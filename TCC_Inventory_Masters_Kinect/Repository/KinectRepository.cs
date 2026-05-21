@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace TCC_Inventory_Masters_Kinect.Repository
 {
-    internal class KinectRepository
+    public class KinectRepository : IKinectRepository
     {
+        public void SalvarMedicao(MedicaoVolume medicao)
+        {
+            // Implementação para salvar a medição
+        }
     }
 }

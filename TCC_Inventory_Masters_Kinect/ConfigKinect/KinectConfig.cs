@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace TCC_Inventory_Masters_Kinect.ConfigKinect
 {
-    internal class KinectConfig
+    public class KinectConfig
     {
+        public const int LimiteAltura = 30;
+
+        public const int MaxHistorico = 30;
+
     }
 }
