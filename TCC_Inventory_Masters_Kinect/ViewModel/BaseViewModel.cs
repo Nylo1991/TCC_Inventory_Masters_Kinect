@@ -1,12 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TCC_Inventory_Masters_Kinect.ViewModel
 {
-    internal class BaseViewModel
+ public class BaseViewModel : INotifyPropertyChanged
     {
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(
+            [CallerMemberName] string nome = null)
+        {
+            PropertyChanged?.Invoke(
+                this,
+                new PropertyChangedEventArgs(nome));
+        }
     }
+}
 }
