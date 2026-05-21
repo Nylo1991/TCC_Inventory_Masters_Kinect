@@ -82,4 +82,3 @@ namespace TCC_Inventory_Masters_Kinect.Command
 
 
 }
-}
