@@ -3,6 +3,9 @@ using System.Windows.Input;
 using TCC_Inventory_Masters_Kinect.Repository;
 using TCC_Inventory_Masters_Kinect.Repository.Interface;
 using TCC_Inventory_Masters_Kinect.Model;
+using TCC_Inventory_Masters_Kinect.Service;
+using TCC_Inventory_Masters_Kinect.Command;
+
 
 namespace TCC_Inventory_Masters_Kinect.ViewModel
 {
