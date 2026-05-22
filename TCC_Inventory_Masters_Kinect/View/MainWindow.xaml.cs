@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TCC_Inventory_Masters_Kinect.ViewModel;
 
 namespace TCC_Inventory_Masters_Kinect
 {
@@ -23,6 +24,7 @@ namespace TCC_Inventory_Masters_Kinect
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
         }
     }
 }
