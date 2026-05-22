@@ -1,17 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using TCC_Inventory_Masters_Kinect.Command;
 using TCC_Inventory_Masters_Kinect.Service;
 
 namespace TCC_Inventory_Masters_Kinect.ViewModel
 {
-    public class MainViewModel
+    public class MainViewModel : BaseViewModel
     {
+        // ==========================================
+        // 1. CAMPOS PRIVADOS
+        // ==========================================
+
         private readonly KinectService _kinectService;
+
+        // ==========================================
+        // 2. PROPRIEDADE STATUS
+        // ==========================================
 
         private string _status;
         public string Status
@@ -24,6 +28,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
         }
 
+        // ==========================================
+        // 3. PROPRIEDADE VOLUME
+        // ==========================================
+
         private string _volumeTexto;
         public string VolumeTexto
         {
@@ -35,8 +43,16 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
         }
 
+        // ==========================================
+        // 4. COMANDOS
+        // ==========================================
+
         public ICommand LigarKinectCommand { get; }
         public ICommand DesligarKinectCommand { get; }
+
+        // ==========================================
+        // 5. CONSTRUTOR
+        // ==========================================
 
         public MainViewModel()
         {
@@ -51,6 +67,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             LigarKinectCommand = new RelayCommand(LigarKinect);
             DesligarKinectCommand = new RelayCommand(DesligarKinect);
         }
+
+        // ==========================================
+        // 6. LIGAR KINECT
+        // ==========================================
 
         private void LigarKinect()
         {
@@ -75,6 +95,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
         }
 
+        // ==========================================
+        // 7. DESLIGAR KINECT
+        // ==========================================
+
         private void DesligarKinect()
         {
             try
@@ -90,10 +114,18 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
         }
 
+        // ==========================================
+        // 8. ATUALIZAR MEDIDA
+        // ==========================================
+
         private void AtualizarMedida(double medidaMm)
         {
             VolumeTexto = "Medida média: " + medidaMm.ToString("F0") + " mm";
         }
+
+        // ==========================================
+        // 9. ATUALIZAR STATUS
+        // ==========================================
 
         private void AtualizarStatus(string mensagem)
         {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TCC_Inventory_Masters_Kinect.Model;
+using TCC_Inventory_Masters_Kinect.Repository.Interface;
 
 namespace TCC_Inventory_Masters_Kinect.Repository
 {
@@ -10,7 +12,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
     {
         public void SalvarMedicao(MedicaoVolume medicao)
         {
-            // Implementação para salvar a medição
+            // Aqui entra a lógica para salvar no banco.
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace TCC_Inventory_Masters_Kinect.Command
 {
-    public class RelayCommands : ICommand  
+    public class RelayCommand : ICommand
     {
         // ==========================================
         // 1. CAMPOS PRIVADOS
@@ -79,6 +76,4 @@ namespace TCC_Inventory_Masters_Kinect.Command
             remove { CommandManager.RequerySuggested -= value; }
         }
     }
-
-
 }
