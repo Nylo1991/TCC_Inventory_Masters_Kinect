@@ -7,6 +7,31 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+
+        <StackPanel VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+
+            <TextBlock Text="{Binding Status}"
+                   FontSize="20"
+                   Margin="10"/>
+
+            <TextBlock Text="{Binding VolumeTexto}"
+                   FontSize="20"
+                   Margin="10"/>
+
+            <Button Content="Ligar Kinect"
+                Command="{Binding LigarKinectCommand}"
+                Width="150"
+                Height="40"
+                Margin="10"/>
+
+            <Button Content="Desligar Kinect"
+                Command="{Binding DesligarKinectCommand}"
+                Width="150"
+                Height="40"
+                Margin="10"/>
+
+        </StackPanel>
+
     </Grid>
 </Window>
