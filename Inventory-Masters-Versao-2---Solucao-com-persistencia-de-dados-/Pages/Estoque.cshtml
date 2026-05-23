@@ -1,0 +1,204 @@
+@page
+@model InventoryMaster.Pages.EstoqueModel
+@using System.Text.Json
+@using System.Linq
+
+<h2>Monitoramento de Resíduos</h2>
+
+<!-- Gráfico -->
+<div style="display:flex;justify-content:center;margin-top:20px;">
+    <canvas id="graficoVolume" style="width:90vw;height:50vh;"></canvas>
+</div>
+
+<!-- Status -->
+<div style="margin-top:10px;text-align:center;">
+    <span id="statusConexao" style="font-weight:bold;color:orange;">Conectando...</span>
+</div>
+
+<!-- Modal Alerta de Estoque -->
+<div id="modalAlerta" style="
+    display:none;
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color: rgba(0,0,0,0.5);
+    justify-content:center;
+    align-items:center;
+    z-index:1000;">
+
+    <div style="
+        background-color:#fff;
+        padding:20px;
+        border-radius:8px;
+        max-width:400px;
+        width:90%;
+        text-align:center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+
+        <h5 style="color:#cc0000;">🚨 Alerta de Estoque</h5>
+        <p>O nível do estoque atingiu o limite máximo (1 m³).</p>
+        <p>Deseja enviar notificação aos parceiros?</p>
+
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
+            <button id="btnEnviar" style="
+                padding:6px 12px;
+                border-radius:6px;
+                border:1px solid #0d6efd;
+                background:#0d6efd;
+                color:#fff;
+                cursor:pointer;">Enviar</button>
+
+            <button id="btnAgoraNao" style="
+                padding:6px 12px;
+                border-radius:6px;
+                border:1px solid #6c757d;
+                background:#6c757d;
+                color:#fff;
+                cursor:pointer;">Agora não</button>
+        </div>
+    </div>
+</div>
+
+<!-- Mensagem de confirmação -->
+<div class="alert alert-info mt-3" id="mensagemEnvio" style="display:none;max-width:400px;margin:0 auto;">
+    📧 Emails enviados com sucesso!
+</div>
+
+<!-- Console de logs -->
+<div class="mt-4" style="max-width:900px;margin:30px auto;">
+    <h4>📜 Logs em Tempo Real</h4>
+    <div id="logContainer" style="
+        height:250px;
+        overflow-y:auto;
+        background-color:#fff;
+        color:#000;
+        font-family:monospace;
+        padding:10px;
+        border-radius:8px;
+        border:1px solid #ccc;">
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
+
+<script>
+    const LIMITE_MAXIMO = 1.0; // m³
+
+    // Dados iniciais
+    const entradas = @Html.Raw(JsonSerializer.Serialize(
+    Model.Entradas?.Select(e => new { label = e.Data.ToString("dd/MM HH:mm"), valor = e.Volume }) ?? Enumerable.Empty<object>()
+    ));
+    const dadosLabels = entradas.map(e => e.label);
+    const dadosValores = entradas.map(e => e.valor);
+
+    // Gráfico
+    const ctx = document.getElementById('graficoVolume').getContext('2d');
+    const grafico = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dadosLabels,
+            datasets: [{
+                label: 'Volume de Resíduos (m³)',
+                data: dadosValores,
+                borderColor: '#228B22',
+                backgroundColor: 'rgba(34,139,34,0.15)',
+                fill: true,
+                tension: 0.3,
+                pointBackgroundColor: '#228B22',
+                pointBorderColor: '#fff',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: true } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // Função de log
+    function adicionarLog(mensagem, cor = "#000") {
+        const logContainer = document.getElementById("logContainer");
+        const linha = document.createElement("div");
+        linha.textContent = `[${new Date().toLocaleTimeString("pt-BR")}] ${mensagem}`;
+        linha.style.color = cor;
+        linha.style.borderBottom = "1px solid #eee";
+        linha.style.padding = "2px 0";
+        logContainer.appendChild(linha);
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    // SignalR
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/residuosHub")
+        .withAutomaticReconnect()
+        .build();
+
+    const alerta = document.getElementById("modalAlerta");
+    const mensagemEnvio = document.getElementById("mensagemEnvio");
+
+    connection.on("ReceberVolume", function(volume) {
+        const timestamp = new Date();
+        const label = timestamp.toLocaleString("pt-BR", { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+        grafico.data.labels.push(label);
+        grafico.data.datasets[0].data.push(volume);
+        if (grafico.data.labels.length > 20) {
+            grafico.data.labels.shift();
+            grafico.data.datasets[0].data.shift();
+        }
+        grafico.update();
+
+        if (volume >= LIMITE_MAXIMO) {
+            alerta.style.display = "flex";
+            mensagemEnvio.style.display = "none";
+        } else {
+            alerta.style.display = "none";
+            mensagemEnvio.style.display = "none";
+        }
+
+        const status = document.getElementById('statusConexao');
+        status.textContent = `Volume recebido do WPF: ${volume.toFixed(2)} m³`;
+        status.style.color = "blue";
+
+        adicionarLog(`Volume recebido: ${volume.toFixed(2)} m³`, "#007700");
+    });
+
+    connection.on("ReceberStatus", function(mensagem) {
+        const status = document.getElementById('statusConexao');
+        status.textContent = mensagem;
+        status.style.color = "green";
+        adicionarLog(`Status recebido: ${mensagem}`, "#0044cc");
+    });
+
+    connection.start()
+        .then(() => {
+            const status = document.getElementById('statusConexao');
+            status.textContent = "Conectado ao servidor";
+            status.style.color = "green";
+            adicionarLog("Conectado ao servidor SignalR", "#555");
+        })
+        .catch(err => {
+            const status = document.getElementById('statusConexao');
+            status.textContent = "Erro na conexão";
+            status.style.color = "red";
+            adicionarLog(`Erro na conexão com SignalR: ${err?.message || err}`, "#cc0000");
+            console.error(err);
+        });
+
+    // --- Simulação de envio ---
+    document.getElementById("btnEnviar").addEventListener("click", () => {
+        alerta.style.display = "none";
+        mensagemEnvio.style.display = "block";
+        adicionarLog("Simulação: notificação enviada aos parceiros.", "#555");
+    });
+
+    document.getElementById("btnAgoraNao").addEventListener("click", () => {
+        alerta.style.display = "none";
+        adicionarLog("Usuário optou por não enviar notificação agora.", "#555");
+    });
+</script>

@@ -1,0 +1,140 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+<body>
+<div class="text-center mt-3">
+    <div class="container">
+
+        <!-- Cards de Indicadores -->
+        <div class="row text-center mb-4">
+            <div class="col-md-3 col-sm-6 mb-2">
+                <div class="card p-3 shadow-sm">
+                    <h5>Materiais Disponíveis</h5>
+                    <h2 class="text-primary">320</h2>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
+                <div class="card p-3 shadow-sm">
+                    <h5>Materiais Reciclados</h5>
+                    <h2 class="text-success">120</h2>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
+                <div class="card p-3 shadow-sm">
+                    <h5>Parceiros Ativos</h5>
+                    <h2 class="text-warning">15</h2>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
+                <div class="card p-3 shadow-sm">
+                    <h5>Doações Concluídas</h5>
+                    <h2 class="text-info">58</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row mb-4" >
+            <div class="col-md-6 ">
+                <div class="card p-3 shadow-sm ">
+                    <h5>Tipos de Materiais</h5>
+                    <div style="height: 270px;"> <!-- define altura -->
+                        <canvas id="graficoPizza"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm" >
+                    <h5>Materiais Reciclados por Mês</h5>
+                    <div style="height: 270px;"> <!-- define altura -->
+                        <canvas id="graficoBarras"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Últimas Doações -->
+        <div class="card p-3 shadow-sm">
+            <h5>Últimas Doações</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Quantidade</th>
+                        <th>Data</th>
+                        <th>Parceiro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Papel A4</td>
+                        <td>200 folhas</td>
+                        <td>05/08/2025</td>
+                        <td>Escola ABC</td>
+                    </tr>
+                    <tr>
+                        <td>Tinta Guache</td>
+                        <td>15 frascos</td>
+                        <td>03/08/2025</td>
+                        <td>Ateliê Criarte</td>
+                    </tr>
+                    <tr>
+                        <td>Cartolina Colorida</td>
+                        <td>50 folhas</td>
+                        <td>01/08/2025</td>
+                        <td>ONG Arte e Vida</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Gráfico Pizza
+    new Chart(document.getElementById("graficoPizza"), {
+        type: 'pie',
+        data: {
+            labels: ["Papel", "Plástico", "Tintas", "Outros"],
+            datasets: [{
+                data: [45, 25, 20, 10],
+                backgroundColor: ["#007bff", "#28a745", "#ffc107", "#6c757d"]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false // permite respeitar a altura do div
+        }
+    });
+
+    // Gráfico Barras
+    new Chart(document.getElementById("graficoBarras"), {
+        type: 'bar',
+        data: {
+            labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago"],
+            datasets: [{
+                label: 'Materiais Reciclados (unidades)',
+                data: [50, 60, 40, 80, 90, 70, 100, 65],
+                backgroundColor: "#17a2b8"
+            }]
+        },
+        options: {
+
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            maintainAspectRatio: false // permite respeitar a altura do div
+        }
+    });
+</script>
+</body>

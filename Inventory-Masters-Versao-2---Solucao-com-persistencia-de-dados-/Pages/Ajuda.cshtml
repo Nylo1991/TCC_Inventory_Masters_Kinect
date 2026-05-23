@@ -1,0 +1,43 @@
+@page
+@model InventoryMaster.Pages.AjudaModel
+@{
+    ViewData["Title"] = "Ajuda e Suporte";
+}
+
+<h2 style="text-align:center; margin-top:20px;">📚 Central de Ajuda</h2>
+<p style="text-align:center; color: #555;">Assista aos tutoriais e entre em contato se precisar de suporte.</p>
+
+<!-- Grade de vídeos -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px;">
+    <div style="aspect-ratio: 16 / 9;">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/SEU_VIDEO_1" 
+                title="Tutorial 1" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div style="aspect-ratio: 16 / 9;">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/SEU_VIDEO_2" 
+                title="Tutorial 2" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div style="aspect-ratio: 16 / 9;">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/SEU_VIDEO_3" 
+                title="Tutorial 3" frameborder="0" allowfullscreen></iframe>
+    </div>
+</div>
+
+<!-- Área de contato -->
+<div style="margin-top: 40px; text-align:center;">
+    <h3>💬 Precisa de Ajuda?</h3>
+    <p>Fale diretamente com nossa equipe de suporte.</p>
+
+    <!-- Botão WhatsApp -->
+    <a href="https://api.whatsapp.com/send?phone=SEU_NUMERO&text=Olá,%20preciso%20de%20ajuda%20com%20o%20sistema"
+       target="_blank"
+       style="display:inline-block; padding: 12px 20px; background-color:#25D366; color:#fff; border-radius:8px; margin:10px; text-decoration:none; font-weight:bold;">
+        📱 WhatsApp
+    </a>
+
+    <!-- Botão Email -->
+    <a href="mailto:suporte@seudominio.com?subject=Ajuda%20no%20Sistema&body=Olá,%20preciso%20de%20ajuda..."
+       style="display:inline-block; padding: 12px 20px; background-color:#007BFF; color:#fff; border-radius:8px; margin:10px; text-decoration:none; font-weight:bold;">
+        📧 E-mail
+    </a>
+</div>

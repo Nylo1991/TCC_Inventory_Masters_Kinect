@@ -1,0 +1,111 @@
+@page
+@model InventoryMaster.Pages.ParceirosModel
+@{
+    ViewData["Title"] = "Parceiros";
+}
+
+<div class="container mt-4">
+
+    <div class="container mt-0 mb-3">
+        <div class="tituloPag d-flex justify-content-between align-items-center">
+
+            <div class="tituloGrupo d-flex align-items-center">
+                <i class="bi bi-people-fill me-2" style="color:white;font-size:25px"></i>
+                <h4 class="text-white">Controle de Parceiros</h4>
+            </div>
+
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCadastroParceiro">
+                Novo Parceiro
+            </button>
+
+        </div>
+    </div>
+
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Empresa</th>
+                <th>Telefone</th>
+                <th>Email</th>
+                <th>Endereço</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        @foreach (var parceiro in Model.Parceiros)
+        {
+            <tr>
+                <td>@parceiro.Nome</td>
+                <td>@parceiro.Empresa</td>
+                <td>@parceiro.Telefone</td>
+                <td>@parceiro.Email</td>
+                <td>@parceiro.Endereco</td>
+            </tr>
+        }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<!-- MODAL CADASTRO -->
+
+<div class="modal fade" id="modalCadastroParceiro" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Cadastrar Parceiro</h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form method="post">
+
+                    <div class="mb-3">
+                        <label>Nome</label>
+                        <input asp-for="NovoParceiro.Nome" class="form-control"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Empresa</label>
+                        <input asp-for="NovoParceiro.Empresa" class="form-control"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Telefone</label>
+                        <input asp-for="NovoParceiro.Telefone" class="form-control"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input asp-for="NovoParceiro.Email" class="form-control"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Endereço</label>
+                        <input asp-for="NovoParceiro.Endereco" class="form-control"/>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">
+                        Salvar
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

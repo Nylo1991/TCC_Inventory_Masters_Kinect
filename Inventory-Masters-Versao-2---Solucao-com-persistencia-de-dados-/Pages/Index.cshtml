@@ -1,0 +1,28 @@
+@page
+@model InventoryMaster.Pages.IndexModel
+@{
+    Layout = null; // opcional, pode ter layout normal também
+}
+
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; text-align: center;">
+    <h2>🔐 Acesso ao Sistema</h2>
+
+    @if (!string.IsNullOrEmpty(Model.MensagemErro))
+    {
+        <div style="background-color: #f8d7da; padding: 10px; border-radius: 5px; color: #721c24; margin-bottom: 10px;">
+            @Model.MensagemErro
+        </div>
+    }
+
+    <form method="post" style="text-align: left;">
+        <label for="Email">E-mail:</label>
+        <input type="email" id="Email" name="Email" value="@Model.Email" required style="width: 100%; padding: 8px; margin-bottom: 15px;" />
+
+        <label for="Senha">Senha:</label>
+        <input type="password" id="Senha" name="Senha" required style="width: 100%; padding: 8px; margin-bottom: 15px;" />
+
+        <button type="submit" style="width: 100%; padding: 10px; background-color: #228B22; color: white; border: none; border-radius: 5px;">
+            Entrar
+        </button>
+    </form>
+</div>

@@ -1,0 +1,107 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  margin: 0;
+  background-color: #f0f0f0 !important; /* cinza claro */
+  height: 100vh; /* altura total da janela */
+  width: 100vw;
+}
+
+.main-content {
+  background-color: transparent !important;
+  margin-left: 250px; /* mesmo valor da largura da sidebar */
+  padding: 20px;
+  flex: 1;              /* ocupa todo o espaço restante */
+  overflow-y: auto;     /* rolagem só no conteúdo */
+}
+.sidebar {
+  position: fixed;        /* fixa na tela */
+  top: 0;
+  left: 0;
+  height: 100vh;           /* ocupa a altura inteira */
+  width: 250px;            /* largura fixa */
+  background-color: #f8f9fa;
+  padding-top: 20px;
+  overflow-y: auto;        /* adiciona rolagem caso o conteúdo ultrapasse a altura */
+  border-right: 1px solid #ddd;
+}
+
+.sidebar .nav-link {
+  color: #333;
+  padding: 0.75rem 1rem;
+  border-radius: 0;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  background-color: #e9ecef;
+  color: #000;
+}
+
+.main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#graficoPizza{
+  height: 10px;
+}
+.tituloPag {
+  background-color: #228B22;
+  color: #fff;
+  border-radius: 15px;
+  height: 50px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* título à esquerda e botão à direita */
+  margin: 0;
+}
+
+.tituloPag .tituloGrupo {
+  display: flex;
+  align-items: center;
+}
+
+.tituloPag h4 {
+  margin: 0;
+  padding-left: 5px;
+}
+
+.tituloPag button {
+  background-color: #fff;
+  color: #228B22;
+  border: none;
+  font-weight: bold;
+  padding: 6px 15px;
+  border-radius: 5px;
+}
+
+.tituloPag button:hover {
+  background-color: #f0f0f0;
+}
+.nav-link.active {
+  background-color: #228B22; !important;/* azul bootstrap */
+  color: white !important;
+  font-weight: bold;
+  border-radius: 5px;
+}
