@@ -5,7 +5,7 @@ using System.Data.SQLite; // Adicione este using
 namespace TCC_Inventory_Masters_Kinect.Data
 {
     // Adicionamos esta configuração para forçar o uso do SQLite
-    [DbConfigurationType(typeof(System.Data.SQLite.EF6.SQLiteConfiguration))]
+    [DbConfigurationType("System.Data.SQLite.EF6.SQLiteProviderServices, System.Data.SQLite.EF6")]
     public class AppDbContext : DbContext
     {
         public AppDbContext()
