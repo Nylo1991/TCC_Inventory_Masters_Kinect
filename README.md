@@ -330,16 +330,96 @@ A adoção do Firebase Firestore trouxe benefícios importantes para a solução
 A arquitetura híbrida implementada no projeto permite que o módulo Kinect opere de maneira independente localmente, enquanto a aplicação MVC centraliza e distribui as informações operacionalmente em ambiente cloud.
 
 ---
-### Modelo Físico
 
-O modelo físico do módulo Kinect permanece utilizando SQLite local através do Entity Framework Core, sendo responsável pela persistência temporária das medições e parâmetros do sensor.
+## Modelo Conceitual — MVVM Kinect
 
-<table align="center">
-  <tr>
-    <td><img src="https://github.com/user-attachments/assets/3552237e-01ba-4191-98a3-ebccb8b9e5cd" width="400" alt="imagem 1"></td>
-    <td><img src="https://github.com/user-attachments/assets/6fe7cd76-1829-4d89-b7f8-9cce91d0c49c" width="400" alt="imagem 2"></td>
-  </tr>
-</table>
+<p align="center">
+  <img src="./imagens/Modelo_Conceitual_MVVM.png" width="1000" alt="Modelo Conceitual MVVM Kinect" />
+</p>
+
+### Descrição das Entidades
+
+| Entidade | Finalidade |
+|---|---|
+| **MedicaoVolume** | Armazena as leituras volumétricas realizadas pelo sensor Kinect |
+| **ParametrosSistema** | Define os limites operacionais e parâmetros utilizados pelo sistema |
+
+---
+
+### Entidade: MedicaoVolume
+
+| Campo | Tipo |
+|---|---|
+| id | Integer |
+| data_hora | DateTime |
+| volume_medido | Decimal |
+| origem_leitura | String |
+
+---
+
+### Entidade: ParametrosSistema
+
+| Campo | Tipo |
+|---|---|
+| id | Integer |
+| volume_maximo | Decimal |
+| volume_minimo | Decimal |
+| email_notificacao_ativo | Boolean |
+| data_atualizacao | DateTime |
+
+---
+
+## Modelo Lógico — MVVM Kinect
+
+<p align="center">
+  <img src="./imagens/Modelo_Logico_MVVM.png" width="1000" alt="Modelo Lógico MVVM Kinect" />
+</p>
+
+### Estrutura Relacional
+
+| Tabela | Descrição |
+|---|---|
+| **MedicaoVolume** | Histórico das medições capturadas pelo sensor |
+| **ParametrosSistema** | Configurações e regras de negócio locais |
+
+---
+
+### Tabela: MedicaoVolume
+
+| Campo | Tipo | Restrição |
+|---|---|---|
+| id | INTEGER | PK |
+| data_hora | DATETIME | NOT NULL |
+| volume_medido | DECIMAL | NOT NULL |
+| origem_leitura | VARCHAR | NOT NULL |
+
+---
+
+### Tabela: ParametrosSistema
+
+| Campo | Tipo | Restrição |
+|---|---|---|
+| id | INTEGER | PK |
+| volume_maximo | DECIMAL | NOT NULL |
+| volume_minimo | DECIMAL | NOT NULL |
+| email_notificacao_ativo | BOOLEAN | NOT NULL |
+| data_atualizacao | DATETIME | NOT NULL |
+
+---
+
+## Modelo Físico — MVVM Kinect
+
+O modelo físico do módulo MVVM foi implementado utilizando:
+- SQLite;
+- Entity Framework Core;
+- Migrations;
+- Persistência local embarcada.
+
+A estrutura física é gerada automaticamente pelo Entity Framework através das migrations da aplicação.
+
+<p align="center">
+  <img src="./imagens/Modelo_Fisico_MVVM.png" width="1000" alt="Modelo Físico MVVM Kinect" />
+</p>
 
 ---
 
