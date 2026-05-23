@@ -89,11 +89,6 @@
     <Compile Include="Command\RelayCommands.cs" />
     <Compile Include="ConfigKinect\KinectConfig.cs" />
     <Compile Include="Data\AppDbContext.cs" />
-    <Compile Include="Migrations\202605220205506_CriacaoInicial.cs" />
-    <Compile Include="Migrations\202605220205506_CriacaoInicial.Designer.cs">
-      <DependentUpon>202605220205506_CriacaoInicial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\MedicaoVolume.cs" />
     <Compile Include="Repository\Interface\IKinectRepository.cs" />
     <Compile Include="Repository\KinectRepository.cs" />
@@ -119,9 +114,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Migrations\202605220205506_CriacaoInicial.resx">
-      <DependentUpon>202605220205506_CriacaoInicial.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
