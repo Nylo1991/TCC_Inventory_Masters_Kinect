@@ -9,11 +9,17 @@ namespace TCC_Inventory_Masters_Kinect.Repository
     {
         public void SalvarMedicao(MedicaoVolume medicao)
         {
-            // O "using" garante que a conexão com o SQLite seja fechada após salvar
-            using (var context = new AppDbContext())
+            try
             {
-                context.MedicoesVolume.Add(medicao);
-                context.SaveChanges();
+                using (var db = new AppDbContext())
+                {
+                    db.MedicaoVolumes.Add(medicao);
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro ao salvar: " + ex.Message);
             }
         }
     }
