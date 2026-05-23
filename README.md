@@ -164,65 +164,175 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 
 ## MODELAGEM DO BANCO DE DADOS
 ---
-### Modelo Conceitual:
 
-<img width="1349" height="616" alt="InventoryMaster_ModeloConceitual" src="https://github.com/user-attachments/assets/c6d86792-4619-4497-9876-0407c63a003f" />
+Com a evolução arquitetural do projeto, a solução passou a utilizar uma abordagem híbrida de armazenamento de dados, combinando banco relacional local e banco NoSQL em nuvem.
 
-| Nome da Entidade        | Atributos                                                                       | Chave Primária | Chave Secundária                     |
-| ----------------------- | ------------------------------------------------------------------------------- | -------------- | ------------------------------------ |
-| **Parceiro**            | Id, Nome, Empresa, Email, Telefone, Endereco, Ativo, Data_Cadastro              | Id             | —                                    |
-| **ParametrosSistema**   | Id, Volume_Maximo, Volume_Minimo, Email_Notificacao_Ativo, Data_Atualizacao     | Id             | —                                    |
-| **Usuario**             | Id, Nome, Email, Senha, Perfil, Data_Cadastro, Ativo                            | Id             | —                                    |
-| **MedicaoVolume**       | Id, Data_Hora, Volume_Medido, Origem_Leitura                                    | Id             | —                                    |
-| **Notificacao**         | Id, Data_Envio, Volume_Momento, Status_Envio, Mensagem, Quantidade_Destinatario | Id             | —                                    |
-| **NotificacaoParceiro** | Status_Entrega                                                                  | —              | Ligação entre Parceiro e Notificacao |
+O módulo responsável pela captura volumétrica via Kinect (MVVM) utiliza o banco local **SQLite**, garantindo baixo custo computacional, operação offline e persistência temporária das leituras do sensor.
 
----
-### Modelo Lógico:
+Já a aplicação Web MVC, responsável pelo gerenciamento operacional, autenticação, dashboard, notificações e integração entre usuários e parceiros, passou a utilizar o **Firebase Firestore**, um banco de dados NoSQL orientado a documentos e altamente escalável.
 
-<img width="1080" height="614" alt="InventoryMaster_ModeloLogico" src="https://github.com/user-attachments/assets/08a23fd9-58b8-4b26-8be3-b3bf43bcd847" />
+Diferentemente da modelagem relacional tradicional, o Firestore organiza os dados em:
+- Coleções;
+- Documentos;
+- Subcoleções;
+- Referências por identificadores (IDs).
 
-| Nome da Entidade    | Descrição                                                                        | Atributos               | Tipo de Dado | PK/FK |
-| ------------------- | -------------------------------------------------------------------------------- | ----------------------- | ------------ | ----- |
-| Parceiro            | Guarda informações das empresas parceiras que recebem notificações.              | Id                      | INTEGER      | PK    |
-|                     |                                                                                  | Nome                    | VARCHAR      |       |
-|                     |                                                                                  | Empresa                 | VARCHAR      |       |
-|                     |                                                                                  | Email                   | VARCHAR      |       |
-|                     |                                                                                  | Telefone                | VARCHAR      |       |
-|                     |                                                                                  | Endereco                | VARCHAR      |       |
-|                     |                                                                                  | Ativo                   | BOOLEAN      |       |
-|                     |                                                                                  | Data_Cadastro           | DATE         |       |
-| Usuario             | Representa os usuários cadastrados no sistema.                                   | Id                      | INTEGER      | PK    |
-|                     |                                                                                  | Nome                    | VARCHAR      |       |
-|                     |                                                                                  | Email                   | VARCHAR      |       |
-|                     |                                                                                  | Senha                   | VARCHAR      |       |
-|                     |                                                                                  | Perfil                  | VARCHAR      |       |
-|                     |                                                                                  | Data_Cadastro           | DATE         |       |
-|                     |                                                                                  | Ativo                   | BOOLEAN      |       |
-| Notificacao         | Registra notificações enviadas pelo sistema.                                     | Id                      | INTEGER      | PK    |
-|                     |                                                                                  | Data_Envio              | DATE         |       |
-|                     |                                                                                  | Volume_Momento          | DECIMAL      |       |
-|                     |                                                                                  | Status_Envio            | VARCHAR      |       |
-|                     |                                                                                  | Mensagem                | VARCHAR      |       |
-|                     |                                                                                  | Quantidade_Destinatario | INTEGER      |       |
-|                     |                                                                                  | fk_Usuario_Id           | INTEGER      | FK    |
-| MedicaoVolume       | Armazena medições de volume registradas no sistema.                              | Id                      | INTEGER      | PK    |
-|                     |                                                                                  | Data_Hora               | DATE         |       |
-|                     |                                                                                  | Volume_Medido           | DECIMAL      |       |
-|                     |                                                                                  | Origem_Leitura          | VARCHAR      |       |
-|                     |                                                                                  | fk_Usuario_Id           | INTEGER      | FK    |
-| ParametrosSistema   | Define os parâmetros de controle do sistema.                                     | Id                      | INTEGER      | PK    |
-|                     |                                                                                  | Volume_Maximo           | DECIMAL      |       |
-|                     |                                                                                  | Volume_Minimo           | DECIMAL      |       |
-|                     |                                                                                  | Email_Notificacao_Ativo | BOOLEAN      |       |
-|                     |                                                                                  | Data_Atualizacao        | DATE         |       |
-| NotificacaoParceiro | Tabela associativa que relaciona notificações aos parceiros que irão recebê-las. | Id                      | INTEGER      | PK    |
-|                     |                                                                                  | fk_Parceiro_Id          | INTEGER      | FK    |
-|                     |                                                                                  | fk_Notificacao_Id       | INTEGER      | FK    |
-|                     |                                                                                  | Status_Entrega          | VARCHAR      |       |
+Essa abordagem elimina a necessidade de relacionamentos complexos e operações JOIN, proporcionando maior desempenho em aplicações distribuídas e em tempo real.
 
 ---
-### Modelo Fisíco:
+
+## Arquitetura de Persistência de Dados
+
+### Módulo Kinect (MVVM)
+- Banco Local: SQLite;
+- Responsável por:
+  - armazenamento temporário das medições;
+  - persistência dos parâmetros do sensor;
+  - funcionamento offline;
+  - processamento local das leituras do Kinect.
+
+### Aplicação MVC Web
+- Banco em Nuvem: Firebase Firestore;
+- Responsável por:
+  - autenticação de usuários;
+  - gerenciamento de parceiros;
+  - dashboard operacional;
+  - envio de notificações;
+  - mensageria;
+  - armazenamento centralizado das medições;
+  - sincronização em tempo real.
+
+---
+
+## Modelagem NoSQL Firebase Firestore (MVC)
+
+<p align="center">
+  <img src="./imagens/Modelagem_NoSQL_MVC.png" width="1200" alt="Modelagem NoSQL Firebase Firestore MVC" />
+</p>
+
+---
+
+## Estrutura das Coleções Firestore
+
+| Coleção | Finalidade |
+|---|---|
+| **usuarios** | Armazena os usuários cadastrados no sistema |
+| **parceiros** | Mantém os parceiros responsáveis pelo reaproveitamento dos excedentes |
+| **medicoes** | Registra todas as medições volumétricas enviadas pelo Kinect |
+| **notificacoes** | Controla os alertas automáticos disparados pelo sistema |
+| **mensagens** | Gerencia a comunicação entre usuários |
+| **parametrosSistema** | Armazena as regras de negócio e limites volumétricos |
+
+---
+
+## Descrição das Coleções
+
+### Coleção: usuarios
+
+Responsável pelo armazenamento das informações de autenticação e controle de acesso da plataforma.
+
+| Campo | Tipo |
+|---|---|
+| usuarioId | String |
+| nome | String |
+| email | String |
+| perfil | String |
+| ativo | Boolean |
+| dataCadastro | Timestamp |
+
+---
+
+### Coleção: parceiros
+
+Armazena as empresas parceiras aptas a receber excedentes produtivos.
+
+| Campo | Tipo |
+|---|---|
+| parceiroId | String |
+| nome | String |
+| empresa | String |
+| email | String |
+| telefone | String |
+| endereco | Map |
+| ativo | Boolean |
+
+---
+
+### Coleção: medicoes
+
+Responsável pelo armazenamento das medições volumétricas capturadas pelo Kinect ou inseridas manualmente.
+
+| Campo | Tipo |
+|---|---|
+| medicaoId | String |
+| dataHora | Timestamp |
+| volumeMedido | Number |
+| origemLeitura | String |
+| status | String |
+
+---
+
+### Coleção: notificacoes
+
+Registra os alertas automáticos enviados pelo sistema aos parceiros e operadores.
+
+| Campo | Tipo |
+|---|---|
+| notificacaoId | String |
+| mensagem | String |
+| dataEnvio | Timestamp |
+| statusEnvio | String |
+| volumeMomento | Number |
+| usuarioId | Reference |
+| parceiroId | Reference |
+
+---
+
+### Coleção: mensagens
+
+Responsável pela comunicação interna entre usuários da plataforma.
+
+| Campo | Tipo |
+|---|---|
+| mensagemId | String |
+| remetenteId | Reference |
+| destinatarioId | Reference |
+| texto | String |
+| dataHora | Timestamp |
+| lida | Boolean |
+
+---
+
+### Coleção: parametrosSistema
+
+Define os parâmetros operacionais utilizados pelos gatilhos automáticos da aplicação.
+
+| Campo | Tipo |
+|---|---|
+| volumeMaximo | Number |
+| volumeMinimo | Number |
+| emailNotificacaoAtivo | Boolean |
+| dataAtualizacao | Timestamp |
+
+---
+
+## Considerações Arquiteturais
+
+A adoção do Firebase Firestore trouxe benefícios importantes para a solução:
+
+- Escalabilidade em nuvem;
+- Sincronização em tempo real;
+- Redução da complexidade relacional;
+- Melhor desempenho para aplicações distribuídas;
+- Facilidade de integração com aplicações Web e Mobile;
+- Estrutura orientada a documentos adequada para IoT e monitoramento contínuo.
+
+A arquitetura híbrida implementada no projeto permite que o módulo Kinect opere de maneira independente localmente, enquanto a aplicação MVC centraliza e distribui as informações operacionalmente em ambiente cloud.
+
+---
+### Modelo Físico
+
+O modelo físico do módulo Kinect permanece utilizando SQLite local através do Entity Framework Core, sendo responsável pela persistência temporária das medições e parâmetros do sensor.
 
 <table align="center">
   <tr>
@@ -232,6 +342,7 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 </table>
 
 ---
+
 ## Viabilidade técnica
 
 ### Introdução
