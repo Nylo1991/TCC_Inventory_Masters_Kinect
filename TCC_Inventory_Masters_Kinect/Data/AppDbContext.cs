@@ -1,18 +1,16 @@
 ﻿using System.Data.Entity;
 using TCC_Inventory_Masters_Kinect.Model;
-using System.Data.SQLite; // Adicione este using
 
 namespace TCC_Inventory_Masters_Kinect.Data
 {
-    // Adicionamos esta configuração para forçar o uso do SQLite
-    [DbConfigurationType("System.Data.SQLite.EF6.SQLiteProviderServices, System.Data.SQLite.EF6")]
     public class AppDbContext : DbContext
     {
-        public AppDbContext()
-            : base("name=InventoryMastersDb") // O nome aqui deve bater com o App.config
+        // O nome "InventoryMastersDb" liga este código ao App.config
+        public AppDbContext() : base("name=InventoryMastersDb")
         {
-            // Isso garante que o banco seja criado se não existir
-            Database.SetInitializer<AppDbContext>(null);
+            // Estratégia para SQLite: Se o banco não existir, ele cria automaticamente
+            // com base nas classes DbSet (como MedicaoVolume)
+            Database.SetInitializer(new CreateDatabaseIfNotExists<AppDbContext>());
         }
 
         public DbSet<MedicaoVolume> MedicoesVolume { get; set; }

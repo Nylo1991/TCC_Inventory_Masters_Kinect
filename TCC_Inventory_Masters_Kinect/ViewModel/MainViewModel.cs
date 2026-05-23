@@ -12,16 +12,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
     public class MainViewModel : BaseViewModel
     {
         // ==========================================
-        // 1. CAMPOS PRIVADOS
+        // CAMPOS PRIVADOS
         // ==========================================
         private readonly KinectService _kinectService;
         private readonly IKinectRepository _repository;
-
-        // Controle para não inundar o banco de dados (Salva a cada 1 segundo)
-        private DateTime _proximaGravacaoPermitida = DateTime.MinValue;
+        private DateTime _proximaGravacao = DateTime.MinValue;
 
         // ==========================================
-        // 2. PROPRIEDADES (NOTIFY PROPERTY CHANGED)
+        // PROPRIEDADES PARA A INTERFACE (WPF)
         // ==========================================
         private string _status;
         public string Status
@@ -38,99 +36,86 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         }
 
         // ==========================================
-        // 3. COMANDOS
+        // COMANDOS
         // ==========================================
         public ICommand LigarKinectCommand { get; }
         public ICommand DesligarKinectCommand { get; }
 
         // ==========================================
-        // 4. CONSTRUTOR
+        // CONSTRUTOR
         // ==========================================
         public MainViewModel()
         {
-            // Inicializa Serviços e Repositório
             _kinectService = new KinectService();
-            _repository = new KinectRepository();
+            _repository = new KinectRepository(); // Repositório que usa o AppDbContext
 
-            // Assina os eventos do Kinect
-            _kinectService.MedidaAtualizada += AtualizarMedida;
-            _kinectService.StatusAtualizado += AtualizarStatus;
+            // Subscreve os eventos vindos do sensor
+            _kinectService.MedidaAtualizada += ProcessarNovaMedida;
+            _kinectService.StatusAtualizado += (msg) => Status = msg;
 
-            // Estado Inicial
-            Status = "Kinect desligado";
+            Status = "Kinect aguardando...";
             VolumeTexto = "Medida: 0 mm";
 
-            // Inicializa Comandos
             LigarKinectCommand = new RelayCommand(LigarKinect);
             DesligarKinectCommand = new RelayCommand(DesligarKinect);
         }
 
-        // ==========================================
-        // 5. MÉTODOS DE AÇÃO
-        // ==========================================
         private void LigarKinect()
         {
             try
             {
-                Status = "Tentando ligar Kinect...";
-                bool conectado = _kinectService.InicializarKinect();
-                Status = conectado ? "Kinect conectado e lendo..." : "Kinect não encontrado.";
+                Status = "Inicializando sensor...";
+                bool sucesso = _kinectService.InicializarKinect();
+                Status = sucesso ? "Kinect ativo e gravando!" : "Falha ao ligar o sensor.";
             }
             catch (Exception ex)
             {
-                Status = "Erro ao ligar: " + ex.Message;
+                Status = "Erro crítico: " + ex.Message;
             }
         }
 
         private void DesligarKinect()
         {
             _kinectService.DesligarKinect();
-            Status = "Kinect desligado";
+            Status = "Kinect parado.";
             VolumeTexto = "Medida: 0 mm";
         }
 
         // ==========================================
-        // 6. ATUALIZAÇÃO DA UI E GRAVAÇÃO
+        // PROCESSAMENTO E GRAVAÇÃO SQLITE
         // ==========================================
-        private void AtualizarMedida(double medidaMm)
+        private void ProcessarNovaMedida(double medidaMm)
         {
-            // 1. Atualiza o que o usuário vê na tela imediatamente
-            VolumeTexto = $"Medida atual: {medidaMm:F0} mm";
+            // 1. Atualiza o ecrã imediatamente
+            VolumeTexto = $"Medida Média: {medidaMm:F0} mm";
 
-            // 2. Lógica de Gravação no SQLite
-            // Verificamos se já passou 1 segundo desde a última gravação
-            if (DateTime.Now >= _proximaGravacaoPermitida)
+            // 2. Gravação Automática (Filtro de 1 segundo para não travar o PC)
+            if (DateTime.Now >= _proximaGravacao)
             {
-                _proximaGravacaoPermitida = DateTime.Now.AddSeconds(1);
+                _proximaGravacao = DateTime.Now.AddSeconds(1);
 
-                var novaMedicao = new MedicaoVolume
+                var medicao = new MedicaoVolume
                 {
                     DataHora = DateTime.Now,
                     VolumeCm3 = medidaMm,
                     KinectLigado = true,
                     Calibrado = true,
-                    Status = "Captura Automática"
+                    Status = "Auto-Save"
                 };
 
-                // Task.Run garante que a gravação no banco não "congele" a imagem do Kinect
+                // Executa a gravação em segundo plano (async) para a tela não "congelar"
                 Task.Run(() =>
                 {
                     try
                     {
-                        _repository.SalvarMedicao(novaMedicao);
+                        _repository.SalvarMedicao(medicao);
                     }
                     catch (Exception ex)
                     {
-                        // Opcional: Logar erro de banco se necessário
-                        System.Diagnostics.Debug.WriteLine("Erro ao salvar: " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("Erro SQLite: " + ex.Message);
                     }
                 });
             }
-        }
-
-        private void AtualizarStatus(string mensagem)
-        {
-            Status = mensagem;
         }
     }
 }
