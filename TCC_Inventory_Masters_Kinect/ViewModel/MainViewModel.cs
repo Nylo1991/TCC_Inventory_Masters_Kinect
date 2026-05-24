@@ -1,118 +1,270 @@
 ﻿using System;
-using System.Windows.Input;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Media;
+
+using TCC_Inventory_Masters_Kinect.Command;
+using TCC_Inventory_Masters_Kinect.Model;
 using TCC_Inventory_Masters_Kinect.Repository;
 using TCC_Inventory_Masters_Kinect.Repository.Interface;
-using TCC_Inventory_Masters_Kinect.Model;
 using TCC_Inventory_Masters_Kinect.Service;
-using TCC_Inventory_Masters_Kinect.Command;
 
 namespace TCC_Inventory_Masters_Kinect.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
         // ==========================================
-        // CAMPOS PRIVADOS
+        // CAMPOS
         // ==========================================
+
         private readonly KinectService _kinectService;
+
         private readonly IKinectRepository _repository;
-        private DateTime _proximaGravacao = DateTime.MinValue;
+
+        private DateTime _proximaGravacao =
+            DateTime.MinValue;
 
         // ==========================================
-        // PROPRIEDADES PARA A INTERFACE (WPF)
+        // STATUS
         // ==========================================
+
         private string _status;
+
         public string Status
         {
             get => _status;
-            set { _status = value; OnPropertyChanged(); }
+
+            set
+            {
+                _status = value;
+                OnPropertyChanged();
+            }
         }
 
+        // ==========================================
+        // VOLUME
+        // ==========================================
+
         private string _volumeTexto;
+
         public string VolumeTexto
         {
             get => _volumeTexto;
-            set { _volumeTexto = value; OnPropertyChanged(); }
+
+            set
+            {
+                _volumeTexto = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // ==========================================
+        // CAMERA
+        // ==========================================
+
+        private ImageSource _cameraImage;
+
+        public ImageSource CameraImage
+        {
+            get => _cameraImage;
+
+            set
+            {
+                _cameraImage = value;
+                OnPropertyChanged();
+            }
         }
 
         // ==========================================
         // COMANDOS
         // ==========================================
-        public ICommand LigarKinectCommand { get; }
-        public ICommand DesligarKinectCommand { get; }
+
+        public ICommand LigarKinectCommand
+        {
+            get;
+        }
+
+        public ICommand DesligarKinectCommand
+        {
+            get;
+        }
+
+        public ICommand CalibrarCommand
+        {
+            get;
+        }
 
         // ==========================================
         // CONSTRUTOR
         // ==========================================
+
         public MainViewModel()
         {
-            _kinectService = new KinectService();
-            _repository = new KinectRepository(); // Repositório que usa o AppDbContext
+            _kinectService =
+                new KinectService();
 
-            // Subscreve os eventos vindos do sensor
-            _kinectService.MedidaAtualizada += ProcessarNovaMedida;
-            _kinectService.StatusAtualizado += (msg) => Status = msg;
+            _repository =
+                new KinectRepository();
 
-            Status = "Kinect aguardando...";
-            VolumeTexto = "Medida: 0 mm";
+            // EVENTOS
 
-            LigarKinectCommand = new RelayCommand(LigarKinect);
-            DesligarKinectCommand = new RelayCommand(DesligarKinect);
+            _kinectService.MedidaAtualizada +=
+                ProcessarNovaMedida;
+
+            _kinectService.StatusAtualizado +=
+                AtualizarStatus;
+
+            _kinectService.CameraAtualizada +=
+                AtualizarCamera;
+
+            // TEXTO INICIAL
+
+            Status =
+                "Sistema aguardando inicialização...";
+
+            VolumeTexto =
+                "Volume: 0 cm³";
+
+            // COMANDOS
+
+            LigarKinectCommand =
+                new RelayCommand(LigarKinect);
+
+            DesligarKinectCommand =
+                new RelayCommand(DesligarKinect);
+
+            CalibrarCommand =
+                new RelayCommand(CalibrarChao);
         }
+
+        // ==========================================
+        // LIGAR KINECT
+        // ==========================================
 
         private void LigarKinect()
         {
             try
             {
-                Status = "Inicializando sensor...";
-                bool sucesso = _kinectService.InicializarKinect();
-                Status = sucesso ? "Kinect ativo e gravando!" : "Falha ao ligar o sensor.";
+                Status =
+                    "Inicializando Kinect...";
+
+                bool sucesso =
+                    _kinectService
+                        .InicializarKinect();
+
+                if (sucesso)
+                {
+                    Status =
+                        "Kinect iniciado.";
+                }
+                else
+                {
+                    Status =
+                        "Falha ao iniciar Kinect.";
+                }
             }
             catch (Exception ex)
             {
-                Status = "Erro crítico: " + ex.Message;
+                Status =
+                    ex.Message;
             }
         }
+
+        // ==========================================
+        // DESLIGAR
+        // ==========================================
 
         private void DesligarKinect()
         {
             _kinectService.DesligarKinect();
-            Status = "Kinect parado.";
-            VolumeTexto = "Medida: 0 mm";
+
+            Status =
+                "Kinect desligado.";
+
+            VolumeTexto =
+                "Volume: 0 cm³";
+
+            CameraImage = null;
         }
 
         // ==========================================
-        // PROCESSAMENTO E GRAVAÇÃO SQLITE
+        // CALIBRAR
         // ==========================================
-        private void ProcessarNovaMedida(double medidaMm)
-        {
-            // 1. Atualiza o ecrã imediatamente
-            VolumeTexto = $"Medida Média: {medidaMm:F0} mm";
 
-            // 2. Gravação Automática (Filtro de 1 segundo para não travar o PC)
+        private void CalibrarChao()
+        {
+            _kinectService.CalibrarChao();
+
+            Status =
+                "Chão calibrado.";
+        }
+
+        // ==========================================
+        // STATUS
+        // ==========================================
+
+        private void AtualizarStatus(
+            string msg)
+        {
+            Status = msg;
+        }
+
+        // ==========================================
+        // CAMERA
+        // ==========================================
+
+        private void AtualizarCamera(
+            ImageSource imagem)
+        {
+            CameraImage = imagem;
+        }
+
+        // ==========================================
+        // MEDIÇÃO
+        // ==========================================
+
+        private void ProcessarNovaMedida(
+            double volumeCm3)
+        {
+            VolumeTexto =
+                $"Volume: {volumeCm3:F0} cm³";
+
+            // SALVAR SQLITE
+
             if (DateTime.Now >= _proximaGravacao)
             {
-                _proximaGravacao = DateTime.Now.AddSeconds(1);
+                _proximaGravacao =
+                    DateTime.Now.AddSeconds(1);
 
-                var medicao = new MedicaoVolume
-                {
-                    DataHora = DateTime.Now,
-                    VolumeCm3 = medidaMm,
-                    KinectLigado = true,
-                    Calibrado = true,
-                    Status = "Auto-Save"
-                };
+                var medicao =
+                    new MedicaoVolume
+                    {
+                        DataHora =
+                            DateTime.Now,
 
-                // Executa a gravação em segundo plano (async) para a tela não "congelar"
+                        VolumeCm3 =
+                            volumeCm3,
+
+                        KinectLigado =
+                            true,
+
+                        Calibrado =
+                            true,
+
+                        Status =
+                            "AutoSave"
+                    };
+
                 Task.Run(() =>
                 {
                     try
                     {
-                        _repository.SalvarMedicao(medicao);
+                        _repository
+                            .SalvarMedicao(
+                                medicao);
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        System.Diagnostics.Debug.WriteLine("Erro SQLite: " + ex.Message);
                     }
                 });
             }
