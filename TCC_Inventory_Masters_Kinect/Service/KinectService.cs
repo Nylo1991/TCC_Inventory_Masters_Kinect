@@ -1,215 +1,361 @@
-﻿
-using TCC_Inventory_Masters_Kinect.Model;
-using TCC_Inventory_Masters_Kinect.Repository.Interface;
-using Microsoft.Kinect;
+﻿using Microsoft.Kinect;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace TCC_Inventory_Masters_Kinect.Service
 {
     public class KinectService
     {
         // ==========================================
-        // 1. SENSOR
+        // SENSOR
         // ==========================================
 
-        public KinectSensor Sensor { get; private set; }
+        public KinectSensor Sensor
+        {
+            get;
+            private set;
+        }
 
         // ==========================================
-        // 2. ARRAY DE PROFUNDIDADE
+        // DEPTH
         // ==========================================
 
         private DepthImagePixel[] _depthPixels;
 
         // ==========================================
-        // 3. EVENTOS
+        // RGB
         // ==========================================
 
-        public event Action<double> MedidaAtualizada;
+        private byte[] _colorPixels;
 
-        public event Action<string> StatusAtualizado;
+        private WriteableBitmap _colorBitmap;
 
         // ==========================================
-        // 4. INICIALIZAR KINECT
+        // CALIBRAÇÃO
+        // ==========================================
+
+        private int[] _referenciaChao;
+
+        private bool _calibrado;
+
+        // ==========================================
+        // SUAVIZAÇÃO
+        // ==========================================
+
+        private Queue<double> _historicoVolume =
+            new Queue<double>();
+
+        private double _ultimoVolume;
+
+        // ==========================================
+        // EVENTOS
+        // ==========================================
+
+        public event Action<double>
+            MedidaAtualizada;
+
+        public event Action<string>
+            StatusAtualizado;
+
+        public event Action<ImageSource>
+            CameraAtualizada;
+
+        // ==========================================
+        // INICIALIZAR
         // ==========================================
 
         public bool InicializarKinect()
         {
             try
             {
-                StatusAtualizado?.Invoke("Procurando Kinect...");
+                StatusAtualizado?.Invoke(
+                    "Procurando Kinect...");
 
-                Sensor = KinectSensor.KinectSensors
-                    .FirstOrDefault(s => s.Status == KinectStatus.Connected);
+                Sensor =
+                    KinectSensor.KinectSensors
+                    .FirstOrDefault(
+                        s => s.Status ==
+                             KinectStatus.Connected);
 
                 if (Sensor == null)
                 {
-                    StatusAtualizado?.Invoke("Nenhum Kinect conectado.");
+                    StatusAtualizado?.Invoke(
+                        "Nenhum Kinect encontrado.");
+
                     return false;
                 }
 
-                // ==========================================
-                // HABILITA CÂMERA RGB
-                // ==========================================
+                // RGB
 
                 Sensor.ColorStream.Enable(
-                    ColorImageFormat.RgbResolution640x480Fps30);
+                    ColorImageFormat
+                    .RgbResolution640x480Fps30);
 
-                // ==========================================
-                // HABILITA SENSOR DE PROFUNDIDADE
-                // ==========================================
+                // DEPTH
 
                 Sensor.DepthStream.Enable(
-                    DepthImageFormat.Resolution320x240Fps30);
+                    DepthImageFormat
+                    .Resolution320x240Fps30);
 
-                // ==========================================
-                // CRIA ARRAY DE PIXELS
-                // ==========================================
+                // ARRAYS
 
-                _depthPixels = new DepthImagePixel[
-                    Sensor.DepthStream.FramePixelDataLength];
+                _depthPixels =
+                    new DepthImagePixel[
+                        Sensor.DepthStream
+                            .FramePixelDataLength];
 
-                // ==========================================
-                // EVENTO DE LEITURA
-                // ==========================================
+                _colorPixels =
+                    new byte[
+                        Sensor.ColorStream
+                            .FramePixelDataLength];
 
-                Sensor.DepthFrameReady += Sensor_DepthFrameReady;
+                // BITMAP
 
-                // ==========================================
-                // INICIA SENSOR
-                // ==========================================
+                _colorBitmap =
+                    new WriteableBitmap(
+                        Sensor.ColorStream.FrameWidth,
+                        Sensor.ColorStream.FrameHeight,
+                        96,
+                        96,
+                        PixelFormats.Bgr32,
+                        null);
+
+                // EVENTOS
+
+                Sensor.ColorFrameReady +=
+                    Sensor_ColorFrameReady;
+
+                Sensor.DepthFrameReady +=
+                    Sensor_DepthFrameReady;
+
+                // START
 
                 Sensor.Start();
 
-                if (Sensor.IsRunning)
-                {
-                    StatusAtualizado?.Invoke("Kinect ligado com sucesso.");
-                    return true;
-                }
+                StatusAtualizado?.Invoke(
+                    "Kinect iniciado.");
 
-                StatusAtualizado?.Invoke("Kinect encontrado, mas não iniciou.");
-
-                return false;
+                return true;
             }
             catch (Exception ex)
             {
                 StatusAtualizado?.Invoke(
-                    "Erro ao inicializar Kinect: " + ex.Message);
+                    ex.Message);
 
                 return false;
             }
         }
 
         // ==========================================
-        // 5. LEITURA DA PROFUNDIDADE
+        // RGB
+        // ==========================================
+
+        private void Sensor_ColorFrameReady(
+            object sender,
+            ColorImageFrameReadyEventArgs e)
+        {
+            using (var frame =
+                e.OpenColorImageFrame())
+            {
+                if (frame == null)
+                    return;
+
+                frame.CopyPixelDataTo(
+                    _colorPixels);
+
+                _colorBitmap.WritePixels(
+                    new Int32Rect(
+                        0,
+                        0,
+                        frame.Width,
+                        frame.Height),
+
+                    _colorPixels,
+
+                    frame.Width * 4,
+
+                    0);
+
+                CameraAtualizada?.Invoke(
+                    _colorBitmap);
+            }
+        }
+
+        // ==========================================
+        // DEPTH
         // ==========================================
 
         private void Sensor_DepthFrameReady(
             object sender,
             DepthImageFrameReadyEventArgs e)
         {
-            try
+            using (DepthImageFrame frame =
+                e.OpenDepthImageFrame())
             {
-                using (DepthImageFrame frame =
-                    e.OpenDepthImageFrame())
+                if (frame == null)
+                    return;
+
+                frame.CopyDepthImagePixelDataTo(
+                    _depthPixels);
+
+                if (_calibrado)
                 {
-                    if (frame == null)
-                    {
-                        StatusAtualizado?.Invoke(
-                            "Frame de profundidade vazio.");
-
-                        return;
-                    }
-
-                    // ==========================================
-                    // COPIA DADOS
-                    // ==========================================
-
-                    frame.CopyDepthImagePixelDataTo(_depthPixels);
-
-                    double somaDistancias = 0;
-
-                    int quantidadeValidos = 0;
-
-                    // ==========================================
-                    // PERCORRE TODOS PIXELS
-                    // ==========================================
-
-                    foreach (var pixel in _depthPixels)
-                    {
-                        int profundidade = pixel.Depth;
-
-                        // Ignora pixels inválidos
-                        if (profundidade > 0)
-                        {
-                            somaDistancias += profundidade;
-
-                            quantidadeValidos++;
-                        }
-                    }
-
-                    // ==========================================
-                    // EVITA DIVISÃO POR ZERO
-                    // ==========================================
-
-                    if (quantidadeValidos == 0)
-                    {
-                        StatusAtualizado?.Invoke(
-                            "Nenhum pixel válido detectado.");
-
-                        return;
-                    }
-
-                    // ==========================================
-                    // MÉDIA DA PROFUNDIDADE
-                    // ==========================================
-
-                    double mediaMm =
-                        somaDistancias / quantidadeValidos;
-
-                    // ==========================================
-                    // ENVIA MEDIDA PARA VIEWMODEL
-                    // ==========================================
-
-                    MedidaAtualizada?.Invoke(mediaMm);
+                    CalcularVolume();
                 }
-            }
-            catch (Exception ex)
-            {
-                StatusAtualizado?.Invoke(
-                    "Erro ao ler profundidade: " + ex.Message);
             }
         }
 
         // ==========================================
-        // 6. DESLIGAR KINECT
+        // CALIBRAR CHÃO
+        // ==========================================
+
+        public void CalibrarChao()
+        {
+            if (_depthPixels == null)
+                return;
+
+            _referenciaChao =
+                new int[_depthPixels.Length];
+
+            for (int i = 0;
+                 i < _depthPixels.Length;
+                 i++)
+            {
+                _referenciaChao[i] =
+                    _depthPixels[i].Depth;
+            }
+
+            _calibrado = true;
+
+            _historicoVolume.Clear();
+
+            _ultimoVolume = 0;
+
+            StatusAtualizado?.Invoke(
+                "Chão calibrado.");
+        }
+
+        // ==========================================
+        // CALCULAR VOLUME
+        // ==========================================
+
+        private void CalcularVolume()
+        {
+            double horizontalFOV =
+                57 * Math.PI / 180.0;
+
+            double verticalFOV =
+                43 * Math.PI / 180.0;
+
+            int width =
+                Sensor.DepthStream.FrameWidth;
+
+            int height =
+                Sensor.DepthStream.FrameHeight;
+
+            double volumeTotal = 0;
+
+            for (int i = 0;
+                 i < _depthPixels.Length;
+                 i++)
+            {
+                int current =
+                    _depthPixels[i].Depth;
+
+                int reference =
+                    _referenciaChao[i];
+
+                if (current <= 0 ||
+                    reference <= 0 ||
+                    current >= reference)
+                    continue;
+
+                int delta =
+                    reference - current;
+
+                if (delta < 30)
+                    continue;
+
+                double altura =
+                    delta / 1000.0;
+
+                double distancia =
+                    current / 1000.0;
+
+                double pixelWidth =
+                    2 *
+                    distancia *
+                    Math.Tan(horizontalFOV / 2)
+                    / width;
+
+                double pixelHeight =
+                    2 *
+                    distancia *
+                    Math.Tan(verticalFOV / 2)
+                    / height;
+
+                double pixelArea =
+                    pixelWidth *
+                    pixelHeight;
+
+                volumeTotal +=
+                    altura *
+                    pixelArea;
+            }
+
+            double volumeCm3 =
+                volumeTotal * 1000000;
+
+            _historicoVolume.Enqueue(
+                volumeCm3);
+
+            if (_historicoVolume.Count > 30)
+            {
+                _historicoVolume.Dequeue();
+            }
+
+            double media =
+                _historicoVolume.Average();
+
+            double suavizado =
+                (_ultimoVolume * 0.7)
+                + (media * 0.3);
+
+            _ultimoVolume =
+                suavizado;
+
+            MedidaAtualizada?.Invoke(
+                suavizado);
+        }
+
+        // ==========================================
+        // DESLIGAR
         // ==========================================
 
         public void DesligarKinect()
         {
-            try
+            if (Sensor != null)
             {
-                if (Sensor != null)
+                Sensor.ColorFrameReady -=
+                    Sensor_ColorFrameReady;
+
+                Sensor.DepthFrameReady -=
+                    Sensor_DepthFrameReady;
+
+                if (Sensor.IsRunning)
                 {
-                    // Remove evento
-                    Sensor.DepthFrameReady -= Sensor_DepthFrameReady;
-
-                    // Para Kinect
-                    if (Sensor.IsRunning)
-                    {
-                        Sensor.Stop();
-                    }
-
-                    Sensor = null;
+                    Sensor.Stop();
                 }
 
-                StatusAtualizado?.Invoke("Kinect desligado.");
+                Sensor = null;
             }
-            catch (Exception ex)
-            {
-                StatusAtualizado?.Invoke(
-                    "Erro ao desligar Kinect: " + ex.Message);
-            }
+
+            StatusAtualizado?.Invoke(
+                "Kinect desligado.");
         }
     }
 }
