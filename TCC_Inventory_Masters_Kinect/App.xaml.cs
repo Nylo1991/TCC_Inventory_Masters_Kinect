@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Service;
 
 namespace TCC_Inventory_Masters_Kinect
@@ -10,14 +11,14 @@ namespace TCC_Inventory_Masters_Kinect
         {
             base.OnStartup(e);
 
-            LoggerService.Log(
+            LoggerServiceKinect.Log(
                 "Sistema iniciado.");
         }
 
         protected override void OnExit(
             ExitEventArgs e)
         {
-            LoggerService.Log(
+            LoggerServiceKinect.Log(
                 "Sistema encerrado.");
 
             base.OnExit(e);
