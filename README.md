@@ -8,12 +8,10 @@
 ## INTEGRANTES DO GRUPO
 
 <p align="center">
-  <img src="./imagens/Equipe.jpeg" width="600" alt="Equipe Inventory Masters" />
+  <img src="./Imagens/Equipe.jpeg" width="600" alt="Equipe Inventory Masters" />
 </p>
 
 </div>
-
-<div align="center">
 
 | Nome | Curso| Especialidade no Projeto |
 | :--- | :--- | :--- |
@@ -35,7 +33,7 @@ Promovemos redução de custos, eficiência operacional e responsabilidade ambie
 Somos inovação aplicada à gestão sustentável e competitiva.
 
 <p align="center">
-  <img src="./imagens/logo.png" width="600" alt="Logo Inventory Masters" />
+  <img src="./Imagens/logo.png" width="600" alt="Logo Inventory Masters" />
 </p>
 
 -------
@@ -111,7 +109,7 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 ## Diagrama de Caso de Uso
 
 <p align="center">
-  <img src="./imagens/Diagrama de Caso de Uso.png" width="600" alt="Diagrama de Caso de Uso" />
+  <img src="./Imagens/Diagrama de Caso de Uso.png" width="600" alt="Diagrama de Caso de Uso" />
 </p>
 
 | Nome  |  Funcionalidade       |Perfil         | Descrição                                                                            |
@@ -130,7 +128,7 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 ## Diagrama de Fluxo 
 
 <p align="center">
-  <img src="./imagens/Diagrama de Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
+  <img src="./Imagens/Diagrama de Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
 </p>
 
 ## Diagrama de Fluxo de Dados (1º Nível)
@@ -207,7 +205,7 @@ Essa abordagem elimina a necessidade de relacionamentos complexos e operações 
 ## Modelagem NoSQL Firebase Firestore (MVC)
 
 <p align="center">
-  <img src="./imagens/Modelagem_NoSQL_MVC.png" width="1200" alt="Modelagem NoSQL Firebase Firestore MVC" />
+  <img src="./Imagens/Modelagem_NoSQL_MVC.png" width="1200" alt="Modelagem NoSQL Firebase Firestore MVC" />
 </p>
 
 ---
@@ -334,7 +332,7 @@ A arquitetura híbrida implementada no projeto permite que o módulo Kinect oper
 ## Modelo Conceitual — MVVM Kinect
 
 <p align="center">
-  <img src="./imagens/Modelo_Conceitual_MVVM.png" width="1000" alt="Modelo Conceitual MVVM Kinect" />
+  <img src="./Imagens/Modelo_Conceitual_MVVM.png" width="1000" alt="Modelo Conceitual MVVM Kinect" />
 </p>
 
 ### Descrição das Entidades
@@ -372,7 +370,7 @@ A arquitetura híbrida implementada no projeto permite que o módulo Kinect oper
 ## Modelo Lógico — MVVM Kinect
 
 <p align="center">
-  <img src="./imagens/Modelo_Logico_MVVM.png" width="1000" alt="Modelo Lógico MVVM Kinect" />
+  <img src="./Imagens/Modelo_Logico_MVVM.png" width="1000" alt="Modelo Lógico MVVM Kinect" />
 </p>
 
 ### Estrutura Relacional
@@ -418,7 +416,7 @@ O modelo físico do módulo MVVM foi implementado utilizando:
 A estrutura física é gerada automaticamente pelo Entity Framework através das migrations da aplicação.
 
 <p align="center">
-  <img src="./imagens/Modelo_Fisico_MVVM.png" width="1000" alt="Modelo Físico MVVM Kinect" />
+  <img src="./Imagens/Modelo_Fisico_MVVM.png" width="1000" alt="Modelo Físico MVVM Kinect" />
 </p>
 
 ---
