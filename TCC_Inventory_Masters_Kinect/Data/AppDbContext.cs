@@ -8,8 +8,10 @@ namespace TCC_Inventory_Masters_Kinect.Data
     [DbConfigurationType(typeof(SQLiteConfigurationInternal))]
     public class AppDbContext : DbContext
     {
-        public AppDbContext() : base("name=InventoryMastersDb")
+        // Alterado para apontar diretamente para o arquivo, sem depender do App.config
+        public AppDbContext() : base(@"Data Source=inventorymasters.db")
         {
+            // Garante que o banco seja criado automaticamente se ainda não existir
             Database.SetInitializer(new CreateDatabaseIfNotExists<AppDbContext>());
         }
 

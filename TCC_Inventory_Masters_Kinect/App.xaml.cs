@@ -8,12 +8,12 @@ namespace TCC_Inventory_Masters_Kinect
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            // Logger removido pois a classe não existe mais
+            
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            // Logger removido pois a classe não existe mais
+            
             base.OnExit(e);
         }
     }
