@@ -168,7 +168,6 @@
     <Compile Include="Command\RelayCommands.cs" />
     <Compile Include="ConfigKinect\KinectConfig.cs" />
     <Compile Include="Data\AppDbContext.cs" />
-    <Compile Include="Logs\LoggerServiceKinect.cs" />
     <Compile Include="Model\MedicaoVolume.cs" />
     <Compile Include="Repository\Interface\IKinectRepository.cs" />
     <Compile Include="Repository\KinectRepository.cs" />
@@ -218,8 +217,7 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup />
+  </ItemGroup>  
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
