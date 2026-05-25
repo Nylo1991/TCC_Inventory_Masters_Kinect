@@ -1,42 +1,60 @@
+using Google.Cloud.Firestore;
 using InventoryMaster.Data;
 using InventoryMaster.Hubs;
-using Google.Cloud.Firestore;
-using System;
-using System.IO;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
-
-using InventoryMasters.Services;
 using InventoryMasters.Repositories;
+using InventoryMasters.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
+// =====================================
+// LOGS
+// =====================================
 
-string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "inventorymasters_firebase.json");
-if (File.Exists(path))
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+
+// =====================================
+// FIREBASE
+// =====================================
+
+string credentialPath = builder.Configuration["Firebase:CredentialsPath"];
+
+if (!string.IsNullOrEmpty(credentialPath))
 {
-    Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
+    Environment.SetEnvironmentVariable(
+        "GOOGLE_APPLICATION_CREDENTIALS",
+        credentialPath
+    );
 }
 
-builder.Services.AddSingleton<InventoryMasters.Services.FirebaseService>();
+string projectId = builder.Configuration["Firebase:ProjectId"];
 
-
-string projectId = "inventorymasters";
 builder.Services.AddSingleton(sp =>
 {
     return FirestoreDb.Create(projectId);
 });
 
+builder.Services.AddSingleton<FirebaseService>();
+
+
+// =====================================
+// REPOSITORIES
+// =====================================
 
 builder.Services.AddScoped<ParceiroRepository>();
-builder.Services.AddScoped<InventoryMasters.Repositories.UsuarioRepository>();
+builder.Services.AddScoped<UsuarioRepository>();
 
-// Serviços nativos do ASP.NET Core
+
+// =====================================
+// ASP.NET
+// =====================================
+
 builder.Services.AddRazorPages();
+
 builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
@@ -46,22 +64,48 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Comunicação em tempo real com SignalR
-builder.Services.AddSignalR();
 
-// Configuração de CORS
+// =====================================
+// SIGNALR
+// =====================================
+
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
+
+
+// =====================================
+// CORS
+// =====================================
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
-        policy.AllowAnyHeader()
+    {
+        policy
+            .WithOrigins(
+                "https://localhost:5001",
+                "https://localhost:7001",
+                "https://SEU-DOMINIO.onrender.com"
+            )
+            .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyOrigin());
+            .AllowCredentials();
+    });
 });
 
+
+// =====================================
+// BUILD
+// =====================================
 
 var app = builder.Build();
 
 
+// =====================================
+// PIPELINE
+// =====================================
 
 if (!app.Environment.IsDevelopment())
 {
@@ -70,16 +114,31 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
+
 app.UseRouting();
+
 app.UseCors("AllowAll");
+
 app.UseSession();
+
 app.UseAuthorization();
+
+app.UseWebSockets();
+
+
+// =====================================
+// MAPS
+// =====================================
 
 app.MapRazorPages();
 
-// Rotas do SignalR
 app.MapHub<ResiduosHub>("/residuosHub");
 
-// Inicia o servidor
+
+// =====================================
+// RUN
+// =====================================
+
 app.Run();

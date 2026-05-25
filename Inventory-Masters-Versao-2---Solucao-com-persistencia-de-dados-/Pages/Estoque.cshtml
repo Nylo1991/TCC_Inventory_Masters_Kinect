@@ -48,7 +48,9 @@
                 border:1px solid #0d6efd;
                 background:#0d6efd;
                 color:#fff;
-                cursor:pointer;">Enviar</button>
+                cursor:pointer;">
+                Enviar
+            </button>
 
             <button id="btnAgoraNao" style="
                 padding:6px 12px;
@@ -56,7 +58,9 @@
                 border:1px solid #6c757d;
                 background:#6c757d;
                 color:#fff;
-                cursor:pointer;">Agora não</button>
+                cursor:pointer;">
+                Agora não
+            </button>
         </div>
     </div>
 </div>
@@ -87,15 +91,25 @@
 <script>
     const LIMITE_MAXIMO = 1.0; // m³
 
-    // Dados iniciais
+    // ================================
+    // DADOS INICIAIS (FIREBASE)
+    // ================================
     const entradas = @Html.Raw(JsonSerializer.Serialize(
-    Model.Entradas?.Select(e => new { label = e.Data.ToString("dd/MM HH:mm"), valor = e.Volume }) ?? Enumerable.Empty<object>()
-    ));
+                Model.Entradas?.Select(e => new
+                {
+                        label = e.Data_Hora.ToString("dd/MM HH:mm"),
+                        valor = e.Volume_Medido
+                }) ?? Enumerable.Empty<object>()
+        ));
+
     const dadosLabels = entradas.map(e => e.label);
     const dadosValores = entradas.map(e => e.valor);
 
-    // Gráfico
+    // ================================
+    // GRÁFICO
+    // ================================
     const ctx = document.getElementById('graficoVolume').getContext('2d');
+
     const grafico = new Chart(ctx, {
         type: 'line',
         data: {
@@ -120,21 +134,27 @@
         }
     });
 
-    // Função de log
+    // ================================
+    // LOGS
+    // ================================
     function adicionarLog(mensagem, cor = "#000") {
         const logContainer = document.getElementById("logContainer");
+
         const linha = document.createElement("div");
         linha.textContent = `[${new Date().toLocaleTimeString("pt-BR")}] ${mensagem}`;
         linha.style.color = cor;
         linha.style.borderBottom = "1px solid #eee";
         linha.style.padding = "2px 0";
+
         logContainer.appendChild(linha);
         logContainer.scrollTop = logContainer.scrollHeight;
     }
 
-    // SignalR
+    // ================================
+    // SIGNALR (PRODUÇÃO READY)
+    // ================================
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/residuosHub")
+        .withUrl(window.location.origin + "/residuosHub")
         .withAutomaticReconnect()
         .build();
 
@@ -142,15 +162,25 @@
     const mensagemEnvio = document.getElementById("mensagemEnvio");
 
     connection.on("ReceberVolume", function(volume) {
+
+        if (volume == null || isNaN(volume)) return;
+
         const timestamp = new Date();
-        const label = timestamp.toLocaleString("pt-BR", { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        const label = timestamp.toLocaleString("pt-BR", {
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
 
         grafico.data.labels.push(label);
-        grafico.data.datasets[0].data.push(volume);
+        grafico.data.datasets[0].data.push(Number(volume));
+
         if (grafico.data.labels.length > 20) {
             grafico.data.labels.shift();
             grafico.data.datasets[0].data.shift();
         }
+
         grafico.update();
 
         if (volume >= LIMITE_MAXIMO) {
@@ -162,17 +192,39 @@
         }
 
         const status = document.getElementById('statusConexao');
-        status.textContent = `Volume recebido do WPF: ${volume.toFixed(2)} m³`;
+        status.textContent = `Volume recebido: ${Number(volume).toFixed(2)} m³`;
         status.style.color = "blue";
 
-        adicionarLog(`Volume recebido: ${volume.toFixed(2)} m³`, "#007700");
+        adicionarLog(`Volume recebido: ${Number(volume).toFixed(2)} m³`, "#007700");
     });
 
     connection.on("ReceberStatus", function(mensagem) {
         const status = document.getElementById('statusConexao');
         status.textContent = mensagem;
         status.style.color = "green";
+
         adicionarLog(`Status recebido: ${mensagem}`, "#0044cc");
+    });
+
+    // ================================
+    // STATUS DE CONEXÃO
+    // ================================
+    connection.onreconnecting(() => {
+        const status = document.getElementById("statusConexao");
+        status.textContent = "Reconectando...";
+        status.style.color = "orange";
+    });
+
+    connection.onreconnected(() => {
+        const status = document.getElementById("statusConexao");
+        status.textContent = "Reconectado";
+        status.style.color = "green";
+    });
+
+    connection.onclose(() => {
+        const status = document.getElementById("statusConexao");
+        status.textContent = "Conexão perdida";
+        status.style.color = "red";
     });
 
     connection.start()
@@ -180,25 +232,31 @@
             const status = document.getElementById('statusConexao');
             status.textContent = "Conectado ao servidor";
             status.style.color = "green";
-            adicionarLog("Conectado ao servidor SignalR", "#555");
+
+            adicionarLog("Conectado ao SignalR", "#555");
         })
         .catch(err => {
             const status = document.getElementById('statusConexao');
             status.textContent = "Erro na conexão";
             status.style.color = "red";
-            adicionarLog(`Erro na conexão com SignalR: ${err?.message || err}`, "#cc0000");
+
+            adicionarLog(`Erro SignalR: ${err}`, "#cc0000");
             console.error(err);
         });
 
-    // --- Simulação de envio ---
+    // ================================
+    // BOTÕES MODAL
+    // ================================
     document.getElementById("btnEnviar").addEventListener("click", () => {
         alerta.style.display = "none";
         mensagemEnvio.style.display = "block";
-        adicionarLog("Simulação: notificação enviada aos parceiros.", "#555");
+
+        adicionarLog("Notificação enviada aos parceiros.", "#555");
     });
 
     document.getElementById("btnAgoraNao").addEventListener("click", () => {
         alerta.style.display = "none";
-        adicionarLog("Usuário optou por não enviar notificação agora.", "#555");
+
+        adicionarLog("Usuário cancelou envio.", "#555");
     });
 </script>
