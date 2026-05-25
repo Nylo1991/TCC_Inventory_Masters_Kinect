@@ -1,26 +1,19 @@
 ﻿using System.Windows;
-using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Service;
 
 namespace TCC_Inventory_Masters_Kinect
 {
     public partial class App : Application
     {
-        protected override void OnStartup(
-            StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            LoggerServiceKinect.Log(
-                "Sistema iniciado.");
+            // Logger removido pois a classe não existe mais
         }
 
-        protected override void OnExit(
-            ExitEventArgs e)
+        protected override void OnExit(ExitEventArgs e)
         {
-            LoggerServiceKinect.Log(
-                "Sistema encerrado.");
-
+            // Logger removido pois a classe não existe mais
             base.OnExit(e);
         }
     }
