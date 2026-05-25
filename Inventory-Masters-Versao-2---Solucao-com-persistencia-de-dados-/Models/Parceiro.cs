@@ -1,24 +1,32 @@
+using Google.Cloud.Firestore;
+using System;
+
 namespace InventoryMaster.Models;
 
+[FirestoreData]
 public class Parceiro
 {
-    public int Id { get; set; }
+    [FirestoreDocumentId]
+    public string Id { get; set; }
 
-    public string Nome { get; set; }
+    [FirestoreProperty]
+    public string Nome { get; set; } = string.Empty;
 
-    public string Email { get; set; }
+    [FirestoreProperty]
+    public string Empresa { get; set; } = string.Empty;
 
-    public string Empresa { get; set; }
+    [FirestoreProperty]
+    public string Telefone { get; set; } = string.Empty;
 
-    public string Telefone { get; set; }
-    
-    public string Endereco { get; set; }
+    [FirestoreProperty]
+    public string Email { get; set; } = string.Empty;
 
-    public DateTime? Data_Cadastro { get; set; }
+    [FirestoreProperty]
+    public string Endereco { get; set; } = string.Empty;
 
-<<<<<<< HEAD
+    [FirestoreProperty]
+    public DateTime Data_Cadastro { get; set; } = DateTime.UtcNow;
 
-=======
->>>>>>> parent of cc72f7d (Alteração do MVC conectado com o Firebase)
-    public bool Ativo { get; set; }
+    [FirestoreProperty]
+    public bool Ativo { get; set; } = true;
 }

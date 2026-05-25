@@ -1,56 +1,73 @@
+using Google.Cloud.Firestore;
 using InventoryMaster.Models;
-using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace InventoryMaster.Data;
 
 public class ParceiroRepository
 {
-    public void Inserir(Parceiro parceiro)
+    private readonly FirestoreDb _firestoreDb;
+
+  
+    private const string Colecao = "parceiros";
+
+
+    public ParceiroRepository(FirestoreDb firestoreDb)
     {
-        using var conn = DataBase.GetConnection();
-        conn.Open();
-
-        var cmd = conn.CreateCommand();
-
-        cmd.CommandText = @"
-        INSERT INTO Parceiro
-        (Nome, Empresa, Email, Telefone, Endereco, Data_Cadastro, Ativo)
-        VALUES
-        (@Nome, @Empresa, @Email, @Telefone, @Endereco, datetime('now'), 1)
-        ";
-
-        cmd.Parameters.AddWithValue("@Nome", parceiro.Nome);
-        cmd.Parameters.AddWithValue("@Empresa", parceiro.Empresa ?? "");
-        cmd.Parameters.AddWithValue("@Email", parceiro.Email);
-        cmd.Parameters.AddWithValue("@Telefone", parceiro.Telefone);
-        cmd.Parameters.AddWithValue("@Endereco", parceiro.Endereco ?? "");
-
-        cmd.ExecuteNonQuery();
+        _firestoreDb = firestoreDb;
     }
 
-    public List<Parceiro> ListarParceiro()
+  
+    public async Task InserirAsync(Parceiro parceiro)
+    {
+        
+        DocumentReference docRef = _firestoreDb.Collection(Colecao).Document();
+
+        
+        Dictionary<string, object> dados = new Dictionary<string, object>
+        {
+            { "Nome", parceiro.Nome ?? "" },
+            { "Empresa", parceiro.Empresa ?? "" },
+            { "Telefone", parceiro.Telefone ?? "" },
+            { "Email", parceiro.Email ?? "" },
+            { "Endereco", parceiro.Endereco ?? "" },
+            { "Data_Cadastro", DateTime.UtcNow },
+            { "Ativo", true }
+        };
+
+        
+        await docRef.SetAsync(dados);
+    }
+
+ 
+    public async Task<List<Parceiro>> ListarParceiroAsync()
     {
         var lista = new List<Parceiro>();
 
-        using var conn = DataBase.GetConnection();
-        conn.Open();
+        Query query = _firestoreDb.Collection(Colecao);
+        QuerySnapshot snapshot = await query.GetSnapshotAsync();
 
-        var cmd = conn.CreateCommand();
-        cmd.CommandText = "SELECT Id, Nome, Empresa, Email, Telefone, Endereco FROM Parceiro";
-
-        using var reader = cmd.ExecuteReader();
-
-        while (reader.Read())
+        foreach (DocumentSnapshot document in snapshot.Documents)
         {
-            lista.Add(new Parceiro
+            if (document.Exists)
             {
-                Id = reader.GetInt32(0),
-                Nome = reader.GetString(1),
-                Empresa = reader.GetString(2),
-                Email = reader.GetString(3),
-                Telefone = reader.GetString(4),
-                Endereco = reader.GetString(5)
-            });
+                
+                var dados = document.ToDictionary();
+
+                Parceiro parceiro = new Parceiro
+                {
+                    Id = document.Id,
+                    Nome = dados.ContainsKey("Nome") ? dados["Nome"]?.ToString() ?? "" : "",
+                    Empresa = dados.ContainsKey("Empresa") ? dados["Empresa"]?.ToString() ?? "" : "",
+                    Telefone = dados.ContainsKey("Telefone") ? dados["Telefone"]?.ToString() ?? "" : "",
+                    Email = dados.ContainsKey("Email") ? dados["Email"]?.ToString() ?? "" : "",
+                    Endereco = dados.ContainsKey("Endereco") ? dados["Endereco"]?.ToString() ?? "" : ""
+                };
+
+                lista.Add(parceiro);
+            }
         }
 
         return lista;

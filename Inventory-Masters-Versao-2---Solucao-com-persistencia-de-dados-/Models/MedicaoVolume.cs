@@ -1,14 +1,18 @@
-namespace InventoryMaster.Models;
+using Google.Cloud.Firestore;
 
+namespace InventoryMaster.Models;
+[FirestoreData]
 public class MedicaoVolume
 {
-    public int Id { get; set; }
+    [FirestoreDocumentId]
+    public string Id { get; set; }
 
+    [FirestoreProperty]
     public string Origem_Leitura { get; set; }
-    
+    [FirestoreProperty]
     public decimal Volume_Medido { get; set; }
-
+    [FirestoreProperty]
     public DateTime? Data_Hora { get; set; }
-
+    [FirestoreProperty]
     public int fk_Usuario_Id { get; set; }
 }

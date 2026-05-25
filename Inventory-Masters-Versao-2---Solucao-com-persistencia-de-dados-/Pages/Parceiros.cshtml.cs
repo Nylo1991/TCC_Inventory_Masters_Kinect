@@ -2,28 +2,37 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using InventoryMaster.Models;
 using InventoryMaster.Data;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace InventoryMaster.Pages;
 
 public class ParceirosModel : PageModel
 {
-    private readonly ParceiroRepository _repo = new();
+    private readonly ParceiroRepository _repo;
+
+
+    public ParceirosModel(ParceiroRepository repo)
+    {
+        _repo = repo;
+    }
 
     public List<Parceiro> Parceiros { get; set; } = new();
 
     [BindProperty]
-    public Parceiro NovoParceiro { get; set; }
+    public Parceiro NovoParceiro { get; set; } = new(); 
 
-    public void OnGet()
+    public async Task OnGetAsync()
     {
-        Parceiros = _repo.ListarParceiro();
+        Parceiros = await _repo.ListarParceiroAsync();
     }
 
-    public IActionResult OnPost()
+    
+    public async Task<IActionResult> OnPostAsync()
     {
-        if (NovoParceiro != null)
+        if (!string.IsNullOrWhiteSpace(NovoParceiro.Nome))
         {
-            _repo.Inserir(NovoParceiro);
+            await _repo.InserirAsync(NovoParceiro);
         }
 
         return RedirectToPage();

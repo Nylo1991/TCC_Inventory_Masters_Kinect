@@ -1,8 +1,40 @@
+using InventoryMaster.Data;
 using InventoryMaster.Hubs;
+using Google.Cloud.Firestore;
+using System;
+using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+
+using InventoryMasters.Services;
+using InventoryMasters.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Serviços
+
+
+string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "inventorymasters_firebase.json");
+if (File.Exists(path))
+{
+    Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
+}
+
+builder.Services.AddSingleton<InventoryMasters.Services.FirebaseService>();
+
+
+string projectId = "inventorymasters";
+builder.Services.AddSingleton(sp =>
+{
+    return FirestoreDb.Create(projectId);
+});
+
+
+builder.Services.AddScoped<ParceiroRepository>();
+builder.Services.AddScoped<InventoryMasters.Repositories.UsuarioRepository>();
+
+// Serviços nativos do ASP.NET Core
 builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
@@ -14,10 +46,10 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// SignalR
+// Comunicação em tempo real com SignalR
 builder.Services.AddSignalR();
 
-// CORS (para WPF ou outros clientes)
+// Configuração de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -26,9 +58,11 @@ builder.Services.AddCors(options =>
             .AllowAnyOrigin());
 });
 
+
 var app = builder.Build();
 
-// Pipeline HTTP
+
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -37,22 +71,15 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseCors("AllowAll");
-
 app.UseSession();
 app.UseAuthorization();
 
 app.MapRazorPages();
 
-// Hub SignalR
+// Rotas do SignalR
 app.MapHub<ResiduosHub>("/residuosHub");
 
-using (var conn = InventoryMaster.Data.DataBase.GetConnection())
-{
-    conn.Open();
-}
-
+// Inicia o servidor
 app.Run();

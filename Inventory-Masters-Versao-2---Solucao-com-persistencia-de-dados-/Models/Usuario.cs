@@ -1,8 +1,11 @@
+using Google.Cloud.Firestore;
+
 namespace InventoryMaster.Models;
 
 public class Usuario
 {
-    public int Id { get; set; }
+    [FirestoreDocumentId]
+    public string Id { get; set; }
 
     public string Nome { get; set; }
 
