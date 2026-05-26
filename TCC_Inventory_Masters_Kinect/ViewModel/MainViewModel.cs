@@ -121,6 +121,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             _signalRService =
                 new SignalRService();
 
+            // Recebe mensagens do SignalR,
+            // como reconectando, reconectado ou conexão encerrada.
+            _signalRService.StatusSignalRAtualizado +=
+                AtualizarStatus;
+
             // EVENTOS DO KINECT
 
             _kinectService.MedidaAtualizada +=
@@ -248,6 +253,13 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             {
                 await _signalRService.EnviarStatusAsync(
                     "Kinect desligado.");
+
+                await _signalRService.DesconectarAsync();
+
+                _signalRConectado = false;
+
+                Status =
+                    "Kinect desligado e conexão com MVC encerrada.";
             }
         }
 

@@ -1,20 +1,23 @@
-﻿using System.Data.Entity;
-using TCC_Inventory_Masters_Kinect.Model;
+﻿using System;
+using System.Data.Entity;
 using System.Data.SQLite;
 using System.Data.SQLite.EF6;
-using System;
 using System.IO;
+using TCC_Inventory_Masters_Kinect.Model;
 
 namespace TCC_Inventory_Masters_Kinect.Data
 {
     [DbConfigurationType(typeof(SQLiteConfigurationInternal))]
     public class AppDbContext : DbContext
     {
+        static AppDbContext()
+        {
+            // Evita o Entity Framework tentar criar migrations/tabelas automaticamente.
+            Database.SetInitializer<AppDbContext>(null);
+        }
+
         public AppDbContext() : base(CreateSQLiteConnection(), true)
         {
-            Database.SetInitializer(new CreateDatabaseIfNotExists<AppDbContext>());
-
-            CriarTabelaManual();
         }
 
         private static SQLiteConnection CreateSQLiteConnection()
@@ -25,39 +28,11 @@ namespace TCC_Inventory_Masters_Kinect.Data
             );
 
             return new SQLiteConnection(
-                $"Data Source={dbPath};Version=3;"
+                $"Data Source={dbPath};Version=3;BusyTimeout=5000;Journal Mode=WAL;"
             );
         }
 
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
-
-        // ======================================================
-        // CRIAÇÃO MANUAL DA TABELA
-        // ======================================================
-
-        private void CriarTabelaManual()
-        {
-            using (var conn = CreateSQLiteConnection())
-            {
-                conn.Open();
-
-                string sql = @"
-                CREATE TABLE IF NOT EXISTS MedicaoVolumes (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    VolumeCm3 REAL NOT NULL,
-                    DataHora TEXT NOT NULL,
-                    KinectLigado INTEGER NOT NULL,
-                    Calibrado INTEGER NOT NULL,
-                    Status TEXT
-                );
-                ";
-
-                using (var cmd = new SQLiteCommand(sql, conn))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
     }
 
     public class SQLiteConfigurationInternal : DbConfiguration
