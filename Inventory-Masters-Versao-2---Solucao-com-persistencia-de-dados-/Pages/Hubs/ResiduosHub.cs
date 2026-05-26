@@ -6,36 +6,52 @@ namespace InventoryMaster.Hubs
 {
     public class ResiduosHub : Hub
     {
-        /// <summary>
-        /// Recebe o volume enviado pelo cliente (ex: WPF) e repassa para todos conectados.
-        /// </summary>
+        // 📦 Volume do Kinect ou sensor
         public async Task EnviarVolume(double volume)
         {
             Console.WriteLine($"[Hub] Volume recebido: {volume:F2} m³ de {Context.ConnectionId}");
-            await Clients.All.SendAsync("ReceberVolume", volume);
+
+            await Clients.All.SendAsync("ReceberVolume", new
+            {
+                valor = volume,
+                tipo = "volume",
+                origem = Context.ConnectionId,
+                data = DateTime.UtcNow
+            });
         }
 
-        /// <summary>
-        /// Recebe mensagens de status do cliente e repassa para todos conectados.
-        /// </summary>
+        // 📡 Status do sistema
         public async Task EnviarStatus(string mensagem)
         {
-            Console.WriteLine($"[Hub] Status recebido: '{mensagem}' de {Context.ConnectionId}");
-            await Clients.All.SendAsync("ReceberStatus", mensagem);
+            Console.WriteLine($"[Hub] Status: {mensagem}");
+
+            await Clients.All.SendAsync("ReceberStatus", new
+            {
+                mensagem,
+                tipo = "status",
+                origem = Context.ConnectionId,
+                data = DateTime.UtcNow
+            });
         }
 
-        /// <summary>
-        /// Loga quando um cliente se conecta.
-        /// </summary>
+        // 📊 Evento genérico (MUITO útil para Kinect futuramente)
+        public async Task EnviarLeitura(string tipo, double valor)
+        {
+            await Clients.All.SendAsync("ReceberLeitura", new
+            {
+                tipo,
+                valor,
+                origem = Context.ConnectionId,
+                data = DateTime.UtcNow
+            });
+        }
+
         public override Task OnConnectedAsync()
         {
             Console.WriteLine($"[Hub] Cliente conectado: {Context.ConnectionId}");
             return base.OnConnectedAsync();
         }
 
-        /// <summary>
-        /// Loga quando um cliente se desconecta.
-        /// </summary>
         public override Task OnDisconnectedAsync(Exception exception)
         {
             Console.WriteLine($"[Hub] Cliente desconectado: {Context.ConnectionId}");

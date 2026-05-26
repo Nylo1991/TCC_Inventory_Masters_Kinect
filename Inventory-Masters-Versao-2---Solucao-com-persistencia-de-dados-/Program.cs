@@ -6,18 +6,8 @@ using InventoryMasters.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// =====================================
-// LOGS
-// =====================================
-
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-
-
-// =====================================
-// FIREBASE
-// =====================================
 
 string credentialPath = builder.Configuration["Firebase:CredentialsPath"];
 
@@ -38,23 +28,12 @@ builder.Services.AddSingleton(sp =>
 
 builder.Services.AddSingleton<FirebaseService>();
 
-
-// =====================================
-// REPOSITORIES
-// =====================================
-
 builder.Services.AddScoped<ParceiroRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 
 
-// =====================================
-// ASP.NET
-// =====================================
-
 builder.Services.AddRazorPages();
-
 builder.Services.AddHttpContextAccessor();
-
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
@@ -65,32 +44,19 @@ builder.Services.AddSession(options =>
 });
 
 
-// =====================================
-// SIGNALR
-// =====================================
-
 builder.Services.AddSignalR(options =>
 {
     options.EnableDetailedErrors = true;
 });
-
-
-// =====================================
-// CORS
-// =====================================
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
         policy
-            .WithOrigins(
-                "https://localhost:5001",
-                "https://localhost:7001",
-                "https://SEU-DOMINIO.onrender.com"
-            )
             .AllowAnyHeader()
             .AllowAnyMethod()
+            .SetIsOriginAllowed(_ => true)
             .AllowCredentials();
     });
 });
@@ -99,16 +65,8 @@ var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// =====================================
-// BUILD
-// =====================================
-
 var app = builder.Build();
 
-
-// =====================================
-// PIPELINE
-// =====================================
 
 if (!app.Environment.IsDevelopment())
 {
@@ -116,7 +74,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
@@ -128,20 +85,9 @@ app.UseSession();
 
 app.UseAuthorization();
 
-app.UseWebSockets();
-
-
-// =====================================
-// MAPS
-// =====================================
 
 app.MapRazorPages();
 
 app.MapHub<ResiduosHub>("/residuosHub");
-
-
-// =====================================
-// RUN
-// =====================================
 
 app.Run();
