@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -21,8 +22,20 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
         private readonly IKinectRepository _repository;
 
+        private readonly SignalRService _signalRService;
+
+        // Controla quando será permitida a próxima gravação no SQLite.
+        // Usado para evitar salvar muitas medições por segundo.
         private DateTime _proximaGravacao =
             DateTime.MinValue;
+
+        // Controla quando será permitido o próximo envio ao MVC via SignalR.
+        // Usado como um timer manual para enviar os dados a cada 15 segundos.
+        private DateTime _proximoEnvioSignalR =
+            DateTime.MinValue;
+
+        // Indica se a aplicação WPF conseguiu se conectar ao Hub SignalR do MVC.
+        private bool _signalRConectado = false;
 
         // ==========================================
         // STATUS
@@ -106,7 +119,15 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             _repository =
                 new KinectRepository();
 
-            // EVENTOS
+            _signalRService =
+                new SignalRService();
+
+            // Recebe mensagens do SignalR,
+            // como reconectando, reconectado ou conexão encerrada.
+            _signalRService.StatusSignalRAtualizado +=
+                AtualizarStatus;
+
+            // EVENTOS DO KINECT
 
             _kinectService.MedidaAtualizada +=
                 ProcessarNovaMedida;
@@ -125,7 +146,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             VolumeTexto =
                 "Volume: 0 cm³";
 
-            // COMANDOS
+            // COMANDOS DA TELA
 
             LigarKinectCommand =
                 new RelayCommand(LigarKinect);
@@ -135,13 +156,44 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             CalibrarCommand =
                 new RelayCommand(CalibrarChao);
+
+            // CONEXÃO COM O MVC VIA SIGNALR
+
+            ConectarSignalR();
+        }
+
+        // ==========================================
+        // SIGNALR
+        // ==========================================
+
+        private async void ConectarSignalR()
+        {
+            try
+            {
+                await _signalRService.ConectarAsync();
+
+                _signalRConectado = true;
+
+                Status =
+                    "Conectado ao MVC via SignalR.";
+
+                await _signalRService.EnviarStatusAsync(
+                    "Aplicação Kinect conectada ao MVC.");
+            }
+            catch (Exception ex)
+            {
+                _signalRConectado = false;
+
+                Status =
+                    "Erro ao conectar SignalR: " + ex.Message;
+            }
         }
 
         // ==========================================
         // LIGAR KINECT
         // ==========================================
 
-        private void LigarKinect()
+        private async void LigarKinect()
         {
             try
             {
@@ -156,11 +208,23 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 {
                     Status =
                         "Kinect iniciado.";
+
+                    if (_signalRConectado)
+                    {
+                        await _signalRService.EnviarStatusAsync(
+                            "Kinect iniciado.");
+                    }
                 }
                 else
                 {
                     Status =
                         "Falha ao iniciar Kinect.";
+
+                    if (_signalRConectado)
+                    {
+                        await _signalRService.EnviarStatusAsync(
+                            "Falha ao iniciar Kinect.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -171,10 +235,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         }
 
         // ==========================================
-        // DESLIGAR
+        // DESLIGAR KINECT
         // ==========================================
 
-        private void DesligarKinect()
+        private async void DesligarKinect()
         {
             _kinectService.DesligarKinect();
 
@@ -185,18 +249,37 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 "Volume: 0 cm³";
 
             CameraImage = null;
+
+            if (_signalRConectado)
+            {
+                await _signalRService.EnviarStatusAsync(
+                    "Kinect desligado.");
+
+                await _signalRService.DesconectarAsync();
+
+                _signalRConectado = false;
+
+                Status =
+                    "Kinect desligado e conexão com MVC encerrada.";
+            }
         }
 
         // ==========================================
-        // CALIBRAR
+        // CALIBRAR CHÃO
         // ==========================================
 
-        private void CalibrarChao()
+        private async void CalibrarChao()
         {
             _kinectService.CalibrarChao();
 
             Status =
                 "Chão calibrado.";
+
+            if (_signalRConectado)
+            {
+                await _signalRService.EnviarStatusAsync(
+                    "Chão calibrado.");
+            }
         }
 
         // ==========================================
@@ -223,19 +306,37 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         // MEDIÇÃO
         // ==========================================
 
-        private void ProcessarNovaMedida(
-            double volumeCm3)
+        private void ProcessarNovaMedida(double volumeCm3)
         {
+            // Atualiza o texto exibido na tela sempre que uma nova medida chega do Kinect.
+            // Essa atualização acontece em tempo real, conforme o Kinect calcula o volume.
             VolumeTexto =
                 $"Volume: {volumeCm3:F0} cm³";
 
-            // SALVAR SQLITE
+            // ==========================================================
+            // CONTROLE DE GRAVAÇÃO NO SQLITE
+            // ==========================================================
+            // O Kinect gera muitas medições por segundo.
+            // Se salvarmos todas as medições no banco, o SQLite pode ficar pesado
+            // e o sistema pode perder desempenho.
+            //
+            // Por isso usamos a variável _proximaGravacao como um controle de tempo.
+            // Ela indica quando será permitido salvar novamente no banco.
+            //
+            // Exemplo:
+            // - Salvou agora às 10:00:00
+            // - A próxima gravação só será permitida às 10:00:01
+            //
+            // Assim, o sistema salva no SQLite apenas 1 vez por segundo.
 
             if (DateTime.Now >= _proximaGravacao)
             {
+                // Define o próximo horário permitido para salvar no SQLite.
+                // Aqui configuramos para salvar novamente somente depois de 1 segundo.
                 _proximaGravacao =
                     DateTime.Now.AddSeconds(1);
 
+                // Cria o objeto de medição que será gravado no banco SQLite.
                 var medicao =
                     new MedicaoVolume
                     {
@@ -255,6 +356,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                             "AutoSave"
                     };
 
+                // A gravação no banco é feita em segundo plano com Task.Run.
+                // Isso evita travar a tela enquanto o SQLite salva os dados.
                 Task.Run(() =>
                 {
                     try
@@ -265,6 +368,71 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     }
                     catch
                     {
+                        // Evita que uma falha de gravação derrube o sistema.
+                        // Se quiser, depois podemos registrar esse erro em log.
+                    }
+                });
+            }
+
+            // ==========================================================
+            // CONTROLE DE ENVIO PARA O MVC VIA SIGNALR
+            // ==========================================================
+            // Além de salvar no SQLite, o sistema também envia o volume
+            // para o site MVC publicado:
+            //
+            // http://inventorymasters.runasp.net/residuosHub
+            //
+            // Esse envio não precisa acontecer a cada medição do Kinect,
+            // porque o Kinect gera várias leituras por segundo.
+            //
+            // Por isso usamos a variável _proximoEnvioSignalR.
+            // Ela funciona como um timer de envio.
+            //
+            // Exemplo:
+            // - Enviou agora às 10:00:00
+            // - O próximo envio só será permitido às 10:00:15
+            //
+            // Assim, o MVC recebe atualizações a cada 15 segundos.
+
+            if (_signalRConectado &&
+                DateTime.Now >= _proximoEnvioSignalR)
+            {
+                // Define o próximo horário permitido para enviar ao MVC.
+                // Aqui configuramos o envio para ocorrer a cada 15 segundos.
+                _proximoEnvioSignalR =
+                    DateTime.Now.AddSeconds(15);
+
+                // O envio é feito em segundo plano para não travar a interface.
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        // Envia o volume calculado para o Hub SignalR do MVC.
+                        await _signalRService
+                            .EnviarVolumeAsync(
+                                volumeCm3);
+
+                        // Envia também uma mensagem de status para o MVC.
+                        await _signalRService
+                            .EnviarStatusAsync(
+                                "Volume enviado pelo Kinect.");
+
+                        // Atualiza a tela informando que o envio foi realizado com sucesso.
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            Status =
+                                $"Informações enviadas ao MVC com sucesso às {DateTime.Now:HH:mm:ss}.";
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        // Atualiza a tela informando que houve falha no envio.
+                        // Mesmo com falha no MVC, o sistema continua salvando localmente no SQLite.
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            Status =
+                                "Falha ao enviar informações ao MVC. Dados mantidos no SQLite. Erro: " + ex.Message;
+                        });
                     }
                 });
             }

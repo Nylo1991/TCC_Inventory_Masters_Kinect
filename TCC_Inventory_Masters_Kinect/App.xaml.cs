@@ -1,5 +1,6 @@
-﻿using System.Windows;
-using TCC_Inventory_Masters_Kinect.Data; 
+﻿using System;
+using System.Windows;
+using TCC_Inventory_Masters_Kinect.Data;
 
 namespace TCC_Inventory_Masters_Kinect
 {
@@ -9,11 +10,27 @@ namespace TCC_Inventory_Masters_Kinect
         {
             base.OnStartup(e);
 
-            // Esta lógica garante que o banco seja criado assim que a aplicação iniciar
-            using (var db = new AppDbContext())
+            try
             {
-                // Verifica se o arquivo .db existe, caso contrário, cria-o na pasta do executável
-                db.Database.CreateIfNotExists();
+                using (var db = new AppDbContext())
+                {
+                    db.Database.ExecuteSqlCommand(@"
+                        CREATE TABLE IF NOT EXISTS MedicaoVolumes (
+                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            VolumeCm3 REAL NOT NULL,
+                            DataHora TEXT NOT NULL,
+                            KinectLigado INTEGER NOT NULL,
+                            Calibrado INTEGER NOT NULL,
+                            Status TEXT
+                        );
+                    ");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.ToString(),
+                    "ERRO AO INICIAR BANCO SQLITE");
             }
         }
 
