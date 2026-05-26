@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -415,12 +416,23 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                         await _signalRService
                             .EnviarStatusAsync(
                                 "Volume enviado pelo Kinect.");
+
+                        // Atualiza a tela informando que o envio foi realizado com sucesso.
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            Status =
+                                $"Informações enviadas ao MVC com sucesso às {DateTime.Now:HH:mm:ss}.";
+                        });
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // Evita que uma falha de conexão com o MVC derrube o sistema.
-                        // Se o site estiver fora do ar ou sem internet,
-                        // o WPF continua funcionando e salvando localmente.
+                        // Atualiza a tela informando que houve falha no envio.
+                        // Mesmo com falha no MVC, o sistema continua salvando localmente no SQLite.
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            Status =
+                                "Falha ao enviar informações ao MVC. Dados mantidos no SQLite. Erro: " + ex.Message;
+                        });
                     }
                 });
             }
