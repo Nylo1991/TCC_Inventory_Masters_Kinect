@@ -6,6 +6,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 {
     public class SignalRService
     {
+        // Conexão com o Hub SignalR do MVC
         private HubConnection _connection;
 
         public async Task ConectarAsync()
