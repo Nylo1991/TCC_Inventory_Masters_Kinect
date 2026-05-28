@@ -137,33 +137,33 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
   <img src="./Imagens/Diagrama_de_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
 </p>
 
-## Detalhamento Diagrama de Fluxo de Dados (1º Nível)
+### Detalhamento do Diagrama de Fluxo de Dados (1º Nível) 
 
-  ### Entidades Externas
-  • **Câmera / Visão Computacional:** Origem dos dados de volume. <br />
-  • **Usuário (Adm/Op):** Interage com as configurações e relatórios. <br />
-  • **Parceiro:** Destinatário final dos alertas de excedentes.
+#### Entidades Externas
+* **Câmera / Visão Computacional:** Origem dos dados de volume (sensor).
+* **Usuário (Adm/Op):** Define configurações de parâmetros e consome relatórios.
+* **Parceiro:** Entidade externa que recebe alertas automáticos de excedentes.
 
-  ### Processos Principais
-  • **P1: Coletar e Validar Medição:** Recebe o sinal da câmera, calcula o volume e atribui a confiabilidade da leitura. <br />
-  • **P2: Monitorar Limites (Gatilho):** Compara o volume recebido com os limites gravados em ParametrosSistema. <br />
-  • **P3: Gerenciar Notificações:** Se o limite for atingido, busca os parceiros ativos e formata a mensagem. <br />
-  • **P4: Gerar Inteligência de Dados:** Consolida medições para o Dashboard e relatórios de auditoria.
+#### Processos Principais
+* **P1: Coletar e Validar Medição:** Recebe o sinal bruto, calcula o volume e atribui a confiabilidade da leitura.
+* **P2: Monitorar Limites (Gatilho):** Avalia a medição validada conforme a lógica de decisão definida.
+* **P3: Gerenciar Notificações:** Responsável por buscar parceiros ativos em `D3`, formatar o alerta e registrar o log em `D4`.
+* **P4: Gerar Relatórios:** Consolida as informações de `D1` para dashboards e auditoria.
 
-  ### Depósitos de Dados 
-  • **D1: MedicoesVolume:** Histórico de todas as leituras. <br />
-  • **D2: ParametrosSistema:** Regras de negócio (limite max/min). <br />
-  • **D3: Parceiros:** Cadastro de quem pode receber o excedente. <br />
-  • **D4: Notificacoes:** Registro de logs de envios realizados.
- 
-## Detalhamento do Fluxo de Execução 
+#### Depósitos de Dados (Datastores)
+* **D1: MedicoesVolume:** Histórico de leituras (captura e persistência).
+* **D2: ParametrosSistema:** Regras de negócio, incluindo o `VolumeMaximoPermitido`.
+* **D3: Parceiros:** Cadastro de contatos responsáveis.
+* **D4: Notificacoes:** Log histórico de disparos de alertas.
 
-1. **Entrada de Dados:** O sensor (Câmera) envia o *VolumeMedido* para o Processo 1. <br />
-2. **Persistência:** O sistema grava a medição no banco de dados **D1**. <br />
-3. **Verificação de Regra:** O Processo 2 lê o *VolumeMaximoPermitido* de **D2**. <br />
-4. **Tomada de Decisão:** Caso $VolumeMedido > VolumeMaximo$, o fluxo segue para o Processo 3. <br />
-5. **Saída de Notificação:** O sistema consulta **D3** (Parceiros), registra o envio em **D4** e dispara o e-mail/alerta para o **Parceiro Externo**.
-
+#### Detalhamento do Fluxo de Execução
+1. **Captura e Persistência:** O sensor envia o `VolumeMedido` para **P1**. A leitura é persistida no banco de dados **D1** (registro de entrada).
+2. **Tomada de Decisão:** * Após a validação, o sistema executa a **Tomada de Decisão**: *VolumeMedido > VolumeMaximo?*
+   * **Se NÃO (Processo Normal):** O fluxo encerra a verificação, mantendo o registro apenas em **D1**.
+   * **Se SIM (Excedente Detectado):** O fluxo é direcionado obrigatoriamente para **P3** (Gerenciar Notificações).
+3. **Saída de Notificação:** O **P3** consulta os contatos em **D3**, realiza o envio do alerta e registra a operação (log) no depósito **D4**.
+4. **Inteligência:** O processo **P4** consome os dados de **D1** para alimentar o Dashboard do Usuário, fechando o ciclo de visibilidade.
+   
 ---
 
 ## Diagrama de Sequência
