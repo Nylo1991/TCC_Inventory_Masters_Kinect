@@ -134,10 +134,10 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 ## Diagrama de Fluxo 
 
 <p align="center">
-  <img src="./Imagens/Diagrama de Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
+  <img src="./Imagens/Diagrama_de_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
 </p>
 
-## Diagrama de Fluxo de Dados (1º Nível)
+## Detalhamento Diagrama de Fluxo de Dados (1º Nível)
 
   ### Entidades Externas
   • **Câmera / Visão Computacional:** Origem dos dados de volume. <br />
