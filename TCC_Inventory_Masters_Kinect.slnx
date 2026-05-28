@@ -4,9 +4,13 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="InventoryMaster_MVC/InventoryMaster_MVC.csproj" Id="ed26c7bb-1726-4b17-9889-ecae647f87ca" />
+  <Project Path="InventoryMaster_MVC/InventoryMaster_MVC.csproj" Id="ed26c7bb-1726-4b17-9889-ecae647f87ca">
+    <Platform Solution="Debug|Any CPU" Project="x64" />
+    <Platform Solution="Debug|x64" Project="x64" />
+  </Project>
   <Project Path="TCC_Inventory_Masters_Kinect/TCC_Inventory_Masters_Kinect.csproj" Id="7d139cc2-2370-45cd-8400-8d963529d54b">
     <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="Debug|Any CPU" Project="x64" />
     <Platform Solution="Debug|x86" Project="x64" />
     <Platform Solution="Release|x86" Project="x86" />
   </Project>

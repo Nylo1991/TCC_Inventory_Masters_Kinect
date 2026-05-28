@@ -1,0 +1,47 @@
+﻿@page
+@model InventoryMaster_MVC.Pages.ErrorModel
+
+@{
+    ViewData["Title"] = "Erro";
+}
+
+<div class="container mt-5">
+    <h1 class="text-danger">Erro</h1>
+    <h2 class="text-danger">
+        Ocorreu um erro ao processar sua solicitação.
+    </h2>
+
+    ```
+    @if (Model?.ShowRequestId ?? false)
+    {
+        <p>
+            <strong>ID da Requisição:</strong>
+            <code>@Model.RequestId</code>
+        </p>
+    }
+
+    <hr />
+
+    <h3>Modo de Desenvolvimento</h3>
+
+    <p>
+        Alterar o ambiente para <strong>Development</strong> exibirá
+        informações detalhadas do erro ocorrido.
+    </p>
+
+    <p>
+        <strong>
+            O ambiente Development não deve ser utilizado em produção.
+        </strong>
+    </p>
+
+    <p>
+        Para depuração local, configure a variável de ambiente:
+    </p>
+
+    <code>
+        ASPNETCORE_ENVIRONMENT=Development
+    </code>
+    ```
+
+</div>
