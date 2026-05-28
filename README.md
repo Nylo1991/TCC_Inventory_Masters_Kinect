@@ -26,7 +26,7 @@
 
 ##  Quem somos!
 
-A Inventory Masters é uma plataforma tecnológica voltada para a gestão inteligente de excedentes produtivos.
+A Inventory Masters é uma plataforma tecnológica dedicada à gestão inteligente de excedentes produtivos.
 Atuamos conectando empresas a soluções estratégicas de reaproveitamento de materiais.
 Transformamos desperdícios em ativos com potencial de geração de valor econômico.
 Promovemos redução de custos, eficiência operacional e responsabilidade ambiental.
@@ -112,51 +112,86 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
   <img src="./Imagens/Diagrama de Caso de Uso.png" width="600" alt="Diagrama de Caso de Uso" />
 </p>
 
-| Nome  |  Funcionalidade       |Perfil         | Descrição                                                                            |
-|-------|-----------------------|---------------|--------------------------------------------------------------------------------------|
-|UC01:  | Efetuar Login         | Administrador / Operador | Logar no Sistema                                                          |
-|UC02:  | Configurar Parâmetros | Administrador | Definir os limites de volume ($m^3$) para disparo de alertas.                        |
-|UC03:  | Manter Parceiros      | Administrador | Cadastrar, editar ou excluir empresas que receberão os excedentes.                   |
-|UC04:  | Registrar Medição     | Sistema / Operador | Captura automática via câmera ou inserção manual do volume atual.               |
-|UC05:  | Monitorar Dashboard   | Operador | Visualizar em tempo real o status dos resíduos/estoque.                                   |
-|UC06:  | Notificar Parceiros   | Sistema | (Automático)<< include >> no UC03. Se o volume atingir o limite, o sistema envia o alerta. |
-|UC07:  | Gerar Relatório       | Administrador |Exportar histórico de medições e eficiência de destinação.                            |
-|UC08:  | Efetuar Log Out       | Administrador / Operador| Deslogar do Sistema                                                        |
+### Especificação dos Casos de Uso por ordem de comportamento
 
+| **ID** | **Nome da Funcionalidade** | **Perfil** | **Descrição** |
+| :--- | :--- | :--- | :--- |
+| **UC01** | Efetuar Login | Admin / Operador | Autenticação inicial no sistema. |
+| **UC02** | Configurar Parâmetros | Administrador | Definição de limites de alerta (Pré-operacional). |
+| **UC03** | Manter Parceiros | Administrador | Gestão de cadastros de terceiros (Pré-operacional). |
+| **UC04** | Gerar Status do Hardware | Operador | Diagnóstico da conexão do Kinect (Pré-operacional). |
+| **UC05** | Calibrar Sensor | Operador | Rotina de definição do plano de referência (Setup). |
+| **UC06** | Registrar Medição | Sistema / Operador | Captura (Kinect) ou inserção manual (Operacional). |
+| **UC07** | Sincronizar Dados (Real-time) | Sistema | Consistência entre WPF e Web via SignalR (Operacional). |
+| **UC08** | Notificar Parceiros | Sistema | Disparo automático de alertas pós-medição (Operacional). |
+| **UC09** | Monitorar Dashboard | Operador | Visualização em tempo real do status (Operacional). |
+| **UC10** | Gerar Relatório | Administrador | Análise histórica e eficiência (Gestão). |
+| **UC11** | Auditar Registros | Administrador | Verificação de integridade dos dados (Gestão). |
+| **UC12** | Backup de Dados | Administrador | Salvamento de segurança do banco (Manutenção). |
+| **UC13** | Efetuar Log Out | Admin / Operador | Encerramento da sessão. |
 ---
 
 ## Diagrama de Fluxo 
 
 <p align="center">
-  <img src="./Imagens/Diagrama de Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
+  <img src="./Imagens/Diagrama_de_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
 </p>
 
-## Diagrama de Fluxo de Dados (1º Nível)
+### Detalhamento do Diagrama de Fluxo de Dados (1º Nível) 
 
-  ### Entidades Externas
-  • **Câmera / Visão Computacional:** Origem dos dados de volume. <br />
-  • **Usuário (Adm/Op):** Interage com as configurações e relatórios. <br />
-  • **Parceiro:** Destinatário final dos alertas de excedentes.
+#### Entidades Externas
+* **Câmera / Visão Computacional:** Origem dos dados de volume (sensor).
+* **Usuário (Adm/Op):** Define configurações de parâmetros e consome relatórios.
+* **Parceiro:** Entidade externa que recebe alertas automáticos de excedentes.
 
-  ### Processos Principais
-  • **P1: Coletar e Validar Medição:** Recebe o sinal da câmera, calcula o volume e atribui a confiabilidade da leitura. <br />
-  • **P2: Monitorar Limites (Gatilho):** Compara o volume recebido com os limites gravados em ParametrosSistema. <br />
-  • **P3: Gerenciar Notificações:** Se o limite for atingido, busca os parceiros ativos e formata a mensagem. <br />
-  • **P4: Gerar Inteligência de Dados:** Consolida medições para o Dashboard e relatórios de auditoria.
+#### Processos Principais
+* **P1: Coletar e Validar Medição:** Recebe o sinal bruto, calcula o volume e atribui a confiabilidade da leitura.
+* **P2: Monitorar Limites (Gatilho):** Avalia a medição validada conforme a lógica de decisão definida.
+* **P3: Gerenciar Notificações:** Responsável por buscar parceiros ativos em `D3`, formatar o alerta e registrar o log em `D4`.
+* **P4: Gerar Relatórios:** Consolida as informações de `D1` para dashboards e auditoria.
 
-  ### Depósitos de Dados 
-  • **D1: MedicoesVolume:** Histórico de todas as leituras. <br />
-  • **D2: ParametrosSistema:** Regras de negócio (limite max/min). <br />
-  • **D3: Parceiros:** Cadastro de quem pode receber o excedente. <br />
-  • **D4: Notificacoes:** Registro de logs de envios realizados.
- 
-## Detalhamento do Fluxo de Execução 
+#### Depósitos de Dados (Datastores)
+* **D1: MedicoesVolume:** Histórico de leituras (captura e persistência).
+* **D2: ParametrosSistema:** Regras de negócio, incluindo o `VolumeMaximoPermitido`.
+* **D3: Parceiros:** Cadastro de contatos responsáveis.
+* **D4: Notificacoes:** Log histórico de disparos de alertas.
 
-1. **Entrada de Dados:** O sensor (Câmera) envia o *VolumeMedido* para o Processo 1. <br />
-2. **Persistência:** O sistema grava a medição no banco de dados **D1**. <br />
-3. **Verificação de Regra:** O Processo 2 lê o *VolumeMaximoPermitido* de **D2**. <br />
-4. **Tomada de Decisão:** Caso $VolumeMedido > VolumeMaximo$, o fluxo segue para o Processo 3. <br />
-5. **Saída de Notificação:** O sistema consulta **D3** (Parceiros), registra o envio em **D4** e dispara o e-mail/alerta para o **Parceiro Externo**.
+#### Detalhamento do Fluxo de Execução
+1. **Captura e Persistência:** O sensor envia o `VolumeMedido` para **P1**. A leitura é persistida no banco de dados **D1** (registro de entrada).
+2. **Tomada de Decisão:** * Após a validação, o sistema executa a **Tomada de Decisão**: *VolumeMedido > VolumeMaximo?*
+   * **Se NÃO (Processo Normal):** O fluxo encerra a verificação, mantendo o registro apenas em **D1**.
+   * **Se SIM (Excedente Detectado):** O fluxo é direcionado obrigatoriamente para **P3** (Gerenciar Notificações).
+3. **Saída de Notificação:** O **P3** consulta os contatos em **D3**, realiza o envio do alerta e registra a operação (log) no depósito **D4**.
+4. **Inteligência:** O processo **P4** consome os dados de **D1** para alimentar o Dashboard do Usuário, fechando o ciclo de visibilidade.
+   
+---
+
+## Diagrama de Sequência
+
+<p align="center">
+  <img src="./Imagens/Diagrama_de_Sequencia.png" width="600" alt="Diagrama de Sequência" />
+</p>
+
+### Detalhamento do Fluxo de Sequência
+
+O fluxo inicia-se no momento em que um evento de medição é disparado e segue uma lógica de processamento síncrono e assíncrono:
+
+#### 1. Captura e Persistência (Passos 2 e 3)
+* O sensor **Kinect** envia o dado de `VolumeMedido` para o **Servidor Web (Blazor)** via `SignalR`.
+* O servidor executa o *Processo 1* e imediatamente grava a leitura no **Banco de Dados (SQL)** na tabela `MedicoesVolume` (D1).
+
+#### 2. Processamento de Regras de Negócio (Passos 4 e 5)
+* O sistema executa o *Processo 2*, consultando a tabela `ParametrosSistema` (D2) para obter o limite máximo permitido.
+* O servidor realiza a **Tomada de Decisão**: verifica se o `VolumeMedido` excede o limite.
+
+#### 3. Gestão de Exceções e Notificação (Passos 6, 7 e 8)
+* Caso a regra de limite seja violada (Excedente Detectado), o *Processo 3* é ativado.
+* O sistema consulta o banco `Parceiros` (D3) para identificar os contatos responsáveis.
+* O evento é registrado no banco `Notificacoes` (D4) e o alerta é enviado para o **Parceiro** (via e-mail ou API externa).
+
+#### 4. Atualização de Interface e Inteligência (Passos 9, 10 e 11)
+* Independentemente de excedente, o status operacional é atualizado via `SignalR` para o **Operador** (Feedback em tempo real).
+* O *Processo 4* (Gerar Inteligência) consolida os dados históricos de D1 e atualiza o **Dashboard** do Operador, fechando o ciclo de visibilidade.
 
 ---
 

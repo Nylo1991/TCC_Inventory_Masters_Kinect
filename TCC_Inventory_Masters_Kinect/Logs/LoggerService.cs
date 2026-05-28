@@ -2,7 +2,6 @@
 using System.IO;
 using TCC_Inventory_Masters_Kinect.Logs;
 
-
 namespace TCC_Inventory_Masters_Kinect.Logs
 {
     public static class LoggerService
