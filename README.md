@@ -166,6 +166,12 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 
 ---
 
+## Diagrama de Sequência
+
+<p align="center">
+  <img src="./Imagens/Diagrama_de_Sequencia.png" width="600" alt="Diagrama de Sequência" />
+</p>
+
 ### Detalhamento do Fluxo de Sequência
 
 O fluxo inicia-se no momento em que um evento de medição é disparado e segue uma lógica de processamento síncrono e assíncrono:
