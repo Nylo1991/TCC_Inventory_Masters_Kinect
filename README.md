@@ -112,17 +112,23 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
   <img src="./Imagens/Diagrama de Caso de Uso.png" width="600" alt="Diagrama de Caso de Uso" />
 </p>
 
+### Especificação dos Casos de Uso por ordem de comportamento
+
 | **ID** | **Nome da Funcionalidade** | **Perfil** | **Descrição** |
 | :--- | :--- | :--- | :--- |
-| UC01 | Efetuar Login | Admin / Operador | Autenticação no sistema. |
-| UC02 | Configurar Parâmetros | Administrador | Definição dos limites volumétricos ($m^3$) para alertas. |
-| UC03 | Manter Parceiros | Administrador | Gestão de empresas que receberão os excedentes. |
-| UC04 | Registrar Medição | Sistema / Operador | Captura via Kinect (WPF) ou inserção manual. |
-| UC05 | Monitorar Dashboard | Operador | Visualização em tempo real do status do inventário. |
-| UC06 | Notificar Parceiros | Sistema | (Automático) <<include>> no UC04. Disparo de alertas ao atingir limites. |
-| UC07 | Gerar Relatório | Administrador | Exportação de histórico e eficiência de destinação. |
-| UC08 | Efetuar Log Out | Admin / Operador | Encerramento da sessão. |
-
+| **UC01** | Efetuar Login | Admin / Operador | Autenticação inicial no sistema. |
+| **UC02** | Configurar Parâmetros | Administrador | Definição de limites de alerta (Pré-operacional). |
+| **UC03** | Manter Parceiros | Administrador | Gestão de cadastros de terceiros (Pré-operacional). |
+| **UC04** | Gerar Status do Hardware | Operador | Diagnóstico da conexão do Kinect (Pré-operacional). |
+| **UC05** | Calibrar Sensor | Operador | Rotina de definição do plano de referência (Setup). |
+| **UC06** | Registrar Medição | Sistema / Operador | Captura (Kinect) ou inserção manual (Operacional). |
+| **UC07** | Sincronizar Dados (Real-time) | Sistema | Consistência entre WPF e Web via SignalR (Operacional). |
+| **UC08** | Notificar Parceiros | Sistema | Disparo automático de alertas pós-medição (Operacional). |
+| **UC09** | Monitorar Dashboard | Operador | Visualização em tempo real do status (Operacional). |
+| **UC10** | Gerar Relatório | Administrador | Análise histórica e eficiência (Gestão). |
+| **UC11** | Auditar Registros | Administrador | Verificação de integridade dos dados (Gestão). |
+| **UC12** | Backup de Dados | Administrador | Salvamento de segurança do banco (Manutenção). |
+| **UC13** | Efetuar Log Out | Admin / Operador | Encerramento da sessão. |
 ---
 
 ## Diagrama de Fluxo 
