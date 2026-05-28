@@ -26,7 +26,7 @@
 
 ##  Quem somos!
 
-A Inventory Masters é uma plataforma tecnológica voltada para a gestão inteligente de excedentes produtivos.
+A Inventory Masters é uma plataforma tecnológica dedicada à gestão inteligente de excedentes produtivos.
 Atuamos conectando empresas a soluções estratégicas de reaproveitamento de materiais.
 Transformamos desperdícios em ativos com potencial de geração de valor econômico.
 Promovemos redução de custos, eficiência operacional e responsabilidade ambiental.
@@ -112,16 +112,16 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
   <img src="./Imagens/Diagrama de Caso de Uso.png" width="600" alt="Diagrama de Caso de Uso" />
 </p>
 
-| Nome  |  Funcionalidade       |Perfil         | Descrição                                                                            |
-|-------|-----------------------|---------------|--------------------------------------------------------------------------------------|
-|UC01:  | Efetuar Login         | Administrador / Operador | Logar no Sistema                                                          |
-|UC02:  | Configurar Parâmetros | Administrador | Definir os limites de volume ($m^3$) para disparo de alertas.                        |
-|UC03:  | Manter Parceiros      | Administrador | Cadastrar, editar ou excluir empresas que receberão os excedentes.                   |
-|UC04:  | Registrar Medição     | Sistema / Operador | Captura automática via câmera ou inserção manual do volume atual.               |
-|UC05:  | Monitorar Dashboard   | Operador | Visualizar em tempo real o status dos resíduos/estoque.                                   |
-|UC06:  | Notificar Parceiros   | Sistema | (Automático)<< include >> no UC03. Se o volume atingir o limite, o sistema envia o alerta. |
-|UC07:  | Gerar Relatório       | Administrador |Exportar histórico de medições e eficiência de destinação.                            |
-|UC08:  | Efetuar Log Out       | Administrador / Operador| Deslogar do Sistema                                                        |
+| **ID** | **Nome da Funcionalidade** | **Perfil** | **Descrição** |
+| :--- | :--- | :--- | :--- |
+| UC01 | Efetuar Login | Admin / Operador | Autenticação no sistema. |
+| UC02 | Configurar Parâmetros | Administrador | Definição dos limites volumétricos ($m^3$) para alertas. |
+| UC03 | Manter Parceiros | Administrador | Gestão de empresas que receberão os excedentes. |
+| UC04 | Registrar Medição | Sistema / Operador | Captura via Kinect (WPF) ou inserção manual. |
+| UC05 | Monitorar Dashboard | Operador | Visualização em tempo real do status do inventário. |
+| UC06 | Notificar Parceiros | Sistema | (Automático) <<include>> no UC04. Disparo de alertas ao atingir limites. |
+| UC07 | Gerar Relatório | Administrador | Exportação de histórico e eficiência de destinação. |
+| UC08 | Efetuar Log Out | Admin / Operador | Encerramento da sessão. |
 
 ---
 
