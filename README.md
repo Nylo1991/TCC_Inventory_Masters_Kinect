@@ -166,6 +166,29 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 
 ---
 
+### Detalhamento do Fluxo de Sequência
+
+O fluxo inicia-se no momento em que um evento de medição é disparado e segue uma lógica de processamento síncrono e assíncrono:
+
+#### 1. Captura e Persistência (Passos 2 e 3)
+* O sensor **Kinect** envia o dado de `VolumeMedido` para o **Servidor Web (Blazor)** via `SignalR`.
+* O servidor executa o *Processo 1* e imediatamente grava a leitura no **Banco de Dados (SQL)** na tabela `MedicoesVolume` (D1).
+
+#### 2. Processamento de Regras de Negócio (Passos 4 e 5)
+* O sistema executa o *Processo 2*, consultando a tabela `ParametrosSistema` (D2) para obter o limite máximo permitido.
+* O servidor realiza a **Tomada de Decisão**: verifica se o `VolumeMedido` excede o limite.
+
+#### 3. Gestão de Exceções e Notificação (Passos 6, 7 e 8)
+* Caso a regra de limite seja violada (Excedente Detectado), o *Processo 3* é ativado.
+* O sistema consulta o banco `Parceiros` (D3) para identificar os contatos responsáveis.
+* O evento é registrado no banco `Notificacoes` (D4) e o alerta é enviado para o **Parceiro** (via e-mail ou API externa).
+
+#### 4. Atualização de Interface e Inteligência (Passos 9, 10 e 11)
+* Independentemente de excedente, o status operacional é atualizado via `SignalR` para o **Operador** (Feedback em tempo real).
+* O *Processo 4* (Gerar Inteligência) consolida os dados históricos de D1 e atualiza o **Dashboard** do Operador, fechando o ciclo de visibilidade.
+
+---
+
 ## MODELAGEM DO BANCO DE DADOS
 ---
 
