@@ -280,7 +280,11 @@
     <Compile Include="ConfigKinect\KinectConfig.cs" />
     <Compile Include="Data\AppDbContext.cs" />
     <Compile Include="Logs\LoggerService.cs" />
+    <Compile Include="Model\EspacoMapeado.cs" />
+    <Compile Include="Model\HistoricoOcupacao.cs" />
     <Compile Include="Model\MedicaoVolume.cs" />
+    <Compile Include="Model\Point3DData.cs" />
+    <Compile Include="Model\SnapshotEspacial.cs" />
     <Compile Include="Repository\Interface\IKinectRepository.cs" />
     <Compile Include="Repository\KinectRepository.cs" />
     <Compile Include="Service\KinectService.cs" />
