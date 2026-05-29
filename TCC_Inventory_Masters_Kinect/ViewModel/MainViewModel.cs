@@ -128,7 +128,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     new SignalRService();
 
                 LoggerService.Info(
-                    "*******************      Serviços inicializados.**********************");
+                    "*******************Serviços inicializados.**********************");
 
                 // EVENTOS SIGNALR
 
