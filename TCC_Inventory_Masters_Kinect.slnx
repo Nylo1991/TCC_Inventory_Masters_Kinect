@@ -4,8 +4,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="InventoryMasters.Core/InventoryMasters.Core.csproj" Id="17063421-23a8-4645-82c7-3dfffbb288ae" />
-  <Project Path="InventoryMasters.Infrastructure.Firebase/InventoryMasters.Infrastructure.Firebase.csproj" Id="2192f823-3b46-4798-8ac1-3b7f1466ab1f" />
   <Project Path="MVC_InventoryMasters/MVC_InventoryMasters.csproj" Id="ae7ee015-e49d-4b59-840d-563260b4bb1a" />
   <Project Path="TCC_Inventory_Masters_Kinect/TCC_Inventory_Masters_Kinect.csproj" Id="7d139cc2-2370-45cd-8400-8d963529d54b">
     <Platform Solution="*|x64" Project="x64" />
