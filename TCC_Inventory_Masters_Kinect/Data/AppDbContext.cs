@@ -10,14 +10,13 @@ namespace TCC_Inventory_Masters_Kinect.Data
     [DbConfigurationType(typeof(SQLiteConfigurationInternal))]
     public class AppDbContext : DbContext
     {
-        static AppDbContext()
+        public AppDbContext()
+            : base(CreateSQLiteConnection(), true)
         {
-            // Evita o Entity Framework tentar criar migrations/tabelas automaticamente.
-            Database.SetInitializer<AppDbContext>(null);
-        }
+            Database.SetInitializer(
+                new CreateDatabaseIfNotExists<AppDbContext>());
 
-        public AppDbContext() : base(CreateSQLiteConnection(), true)
-        {
+            CriarTabelaManual();
         }
 
         private static SQLiteConnection CreateSQLiteConnection()
@@ -28,11 +27,85 @@ namespace TCC_Inventory_Masters_Kinect.Data
             );
 
             return new SQLiteConnection(
-                $"Data Source={dbPath};Version=3;BusyTimeout=5000;Journal Mode=WAL;"
+                $"Data Source={dbPath};Version=3;"
             );
         }
 
+        // ==========================================
+        // TABELAS
+        // ==========================================
+
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
+
+        public DbSet<EspacoMapeado> EspacosMapeados { get; set; }
+
+        public DbSet<Point3DData> Points3D { get; set; }
+
+        public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
+
+        public DbSet<SnapshotEspacial> SnapshotsEspaciais { get; set; }
+
+        // ==========================================
+        // CRIAÇÃO MANUAL DAS TABELAS
+        // ==========================================
+
+        private void CriarTabelaManual()
+        {
+            using (var conn = CreateSQLiteConnection())
+            {
+                conn.Open();
+
+                string sql = @"
+
+                CREATE TABLE IF NOT EXISTS MedicaoVolumes (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    VolumeCm3 REAL NOT NULL,
+                    DataHora TEXT NOT NULL,
+                    KinectLigado INTEGER NOT NULL,
+                    Calibrado INTEGER NOT NULL,
+                    Status TEXT
+                );
+
+                CREATE TABLE IF NOT EXISTS EspacosMapeados (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    NomeEspaco TEXT NOT NULL,
+                    VolumeMaximoCm3 REAL NOT NULL,
+                    PercentualAlerta REAL NOT NULL,
+                    DataCriacao TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS Point3DData (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    EspacoMapeadoId INTEGER NOT NULL,
+                    PosicaoX REAL NOT NULL,
+                    PosicaoY REAL NOT NULL,
+                    PosicaoZ REAL NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS HistoricosOcupacao (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    EspacoMapeadoId INTEGER NOT NULL,
+                    VolumeAtualCm3 REAL NOT NULL,
+                    PercentualOcupacao REAL NOT NULL,
+                    DataHora TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS SnapshotsEspaciais (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    EspacoMapeadoId INTEGER NOT NULL,
+                    NomeSnapshot TEXT,
+                    CaminhoArquivo TEXT,
+                    DataCaptura TEXT NOT NULL
+                );
+
+                ";
+
+                using (var cmd = new SQLiteCommand(sql, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 
     public class SQLiteConfigurationInternal : DbConfiguration
