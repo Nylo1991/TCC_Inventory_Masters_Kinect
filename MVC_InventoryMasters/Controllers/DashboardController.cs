@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC_InventoryMasters.Repositories;
+using MVC_InventoryMasters.ViewModels;
 
 namespace MVC_InventoryMasters.Controllers
 {    
@@ -10,7 +11,7 @@ namespace MVC_InventoryMasters.Controllers
         private readonly ParceirosRepository _parceirosRepo;
         private readonly ParametrosSistemaRepository _parametrosRepo;
 
-        // Injeção dos 4 repositórios no construtor
+        // O construtor do controller recebe os repositórios via injeção de dependência
         public DashboardController(
             MedicaoVolumeRepository medicaoRepo,
             NotificacaoRepository notificacaoRepo,
@@ -23,12 +24,11 @@ namespace MVC_InventoryMasters.Controllers
             _parametrosRepo = parametrosRepo;
         }
 
-        // Ação para exibir o dashboard, onde vamos buscar os dados
-        // de todos os repositórios e enviar para a view
         public IActionResult Index()
         {
-            // Cria um objeto "ViewModel" anônimo para enviar tudo de uma vez para a view
-            var viewModel = new
+            // Cria um objeto do tipo DashboardViewModel e
+            // preenche suas propriedades com os dados dos repositórios
+            var model = new DashboardViewModel
             {
                 Medicoes = _medicaoRepo.ListarTodas(),
                 Alertas = _notificacaoRepo.ListarHistorico(),
@@ -36,7 +36,7 @@ namespace MVC_InventoryMasters.Controllers
                 Parametros = _parametrosRepo.Buscar()
             };
 
-            return View(viewModel);
+            return View(model); // Envia o objeto tipado para a View
         }
     }
 }
