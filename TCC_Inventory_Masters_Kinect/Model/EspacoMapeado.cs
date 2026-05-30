@@ -39,4 +39,4 @@ namespace TCC_Inventory_Masters_Kinect.Model
         public DateTime? DataUltimaAtualizacao { get; set; }
     }
 }
-}
+
