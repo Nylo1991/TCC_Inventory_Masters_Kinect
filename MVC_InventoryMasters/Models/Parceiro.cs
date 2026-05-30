@@ -2,8 +2,7 @@
 
 namespace MVC_InventoryMasters.Models
 {
-    public class Parceiros
-    {
+    public class Parceiro    {
         [Key]
         public int Id { get; set; }
 
