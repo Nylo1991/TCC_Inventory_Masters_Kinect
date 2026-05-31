@@ -23,6 +23,7 @@ builder.Services.AddScoped<ParceirosRepository>();
 builder.Services.AddScoped<MedicaoVolumeRepository>();
 builder.Services.AddScoped<NotificacaoRepository>();
 builder.Services.AddScoped<ParametrosSistemaRepository>();
+builder.Services.AddScoped<UsuariosRepository>();
 
 var app = builder.Build();
 

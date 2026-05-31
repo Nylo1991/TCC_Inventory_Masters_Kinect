@@ -1,17 +1,34 @@
 ﻿using MVC_InventoryMasters.Models;
-using System.Collections.Generic;
 
 namespace MVC_InventoryMasters.ViewModels
 {
-    // Herda de BaseViewModel para ter acesso aos recursos de notificação de mudança
     public class DashboardViewModel : BaseViewModel
     {
-        public List<MedicaoVolume> Medicoes { get; set; } = new List<MedicaoVolume>();
-        public List<Notificacao> Alertas { get; set; } = new List<Notificacao>();
-        public List<Parceiro> Parceiros { get; set; } = new List<Parceiro>();
-        public ParametrosSistema Parametros { get; set; } = new ParametrosSistema();
+        public List<MedicaoVolume> Medicoes { get; set; } = new();
+        public List<Notificacao> Alertas { get; set; } = new();
+        public List<Parceiro> Parceiros { get; set; } = new();
+        public List<Usuario> Usuarios { get; set; } = new();
 
-        // Adiciona uma propriedade para mensagens de erro, caso o Firebase falhe
+        public ParametrosSistema Parametros { get; set; } = new();
         public string MensagemErro { get; set; }
+
+        // KPIs
+        public int TotalParceiros => Parceiros?.Count ?? 0;
+        public int TotalMedicoes => Medicoes?.Count ?? 0;
+        public int TotalAlertas => Alertas?.Count ?? 0;
+        public int TotalUsuarios => Usuarios?.Count ?? 0;
+
+        // Últimos registros (ORDENAÇÃO CORRETA)
+        public List<Parceiro> UltimosParceiros =>
+            Parceiros?
+                .OrderByDescending(p => p.Data_Cadastro)
+                .Take(5)
+                .ToList();
+
+        /*public List<MedicaoVolume> UltimasMedicoes =>
+            Medicoes?
+                .OrderByDescending(m => m.Data_Cadastro)
+                .Take(5)
+                .ToList();*/
     }
 }

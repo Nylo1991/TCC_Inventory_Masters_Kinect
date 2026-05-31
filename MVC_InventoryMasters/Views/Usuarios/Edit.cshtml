@@ -1,0 +1,58 @@
+﻿@model MVC_InventoryMasters.Models.Usuario
+
+@{
+    ViewData["Title"] = "Editar Usuário";
+}
+
+<div class="container">
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning">
+            <h4>Editar Usuário</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Nome" class="form-label"></label>
+                    <input asp-for="Nome" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Perfil" class="form-label"></label>
+                    <input asp-for="Perfil" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Senha" class="form-label"></label>
+                    <input asp-for="Senha" type="password" class="form-control" />
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="Ativo" class="form-check-input" />
+                    <label class="form-check-label">Usuário Ativo</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Atualizar
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+</div>
