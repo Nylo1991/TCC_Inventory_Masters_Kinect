@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 using TCC_Inventory_Masters_Kinect.Command;
+using TCC_Inventory_Masters_Kinect.ConfigKinect;
 using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Model;
 using TCC_Inventory_Masters_Kinect.Repository;
@@ -25,16 +26,13 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
         private readonly IKinectRepository _repository;
 
-        private readonly SignalRService _signalRService;
+        private readonly ApiMedicaoService _apiMedicaoService;
 
         private DateTime _proximaGravacao =
             DateTime.MinValue;
 
-        private DateTime _proximoEnvioSignalR =
+        private DateTime _proximoEnvioApi =
             DateTime.MinValue;
-
-        private bool _signalRConectado =
-            false;
 
         private bool _encerrando =
             false;
@@ -90,7 +88,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         }
 
         private string _statusSignalR =
-            "SignalR: Desconectado";
+            "API MVC: Pronta para envio";
 
         public string StatusSignalR
         {
@@ -305,14 +303,15 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 _repository =
                     new KinectRepository();
 
-                _signalRService =
-                    new SignalRService();
+                _apiMedicaoService =
+                    new ApiMedicaoService();
 
                 LoggerService.Info(
                     "Serviços inicializados.");
 
-                _signalRService.StatusSignalRAtualizado +=
-                    AtualizarStatus;
+                // ==========================================
+                // EVENTOS KINECT
+                // ==========================================
 
                 _kinectService.MedidaAtualizada +=
                     ProcessarNovaMedida;
@@ -329,6 +328,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 _kinectService.SnapshotCriado +=
                     AtualizarSnapshot;
 
+                // ==========================================
+                // TEXTO INICIAL
+                // ==========================================
+
                 Status =
                     "Sistema aguardando inicialização...";
 
@@ -342,7 +345,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     "SQLite: Aguardando";
 
                 StatusSignalR =
-                    "SignalR: Desconectado";
+                    "API MVC: Pronta para envio";
 
                 StatusMvcFirebase =
                     "MVC/Firebase: Aguardando";
@@ -359,6 +362,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 UltimoSnapshot =
                     "Snapshot: nenhum";
 
+                // ==========================================
+                // COMANDOS
+                // ==========================================
+
                 LigarKinectCommand =
                     new RelayCommand(LigarKinect);
 
@@ -371,9 +378,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Info(
                     "Comandos configurados.");
 
-                CarregarHistoricoMedicoes();
+                // ==========================================
+                // HISTÓRICO
+                // ==========================================
 
-                ConectarSignalR();
+                CarregarHistoricoMedicoes();
             }
             catch (Exception ex)
             {
@@ -411,60 +420,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         }
 
         // ==========================================
-        // SIGNALR
-        // ==========================================
-
-        private async void ConectarSignalR()
-        {
-            try
-            {
-                if (_encerrando)
-                    return;
-
-                LoggerService.Info(
-                    "Tentando conectar ao SignalR.");
-
-                await _signalRService
-                    .ConectarAsync();
-
-                _signalRConectado =
-                    true;
-
-                StatusSignalR =
-                    "SignalR: Conectado";
-
-                Status =
-                    "Conectado ao MVC via SignalR.";
-
-                LoggerService.Info(
-                    "Conectado ao SignalR com sucesso.");
-
-                await _signalRService
-                    .EnviarStatusAsync(
-                        "Aplicação Kinect conectada ao MVC.");
-            }
-            catch (Exception ex)
-            {
-                _signalRConectado =
-                    false;
-
-                StatusSignalR =
-                    "SignalR: Sem conexão";
-
-                Status =
-                    "Erro ao conectar SignalR: " + ex.Message;
-
-                LoggerService.Erro(
-                    "Erro ao conectar SignalR.",
-                    ex);
-            }
-        }
-
-        // ==========================================
         // LIGAR KINECT
         // ==========================================
 
-        private async void LigarKinect()
+        private void LigarKinect()
         {
             try
             {
@@ -496,13 +455,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                     LoggerService.Info(
                         "Kinect iniciado com sucesso.");
-
-                    if (_signalRConectado)
-                    {
-                        await _signalRService
-                            .EnviarStatusAsync(
-                                "Kinect iniciado.");
-                    }
                 }
                 else
                 {
@@ -514,13 +466,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                     LoggerService.Info(
                         "Falha ao iniciar Kinect.");
-
-                    if (_signalRConectado)
-                    {
-                        await _signalRService
-                            .EnviarStatusAsync(
-                                "Falha ao iniciar Kinect.");
-                    }
                 }
             }
             catch (Exception ex)
@@ -659,34 +604,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     UltimoSnapshot =
                         "Snapshot: nenhum";
 
+                    StatusSignalR =
+                        "API MVC: Pronta para envio";
+
                     StatusMvcFirebase =
                         "MVC/Firebase: Aguardando";
                 });
 
-                if (_signalRConectado)
-                {
-                    await _signalRService
-                        .EnviarStatusAsync(
-                            "Kinect desligado.");
-
-                    await _signalRService
-                        .DesconectarAsync();
-
-                    _signalRConectado =
-                        false;
-
-                    ExecutarNaUI(() =>
-                    {
-                        StatusSignalR =
-                            "SignalR: Desconectado";
-
-                        Status =
-                            "Kinect desligado e conexão com MVC encerrada.";
-                    });
-
-                    LoggerService.Info(
-                        "SignalR desconectado.");
-                }
+                await Task.CompletedTask;
             }
             catch (Exception ex)
             {
@@ -703,7 +628,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         // CALIBRAR CHÃO
         // ==========================================
 
-        private async void CalibrarChao()
+        private void CalibrarChao()
         {
             try
             {
@@ -721,13 +646,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 LoggerService.Info(
                     "Chão calibrado com sucesso.");
-
-                if (_signalRConectado)
-                {
-                    await _signalRService
-                        .EnviarStatusAsync(
-                            "Chão calibrado.");
-                }
             }
             catch (Exception ex)
             {
@@ -889,12 +807,16 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     $"Volume: {volumeCm3:F0} cm³";
             });
 
+            // ==========================================
+            // SALVAR SQLITE
+            // ==========================================
+
             if (DateTime.Now >=
                 _proximaGravacao)
             {
                 _proximaGravacao =
                     DateTime.Now.AddSeconds(
-                        1);
+                        KinectConfig.IntervaloSalvarSQLiteSegundos);
 
                 var medicao =
                     new MedicaoVolume
@@ -966,13 +888,16 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 });
             }
 
-            if (_signalRConectado &&
-                DateTime.Now >=
-                _proximoEnvioSignalR)
+            // ==========================================
+            // ENVIAR MVC VIA API REST
+            // ==========================================
+
+            if (DateTime.Now >=
+                _proximoEnvioApi)
             {
-                _proximoEnvioSignalR =
+                _proximoEnvioApi =
                     DateTime.Now.AddSeconds(
-                        15);
+                        KinectConfig.IntervaloEnvioApiSegundos);
 
                 Task.Run(async () =>
                 {
@@ -983,43 +908,82 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                         ExecutarNaUI(() =>
                         {
+                            StatusSignalR =
+                                "API MVC: Enviando";
+
                             StatusMvcFirebase =
                                 "MVC/Firebase: Enviando";
                         });
 
-                        await _signalRService
-                            .EnviarVolumeAsync(
-                                volumeCm3);
+                        var medicaoApi =
+                            new MedicaoVolume
+                            {
+                                DataHora =
+                                    DateTime.Now,
 
-                        await _signalRService
-                            .EnviarStatusAsync(
-                                "Volume enviado pelo Kinect.");
+                                VolumeCm3 =
+                                    volumeCm3,
 
-                        LoggerService.Info(
-                            $"Volume enviado ao MVC: {volumeCm3:F0} cm³");
+                                KinectLigado =
+                                    true,
 
-                        ExecutarNaUI(() =>
+                                Calibrado =
+                                    true,
+
+                                Status =
+                                    "Enviado API MVC"
+                            };
+
+                        bool enviado =
+                            await _apiMedicaoService
+                                .EnviarMedicaoAsync(
+                                    medicaoApi);
+
+                        if (enviado)
                         {
-                            StatusMvcFirebase =
-                                "MVC/Firebase: Enviado";
+                            ExecutarNaUI(() =>
+                            {
+                                StatusSignalR =
+                                    "API MVC: Enviado";
 
-                            Status =
-                                $"Informações enviadas ao MVC com sucesso às {DateTime.Now:HH:mm:ss}.";
-                        });
+                                StatusMvcFirebase =
+                                    "MVC/Firebase: Enviado";
+
+                                Status =
+                                    $"Medição enviada para API MVC com sucesso às {DateTime.Now:HH:mm:ss}.";
+                            });
+                        }
+                        else
+                        {
+                            ExecutarNaUI(() =>
+                            {
+                                StatusSignalR =
+                                    "API MVC: Falha no envio";
+
+                                StatusMvcFirebase =
+                                    "MVC/Firebase: Falha no envio";
+
+                                Status =
+                                    "Falha ao enviar medição para API MVC. Dados mantidos no SQLite.";
+                            });
+                        }
                     }
                     catch (Exception ex)
                     {
                         LoggerService.Erro(
-                            "Erro ao enviar dados ao MVC.",
+                            "Erro ao enviar dados para API MVC.",
                             ex);
 
                         ExecutarNaUI(() =>
                         {
+                            StatusSignalR =
+                                "API MVC: Erro";
+
                             StatusMvcFirebase =
                                 "MVC/Firebase: Falha no envio";
 
                             Status =
-                                "Falha ao enviar informações ao MVC. Dados mantidos no SQLite. Erro: " + ex.Message;
+                                "Erro ao enviar informações para API MVC: " + ex.Message;
                         });
                     }
                 });
@@ -1049,22 +1013,13 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 _kinectService
                     .DesligarKinect();
 
-                if (_signalRConectado)
-                {
-                    await _signalRService
-                        .DesconectarAsync();
-
-                    _signalRConectado =
-                        false;
-                }
-
                 ExecutarNaUI(() =>
                 {
                     StatusKinect =
                         "Kinect: Desconectado";
 
                     StatusSignalR =
-                        "SignalR: Desconectado";
+                        "API MVC: Encerrada";
 
                     StatusMvcFirebase =
                         "MVC/Firebase: Aguardando";
@@ -1075,6 +1030,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 LoggerService.Info(
                     "Aplicação encerrada com segurança.");
+
+                await Task.CompletedTask;
             }
             catch (Exception ex)
             {
