@@ -37,19 +37,19 @@
                     BorderThickness="0">
 
             <!-- ========================================== -->
-            <!-- ABA 1: MAPEAMENTO -->
+            <!-- ABA 1: KINECT / MAPEAMENTO -->
             <!-- ========================================== -->
 
-            <TabItem Header="Mapeamento">
+            <TabItem Header="Kinect / Mapeamento">
 
                 <Grid Margin="0,20,0,0">
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1.4*"/>
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- PAINEL ESQUERDO -->
+                    <!-- PAINEL DE CONTROLE -->
 
                     <Border Grid.Column="0"
                             Background="White"
@@ -62,39 +62,13 @@
 
                             <StackPanel>
 
-                                <!-- CADASTRO DO ESPAÇO -->
+                                <!-- CONTROLE DO KINECT -->
 
-                                <TextBlock Text="Cadastro do Espaço"
+                                <TextBlock Text="Controle do Kinect"
                                            FontSize="26"
                                            FontWeight="Bold"
                                            Foreground="#1E293B"
-                                           Margin="0,0,0,25"/>
-
-                                <TextBlock Text="Nome do Espaço"
-                                           FontSize="15"
-                                           Foreground="#475569"/>
-
-                                <TextBox Height="40"
-                                         Margin="0,5,0,15"
-                                         Text="{Binding NomeEspaco, UpdateSourceTrigger=PropertyChanged}"/>
-
-                                <TextBlock Text="Volume Máximo (cm³)"
-                                           FontSize="15"
-                                           Foreground="#475569"/>
-
-                                <TextBox Height="40"
-                                         Margin="0,5,0,15"
-                                         Text="{Binding VolumeMaximo, UpdateSourceTrigger=PropertyChanged}"/>
-
-                                <TextBlock Text="Percentual de Alerta (%)"
-                                           FontSize="15"
-                                           Foreground="#475569"/>
-
-                                <TextBox Height="40"
-                                         Margin="0,5,0,25"
-                                         Text="{Binding PercentualAlerta, UpdateSourceTrigger=PropertyChanged}"/>
-
-                                <!-- BOTÕES -->
+                                           Margin="0,0,0,20"/>
 
                                 <Button Content="Iniciar Mapeamento"
                                         Height="50"
@@ -167,19 +141,19 @@
 
                                 <!-- INFORMAÇÕES CAPTURADAS -->
 
-                                <TextBlock Text="Informações capturadas"
+                                <TextBlock Text="Informações Capturadas"
                                            Margin="0,25,0,10"
                                            FontSize="20"
                                            FontWeight="Bold"
                                            Foreground="#1E293B"/>
 
                                 <TextBlock Text="{Binding VolumeTexto}"
-                                           FontSize="18"
+                                           FontSize="20"
                                            FontWeight="Bold"
                                            Foreground="#4F46E5"/>
 
                                 <TextBlock Text="{Binding QuantidadePontos3D}"
-                                           Margin="0,8,0,0"
+                                           Margin="0,10,0,0"
                                            FontSize="15"
                                            Foreground="#334155"/>
 
@@ -202,7 +176,7 @@
                                 <!-- MENSAGEM DO SISTEMA -->
 
                                 <TextBlock Text="Mensagem do Sistema"
-                                           Margin="0,20,0,5"
+                                           Margin="0,25,0,5"
                                            FontSize="16"
                                            FontWeight="Bold"
                                            Foreground="#1E293B"/>
@@ -260,7 +234,166 @@
             </TabItem>
 
             <!-- ========================================== -->
-            <!-- ABA 2: HISTÓRICO -->
+            <!-- ABA 2: CADASTRO DO ESPAÇO -->
+            <!-- ========================================== -->
+
+            <TabItem Header="Cadastro do Espaço">
+
+                <Border Margin="0,20,0,0"
+                        Background="White"
+                        CornerRadius="15"
+                        Padding="30"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1">
+
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.2*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- FORMULÁRIO -->
+
+                        <StackPanel Grid.Column="0"
+                                    Margin="0,0,40,0">
+
+                            <TextBlock Text="Cadastro do Espaço"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Foreground="#1E293B"
+                                       Margin="0,0,0,10"/>
+
+                            <TextBlock Text="Preencha os dados do espaço que será monitorado pelo Kinect."
+                                       FontSize="16"
+                                       Foreground="#64748B"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,30"/>
+
+                            <TextBlock Text="Nome do Espaço"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="#475569"/>
+
+                            <TextBox Height="42"
+                                     Margin="0,6,0,18"
+                                     FontSize="15"
+                                     Text="{Binding NomeEspaco, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Text="Volume Máximo Permitido (cm³)"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="#475569"/>
+
+                            <TextBox Height="42"
+                                     Margin="0,6,0,18"
+                                     FontSize="15"
+                                     Text="{Binding VolumeMaximo, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Text="Percentual de Alerta (%)"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="#475569"/>
+
+                            <TextBox Height="42"
+                                     Margin="0,6,0,25"
+                                     FontSize="15"
+                                     Text="{Binding PercentualAlerta, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <Border Background="#EEF2FF"
+                                    CornerRadius="10"
+                                    Padding="15"
+                                    BorderBrush="#C7D2FE"
+                                    BorderThickness="1">
+
+                                <TextBlock Text="Após preencher os dados, volte para a aba Kinect / Mapeamento e clique em Iniciar Mapeamento. O espaço será associado à leitura atual."
+                                           FontSize="14"
+                                           TextWrapping="Wrap"
+                                           Foreground="#3730A3"/>
+
+                            </Border>
+
+                        </StackPanel>
+
+                        <!-- RESUMO DO CADASTRO -->
+
+                        <Border Grid.Column="1"
+                                Background="#F8FAFC"
+                                CornerRadius="15"
+                                Padding="25"
+                                BorderBrush="#E5E7EB"
+                                BorderThickness="1">
+
+                            <StackPanel>
+
+                                <TextBlock Text="Resumo do Espaço"
+                                           FontSize="24"
+                                           FontWeight="Bold"
+                                           Foreground="#1E293B"
+                                           Margin="0,0,0,20"/>
+
+                                <TextBlock Text="Nome cadastrado"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#64748B"/>
+
+                                <TextBlock Text="{Binding NomeEspaco}"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           Foreground="#4F46E5"
+                                           Margin="0,5,0,20"/>
+
+                                <TextBlock Text="Volume máximo"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#64748B"/>
+
+                                <TextBlock FontSize="18"
+                                           FontWeight="Bold"
+                                           Foreground="#1E293B"
+                                           Margin="0,5,0,20">
+                                    <Run Text="{Binding VolumeMaximo}"/>
+                                    <Run Text=" cm³"/>
+                                </TextBlock>
+
+                                <TextBlock Text="Percentual de alerta"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#64748B"/>
+
+                                <TextBlock FontSize="18"
+                                           FontWeight="Bold"
+                                           Foreground="#1E293B"
+                                           Margin="0,5,0,20">
+                                    <Run Text="{Binding PercentualAlerta}"/>
+                                    <Run Text=" %"/>
+                                </TextBlock>
+
+                                <Separator Margin="0,10,0,20"/>
+
+                                <TextBlock Text="Status do Cadastro"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Foreground="#1E293B"
+                                           Margin="0,0,0,8"/>
+
+                                <TextBlock Text="Os dados preenchidos serão utilizados para cálculo de ocupação, espaço livre e percentual de alerta durante o mapeamento."
+                                           FontSize="14"
+                                           TextWrapping="Wrap"
+                                           Foreground="#64748B"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                    </Grid>
+
+                </Border>
+
+            </TabItem>
+
+            <!-- ========================================== -->
+            <!-- ABA 3: HISTÓRICO -->
             <!-- ========================================== -->
 
             <TabItem Header="Histórico de Medições">
