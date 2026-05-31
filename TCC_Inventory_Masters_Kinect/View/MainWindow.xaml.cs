@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Threading;
 using TCC_Inventory_Masters_Kinect.ViewModel;
 
 namespace TCC_Inventory_Masters_Kinect.View
@@ -10,7 +11,11 @@ namespace TCC_Inventory_Masters_Kinect.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        private bool _fechando = false;
+        private bool _podeFechar =
+            false;
+
+        private bool _encerramentoEmAndamento =
+            false;
 
         public MainWindow()
         {
@@ -27,19 +32,30 @@ namespace TCC_Inventory_Masters_Kinect.View
             object sender,
             CancelEventArgs e)
         {
-            if (_fechando)
+            if (_podeFechar)
             {
+                return;
+            }
+
+            if (_encerramentoEmAndamento)
+            {
+                e.Cancel =
+                    true;
+
                 return;
             }
 
             e.Cancel =
                 true;
 
-            _fechando =
+            _encerramentoEmAndamento =
                 true;
 
             try
             {
+                IsEnabled =
+                    false;
+
                 if (DataContext is MainViewModel viewModel)
                 {
                     await viewModel
@@ -54,10 +70,28 @@ namespace TCC_Inventory_Masters_Kinect.View
             }
             finally
             {
+                _podeFechar =
+                    true;
+
+                _encerramentoEmAndamento =
+                    false;
+
                 Closing -=
                     MainWindow_Closing;
 
-                Close();
+                Dispatcher.BeginInvoke(
+                    new Action(() =>
+                    {
+                        try
+                        {
+                            Close();
+                        }
+                        catch
+                        {
+                            Application.Current.Shutdown();
+                        }
+                    }),
+                    DispatcherPriority.ContextIdle);
             }
         }
     }
