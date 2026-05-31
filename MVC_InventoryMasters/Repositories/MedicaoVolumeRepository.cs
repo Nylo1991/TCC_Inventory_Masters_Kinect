@@ -60,13 +60,11 @@ namespace MVC_InventoryMasters.Repositories
             var medicoes = await ListarTodos();
 
             if (!medicoes.Any())
-            {
                 return new MedicaoSummary();
-            }
 
             return new MedicaoSummary
             {
-                TotalMedicoes = medicoes.Count,
+                TotalMedicoes = medicoes.Count,                
                 MediaVolume = medicoes.Average(x => x.VolumeMedido ?? 0),
                 MaxVolume = medicoes.Max(x => x.VolumeMedido ?? 0),
                 MinVolume = medicoes.Min(x => x.VolumeMedido ?? 0)
