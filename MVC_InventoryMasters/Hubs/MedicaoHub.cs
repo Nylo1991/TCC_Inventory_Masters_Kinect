@@ -1,14 +1,19 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using MVC_InventoryMasters.Models;
 
 namespace MVC_InventoryMasters.Hubs
 {
+    /// <summary>
+    /// Hub responsável por enviar medições em tempo real
+    /// para o Dashboard via SignalR.
+    /// </summary>
     public class MedicaoHub : Hub
     {
-        // Kinect envia para cá
-        public async Task EnviarMedicao(MedicaoVolume medicao)
+        /// <summary>
+        /// Método chamado quando o cliente conecta (opcional).
+        /// </summary>
+        public override async Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("NovaMedicao", medicao);
+            await base.OnConnectedAsync();
         }
     }
 }

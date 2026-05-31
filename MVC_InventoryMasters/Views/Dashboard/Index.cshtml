@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <div class="dashboard-title">Parceiros</div>
                     <div class="dashboard-number">
-                        @Model.Parceiros.Count
+                        @(Model.Parceiros?.Count ?? 0)
                     </div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                 <div class="card-body">
                     <div class="dashboard-title">Usuários</div>
                     <div class="dashboard-number">
-                        @Model.Usuarios.Count
+                        @(Model.Usuarios?.Count ?? 0)
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <div class="card-body">
                     <div class="dashboard-title">Medições</div>
                     <div class="dashboard-number" id="totalMedicoes">
-                        @Model.Medicoes.Count
+                        @(Model.Medicoes?.Count ?? 0)
                     </div>
                 </div>
             </div>
@@ -47,7 +47,7 @@
                 <div class="card-body">
                     <div class="dashboard-title">Alertas</div>
                     <div class="dashboard-number">
-                        @Model.Alertas.Count
+                        @(Model.Alertas?.Count ?? 0)
                     </div>
                 </div>
             </div>
@@ -71,19 +71,22 @@
                 </thead>
 
                 <tbody>
-                    @foreach (var parceiro in Model.Parceiros.Take(5))
+                    @if (Model.Parceiros != null)
                     {
-                        <tr>
-                            <td>@parceiro.Nome</td>
-                            <td>@parceiro.Email</td>
-                        </tr>
+                        foreach (var parceiro in Model.Parceiros.Take(5))
+                        {
+                            <tr>
+                                <td>@parceiro.Nome</td>
+                                <td>@parceiro.Email</td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- 🔥 LOG DE MEDIÇÕES (PRONTO PARA SIGNALR) -->
+    <!-- 🔥 LOG DE MEDIÇÕES EM TEMPO REAL -->
     <div class="card shadow-sm">
         <div class="card-header">
             <h5 class="mb-0">📡 Medições em Tempo Real</h5>
@@ -102,14 +105,19 @@
 
                 <tbody id="logMedicoes">
 
-                    @foreach (var m in Model.Medicoes.OrderByDescending(x => x.DataHora).Take(10))
+                    @if (Model.Medicoes != null)
                     {
-                        <tr>
-                            <td>@m.VolumeMedido</td>
-                            <td>@m.OrigemLeitura</td>
-                            <td>@m.Status</td>
-                            <td>@m.DataHora</td>
-                        </tr>
+                        foreach (var m in Model.Medicoes
+                        .OrderByDescending(x => x.DataHora)
+                        .Take(10))
+                        {
+                            <tr>
+                                <td>@m.VolumeMedido</td>
+                                <td>@m.OrigemLeitura</td>
+                                <td>@m.Status</td>
+                                <td>@m.DataHora</td>
+                            </tr>
+                        }
                     }
 
                 </tbody>
@@ -127,26 +135,30 @@
         .withUrl("/medicaoHub")
         .build();
 
-    connection.start();
+    connection.start().catch(err => console.error(err.toString()));
 
     connection.on("NovaMedicao", function (m) {
 
-        // Atualiza contador
+        // 🔢 Atualiza contador
         let total = document.getElementById("totalMedicoes");
-        total.innerText = parseInt(total.innerText) + 1;
+        if (total) {
+            total.innerText = parseInt(total.innerText || "0") + 1;
+        }
 
-        // Adiciona no topo do log
+        // 📡 Atualiza log
         let tabela = document.getElementById("logMedicoes");
 
-        let row = `
-            <tr>
-                <td>${m.volumeMedido}</td>
-                <td>${m.origemLeitura}</td>
-                <td>${m.status}</td>
-                <td>${m.dataHora}</td>
-            </tr>
-        `;
+        if (tabela) {
+            let row = `
+                <tr>
+                    <td>${m.volumeMedido ?? ""}</td>
+                    <td>${m.origemLeitura ?? ""}</td>
+                    <td>${m.status ?? ""}</td>
+                    <td>${m.dataHora ?? ""}</td>
+                </tr>
+            `;
 
-        tabela.insertAdjacentHTML("afterbegin", row);
+            tabela.insertAdjacentHTML("afterbegin", row);
+        }
     });
 </script>

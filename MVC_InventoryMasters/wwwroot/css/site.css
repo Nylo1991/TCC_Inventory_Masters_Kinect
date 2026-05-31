@@ -1,5 +1,5 @@
 /* ==========================
-   INVENTORY MASTERS
+   INVENTORY MASTERS - GREEN ACCENT THEME
    ========================== */
 
 html,
@@ -8,7 +8,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: "Segoe UI", sans-serif;
-    background-color: #f4f6f9;
+    background-color: #f4f6f9; /* mantém claro */
 }
 
 /* ==========================
@@ -21,12 +21,12 @@ body {
 }
 
 /* ==========================
-   SIDEBAR
+   SIDEBAR (VERDE ESCURO)
    ========================== */
 
 .sidebar {
     width: 260px;
-    background: #111827;
+    background: #0f2a1f; /* verde escuro */
     color: white;
     display: flex;
     flex-direction: column;
@@ -35,7 +35,7 @@ body {
 
 .logo-area {
     padding: 25px;
-    border-bottom: 1px solid #1f2937;
+    border-bottom: 1px solid #1e3a2f;
 }
 
     .logo-area h4 {
@@ -62,21 +62,17 @@ body {
     }
 
         .menu a:hover {
-            background: #2563eb;
+            background: #16a34a;
             color: white;
         }
 
         .menu a.active {
-            background: #2563eb;
+            background: #15803d;
             color: white;
         }
 
-    .menu i {
-        font-size: 18px;
-    }
-
 /* ==========================
-   MAIN
+   MAIN CONTENT
    ========================== */
 
 .main-content {
@@ -86,17 +82,17 @@ body {
 }
 
 /* ==========================
-   TOPBAR
+   TOPBAR (VERDE)
    ========================== */
 
 .topbar {
     height: 70px;
-    background: white;
+    background: #15803d; /* verde principal */
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 30px;
-    border-bottom: 1px solid #e5e7eb;
+    color: white;
 }
 
     .topbar h5 {
@@ -116,11 +112,11 @@ body {
 
     .user-info i {
         font-size: 28px;
-        color: #2563eb;
+        color: white;
     }
 
 /* ==========================
-   CONTENT
+   CONTENT (CLARO)
    ========================== */
 
 .content {
@@ -128,7 +124,7 @@ body {
 }
 
 /* ==========================
-   CARDS DASHBOARD
+   CARDS
    ========================== */
 
 .dashboard-card {
@@ -136,6 +132,7 @@ body {
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0,0,0,.08);
     transition: .3s;
+    background: white;
 }
 
     .dashboard-card:hover {
@@ -154,7 +151,7 @@ body {
 .dashboard-number {
     font-size: 32px;
     font-weight: 700;
-    color: #111827;
+    color: #15803d;
 }
 
 /* ==========================
@@ -168,16 +165,8 @@ body {
 }
 
     .table thead {
-        background: #111827;
+        background: #0f2a1f;
         color: white;
-    }
-
-    .table th {
-        border: none;
-    }
-
-    .table td {
-        vertical-align: middle;
     }
 
 /* ==========================
@@ -185,21 +174,13 @@ body {
    ========================== */
 
 .btn-primary {
-    background: #2563eb;
+    background: #16a34a;
     border: none;
 }
 
     .btn-primary:hover {
-        background: #1d4ed8;
+        background: #15803d;
     }
-
-.btn-success {
-    border: none;
-}
-
-.btn-danger {
-    border: none;
-}
 
 /* ==========================
    FORMULÁRIOS
@@ -212,34 +193,5 @@ body {
 
     .form-control:focus,
     .form-select:focus {
-        box-shadow: 0 0 0 .2rem rgba(37,99,235,.15);
+        box-shadow: 0 0 0 .2rem rgba(21,128,61,.15);
     }
-
-/* ==========================
-   RESPONSIVO
-   ========================== */
-
-@media (max-width: 768px) {
-
-    .sidebar {
-        width: 80px;
-    }
-
-    .logo-area h4,
-    .logo-area small,
-    .menu span {
-        display: none;
-    }
-
-    .menu a {
-        justify-content: center;
-    }
-
-    .topbar {
-        padding: 0 15px;
-    }
-
-    .content {
-        padding: 15px;
-    }
-}

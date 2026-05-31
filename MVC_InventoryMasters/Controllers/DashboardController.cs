@@ -12,7 +12,6 @@ namespace MVC_InventoryMasters.Controllers
         private readonly ParametrosSistemaRepository _parametrosRepo;
         private readonly UsuariosRepository _usuariosRepo;
 
-        // O construtor do controller recebe os repositórios via injeção de dependência
         public DashboardController(
             MedicaoVolumeRepository medicaoRepo,
             NotificacaoRepository notificacaoRepo,
@@ -31,15 +30,15 @@ namespace MVC_InventoryMasters.Controllers
         {
             var parceiros = await _parceirosRepo.ListarTodos();
             var usuarios = await _usuariosRepo.ListarTodos();
-            //var medicoes = await _medicaoRepo.ListarTodos();
-            //var alertas = await _notificacaoRepo.ListarTodos();
+            var medicoes = await _medicaoRepo.ListarTodos();
+           // var alertas = await _notificacaoRepo.ListarTodos();
 
             var model = new DashboardViewModel
             {
                 Parceiros = parceiros,
-                Usuarios = usuarios
-//Medicoes = medicoes,
-               // Alertas = alertas
+                Usuarios = usuarios,
+                Medicoes = medicoes
+                //Alertas = alertas
             };
 
             return View(model);
