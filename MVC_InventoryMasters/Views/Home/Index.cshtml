@@ -1,31 +1,88 @@
 ﻿@model IEnumerable<MVC_InventoryMasters.Models.Parceiro>
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="container">
+<div class="container-fluid">
 
-    <h1>Parceiros Cadastrados</h1>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <div class="dashboard-title">Parceiros</div>
+                    <div class="dashboard-number">
+                        @Model.Count()
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-        <tbody>
+        <div class="col-md-3">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <div class="dashboard-title">Usuários</div>
+                    <div class="dashboard-number">
+                        0
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            @foreach (var parceiro in Model)
-            {
-                <tr>
-                    <td>@parceiro.Nome</td>
-                    <td>@parceiro.Email</td>
-                </tr>
-            }
+        <div class="col-md-3">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <div class="dashboard-title">Medições</div>
+                    <div class="dashboard-number">
+                        0
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        </tbody>
-    </table>
+        <div class="col-md-3">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <div class="dashboard-title">Alertas</div>
+                    <div class="dashboard-number">
+                        0
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">Últimos Parceiros Cadastrados</h5>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var parceiro in Model.Take(5))
+                    {
+                        <tr>
+                            <td>@parceiro.Nome</td>
+                            <td>@parceiro.Email</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
 
 </div>

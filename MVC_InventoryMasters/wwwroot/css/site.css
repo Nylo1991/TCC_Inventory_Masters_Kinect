@@ -1,22 +1,245 @@
-html {
-  font-size: 14px;
-}
+/* ==========================
+   INVENTORY MASTERS
+   ========================== */
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+html,
 body {
-  margin-bottom: 60px;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f4f6f9;
+}
+
+/* ==========================
+   LAYOUT
+   ========================== */
+
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ==========================
+   SIDEBAR
+   ========================== */
+
+.sidebar {
+    width: 260px;
+    background: #111827;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0,0,0,.1);
+}
+
+.logo-area {
+    padding: 25px;
+    border-bottom: 1px solid #1f2937;
+}
+
+    .logo-area h4 {
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .logo-area small {
+        color: #9ca3af;
+    }
+
+.menu {
+    padding-top: 15px;
+}
+
+    .menu a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px 25px;
+        color: #d1d5db;
+        text-decoration: none;
+        transition: all .25s ease;
+    }
+
+        .menu a:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .menu a.active {
+            background: #2563eb;
+            color: white;
+        }
+
+    .menu i {
+        font-size: 18px;
+    }
+
+/* ==========================
+   MAIN
+   ========================== */
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================
+   TOPBAR
+   ========================== */
+
+.topbar {
+    height: 70px;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+    .topbar h5 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+/* ==========================
+   USER INFO
+   ========================== */
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .user-info i {
+        font-size: 28px;
+        color: #2563eb;
+    }
+
+/* ==========================
+   CONTENT
+   ========================== */
+
+.content {
+    padding: 30px;
+}
+
+/* ==========================
+   CARDS DASHBOARD
+   ========================== */
+
+.dashboard-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    transition: .3s;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .dashboard-card .card-body {
+        padding: 25px;
+    }
+
+.dashboard-title {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.dashboard-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* ==========================
+   TABELAS
+   ========================== */
+
+.table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+    .table thead {
+        background: #111827;
+        color: white;
+    }
+
+    .table th {
+        border: none;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+/* ==========================
+   BOTÕES
+   ========================== */
+
+.btn-primary {
+    background: #2563eb;
+    border: none;
+}
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+    }
+
+.btn-success {
+    border: none;
+}
+
+.btn-danger {
+    border: none;
+}
+
+/* ==========================
+   FORMULÁRIOS
+   ========================== */
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: 0 0 0 .2rem rgba(37,99,235,.15);
+    }
+
+/* ==========================
+   RESPONSIVO
+   ========================== */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        width: 80px;
+    }
+
+    .logo-area h4,
+    .logo-area small,
+    .menu span {
+        display: none;
+    }
+
+    .menu a {
+        justify-content: center;
+    }
+
+    .topbar {
+        padding: 0 15px;
+    }
+
+    .content {
+        padding: 15px;
+    }
 }
