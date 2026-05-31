@@ -26,6 +26,17 @@ builder.Services.AddScoped<NotificacaoRepository>();
 builder.Services.AddScoped<ParametrosSistemaRepository>();
 builder.Services.AddScoped<UsuariosRepository>();
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 //Configurações SignalR
 builder.Services.AddSignalR();
 
@@ -44,6 +55,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapHub<MedicaoHub>("/medicaoHub");
+
+app.UseCors("AllowAll");
 
 app.MapControllerRoute(
     name: "default",

@@ -8,6 +8,7 @@ namespace MVC_InventoryMasters.ViewModels
         public List<Notificacao> Alertas { get; set; } = new();
         public List<Parceiro> Parceiros { get; set; } = new();
         public List<Usuario> Usuarios { get; set; } = new();
+        public List<Notificacao> Notificacoes { get; set; } = new();
 
         public ParametrosSistema Parametros { get; set; } = new();
         public string MensagemErro { get; set; }
