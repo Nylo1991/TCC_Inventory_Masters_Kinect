@@ -6,7 +6,8 @@ namespace TCC_Inventory_Masters_Kinect
 {
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        protected override void OnStartup(
+            StartupEventArgs e)
         {
             base.OnStartup(e);
 
@@ -34,9 +35,18 @@ namespace TCC_Inventory_Masters_Kinect
             }
         }
 
-        protected override void OnExit(ExitEventArgs e)
+        protected override void OnExit(
+            ExitEventArgs e)
         {
-            base.OnExit(e);
+            try
+            {
+                base.OnExit(e);
+            }
+            finally
+            {
+                Environment.Exit(
+                    0);
+            }
         }
     }
 }

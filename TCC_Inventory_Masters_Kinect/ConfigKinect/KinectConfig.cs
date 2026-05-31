@@ -1,5 +1,4 @@
-﻿
-namespace TCC_Inventory_Masters_Kinect.ConfigKinect
+﻿namespace TCC_Inventory_Masters_Kinect.ConfigKinect
 {
     public static class KinectConfig
     {
@@ -30,62 +29,52 @@ namespace TCC_Inventory_Masters_Kinect.ConfigKinect
         public const string UrlSignalR =
             "http://inventorymasters.runasp.net/residuosHub";
 
+        public const int IntervaloEnvioSignalRSegundos = 15;
+
         // ==========================================
         // MAPEAMENTO ESPACIAL
         // ==========================================
 
-        // Distância máxima de leitura do Kinect
         public const int DistanciaMaximaMm = 4000;
 
-        // Distância mínima de leitura
         public const int DistanciaMinimaMm = 500;
 
         // ==========================================
         // POINT CLOUD
         // ==========================================
 
-        // Quantidade máxima de pontos 3D
         public const int MaxPontos3D = 100000;
 
         // ==========================================
         // SNAPSHOT
         // ==========================================
 
-        // Intervalo para snapshots automáticos
         public const int IntervaloSnapshotSegundos = 60;
 
         // ==========================================
         // MONITORAMENTO
         // ==========================================
 
-        // Intervalo de atualização do volume
         public const int IntervaloAtualizacaoVolumeMs = 500;
-
-        // Intervalo de envio SignalR
-        public const int IntervaloEnvioSignalRSegundos = 15;
 
         // ==========================================
         // OCUPAÇÃO
         // ==========================================
 
-        // Alerta de ocupação
         public const double LimiteAlertaOcupacao = 80.0;
 
-        // Limite crítico
         public const double LimiteCriticoOcupacao = 95.0;
 
         // ==========================================
         // MAPEAMENTO
         // ==========================================
 
-        // Tempo máximo de escaneamento
         public const int TempoMaximoMapeamentoSegundos = 30;
 
         // ==========================================
         // SQLITE
         // ==========================================
 
-        // Intervalo de gravação no banco
         public const int IntervaloSalvarSQLiteSegundos = 1;
     }
 }
