@@ -1,5 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 using MVC_InventoryMasters.Models;
+using MVC_InventoryMasters.Services;
 using System.Collections.Generic;
 
 namespace MVC_InventoryMasters.Repositories
@@ -11,30 +12,32 @@ namespace MVC_InventoryMasters.Repositories
         private readonly FirestoreDb _db;
 
         // O construtor recebe o ID do projeto para abrir a conexão
-        public ParceirosRepository(string projectId)
+        public ParceirosRepository(FirebaseService firebaseService)
         {
-            _db = FirestoreDb.Create(projectId);
+            _db = firebaseService.Firestore;
         }
-        
-        public List<Parceiro> ListarTodos()
+
+        public async Task<List<Parceiro>> ListarTodos()
         {
-            // Cria uma lista vazia para armazenar os parceiros que serão buscados do banco
+            // Cria uma lista vazia para armazenar os parceiros
             List<Parceiro> lista = new List<Parceiro>();
 
-            // Busca os documentos da coleção "Parceiros" de forma assíncrona 
-            var documentos = _db.Collection(_colecao).GetSnapshotAsync().Result;
-            
+            // Busca os documentos da coleção "Parceiros"
+            var documentos = await _db
+                .Collection(_colecao)
+                .GetSnapshotAsync();
+
             foreach (var doc in documentos.Documents)
             {
-                // Converte o documento do Firebase para a classe Parceiro usando o método ConvertTo<T>()
+                // Converte o documento para a classe Parceiro
                 Parceiro p = doc.ConvertTo<Parceiro>();
 
-                // Converte de string para int.
-                p.Id = int.Parse(doc.Id);
-                                
+                // Salva o ID do documento
+                p.Id = doc.Id;
+
                 lista.Add(p);
             }
-                        
+
             return lista;
         }
     }

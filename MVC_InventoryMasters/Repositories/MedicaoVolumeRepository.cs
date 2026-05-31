@@ -1,5 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 using MVC_InventoryMasters.Models;
+using MVC_InventoryMasters.Services;
 using System.Collections.Generic;
 
 namespace MVC_InventoryMasters.Repositories
@@ -9,9 +10,9 @@ namespace MVC_InventoryMasters.Repositories
         private readonly string _colecao = "Medicoes";
         private readonly FirestoreDb _db;
 
-        public MedicaoVolumeRepository(string projectId)
+        public MedicaoVolumeRepository(FirebaseService firebaseService)
         {
-            _db = FirestoreDb.Create(projectId);
+            _db = firebaseService.Firestore;
         }
 
         public List<MedicaoVolume> ListarTodas()

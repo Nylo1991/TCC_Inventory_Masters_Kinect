@@ -1,22 +1,28 @@
 using Google.Cloud.Firestore;
+using Microsoft.Extensions.DependencyInjection;
+using MVC_InventoryMasters.Repositories;
+using MVC_InventoryMasters.Services;
 using System.IO;
-using MVC_InventoryMasters.Repositories; // Ajuste conforme o nome real do seu namespace
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Define o caminho para o arquivo JSON de credenciais do Firebase
+// 1. Configura as credenciais e o ID do projeto do Firebase
 string jsonPath = Path.Combine(AppContext.BaseDirectory, "firebase-service-account.json");
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", jsonPath);
 
-// Registra os repositórios injetando o ID do projeto que está no JSON
-string projectId = "inventorymasters";
+string projectId = "inventorymasters"; // Substitua pelo ID real do seu projeto se for diferente
 
-builder.Services.AddScoped<ParceirosRepository>(sp => new ParceirosRepository(projectId));
-builder.Services.AddScoped<MedicaoVolumeRepository>(sp => new MedicaoVolumeRepository(projectId));
-builder.Services.AddScoped<NotificacaoRepository>(sp => new NotificacaoRepository(projectId));
-builder.Services.AddScoped<ParametrosSistemaRepository>(sp => new ParametrosSistemaRepository(projectId));
-
+// 2. Adiciona os Serviços ao Container de Dependência do .NET
 builder.Services.AddControllersWithViews();
+
+// Registra o FirebaseService passando o ID do projeto
+builder.Services.AddSingleton<FirebaseService>();
+
+// Registra os repositórios que vão usar o FirebaseService
+builder.Services.AddScoped<ParceirosRepository>();
+builder.Services.AddScoped<MedicaoVolumeRepository>();
+builder.Services.AddScoped<NotificacaoRepository>();
+builder.Services.AddScoped<ParametrosSistemaRepository>();
 
 var app = builder.Build();
 

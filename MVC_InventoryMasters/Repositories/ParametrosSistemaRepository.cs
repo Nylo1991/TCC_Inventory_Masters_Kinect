@@ -1,5 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 using MVC_InventoryMasters.Models;
+using MVC_InventoryMasters.Services;
 using System.Linq;
 
 namespace MVC_InventoryMasters.Repositories
@@ -9,9 +10,9 @@ namespace MVC_InventoryMasters.Repositories
         private readonly string _colecao = "Parametros";
         private readonly FirestoreDb _db;
 
-        public ParametrosSistemaRepository(string projectId)
+        public ParametrosSistemaRepository(FirebaseService firebaseService)
         {
-            _db = FirestoreDb.Create(projectId);
+            _db = firebaseService.Firestore;
         }
      
         public ParametrosSistema Buscar()

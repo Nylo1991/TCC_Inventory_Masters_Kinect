@@ -3,7 +3,7 @@ using MVC_InventoryMasters.Repositories;
 using MVC_InventoryMasters.ViewModels;
 
 namespace MVC_InventoryMasters.Controllers
-{    
+{
     public class DashboardController : Controller
     {
         private readonly MedicaoVolumeRepository _medicaoRepo;
@@ -24,19 +24,10 @@ namespace MVC_InventoryMasters.Controllers
             _parametrosRepo = parametrosRepo;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            // Cria um objeto do tipo DashboardViewModel e
-            // preenche suas propriedades com os dados dos repositórios
-            var model = new DashboardViewModel
-            {
-                Medicoes = _medicaoRepo.ListarTodas(),
-                Alertas = _notificacaoRepo.ListarHistorico(),
-                Parceiros = _parceirosRepo.ListarTodos(),
-                Parametros = _parametrosRepo.Buscar()
-            };
-
-            return View(model); // Envia o objeto tipado para a View
+            var parceiros = await _parceirosRepo.ListarTodos();
+            return View(parceiros); // Envia apenas a lista de parceiros, combinando com a View atual
         }
     }
 }

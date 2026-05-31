@@ -1,32 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
-using MVC_InventoryMasters.Models;
-using System.Diagnostics;
+using MVC_InventoryMasters.Repositories;
 
-namespace MVC_InventoryMasters.Controllers
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ParceirosRepository _repository;
+
+    public HomeController(
+        ParceirosRepository repository)
     {
-        private readonly ILogger<HomeController> _logger;
+        _repository = repository;
+    }
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+    public async Task<IActionResult> Index()
+    {
+        var parceiros =
+            await _repository.ListarTodos();
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        return View(parceiros);
     }
 }
