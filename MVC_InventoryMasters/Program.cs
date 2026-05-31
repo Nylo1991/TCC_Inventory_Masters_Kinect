@@ -1,5 +1,6 @@
 using Google.Cloud.Firestore;
 using Microsoft.Extensions.DependencyInjection;
+using MVC_InventoryMasters.Hubs;
 using MVC_InventoryMasters.Repositories;
 using MVC_InventoryMasters.Services;
 using System.IO;
@@ -25,6 +26,10 @@ builder.Services.AddScoped<NotificacaoRepository>();
 builder.Services.AddScoped<ParametrosSistemaRepository>();
 builder.Services.AddScoped<UsuariosRepository>();
 
+//Configurações SignalR
+builder.Services.AddSignalR();
+
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -37,6 +42,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
+
+app.MapHub<MedicaoHub>("/medicaoHub");
 
 app.MapControllerRoute(
     name: "default",

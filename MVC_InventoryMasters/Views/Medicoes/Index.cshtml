@@ -1,0 +1,60 @@
+﻿@model List<MVC_InventoryMasters.Models.MedicaoVolume>
+
+@{
+    ViewData["Title"] = "Medições";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-3">Histórico de Medições</h2>
+
+    <!-- RESUMO SIMPLES -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5>Total de Medições</h5>
+                    <h3>@Model.Count</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TABELA -->
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            Lista de Medições
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Volume</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in Model.OrderByDescending(x => x.DataHora))
+                    {
+                        <tr>
+                            <td>@item.VolumeMedido</td>
+                            <td>@item.DataHora</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

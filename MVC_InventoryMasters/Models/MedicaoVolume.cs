@@ -1,19 +1,24 @@
-﻿using System;
+﻿using Google.Cloud.Firestore;
+using System;
 
 namespace MVC_InventoryMasters.Models
 {
+    [FirestoreData]
     public class MedicaoVolume
     {
-        public int Id { get; set; }
+        [FirestoreDocumentId]
+        public string? Id { get; set; }
 
-        public double VolumeCm3 { get; set; }
+        [FirestoreProperty]
+        public string? OrigemLeitura { get; set; }
 
-        public DateTime DataHora { get; set; }
-        
-        public bool KinectLigado { get; set; }
-       
-        public bool Calibrado { get; set; }
-       
+        [FirestoreProperty]
         public string? Status { get; set; }
+
+        [FirestoreProperty]
+        public double? VolumeMedido { get; set; }
+
+        [FirestoreProperty]
+        public DateTime? DataHora { get; set; }
     }
 }
