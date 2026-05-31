@@ -302,8 +302,8 @@
     <Compile Include="Model\SnapshotEspacial.cs" />
     <Compile Include="Repository\Interface\IKinectRepository.cs" />
     <Compile Include="Repository\KinectRepository.cs" />
-    <Compile Include="Service\ApiMedicaoService.cs" />
     <Compile Include="Service\KinectService.cs" />
+    <Compile Include="Service\SignalRService.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
