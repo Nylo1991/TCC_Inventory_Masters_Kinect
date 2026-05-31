@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+
 using TCC_Inventory_Masters_Kinect.Command;
 using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Model;
@@ -26,22 +27,24 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
         private readonly SignalRService _signalRService;
 
-        // Controla quando será permitida a próxima gravação no SQLite.
         private DateTime _proximaGravacao =
             DateTime.MinValue;
 
-        // Controla quando será permitido o próximo envio ao MVC via SignalR.
         private DateTime _proximoEnvioSignalR =
             DateTime.MinValue;
 
-        // Indica se está conectado ao SignalR.
-        private bool _signalRConectado = false;
+        private bool _signalRConectado =
+            false;
+
+        private bool _encerrando =
+            false;
 
         // ==========================================
         // STATUS GERAL
         // ==========================================
 
-        private string _status = string.Empty;
+        private string _status =
+            string.Empty;
 
         public string Status
         {
@@ -136,7 +139,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         // DADOS DO ESPAÇO
         // ==========================================
 
-        private string _nomeEspaco = string.Empty;
+        private string _nomeEspaco =
+            string.Empty;
 
         public string NomeEspaco
         {
@@ -149,7 +153,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
         }
 
-        private string _volumeMaximo = string.Empty;
+        private string _volumeMaximo =
+            string.Empty;
 
         public string VolumeMaximo
         {
@@ -162,7 +167,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
         }
 
-        private string _percentualAlerta = string.Empty;
+        private string _percentualAlerta =
+            string.Empty;
 
         public string PercentualAlerta
         {
@@ -305,16 +311,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Info(
                     "Serviços inicializados.");
 
-                // ==========================================
-                // EVENTOS SIGNALR
-                // ==========================================
-
                 _signalRService.StatusSignalRAtualizado +=
                     AtualizarStatus;
-
-                // ==========================================
-                // EVENTOS KINECT
-                // ==========================================
 
                 _kinectService.MedidaAtualizada +=
                     ProcessarNovaMedida;
@@ -330,10 +328,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 _kinectService.SnapshotCriado +=
                     AtualizarSnapshot;
-
-                // ==========================================
-                // TEXTO INICIAL
-                // ==========================================
 
                 Status =
                     "Sistema aguardando inicialização...";
@@ -365,10 +359,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 UltimoSnapshot =
                     "Snapshot: nenhum";
 
-                // ==========================================
-                // COMANDOS
-                // ==========================================
-
                 LigarKinectCommand =
                     new RelayCommand(LigarKinect);
 
@@ -381,15 +371,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Info(
                     "Comandos configurados.");
 
-                // ==========================================
-                // HISTÓRICO
-                // ==========================================
-
                 CarregarHistoricoMedicoes();
-
-                // ==========================================
-                // CONECTAR SIGNALR
-                // ==========================================
 
                 ConectarSignalR();
             }
@@ -405,6 +387,30 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         }
 
         // ==========================================
+        // EXECUTAR NA UI
+        // ==========================================
+
+        private void ExecutarNaUI(
+            Action acao)
+        {
+            if (Application.Current == null)
+            {
+                acao();
+                return;
+            }
+
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                acao();
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(
+                    acao);
+            }
+        }
+
+        // ==========================================
         // SIGNALR
         // ==========================================
 
@@ -412,6 +418,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         {
             try
             {
+                if (_encerrando)
+                    return;
+
                 LoggerService.Info(
                     "Tentando conectar ao SignalR.");
 
@@ -459,6 +468,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         {
             try
             {
+                if (_encerrando)
+                    return;
+
                 LoggerService.Info(
                     "Inicializando Kinect.");
 
@@ -608,6 +620,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
         private async void DesligarKinect()
         {
+            await DesligarKinectAsync();
+        }
+
+        private async Task DesligarKinectAsync()
+        {
             try
             {
                 LoggerService.Info(
@@ -616,32 +633,35 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 _kinectService
                     .DesligarKinect();
 
-                Status =
-                    "Kinect desligado.";
+                ExecutarNaUI(() =>
+                {
+                    Status =
+                        "Kinect desligado.";
 
-                StatusKinect =
-                    "Kinect: Desconectado";
+                    StatusKinect =
+                        "Kinect: Desconectado";
 
-                VolumeTexto =
-                    "Volume: 0 cm³";
+                    VolumeTexto =
+                        "Volume: 0 cm³";
 
-                CameraImage =
-                    null;
+                    CameraImage =
+                        null;
 
-                QuantidadePontos3D =
-                    "Pontos 3D: 0";
+                    QuantidadePontos3D =
+                        "Pontos 3D: 0";
 
-                PercentualOcupacaoTexto =
-                    "Ocupação: 0%";
+                    PercentualOcupacaoTexto =
+                        "Ocupação: 0%";
 
-                EspacoLivreTexto =
-                    "Espaço livre: 0 cm³";
+                    EspacoLivreTexto =
+                        "Espaço livre: 0 cm³";
 
-                UltimoSnapshot =
-                    "Snapshot: nenhum";
+                    UltimoSnapshot =
+                        "Snapshot: nenhum";
 
-                StatusMvcFirebase =
-                    "MVC/Firebase: Aguardando";
+                    StatusMvcFirebase =
+                        "MVC/Firebase: Aguardando";
+                });
 
                 if (_signalRConectado)
                 {
@@ -655,14 +675,17 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     _signalRConectado =
                         false;
 
-                    StatusSignalR =
-                        "SignalR: Desconectado";
+                    ExecutarNaUI(() =>
+                    {
+                        StatusSignalR =
+                            "SignalR: Desconectado";
+
+                        Status =
+                            "Kinect desligado e conexão com MVC encerrada.";
+                    });
 
                     LoggerService.Info(
                         "SignalR desconectado.");
-
-                    Status =
-                        "Kinect desligado e conexão com MVC encerrada.";
                 }
             }
             catch (Exception ex)
@@ -684,6 +707,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         {
             try
             {
+                if (_encerrando)
+                    return;
+
                 LoggerService.Info(
                     "Iniciando calibração do chão.");
 
@@ -721,8 +747,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         private void AtualizarStatus(
             string msg)
         {
-            Status =
-                msg;
+            if (_encerrando)
+                return;
+
+            ExecutarNaUI(() =>
+            {
+                Status =
+                    msg;
+            });
 
             LoggerService.Info(
                 "Status atualizado: " + msg);
@@ -735,8 +767,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         private void AtualizarCamera(
             ImageSource imagem)
         {
-            CameraImage =
-                imagem;
+            if (_encerrando)
+                return;
+
+            ExecutarNaUI(() =>
+            {
+                CameraImage =
+                    imagem;
+            });
         }
 
         // ==========================================
@@ -748,8 +786,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         {
             try
             {
-                QuantidadePontos3D =
-                    $"Pontos 3D: {pontos.Count}";
+                if (_encerrando)
+                    return;
+
+                ExecutarNaUI(() =>
+                {
+                    QuantidadePontos3D =
+                        $"Pontos 3D: {pontos.Count}";
+                });
 
                 LoggerService.Info(
                     $"Point Cloud atualizada com {pontos.Count} pontos.");
@@ -771,14 +815,20 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         {
             try
             {
-                UltimoSnapshot =
-                    $"Snapshot: {snapshot.NomeSnapshot}";
+                if (_encerrando)
+                    return;
 
-                PercentualOcupacaoTexto =
-                    $"Ocupação: {snapshot.PercentualOcupacao:F2}%";
+                ExecutarNaUI(() =>
+                {
+                    UltimoSnapshot =
+                        $"Snapshot: {snapshot.NomeSnapshot}";
 
-                EspacoLivreTexto =
-                    $"Espaço livre: {snapshot.EspacoLivreCm3:F0} cm³";
+                    PercentualOcupacaoTexto =
+                        $"Ocupação: {snapshot.PercentualOcupacao:F2}%";
+
+                    EspacoLivreTexto =
+                        $"Espaço livre: {snapshot.EspacoLivreCm3:F0} cm³";
+                });
 
                 LoggerService.Info(
                     "Snapshot recebido na interface: " + snapshot.NomeSnapshot);
@@ -830,12 +880,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         private void ProcessarNovaMedida(
             double volumeCm3)
         {
-            VolumeTexto =
-                $"Volume: {volumeCm3:F0} cm³";
+            if (_encerrando)
+                return;
 
-            // ==========================================
-            // SALVAR SQLITE
-            // ==========================================
+            ExecutarNaUI(() =>
+            {
+                VolumeTexto =
+                    $"Volume: {volumeCm3:F0} cm³";
+            });
 
             if (DateTime.Now >=
                 _proximaGravacao)
@@ -867,7 +919,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 {
                     try
                     {
-                        Application.Current.Dispatcher.Invoke(() =>
+                        if (_encerrando)
+                            return;
+
+                        ExecutarNaUI(() =>
                         {
                             StatusSQLite =
                                 "SQLite: Salvando";
@@ -880,7 +935,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                         LoggerService.Info(
                             $"Medição salva no SQLite. Volume: {volumeCm3:F0} cm³");
 
-                        Application.Current.Dispatcher.Invoke(() =>
+                        ExecutarNaUI(() =>
                         {
                             HistoricoMedicoes.Insert(
                                 0,
@@ -902,7 +957,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                             "Erro ao salvar medição no SQLite.",
                             ex);
 
-                        Application.Current.Dispatcher.Invoke(() =>
+                        ExecutarNaUI(() =>
                         {
                             StatusSQLite =
                                 "SQLite: Erro ao salvar";
@@ -910,10 +965,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     }
                 });
             }
-
-            // ==========================================
-            // ENVIAR MVC VIA SIGNALR
-            // ==========================================
 
             if (_signalRConectado &&
                 DateTime.Now >=
@@ -927,7 +978,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 {
                     try
                     {
-                        Application.Current.Dispatcher.Invoke(() =>
+                        if (_encerrando)
+                            return;
+
+                        ExecutarNaUI(() =>
                         {
                             StatusMvcFirebase =
                                 "MVC/Firebase: Enviando";
@@ -944,7 +998,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                         LoggerService.Info(
                             $"Volume enviado ao MVC: {volumeCm3:F0} cm³");
 
-                        Application.Current.Dispatcher.Invoke(() =>
+                        ExecutarNaUI(() =>
                         {
                             StatusMvcFirebase =
                                 "MVC/Firebase: Enviado";
@@ -959,7 +1013,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                             "Erro ao enviar dados ao MVC.",
                             ex);
 
-                        Application.Current.Dispatcher.Invoke(() =>
+                        ExecutarNaUI(() =>
                         {
                             StatusMvcFirebase =
                                 "MVC/Firebase: Falha no envio";
@@ -969,6 +1023,64 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                         });
                     }
                 });
+            }
+        }
+
+        // ==========================================
+        // ENCERRAR APLICAÇÃO
+        // ==========================================
+
+        public async Task EncerrarAplicacaoAsync()
+        {
+            try
+            {
+                _encerrando =
+                    true;
+
+                LoggerService.Info(
+                    "Encerrando aplicação.");
+
+                ExecutarNaUI(() =>
+                {
+                    Status =
+                        "Encerrando aplicação...";
+                });
+
+                _kinectService
+                    .DesligarKinect();
+
+                if (_signalRConectado)
+                {
+                    await _signalRService
+                        .DesconectarAsync();
+
+                    _signalRConectado =
+                        false;
+                }
+
+                ExecutarNaUI(() =>
+                {
+                    StatusKinect =
+                        "Kinect: Desconectado";
+
+                    StatusSignalR =
+                        "SignalR: Desconectado";
+
+                    StatusMvcFirebase =
+                        "MVC/Firebase: Aguardando";
+
+                    Status =
+                        "Aplicação encerrada.";
+                });
+
+                LoggerService.Info(
+                    "Aplicação encerrada com segurança.");
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Erro(
+                    "Erro ao encerrar aplicação.",
+                    ex);
             }
         }
     }

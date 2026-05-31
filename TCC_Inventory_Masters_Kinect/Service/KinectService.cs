@@ -23,6 +23,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
             private set;
         }
 
+        // Controla se o Kinect está em processo de desligamento.
+        private bool _encerrando = false;
+
         // ==========================================
         // DEPTH
         // ==========================================
@@ -104,6 +107,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                _encerrando =
+                    false;
+
                 LoggerService.Info(
                     "Iniciando busca pelo Kinect.");
 
@@ -190,7 +196,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
         public void DefinirEspaco(
             EspacoMapeado espaco)
         {
-            _espacoAtual = espaco;
+            _espacoAtual =
+                espaco;
 
             LoggerService.Info(
                 $"Espaço definido: {espaco.NomeEspaco}");
@@ -206,6 +213,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                if (_encerrando)
+                    return;
+
                 using (var frame =
                     e.OpenColorImageFrame())
                 {
@@ -257,6 +267,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                if (_encerrando)
+                    return;
+
                 using (DepthImageFrame frame =
                     e.OpenDepthImageFrame())
                 {
@@ -315,6 +328,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                if (_encerrando)
+                    return;
+
                 if (_depthPixels == null)
                 {
                     LoggerService.Info(
@@ -337,11 +353,13 @@ namespace TCC_Inventory_Masters_Kinect.Service
                         _depthPixels[i].Depth;
                 }
 
-                _calibrado = true;
+                _calibrado =
+                    true;
 
                 _historicoVolume.Clear();
 
-                _ultimoVolume = 0;
+                _ultimoVolume =
+                    0;
 
                 LoggerService.Info(
                     "Chão calibrado.");
@@ -370,6 +388,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                if (_encerrando)
+                    return;
+
                 if (_depthPixels == null)
                 {
                     LoggerService.Info(
@@ -458,6 +479,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                if (_encerrando)
+                    return;
+
                 if (_depthPixels == null ||
                     _referenciaChao == null)
                 {
@@ -475,7 +499,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     KinectConfig.VerticalFovGraus
                     * Math.PI / 180.0;
 
-                double volumeTotal = 0;
+                double volumeTotal =
+                    0;
 
                 for (int i = 0;
                      i < _depthPixels.Length;
@@ -620,6 +645,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                if (_encerrando)
+                    return;
+
                 if (DateTime.Now <
                     _proximoSnapshot)
                     return;
@@ -685,6 +713,12 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                _encerrando =
+                    true;
+
+                _calibrado =
+                    false;
+
                 if (Sensor != null)
                 {
                     Sensor.ColorFrameReady -=
@@ -698,16 +732,34 @@ namespace TCC_Inventory_Masters_Kinect.Service
                         Sensor.Stop();
                     }
 
-                    Sensor = null;
+                    Sensor =
+                        null;
                 }
 
-                _calibrado = false;
+                _referenciaChao =
+                    null;
 
-                _referenciaChao = null;
+                _depthPixels =
+                    null;
 
-                _historicoVolume.Clear();
+                _colorPixels =
+                    null;
 
-                _ultimoVolume = 0;
+                _colorBitmap =
+                    null;
+
+                if (_pontos3D != null)
+                {
+                    _pontos3D.Clear();
+                }
+
+                if (_historicoVolume != null)
+                {
+                    _historicoVolume.Clear();
+                }
+
+                _ultimoVolume =
+                    0;
 
                 LoggerService.Info(
                     "Kinect desligado.");
