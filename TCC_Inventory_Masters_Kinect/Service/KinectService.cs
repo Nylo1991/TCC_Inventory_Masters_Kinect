@@ -176,6 +176,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     "Erro ao inicializar Kinect.",
                     ex);
 
+                StatusAtualizado?.Invoke(
+                    "Erro ao inicializar Kinect: " + ex.Message);
+
                 return false;
             }
         }
@@ -209,6 +212,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     if (frame == null)
                         return;
 
+                    if (_colorPixels == null ||
+                        _colorBitmap == null)
+                        return;
+
                     frame.CopyPixelDataTo(
                         _colorPixels);
 
@@ -234,6 +241,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 LoggerService.Erro(
                     "Erro ao processar RGB.",
                     ex);
+
+                StatusAtualizado?.Invoke(
+                    "Erro ao processar imagem RGB.");
             }
         }
 
@@ -253,14 +263,34 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     if (frame == null)
                         return;
 
+                    if (Sensor == null)
+                    {
+                        LoggerService.Info(
+                            "Frame depth ignorado: Sensor está nulo.");
+
+                        return;
+                    }
+
+                    if (_depthPixels == null)
+                    {
+                        LoggerService.Info(
+                            "Frame depth ignorado: array de profundidade está nulo.");
+
+                        return;
+                    }
+
                     frame.CopyDepthImagePixelDataTo(
                         _depthPixels);
 
                     if (_calibrado)
                     {
-                        GerarPointCloud();
+                        GerarPointCloud(
+                            frame.Width,
+                            frame.Height);
 
-                        CalcularVolume();
+                        CalcularVolume(
+                            frame.Width,
+                            frame.Height);
 
                         GerarSnapshotAutomatico();
                     }
@@ -271,6 +301,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 LoggerService.Erro(
                     "Erro ao processar depth.",
                     ex);
+
+                StatusAtualizado?.Invoke(
+                    "Erro ao processar profundidade.");
             }
         }
 
@@ -282,6 +315,17 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                if (_depthPixels == null)
+                {
+                    LoggerService.Info(
+                        "Falha na calibração: dados de profundidade indisponíveis.");
+
+                    StatusAtualizado?.Invoke(
+                        "Não há dados de profundidade para calibrar.");
+
+                    return;
+                }
+
                 _referenciaChao =
                     new int[_depthPixels.Length];
 
@@ -310,6 +354,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 LoggerService.Erro(
                     "Erro ao calibrar chão.",
                     ex);
+
+                StatusAtualizado?.Invoke(
+                    "Erro ao calibrar chão: " + ex.Message);
             }
         }
 
@@ -317,14 +364,21 @@ namespace TCC_Inventory_Masters_Kinect.Service
         // GERAR POINT CLOUD
         // ==========================================
 
-        private void GerarPointCloud()
+        private void GerarPointCloud(
+            int width,
+            int height)
         {
             try
             {
-                _pontos3D.Clear();
+                if (_depthPixels == null)
+                {
+                    LoggerService.Info(
+                        "Point Cloud não gerada: dados de profundidade indisponíveis.");
 
-                int width =
-                    Sensor.DepthStream.FrameWidth;
+                    return;
+                }
+
+                _pontos3D.Clear();
 
                 for (int i = 0;
                      i < _depthPixels.Length;
@@ -348,25 +402,39 @@ namespace TCC_Inventory_Masters_Kinect.Service
                             EspacoMapeadoId =
                                 _espacoAtual?.Id ?? 0,
 
-                            X = x,
+                            X =
+                                x,
 
-                            Y = y,
+                            Y =
+                                y,
 
-                            Z = depth,
+                            Z =
+                                depth,
 
-                            Distancia = depth,
+                            Distancia =
+                                depth,
 
-                            PixelX = x,
+                            PixelX =
+                                x,
 
-                            PixelY = y,
+                            PixelY =
+                                y,
 
-                            TipoObjeto = "Objeto",
+                            TipoObjeto =
+                                "Objeto",
 
                             DataCaptura =
                                 DateTime.Now
                         };
 
-                    _pontos3D.Add(ponto);
+                    _pontos3D.Add(
+                        ponto);
+
+                    if (_pontos3D.Count >=
+                        KinectConfig.MaxPontos3D)
+                    {
+                        break;
+                    }
                 }
 
                 PointCloudAtualizada?.Invoke(
@@ -384,10 +452,21 @@ namespace TCC_Inventory_Masters_Kinect.Service
         // CALCULAR VOLUME
         // ==========================================
 
-        private void CalcularVolume()
+        private void CalcularVolume(
+            int width,
+            int height)
         {
             try
             {
+                if (_depthPixels == null ||
+                    _referenciaChao == null)
+                {
+                    LoggerService.Info(
+                        "Cálculo de volume ignorado: dados insuficientes.");
+
+                    return;
+                }
+
                 double horizontalFOV =
                     KinectConfig.HorizontalFovGraus
                     * Math.PI / 180.0;
@@ -395,12 +474,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 double verticalFOV =
                     KinectConfig.VerticalFovGraus
                     * Math.PI / 180.0;
-
-                int width =
-                    Sensor.DepthStream.FrameWidth;
-
-                int height =
-                    Sensor.DepthStream.FrameHeight;
 
                 double volumeTotal = 0;
 
@@ -424,7 +497,17 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                     if (delta <
                         KinectConfig
-                        .LimiteMinimoAlturaMm)
+                            .LimiteMinimoAlturaMm)
+                        continue;
+
+                    if (current <
+                        KinectConfig
+                            .DistanciaMinimaMm)
+                        continue;
+
+                    if (current >
+                        KinectConfig
+                            .DistanciaMaximaMm)
                         continue;
 
                     double altura =
@@ -486,11 +569,20 @@ namespace TCC_Inventory_Masters_Kinect.Service
                             .VolumeMaximoPermitidoCm3
                         - suavizado;
 
-                    _espacoAtual.PercentualOcupacao =
-                        (suavizado /
-                         _espacoAtual
-                             .VolumeMaximoPermitidoCm3)
-                        * 100.0;
+                    if (_espacoAtual
+                            .VolumeMaximoPermitidoCm3 > 0)
+                    {
+                        _espacoAtual.PercentualOcupacao =
+                            (suavizado /
+                             _espacoAtual
+                                 .VolumeMaximoPermitidoCm3)
+                            * 100.0;
+                    }
+                    else
+                    {
+                        _espacoAtual.PercentualOcupacao =
+                            0;
+                    }
 
                     _espacoAtual.DataUltimaAtualizacao =
                         DateTime.Now;
@@ -514,6 +606,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 LoggerService.Erro(
                     "Erro ao calcular volume.",
                     ex);
+
+                StatusAtualizado?.Invoke(
+                    "Erro ao calcular volume: " + ex.Message);
             }
         }
 
@@ -606,6 +701,14 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     Sensor = null;
                 }
 
+                _calibrado = false;
+
+                _referenciaChao = null;
+
+                _historicoVolume.Clear();
+
+                _ultimoVolume = 0;
+
                 LoggerService.Info(
                     "Kinect desligado.");
 
@@ -617,6 +720,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 LoggerService.Erro(
                     "Erro ao desligar Kinect.",
                     ex);
+
+                StatusAtualizado?.Invoke(
+                    "Erro ao desligar Kinect: " + ex.Message);
             }
         }
     }

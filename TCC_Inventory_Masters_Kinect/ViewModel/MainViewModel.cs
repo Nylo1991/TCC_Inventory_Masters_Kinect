@@ -1,5 +1,5 @@
-﻿
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -41,7 +41,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         // STATUS
         // ==========================================
 
-        private string _status;
+        private string _status = string.Empty;
 
         public string Status
         {
@@ -58,7 +58,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         // VOLUME
         // ==========================================
 
-        private string _volumeTexto;
+        private string _volumeTexto = string.Empty;
 
         public string VolumeTexto
         {
@@ -67,6 +67,109 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             set
             {
                 _volumeTexto = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // ==========================================
+        // DADOS DO ESPAÇO
+        // ==========================================
+
+        private string _nomeEspaco = string.Empty;
+
+        public string NomeEspaco
+        {
+            get => _nomeEspaco;
+
+            set
+            {
+                _nomeEspaco = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _volumeMaximo = string.Empty;
+
+        public string VolumeMaximo
+        {
+            get => _volumeMaximo;
+
+            set
+            {
+                _volumeMaximo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _percentualAlerta = string.Empty;
+
+        public string PercentualAlerta
+        {
+            get => _percentualAlerta;
+
+            set
+            {
+                _percentualAlerta = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // ==========================================
+        // INFORMAÇÕES CAPTURADAS
+        // ==========================================
+
+        private string _quantidadePontos3D =
+            "Pontos 3D: 0";
+
+        public string QuantidadePontos3D
+        {
+            get => _quantidadePontos3D;
+
+            set
+            {
+                _quantidadePontos3D = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _ultimoSnapshot =
+            "Snapshot: nenhum";
+
+        public string UltimoSnapshot
+        {
+            get => _ultimoSnapshot;
+
+            set
+            {
+                _ultimoSnapshot = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _percentualOcupacaoTexto =
+            "Ocupação: 0%";
+
+        public string PercentualOcupacaoTexto
+        {
+            get => _percentualOcupacaoTexto;
+
+            set
+            {
+                _percentualOcupacaoTexto = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _espacoLivreTexto =
+            "Espaço livre: 0 cm³";
+
+        public string EspacoLivreTexto
+        {
+            get => _espacoLivreTexto;
+
+            set
+            {
+                _espacoLivreTexto = value;
                 OnPropertyChanged();
             }
         }
@@ -128,14 +231,18 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     new SignalRService();
 
                 LoggerService.Info(
-                    "*******************Serviços inicializados.**********************");
+                    "Serviços inicializados.");
 
+                // ==========================================
                 // EVENTOS SIGNALR
+                // ==========================================
 
                 _signalRService.StatusSignalRAtualizado +=
                     AtualizarStatus;
 
+                // ==========================================
                 // EVENTOS KINECT
+                // ==========================================
 
                 _kinectService.MedidaAtualizada +=
                     ProcessarNovaMedida;
@@ -146,7 +253,15 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 _kinectService.CameraAtualizada +=
                     AtualizarCamera;
 
+                _kinectService.PointCloudAtualizada +=
+                    AtualizarPointCloud;
+
+                _kinectService.SnapshotCriado +=
+                    AtualizarSnapshot;
+
+                // ==========================================
                 // TEXTO INICIAL
+                // ==========================================
 
                 Status =
                     "Sistema aguardando inicialização...";
@@ -154,7 +269,21 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 VolumeTexto =
                     "Volume: 0 cm³";
 
+                QuantidadePontos3D =
+                    "Pontos 3D: 0";
+
+                PercentualOcupacaoTexto =
+                    "Ocupação: 0%";
+
+                EspacoLivreTexto =
+                    "Espaço livre: 0 cm³";
+
+                UltimoSnapshot =
+                    "Snapshot: nenhum";
+
+                // ==========================================
                 // COMANDOS
+                // ==========================================
 
                 LigarKinectCommand =
                     new RelayCommand(LigarKinect);
@@ -168,7 +297,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Info(
                     "Comandos configurados.");
 
+                // ==========================================
                 // CONECTAR SIGNALR
+                // ==========================================
 
                 ConectarSignalR();
             }
@@ -177,6 +308,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Erro(
                     "Erro ao inicializar MainViewModel.",
                     ex);
+
+                Status =
+                    "Erro ao inicializar sistema: " + ex.Message;
             }
         }
 
@@ -191,7 +325,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Info(
                     "Tentando conectar ao SignalR.");
 
-                await _signalRService.ConectarAsync();
+                await _signalRService
+                    .ConectarAsync();
 
                 _signalRConectado = true;
 
@@ -201,8 +336,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Info(
                     "Conectado ao SignalR com sucesso.");
 
-                await _signalRService.EnviarStatusAsync(
-                    "Aplicação Kinect conectada ao MVC.");
+                await _signalRService
+                    .EnviarStatusAsync(
+                        "Aplicação Kinect conectada ao MVC.");
             }
             catch (Exception ex)
             {
@@ -231,6 +367,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 Status =
                     "Inicializando Kinect...";
 
+                CriarEspacoMapeadoSePossivel();
+
                 bool sucesso =
                     _kinectService
                         .InicializarKinect();
@@ -245,8 +383,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                     if (_signalRConectado)
                     {
-                        await _signalRService.EnviarStatusAsync(
-                            "Kinect iniciado.");
+                        await _signalRService
+                            .EnviarStatusAsync(
+                                "Kinect iniciado.");
                     }
                 }
                 else
@@ -259,8 +398,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                     if (_signalRConectado)
                     {
-                        await _signalRService.EnviarStatusAsync(
-                            "Falha ao iniciar Kinect.");
+                        await _signalRService
+                            .EnviarStatusAsync(
+                                "Falha ao iniciar Kinect.");
                     }
                 }
             }
@@ -271,7 +411,81 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     ex);
 
                 Status =
-                    ex.Message;
+                    "Erro ao iniciar Kinect: " + ex.Message;
+            }
+        }
+
+        // ==========================================
+        // CRIAR ESPAÇO MAPEADO
+        // ==========================================
+
+        private void CriarEspacoMapeadoSePossivel()
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(NomeEspaco))
+                {
+                    LoggerService.Info(
+                        "Espaço não definido. Kinect será iniciado sem cadastro de espaço.");
+
+                    return;
+                }
+
+                double volumeMaximoCm3 = 0;
+
+                double percentualAlerta = 0;
+
+                double.TryParse(
+                    VolumeMaximo,
+                    out volumeMaximoCm3);
+
+                double.TryParse(
+                    PercentualAlerta,
+                    out percentualAlerta);
+
+                var espaco =
+                    new EspacoMapeado
+                    {
+                        NomeEspaco =
+                            NomeEspaco,
+
+                        VolumeMaximoPermitidoCm3 =
+                            volumeMaximoCm3,
+
+                        VolumeAtualCm3 =
+                            0,
+
+                        PercentualOcupacao =
+                            0,
+
+                        EspacoLivreCm3 =
+                            volumeMaximoCm3,
+
+                        Ativo =
+                            true,
+
+                        MapeamentoConcluido =
+                            false,
+
+                        Status =
+                            "Mapeamento iniciado",
+
+                        DataCriacao =
+                            DateTime.Now
+                    };
+
+                _kinectService
+                    .DefinirEspaco(
+                        espaco);
+
+                LoggerService.Info(
+                    "Espaço enviado ao KinectService: " + NomeEspaco);
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Erro(
+                    "Erro ao criar espaço mapeado.",
+                    ex);
             }
         }
 
@@ -286,7 +500,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Info(
                     "Desligando Kinect.");
 
-                _kinectService.DesligarKinect();
+                _kinectService
+                    .DesligarKinect();
 
                 Status =
                     "Kinect desligado.";
@@ -294,14 +509,29 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 VolumeTexto =
                     "Volume: 0 cm³";
 
-                CameraImage = null;
+                CameraImage =
+                    null;
+
+                QuantidadePontos3D =
+                    "Pontos 3D: 0";
+
+                PercentualOcupacaoTexto =
+                    "Ocupação: 0%";
+
+                EspacoLivreTexto =
+                    "Espaço livre: 0 cm³";
+
+                UltimoSnapshot =
+                    "Snapshot: nenhum";
 
                 if (_signalRConectado)
                 {
-                    await _signalRService.EnviarStatusAsync(
-                        "Kinect desligado.");
+                    await _signalRService
+                        .EnviarStatusAsync(
+                            "Kinect desligado.");
 
-                    await _signalRService.DesconectarAsync();
+                    await _signalRService
+                        .DesconectarAsync();
 
                     _signalRConectado = false;
 
@@ -317,6 +547,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Erro(
                     "Erro ao desligar Kinect.",
                     ex);
+
+                Status =
+                    "Erro ao desligar Kinect: " + ex.Message;
             }
         }
 
@@ -331,7 +564,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Info(
                     "Iniciando calibração do chão.");
 
-                _kinectService.CalibrarChao();
+                _kinectService
+                    .CalibrarChao();
 
                 Status =
                     "Chão calibrado.";
@@ -341,8 +575,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 if (_signalRConectado)
                 {
-                    await _signalRService.EnviarStatusAsync(
-                        "Chão calibrado.");
+                    await _signalRService
+                        .EnviarStatusAsync(
+                            "Chão calibrado.");
                 }
             }
             catch (Exception ex)
@@ -350,6 +585,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Erro(
                     "Erro ao calibrar chão.",
                     ex);
+
+                Status =
+                    "Erro ao calibrar chão: " + ex.Message;
             }
         }
 
@@ -360,7 +598,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         private void AtualizarStatus(
             string msg)
         {
-            Status = msg;
+            Status =
+                msg;
 
             LoggerService.Info(
                 "Status atualizado: " + msg);
@@ -373,7 +612,60 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         private void AtualizarCamera(
             ImageSource imagem)
         {
-            CameraImage = imagem;
+            CameraImage =
+                imagem;
+        }
+
+        // ==========================================
+        // POINT CLOUD
+        // ==========================================
+
+        private void AtualizarPointCloud(
+            List<Point3DData> pontos)
+        {
+            try
+            {
+                QuantidadePontos3D =
+                    $"Pontos 3D: {pontos.Count}";
+
+                LoggerService.Info(
+                    $"Point Cloud atualizada com {pontos.Count} pontos.");
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Erro(
+                    "Erro ao atualizar Point Cloud na interface.",
+                    ex);
+            }
+        }
+
+        // ==========================================
+        // SNAPSHOT
+        // ==========================================
+
+        private void AtualizarSnapshot(
+            SnapshotEspacial snapshot)
+        {
+            try
+            {
+                UltimoSnapshot =
+                    $"Snapshot: {snapshot.NomeSnapshot}";
+
+                PercentualOcupacaoTexto =
+                    $"Ocupação: {snapshot.PercentualOcupacao:F2}%";
+
+                EspacoLivreTexto =
+                    $"Espaço livre: {snapshot.EspacoLivreCm3:F0} cm³";
+
+                LoggerService.Info(
+                    "Snapshot recebido na interface: " + snapshot.NomeSnapshot);
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Erro(
+                    "Erro ao atualizar snapshot na interface.",
+                    ex);
+            }
         }
 
         // ==========================================
@@ -482,4 +774,3 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         }
     }
 }
-
