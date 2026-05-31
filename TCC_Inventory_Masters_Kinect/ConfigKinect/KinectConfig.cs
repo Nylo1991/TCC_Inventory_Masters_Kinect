@@ -1,5 +1,4 @@
-﻿
-namespace TCC_Inventory_Masters_Kinect.ConfigKinect
+﻿namespace TCC_Inventory_Masters_Kinect.ConfigKinect
 {
     public static class KinectConfig
     {
@@ -24,11 +23,11 @@ namespace TCC_Inventory_Masters_Kinect.ConfigKinect
         public const double VerticalFovGraus = 43.0;
 
         // ==========================================
-        // SIGNALR
+        // API MVC
         // ==========================================
 
-        public const string UrlSignalR =
-            "http://inventorymasters.runasp.net/residuosHub";
+        public const string UrlApiMedicoes =
+            "http://inventorymasters.runasp.net/api/medicoes";
 
         // ==========================================
         // MAPEAMENTO ESPACIAL
@@ -61,8 +60,8 @@ namespace TCC_Inventory_Masters_Kinect.ConfigKinect
         // Intervalo de atualização do volume
         public const int IntervaloAtualizacaoVolumeMs = 500;
 
-        // Intervalo de envio SignalR
-        public const int IntervaloEnvioSignalRSegundos = 15;
+        // Intervalo de envio para API MVC
+        public const int IntervaloEnvioApiSegundos = 15;
 
         // ==========================================
         // OCUPAÇÃO
