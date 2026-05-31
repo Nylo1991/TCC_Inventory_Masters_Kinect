@@ -7,19 +7,28 @@ namespace MVC_InventoryMasters.Models
     public class Parceiro
     {
         [FirestoreDocumentId]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [FirestoreProperty]
         [Required(ErrorMessage = "O nome do parceiro é obrigatório.")]
-        public string Nome { get; set; }
+        public string? Nome { get; set; }
 
         [FirestoreProperty]
-        [Required]
+        [Required(ErrorMessage = "O e-mail é obrigatório.")]
         [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [FirestoreProperty]
-        public string Telefone { get; set; }
+        public string? Telefone { get; set; }
+
+        [FirestoreProperty]
+        public string? Empresa { get; set; }
+
+        [FirestoreProperty]
+        public string? Endereco { get; set; }
+
+        [FirestoreProperty]
+        public DateTime? Data_Cadastro { get; set; }
 
         [FirestoreProperty]
         public bool Ativo { get; set; }

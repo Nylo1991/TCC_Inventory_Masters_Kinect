@@ -1,0 +1,61 @@
+﻿@model IEnumerable<MVC_InventoryMasters.Models.Parceiro>
+
+@{
+    ViewData["Title"] = "Parceiros";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2>Parceiros</h2>
+
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Novo Parceiro
+    </a>
+
+</div>
+
+<table class="table table-hover">
+
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Empresa</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var parceiro in Model)
+        {
+            <tr>
+                <td>@parceiro.Nome</td>
+                <td>@parceiro.Empresa</td>
+                <td>@parceiro.Email</td>
+                <td>@parceiro.Telefone</td>
+                <td>
+                    @(parceiro.Ativo ? "Ativo" : "Inativo")
+                </td>
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@parceiro.Id"
+                       class="btn btn-warning btn-sm">
+                        Editar
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@parceiro.Id"
+                       class="btn btn-danger btn-sm">
+                        Excluir
+                    </a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
