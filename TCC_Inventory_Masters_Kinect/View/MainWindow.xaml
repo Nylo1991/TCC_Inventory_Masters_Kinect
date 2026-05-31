@@ -199,9 +199,9 @@
                                            TextWrapping="Wrap"
                                            Foreground="#334155"/>
 
-                                <!-- STATUS GERAL -->
+                                <!-- MENSAGEM DO SISTEMA -->
 
-                                <TextBlock Text="Status"
+                                <TextBlock Text="Mensagem do Sistema"
                                            Margin="0,20,0,5"
                                            FontSize="16"
                                            FontWeight="Bold"
