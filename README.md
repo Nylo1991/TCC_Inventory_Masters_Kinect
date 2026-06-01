@@ -129,6 +129,13 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 | **UC11** | Auditar Registros | Administrador | Verificação de integridade dos dados (Gestão). |
 | **UC12** | Backup de Dados | Administrador | Salvamento de segurança do banco (Manutenção). |
 | **UC13** | Efetuar Log Out | Admin / Operador | Encerramento da sessão. |
+| **UC14** | Validar Captura Espacial | Sistema | Verifica a consistência e qualidade da nuvem de pontos capturada pelo Kinect antes do processamento. |
+| **UC15** | Processar Nuvem de Pontos | Sistema | Converte os dados de profundidade capturados pelo Kinect em informações espaciais utilizáveis para cálculo volumétrico. |
+| **UC16** | Calcular Volume Ocupado | Sistema | Realiza os cálculos geométricos necessários para determinar o volume ocupado na área monitorada. |
+| **UC17** | Monitorar Ocupação do Espaço | Operador | Permite acompanhar a evolução da ocupação do ambiente monitorado em tempo real. |
+| **UC18** | Consultar Histórico de Ocupação | Administrador / Operador | Permite visualizar a evolução das medições e da utilização do espaço ao longo do tempo. |
+| **UC19** | Registrar Snapshot Espacial | Sistema | Armazena informações da captura realizada para fins de rastreabilidade e auditoria. |
+
 ---
 
 ## Diagrama de Fluxo 
