@@ -129,6 +129,13 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 | **UC11** | Auditar Registros | Administrador | Verificação de integridade dos dados (Gestão). |
 | **UC12** | Backup de Dados | Administrador | Salvamento de segurança do banco (Manutenção). |
 | **UC13** | Efetuar Log Out | Admin / Operador | Encerramento da sessão. |
+| **UC14** | Validar Captura Espacial | Sistema | Verifica a consistência e qualidade da nuvem de pontos capturada pelo Kinect antes do processamento. |
+| **UC15** | Processar Nuvem de Pontos | Sistema | Converte os dados de profundidade capturados pelo Kinect em informações espaciais utilizáveis para cálculo volumétrico. |
+| **UC16** | Calcular Volume Ocupado | Sistema | Realiza os cálculos geométricos necessários para determinar o volume ocupado na área monitorada. |
+| **UC17** | Monitorar Ocupação do Espaço | Operador | Permite acompanhar a evolução da ocupação do ambiente monitorado em tempo real. |
+| **UC18** | Consultar Histórico de Ocupação | Administrador / Operador | Permite visualizar a evolução das medições e da utilização do espaço ao longo do tempo. |
+| **UC19** | Registrar Snapshot Espacial | Sistema | Armazena informações da captura realizada para fins de rastreabilidade e auditoria. |
+
 ---
 
 ## Diagrama de Fluxo 
@@ -145,25 +152,50 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 * **Parceiro:** Entidade externa que recebe alertas automáticos de excedentes.
 
 #### Processos Principais
-* **P1: Coletar e Validar Medição:** Recebe o sinal bruto, calcula o volume e atribui a confiabilidade da leitura.
-* **P2: Monitorar Limites (Gatilho):** Avalia a medição validada conforme a lógica de decisão definida.
-* **P3: Gerenciar Notificações:** Responsável por buscar parceiros ativos em `D3`, formatar o alerta e registrar o log em `D4`.
-* **P4: Gerar Relatórios:** Consolida as informações de `D1` para dashboards e auditoria.
+
+* **P1: Capturar e Processar Dados Kinect:** Recebe os frames de profundidade, gera a Point Cloud 3D, realiza o pré-processamento dos dados e calcula o Volume Medido.
+* **P2: Calibrar e Mapear Espaço:** Executa a calibração do chão, identifica os limites do ambiente e calcula o Volume Total do Espaço.
+* **P3: Calcular Ocupação e Validar Limites:** Calcula o volume ocupado pelos objetos presentes no ambiente, espaço livre, percentual de ocupação e verifica se o Volume Medido ultrapassa o Volume Máximo Permitido.
+* **P4: Gerar Snapshot Espacial:** Cria registros periódicos contendo o estado atual do ambiente mapeado.
+* **P5: Persistir Medições:** Armazena medições, snapshots e histórico de ocupação no banco SQLite.
+* **P6: Gerenciar Notificações:** Responsável por identificar situações de excedente, consultar parceiros ativos e registrar os alertas gerados.
+* **P7: Sincronizar Dados com MVC:** Envia volume atual, percentual de ocupação e status do sistema para a aplicação web através do SignalR.
+
+
 
 #### Depósitos de Dados (Datastores)
-* **D1: MedicoesVolume:** Histórico de leituras (captura e persistência).
-* **D2: ParametrosSistema:** Regras de negócio, incluindo o `VolumeMaximoPermitido`.
-* **D3: Parceiros:** Cadastro de contatos responsáveis.
-* **D4: Notificacoes:** Log histórico de disparos de alertas.
+
+* **D1: MedicoesVolume:** Histórico de medições calculadas pelo Kinect.
+* **D2: EspacosMapeados:** Informações dos ambientes cadastrados, limites físicos e parâmetros operacionais.
+* **D3: HistoricoOcupacao:** Registro histórico da evolução da ocupação do espaço.
+* **D4: SnapshotsEspaciais:** Armazena capturas periódicas do estado do ambiente.
+* **D5: Parceiros:** Cadastro de contatos responsáveis pelo recebimento de alertas.
+* **D6: Notificacoes:** Log histórico de alertas e eventos gerados pelo sistema.
+
 
 #### Detalhamento do Fluxo de Execução
-1. **Captura e Persistência:** O sensor envia o `VolumeMedido` para **P1**. A leitura é persistida no banco de dados **D1** (registro de entrada).
-2. **Tomada de Decisão:** * Após a validação, o sistema executa a **Tomada de Decisão**: *VolumeMedido > VolumeMaximo?*
-   * **Se NÃO (Processo Normal):** O fluxo encerra a verificação, mantendo o registro apenas em **D1**.
-   * **Se SIM (Excedente Detectado):** O fluxo é direcionado obrigatoriamente para **P3** (Gerenciar Notificações).
-3. **Saída de Notificação:** O **P3** consulta os contatos em **D3**, realiza o envio do alerta e registra a operação (log) no depósito **D4**.
-4. **Inteligência:** O processo **P4** consome os dados de **D1** para alimentar o Dashboard do Usuário, fechando o ciclo de visibilidade.
-   
+
+1. **Cadastro do Espaço:** O usuário informa o nome do espaço e define o percentual de alerta desejado.
+2. **Inicialização do Kinect:** O sistema ativa o sensor e inicia a captura dos dados de profundidade.
+3. **Calibração do Ambiente:** O Kinect identifica o plano do chão e realiza o mapeamento estrutural do espaço.
+4. **Geração da Point Cloud:** Os pontos tridimensionais são capturados e transformados em uma representação 3D do ambiente.
+5. **Mapeamento do Volume Total:** O sistema calcula automaticamente o Volume Total do Espaço disponível.
+6. **Definição do Limite Operacional:** O Volume Máximo Permitido é calculado com base no percentual de alerta definido pelo usuário.
+7. **Captura e Persistência da Medição:** O Kinect calcula o Volume Medido e registra a leitura em **D1**.
+8. **Cálculo da Ocupação:** O sistema calcula:
+   * Volume Ocupado
+   * Espaço Livre
+   * Percentual de Ocupação
+9. **Tomada de Decisão:** O sistema verifica:
+   * **Volume Medido > Volume Máximo Permitido?**
+   * **Se NÃO:** O fluxo continua normalmente, mantendo os registros históricos.
+   * **Se SIM:** O sistema direciona o fluxo para o processo de notificações.
+10. **Geração de Snapshot:** Um Snapshot Espacial é criado contendo o estado atual do ambiente.
+11. **Persistência dos Dados:** As informações calculadas são armazenadas nos depósitos **D1**, **D3** e **D4**.
+12. **Gerenciamento de Alertas:** Em situações de excedente, o sistema consulta os contatos cadastrados em **D5**, gera a notificação e registra a operação em **D6**.
+13. **Sincronização Web:** O volume calculado e o status operacional são enviados para o sistema MVC via SignalR.
+14. **Monitoramento Contínuo:** O processo permanece executando enquanto o Kinect estiver ativo, atualizando os cálculos, snapshots e verificações em tempo real.
+
 ---
 
 ## Diagrama de Sequência
@@ -174,25 +206,34 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 
 ### Detalhamento do Fluxo de Sequência
 
-O fluxo inicia-se no momento em que um evento de medição é disparado e segue uma lógica de processamento síncrono e assíncrono:
+O fluxo inicia-se quando o sensor Kinect realiza uma nova captura do ambiente monitorado, seguindo uma sequência de processamento, persistência e sincronização em tempo real entre o módulo Kinect e a plataforma Web.
 
-#### 1. Captura e Persistência (Passos 2 e 3)
-* O sensor **Kinect** envia o dado de `VolumeMedido` para o **Servidor Web (Blazor)** via `SignalR`.
-* O servidor executa o *Processo 1* e imediatamente grava a leitura no **Banco de Dados (SQL)** na tabela `MedicoesVolume` (D1).
+#### 1. Captura, Processamento e Persistência (Passos 2 e 3)
 
-#### 2. Processamento de Regras de Negócio (Passos 4 e 5)
-* O sistema executa o *Processo 2*, consultando a tabela `ParametrosSistema` (D2) para obter o limite máximo permitido.
-* O servidor realiza a **Tomada de Decisão**: verifica se o `VolumeMedido` excede o limite.
+* O sensor **Kinect** captura os dados de profundidade (*Depth Frame*) do ambiente monitorado.
+* O módulo de processamento converte os dados capturados em uma **nuvem de pontos tridimensional (Point Cloud)**, representando digitalmente o espaço ocupado pelos materiais.
+* A partir da nuvem de pontos, o sistema realiza os cálculos geométricos necessários para determinar o **VolumeMedido** do estoque.
+* Após a validação da leitura, os dados são armazenados localmente no banco **SQLite**, garantindo persistência e funcionamento mesmo em situações de indisponibilidade da rede.
+* Em seguida, a medição é sincronizada com a aplicação Web por meio do **SignalR**, permitindo atualização imediata dos dados operacionais.
 
-#### 3. Gestão de Exceções e Notificação (Passos 6, 7 e 8)
-* Caso a regra de limite seja violada (Excedente Detectado), o *Processo 3* é ativado.
-* O sistema consulta o banco `Parceiros` (D3) para identificar os contatos responsáveis.
-* O evento é registrado no banco `Notificacoes` (D4) e o alerta é enviado para o **Parceiro** (via e-mail ou API externa).
+#### 2. Processamento das Regras de Negócio (Passos 4 e 5)
 
-#### 4. Atualização de Interface e Inteligência (Passos 9, 10 e 11)
-* Independentemente de excedente, o status operacional é atualizado via `SignalR` para o **Operador** (Feedback em tempo real).
-* O *Processo 4* (Gerar Inteligência) consolida os dados históricos de D1 e atualiza o **Dashboard** do Operador, fechando o ciclo de visibilidade.
+* Ao receber a medição, a aplicação consulta a coleção **parametrosSistema** para obter os limites volumétricos configurados.
+* O sistema executa a lógica de negócio comparando o **VolumeMedido** com os parâmetros estabelecidos.
+* Caso os valores estejam dentro da faixa operacional, a medição é registrada apenas para fins de histórico e monitoramento.
 
+#### 3. Gestão de Exceções e Notificações (Passos 6, 7 e 8)
+
+* Quando o volume registrado ultrapassa os limites definidos, o sistema identifica a ocorrência como um possível excedente produtivo.
+* A aplicação consulta a coleção **parceiros** para localizar os contatos aptos a receber notificações.
+* O evento é registrado na coleção **notificacoes**, garantindo rastreabilidade e auditoria do processo.
+* Em seguida, os alertas são enviados automaticamente aos parceiros e operadores por meio dos canais configurados pela plataforma.
+
+#### 4. Atualização Operacional e Inteligência de Dados (Passos 9, 10 e 11)
+
+* Independentemente da ocorrência de excedentes, o status operacional é atualizado em tempo real para os usuários conectados através do **SignalR**.
+* As informações recebidas alimentam o histórico de medições e os indicadores operacionais da plataforma.
+* Os dados consolidados são processados para geração de relatórios, acompanhamento da ocupação do estoque e suporte à tomada de decisão, mantendo o Dashboard sempre atualizado com a situação atual do ambiente monitorado.
 ---
 
 ## MODELAGEM DO BANCO DE DADOS
@@ -295,13 +336,23 @@ Armazena as empresas parceiras aptas a receber excedentes produtivos.
 
 Responsável pelo armazenamento das medições volumétricas capturadas pelo Kinect ou inseridas manualmente.
 
+### Coleção: medicoes
+
+
 | Campo | Tipo |
 |---|---|
 | medicaoId | String |
 | dataHora | Timestamp |
 | volumeMedido | Number |
+| volumeTotalEspaco | Number |
+| volumeLivre | Number |
+| percentualOcupacao | Number |
+| quantidadePontos3D | Number |
+| confiabilidadeLeitura | Number |
 | origemLeitura | String |
 | status | String |
+| espacoId | Reference |
+
 
 ---
 
@@ -316,8 +367,10 @@ Registra os alertas automáticos enviados pelo sistema aos parceiros e operadore
 | dataEnvio | Timestamp |
 | statusEnvio | String |
 | volumeMomento | Number |
+| percentualOcupacao | Number |
 | usuarioId | Reference |
 | parceiroId | Reference |
+
 
 ---
 
@@ -343,11 +396,60 @@ Define os parâmetros operacionais utilizados pelos gatilhos automáticos da apl
 | Campo | Tipo |
 |---|---|
 | volumeMaximo | Number |
-| volumeMinimo | Number |
+| percentualAlerta | Number |
 | emailNotificacaoAtivo | Boolean |
+| intervaloCapturaSegundos | Number |
+| intervaloSnapshotSegundos | Number |
 | dataAtualizacao | Timestamp |
 
 ---
+
+###  espacosMapeados
+
+Representa os ambientes cadastrados e mapeados pelo Kinect.
+
+| Campo | Tipo |
+|---|---|
+| espacoId | String |
+| nomeEspaco | String |
+| volumeTotalEspaco | Number |
+| volumeMaximoPermitido | Number |
+| percentualAlerta | Number |
+| ativo | Boolean |
+| dataMapeamento | Timestamp |
+
+---
+
+###  snapshotsEspaciais
+
+Armazena os estados periódicos do ambiente.
+
+| Campo | Tipo |
+|---|---|
+| snapshotId | String |
+| espacoId | Reference |
+| dataHora | Timestamp |
+| volumeAtual | Number |
+| espacoLivre | Number |
+| percentualOcupacao | Number |
+| quantidadePontos3D | Number |
+
+---
+
+###  historicoOcupacao
+
+Permite gerar gráficos e dashboards.
+
+| Campo | Tipo |
+|---|---|
+| historicoId | String |
+| espacoId | Reference |
+| dataHora | Timestamp |
+| percentualOcupacao | Number |
+| volumeOcupado | Number |
+| volumeLivre | Number |
+
+
 
 ## Considerações Arquiteturais
 

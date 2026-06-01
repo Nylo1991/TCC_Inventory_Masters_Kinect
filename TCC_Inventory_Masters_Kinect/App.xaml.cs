@@ -42,10 +42,11 @@ namespace TCC_Inventory_Masters_Kinect
             {
                 base.OnExit(e);
             }
-            finally
+            catch (Exception ex)
             {
-                Environment.Exit(
-                    0);
+                MessageBox.Show(
+                    ex.Message,
+                    "ERRO AO ENCERRAR APLICAÇÃO");
             }
         }
     }
