@@ -174,25 +174,34 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 
 ### Detalhamento do Fluxo de Sequência
 
-O fluxo inicia-se no momento em que um evento de medição é disparado e segue uma lógica de processamento síncrono e assíncrono:
+O fluxo inicia-se quando o sensor Kinect realiza uma nova captura do ambiente monitorado, seguindo uma sequência de processamento, persistência e sincronização em tempo real entre o módulo Kinect e a plataforma Web.
 
-#### 1. Captura e Persistência (Passos 2 e 3)
-* O sensor **Kinect** envia o dado de `VolumeMedido` para o **Servidor Web (Blazor)** via `SignalR`.
-* O servidor executa o *Processo 1* e imediatamente grava a leitura no **Banco de Dados (SQL)** na tabela `MedicoesVolume` (D1).
+#### 1. Captura, Processamento e Persistência (Passos 2 e 3)
 
-#### 2. Processamento de Regras de Negócio (Passos 4 e 5)
-* O sistema executa o *Processo 2*, consultando a tabela `ParametrosSistema` (D2) para obter o limite máximo permitido.
-* O servidor realiza a **Tomada de Decisão**: verifica se o `VolumeMedido` excede o limite.
+* O sensor **Kinect** captura os dados de profundidade (*Depth Frame*) do ambiente monitorado.
+* O módulo de processamento converte os dados capturados em uma **nuvem de pontos tridimensional (Point Cloud)**, representando digitalmente o espaço ocupado pelos materiais.
+* A partir da nuvem de pontos, o sistema realiza os cálculos geométricos necessários para determinar o **VolumeMedido** do estoque.
+* Após a validação da leitura, os dados são armazenados localmente no banco **SQLite**, garantindo persistência e funcionamento mesmo em situações de indisponibilidade da rede.
+* Em seguida, a medição é sincronizada com a aplicação Web por meio do **SignalR**, permitindo atualização imediata dos dados operacionais.
 
-#### 3. Gestão de Exceções e Notificação (Passos 6, 7 e 8)
-* Caso a regra de limite seja violada (Excedente Detectado), o *Processo 3* é ativado.
-* O sistema consulta o banco `Parceiros` (D3) para identificar os contatos responsáveis.
-* O evento é registrado no banco `Notificacoes` (D4) e o alerta é enviado para o **Parceiro** (via e-mail ou API externa).
+#### 2. Processamento das Regras de Negócio (Passos 4 e 5)
 
-#### 4. Atualização de Interface e Inteligência (Passos 9, 10 e 11)
-* Independentemente de excedente, o status operacional é atualizado via `SignalR` para o **Operador** (Feedback em tempo real).
-* O *Processo 4* (Gerar Inteligência) consolida os dados históricos de D1 e atualiza o **Dashboard** do Operador, fechando o ciclo de visibilidade.
+* Ao receber a medição, a aplicação consulta a coleção **parametrosSistema** para obter os limites volumétricos configurados.
+* O sistema executa a lógica de negócio comparando o **VolumeMedido** com os parâmetros estabelecidos.
+* Caso os valores estejam dentro da faixa operacional, a medição é registrada apenas para fins de histórico e monitoramento.
 
+#### 3. Gestão de Exceções e Notificações (Passos 6, 7 e 8)
+
+* Quando o volume registrado ultrapassa os limites definidos, o sistema identifica a ocorrência como um possível excedente produtivo.
+* A aplicação consulta a coleção **parceiros** para localizar os contatos aptos a receber notificações.
+* O evento é registrado na coleção **notificacoes**, garantindo rastreabilidade e auditoria do processo.
+* Em seguida, os alertas são enviados automaticamente aos parceiros e operadores por meio dos canais configurados pela plataforma.
+
+#### 4. Atualização Operacional e Inteligência de Dados (Passos 9, 10 e 11)
+
+* Independentemente da ocorrência de excedentes, o status operacional é atualizado em tempo real para os usuários conectados através do **SignalR**.
+* As informações recebidas alimentam o histórico de medições e os indicadores operacionais da plataforma.
+* Os dados consolidados são processados para geração de relatórios, acompanhamento da ocupação do estoque e suporte à tomada de decisão, mantendo o Dashboard sempre atualizado com a situação atual do ambiente monitorado.
 ---
 
 ## MODELAGEM DO BANCO DE DADOS
