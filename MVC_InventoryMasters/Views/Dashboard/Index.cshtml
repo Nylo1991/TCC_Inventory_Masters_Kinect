@@ -6,6 +6,7 @@
 
 <div class="container-fluid">
 
+
     <!-- KPIs -->
     <div class="row mb-4">
 
@@ -55,10 +56,10 @@
 
     </div>
 
-    <!-- 📊 GRÁFICO EM TEMPO REAL -->
+    <!-- Gráfico -->
     <div class="card shadow-sm mb-4">
         <div class="card-header">
-            <h5>📊 Volume em Tempo Real</h5>
+            <h5 class="mb-0">📊 Volume em Tempo Real</h5>
         </div>
 
         <div class="card-body">
@@ -66,7 +67,7 @@
         </div>
     </div>
 
-    <!-- Últimos parceiros -->
+    <!-- Últimos Parceiros -->
     <div class="card shadow-sm mb-4">
         <div class="card-header">
             <h5 class="mb-0">Últimos Parceiros</h5>
@@ -99,14 +100,14 @@
         </div>
     </div>
 
-    <!-- 📡 LOG EM TEMPO REAL -->
+    <!-- Log de Medições -->
     <div class="card shadow-sm">
         <div class="card-header">
-            <h5>📡 Medições em Tempo Real</h5>
+            <h5 class="mb-0">📡 Medições em Tempo Real</h5>
         </div>
 
         <div class="card-body">
-            <table class="table table-dark table-hover">
+            <table class="table table-dark table-hover align-middle">
                 <thead>
                     <tr>
                         <th>Volume</th>
@@ -134,131 +135,207 @@
                     }
 
                 </tbody>
+
             </table>
         </div>
     </div>
 
+
 </div>
 
-<!-- TOAST ALERT -->
-<div id="toast" style="
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #333;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    display: none;
-    z-index: 9999;">
+<!-- Toast -->
+
+<div id="toast"
+     style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #1f2937;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 8px;
+        display: none;
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(0,0,0,.3);">
 </div>
 
-<!-- LIBS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@section Scripts
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-    // =========================
-    // CHART SETUP
-    // =========================
-    const ctx = document.getElementById("volumeChart").getContext("2d");
+    ```
+    <script>
 
-    const volumeData = {
-        labels: [],
-        datasets: [{
-            label: "Volume",
-            data: [],
-            borderColor: "green",
-            backgroundColor: "rgba(0,255,0,0.1)",
-            tension: 0.3
-        }]
-    };
+        // ======================================
+        // TOAST
+        // ======================================
 
-    const volumeChart = new Chart(ctx, {
-        type: "line",
-        data: volumeData,
-        options: {
-            responsive: true,
-            animation: false,
-            scales: {
-                y: { beginAtZero: true }
+        function showToast(message) {
+
+            const toast = document.getElementById("toast");
+
+            toast.innerText = message;
+            toast.style.display = "block";
+
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        }
+
+        // ======================================
+        // CHART
+        // ======================================
+
+        const ctx = document
+            .getElementById("volumeChart")
+            .getContext("2d");
+
+        const volumeChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: [],
+                datasets: [{
+                    label: "Volume Medido",
+                    data: [],
+                    borderColor: "#16a34a",
+                    backgroundColor: "rgba(22,163,74,0.15)",
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
-        }
-    });
+        });
 
-    // =========================
-    // TOAST FUNCTION
-    // =========================
-    function showToast(msg) {
-        const toast = document.getElementById("toast");
-        toast.innerText = msg;
-        toast.style.display = "block";
+        // ======================================
+        // SIGNALR
+        // ======================================
 
-        setTimeout(() => {
-            toast.style.display = "none";
-        }, 2500);
-    }
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/medicaoHub")
+            .withAutomaticReconnect()
+            .build();
 
-    // =========================
-    // SIGNALR
-    // =========================
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/medicaoHub")
-        .build();
+        connection.start()
+            .then(() => {
 
-    connection.start()
-        .catch(err => console.error("SignalR error:", err));
+                console.log("✅ SignalR conectado");
+                showToast("Conectado ao servidor");
 
-    connection.on("NovaMedicao", function (m) {
+            })
+            .catch(err => {
 
-        let volume = parseFloat(m.volumeMedido ?? 0);
-        let hora = new Date().toLocaleTimeString();
+                console.error(err);
+                showToast("Erro ao conectar ao servidor");
 
-        // =========================
-        // KPI
-        // =========================
-        const total = document.getElementById("totalMedicoes");
-        if (total) {
-            total.innerText = parseInt(total.innerText || "0") + 1;
-        }
+            });
 
-        // =========================
-        // LOG
-        // =========================
-        const tabela = document.getElementById("logMedicoes");
+        connection.onreconnecting(() => {
 
-        if (tabela) {
-            const row = `
-                <tr>
-                    <td>${m.volumeMedido ?? ""}</td>
-                    <td>${m.origemLeitura ?? ""}</td>
-                    <td>${m.status ?? ""}</td>
-                    <td>${m.dataHora ?? ""}</td>
-                </tr>
-            `;
-            tabela.insertAdjacentHTML("afterbegin", row);
-        }
+            console.warn("Reconectando...");
+            showToast("Reconectando...");
 
-        // =========================
-        // GRÁFICO
-        // =========================
-        volumeChart.data.labels.push(hora);
-        volumeChart.data.datasets[0].data.push(volume);
+        });
 
-        if (volumeChart.data.labels.length > 20) {
-            volumeChart.data.labels.shift();
-            volumeChart.data.datasets[0].data.shift();
-        }
+        connection.onreconnected(() => {
 
-        volumeChart.update();
+            console.log("Reconectado");
+            showToast("Conexão restabelecida");
 
-        // =========================
-        // ALERTA VISUAL
-        // =========================
-        if (volume > 80) {
-            showToast("🚨 ALERTA: Volume alto detectado!");
-        } else {
-            showToast("📡 Nova medição recebida");
-        }
-    });
-</script>
+        });
+
+        connection.onclose(() => {
+
+            console.error("Conexão encerrada");
+            showToast("Conexão perdida");
+
+        });
+
+        // ======================================
+        // EVENTO RECEBIDO DO HUB
+        // ======================================
+
+        connection.on("NovaMedicao", function (m) {
+
+            console.log("📡 Nova medição:", m);
+
+            const volume = Number(m.volumeMedido || 0);
+
+            const hora = new Date().toLocaleTimeString();
+
+            // KPI
+
+            const totalMedicoes =
+                document.getElementById("totalMedicoes");
+
+            if (totalMedicoes) {
+
+                totalMedicoes.innerText =
+                    Number(totalMedicoes.innerText || 0) + 1;
+            }
+
+            // TABELA
+
+            const tabela =
+                document.getElementById("logMedicoes");
+
+            if (tabela) {
+
+                const row = `
+                    <tr>
+                        <td>${m.volumeMedido ?? "-"}</td>
+                        <td>${m.origemLeitura ?? "-"}</td>
+                        <td>${m.status ?? "-"}</td>
+                        <td>${m.dataHora ?? "-"}</td>
+                    </tr>
+                `;
+
+                tabela.insertAdjacentHTML("afterbegin", row);
+
+                while (tabela.rows.length > 20) {
+
+                    tabela.deleteRow(
+                        tabela.rows.length - 1
+                    );
+                }
+            }
+
+            // GRÁFICO
+
+            volumeChart.data.labels.push(hora);
+
+            volumeChart.data.datasets[0].data.push(volume);
+
+            if (volumeChart.data.labels.length > 20) {
+
+                volumeChart.data.labels.shift();
+
+                volumeChart.data.datasets[0].data.shift();
+            }
+
+            volumeChart.update();
+
+            // ALERTAS
+
+            if (volume > 80) {
+
+                showToast("🚨 Volume crítico detectado!");
+
+            } else {
+
+                showToast("📡 Nova medição recebida");
+            }
+
+        });
+
+    </script>
+    ```
+
+}
