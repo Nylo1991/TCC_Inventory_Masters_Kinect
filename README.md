@@ -336,13 +336,23 @@ Armazena as empresas parceiras aptas a receber excedentes produtivos.
 
 Responsável pelo armazenamento das medições volumétricas capturadas pelo Kinect ou inseridas manualmente.
 
+### Coleção: medicoes
+
+
 | Campo | Tipo |
 |---|---|
 | medicaoId | String |
 | dataHora | Timestamp |
 | volumeMedido | Number |
+| volumeTotalEspaco | Number |
+| volumeLivre | Number |
+| percentualOcupacao | Number |
+| quantidadePontos3D | Number |
+| confiabilidadeLeitura | Number |
 | origemLeitura | String |
 | status | String |
+| espacoId | Reference |
+
 
 ---
 
@@ -357,8 +367,10 @@ Registra os alertas automáticos enviados pelo sistema aos parceiros e operadore
 | dataEnvio | Timestamp |
 | statusEnvio | String |
 | volumeMomento | Number |
+| percentualOcupacao | Number |
 | usuarioId | Reference |
 | parceiroId | Reference |
+
 
 ---
 
@@ -384,11 +396,60 @@ Define os parâmetros operacionais utilizados pelos gatilhos automáticos da apl
 | Campo | Tipo |
 |---|---|
 | volumeMaximo | Number |
-| volumeMinimo | Number |
+| percentualAlerta | Number |
 | emailNotificacaoAtivo | Boolean |
+| intervaloCapturaSegundos | Number |
+| intervaloSnapshotSegundos | Number |
 | dataAtualizacao | Timestamp |
 
 ---
+
+###  espacosMapeados
+
+Representa os ambientes cadastrados e mapeados pelo Kinect.
+
+| Campo | Tipo |
+|---|---|
+| espacoId | String |
+| nomeEspaco | String |
+| volumeTotalEspaco | Number |
+| volumeMaximoPermitido | Number |
+| percentualAlerta | Number |
+| ativo | Boolean |
+| dataMapeamento | Timestamp |
+
+---
+
+###  snapshotsEspaciais
+
+Armazena os estados periódicos do ambiente.
+
+| Campo | Tipo |
+|---|---|
+| snapshotId | String |
+| espacoId | Reference |
+| dataHora | Timestamp |
+| volumeAtual | Number |
+| espacoLivre | Number |
+| percentualOcupacao | Number |
+| quantidadePontos3D | Number |
+
+---
+
+###  historicoOcupacao
+
+Permite gerar gráficos e dashboards.
+
+| Campo | Tipo |
+|---|---|
+| historicoId | String |
+| espacoId | Reference |
+| dataHora | Timestamp |
+| percentualOcupacao | Number |
+| volumeOcupado | Number |
+| volumeLivre | Number |
+
+
 
 ## Considerações Arquiteturais
 
