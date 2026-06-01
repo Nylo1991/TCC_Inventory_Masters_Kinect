@@ -152,25 +152,50 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 * **Parceiro:** Entidade externa que recebe alertas automáticos de excedentes.
 
 #### Processos Principais
-* **P1: Coletar e Validar Medição:** Recebe o sinal bruto, calcula o volume e atribui a confiabilidade da leitura.
-* **P2: Monitorar Limites (Gatilho):** Avalia a medição validada conforme a lógica de decisão definida.
-* **P3: Gerenciar Notificações:** Responsável por buscar parceiros ativos em `D3`, formatar o alerta e registrar o log em `D4`.
-* **P4: Gerar Relatórios:** Consolida as informações de `D1` para dashboards e auditoria.
+
+* **P1: Capturar e Processar Dados Kinect:** Recebe os frames de profundidade, gera a Point Cloud 3D, realiza o pré-processamento dos dados e calcula o Volume Medido.
+* **P2: Calibrar e Mapear Espaço:** Executa a calibração do chão, identifica os limites do ambiente e calcula o Volume Total do Espaço.
+* **P3: Calcular Ocupação e Validar Limites:** Calcula o volume ocupado pelos objetos presentes no ambiente, espaço livre, percentual de ocupação e verifica se o Volume Medido ultrapassa o Volume Máximo Permitido.
+* **P4: Gerar Snapshot Espacial:** Cria registros periódicos contendo o estado atual do ambiente mapeado.
+* **P5: Persistir Medições:** Armazena medições, snapshots e histórico de ocupação no banco SQLite.
+* **P6: Gerenciar Notificações:** Responsável por identificar situações de excedente, consultar parceiros ativos e registrar os alertas gerados.
+* **P7: Sincronizar Dados com MVC:** Envia volume atual, percentual de ocupação e status do sistema para a aplicação web através do SignalR.
+
+
 
 #### Depósitos de Dados (Datastores)
-* **D1: MedicoesVolume:** Histórico de leituras (captura e persistência).
-* **D2: ParametrosSistema:** Regras de negócio, incluindo o `VolumeMaximoPermitido`.
-* **D3: Parceiros:** Cadastro de contatos responsáveis.
-* **D4: Notificacoes:** Log histórico de disparos de alertas.
+
+* **D1: MedicoesVolume:** Histórico de medições calculadas pelo Kinect.
+* **D2: EspacosMapeados:** Informações dos ambientes cadastrados, limites físicos e parâmetros operacionais.
+* **D3: HistoricoOcupacao:** Registro histórico da evolução da ocupação do espaço.
+* **D4: SnapshotsEspaciais:** Armazena capturas periódicas do estado do ambiente.
+* **D5: Parceiros:** Cadastro de contatos responsáveis pelo recebimento de alertas.
+* **D6: Notificacoes:** Log histórico de alertas e eventos gerados pelo sistema.
+
 
 #### Detalhamento do Fluxo de Execução
-1. **Captura e Persistência:** O sensor envia o `VolumeMedido` para **P1**. A leitura é persistida no banco de dados **D1** (registro de entrada).
-2. **Tomada de Decisão:** * Após a validação, o sistema executa a **Tomada de Decisão**: *VolumeMedido > VolumeMaximo?*
-   * **Se NÃO (Processo Normal):** O fluxo encerra a verificação, mantendo o registro apenas em **D1**.
-   * **Se SIM (Excedente Detectado):** O fluxo é direcionado obrigatoriamente para **P3** (Gerenciar Notificações).
-3. **Saída de Notificação:** O **P3** consulta os contatos em **D3**, realiza o envio do alerta e registra a operação (log) no depósito **D4**.
-4. **Inteligência:** O processo **P4** consome os dados de **D1** para alimentar o Dashboard do Usuário, fechando o ciclo de visibilidade.
-   
+
+1. **Cadastro do Espaço:** O usuário informa o nome do espaço e define o percentual de alerta desejado.
+2. **Inicialização do Kinect:** O sistema ativa o sensor e inicia a captura dos dados de profundidade.
+3. **Calibração do Ambiente:** O Kinect identifica o plano do chão e realiza o mapeamento estrutural do espaço.
+4. **Geração da Point Cloud:** Os pontos tridimensionais são capturados e transformados em uma representação 3D do ambiente.
+5. **Mapeamento do Volume Total:** O sistema calcula automaticamente o Volume Total do Espaço disponível.
+6. **Definição do Limite Operacional:** O Volume Máximo Permitido é calculado com base no percentual de alerta definido pelo usuário.
+7. **Captura e Persistência da Medição:** O Kinect calcula o Volume Medido e registra a leitura em **D1**.
+8. **Cálculo da Ocupação:** O sistema calcula:
+   * Volume Ocupado
+   * Espaço Livre
+   * Percentual de Ocupação
+9. **Tomada de Decisão:** O sistema verifica:
+   * **Volume Medido > Volume Máximo Permitido?**
+   * **Se NÃO:** O fluxo continua normalmente, mantendo os registros históricos.
+   * **Se SIM:** O sistema direciona o fluxo para o processo de notificações.
+10. **Geração de Snapshot:** Um Snapshot Espacial é criado contendo o estado atual do ambiente.
+11. **Persistência dos Dados:** As informações calculadas são armazenadas nos depósitos **D1**, **D3** e **D4**.
+12. **Gerenciamento de Alertas:** Em situações de excedente, o sistema consulta os contatos cadastrados em **D5**, gera a notificação e registra a operação em **D6**.
+13. **Sincronização Web:** O volume calculado e o status operacional são enviados para o sistema MVC via SignalR.
+14. **Monitoramento Contínuo:** O processo permanece executando enquanto o Kinect estiver ativo, atualizando os cálculos, snapshots e verificações em tempo real.
+
 ---
 
 ## Diagrama de Sequência
