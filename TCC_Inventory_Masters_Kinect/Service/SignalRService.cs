@@ -8,9 +8,33 @@ namespace TCC_Inventory_Masters_Kinect.Service
 {
     public class SignalRService
     {
+        /// <summary>
+        /// Conexão ativa com o Hub SignalR.
+        /// </summary>
         private HubConnection _connection;
 
+        /// <summary>
+        /// Evento utilizado para atualizar a interface
+        /// sobre o status da conexão SignalR.
+        /// </summary>
         public event Action<string> StatusSignalRAtualizado;
+
+        /// <summary>
+        /// Retorna o estado atual da conexão SignalR.
+        /// </summary>
+        public HubConnectionState EstadoConexao =>
+            _connection?.State ?? HubConnectionState.Disconnected;
+
+        /// <summary>
+        /// Indica se a conexão está ativa.
+        /// </summary>
+        public bool EstaConectado =>
+            _connection != null &&
+            _connection.State == HubConnectionState.Connected;
+
+        // ======================================
+        // MÉTODOS
+        // ======================================
 
         public async Task ConectarAsync()
         {

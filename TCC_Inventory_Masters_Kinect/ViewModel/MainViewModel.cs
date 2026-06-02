@@ -399,6 +399,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 // ==========================================
 
                 ConectarSignalR();
+
+                Task.Run(async () =>
+                {
+                    await Task.Delay(5000);
+
+                    LoggerService.Info(
+                        $"Estado SignalR após 5s: {_signalRService.EstadoConexao}");
+                });
             }
             catch (Exception ex)
             {
@@ -447,46 +455,73 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     return;
 
                 LoggerService.Info(
-                    "Tentando conectar ao SignalR.");
+                    $"Tentando conectar ao SignalR em: {KinectConfig.UrlSignalR}");
 
-                StatusSignalR =
-                    "SignalR: Conectando";
+                ExecutarNaUI(() =>
+                {
+                    StatusSignalR = "SignalR: Conectando";
+                });
 
-                await _signalRService
-                    .ConectarAsync();
+                await _signalRService.ConectarAsync();
 
-                _signalRConectado =
-                    true;
+                // Aguarda um pequeno tempo para garantir handshake
+                await Task.Delay(1000);
 
-                StatusSignalR =
-                    "SignalR: Conectado";
+                if (_signalRService.EstaConectado)
+                {
+                    _signalRConectado = true;
 
-                Status =
-                    "Conectado ao MVC via SignalR.";
+                    ExecutarNaUI(() =>
+                    {
+                        StatusSignalR = "SignalR: Conectado";
 
-                LoggerService.Info(
-                    "Conectado ao SignalR com sucesso.");
+                        Status =
+                            "Conectado ao MVC via SignalR.";
+                    });
 
-                await _signalRService
-                    .EnviarStatusAsync(
-                        "Aplicação Kinect conectada ao MVC.");
+                    LoggerService.Info(
+                        "Conexão SignalR estabelecida com sucesso.");
+
+                    await _signalRService.EnviarStatusAsync(
+                        "Aplicação Kinect conectada.");
+                }
+                else
+                {
+                    _signalRConectado = false;
+
+                    ExecutarNaUI(() =>
+                    {
+                        StatusSignalR =
+                            "SignalR: Sem conexão";
+
+                        Status =
+                            "Falha ao conectar SignalR.";
+                    });
+
+                    LoggerService.Info(
+                        $"Falha ao conectar. Estado atual: {_signalRService.EstadoConexao}");
+                }
             }
             catch (Exception ex)
             {
-                _signalRConectado =
-                    false;
+                _signalRConectado = false;
 
-                StatusSignalR =
-                    "SignalR: Sem conexão";
+                ExecutarNaUI(() =>
+                {
+                    StatusSignalR =
+                        "SignalR: Sem conexão";
 
-                Status =
-                    "Erro ao conectar SignalR: " + ex.Message;
+                    Status =
+                        $"Erro ao conectar SignalR: {ex.Message}";
+                });
 
                 LoggerService.Erro(
                     "Erro ao conectar SignalR.",
                     ex);
             }
         }
+
+
 
         // ==========================================
         // STATUS SIGNALR
@@ -1061,9 +1096,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             // ENVIAR MVC VIA SIGNALR
             // ==========================================
 
-            if (_signalRConectado &&
-                DateTime.Now >=
-                _proximoEnvioSignalR)
+            if (_signalRService.EstaConectado &&
+    DateTime.Now >= _proximoEnvioSignalR)
             {
                 _proximoEnvioSignalR =
                     DateTime.Now.AddSeconds(
