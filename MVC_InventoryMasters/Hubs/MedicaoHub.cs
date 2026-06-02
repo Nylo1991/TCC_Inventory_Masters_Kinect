@@ -42,14 +42,14 @@ namespace MVC_InventoryMasters.Hubs
         /// <param name="mensagem">
         /// Mensagem de status.
         /// </param>
-        public async Task EnviarStatus(string mensagem)
+        public async Task EnviarStatus(string status)
         {
             Console.WriteLine(
-                $"[SignalR] Status recebido: {mensagem}");
+                $"[SignalR] Status recebido: {status}");
 
             await Clients.All.SendAsync("ReceberStatus", new
             {
-                mensagem,
+                status,
                 origem = Context.ConnectionId,
                 data = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
             });

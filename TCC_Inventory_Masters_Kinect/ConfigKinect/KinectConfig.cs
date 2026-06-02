@@ -27,7 +27,7 @@
         // ==========================================
 
         public const string UrlSignalR =
-            "https://inventorymasters.runasp.net/medicaohub";
+            "https://inventorymasters.runasp.net/medicaoHub";
 
         public const int IntervaloEnvioSignalRSegundos = 15;
 
