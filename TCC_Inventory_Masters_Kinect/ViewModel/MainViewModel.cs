@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using TCC_Inventory_Masters_Kinect.View;
 
 using TCC_Inventory_Masters_Kinect.Command;
 using TCC_Inventory_Masters_Kinect.ConfigKinect;
@@ -39,6 +40,40 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
         private bool _encerrando =
             false;
+
+        // ==========================================
+        // NAVEGAÇÃO DE PÁGINAS
+        // ==========================================
+
+        private object _paginaAtual;
+
+        public object PaginaAtual
+        {
+            get => _paginaAtual;
+
+            set
+            {
+                _paginaAtual =
+                    value;
+
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand AbrirPaginaKinectCommand
+        {
+            get;
+        }
+
+        public ICommand AbrirPaginaCadastroCommand
+        {
+            get;
+        }
+
+        public ICommand AbrirPaginaHistoricoCommand
+        {
+            get;
+        }
 
         // ==========================================
         // STATUS GERAL
@@ -385,6 +420,22 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 CalibrarCommand =
                     new RelayCommand(CalibrarChao);
 
+                // ==========================================
+                // COMANDOS DE NAVEGAÇÃO
+                // ==========================================
+
+                AbrirPaginaKinectCommand =
+                    new RelayCommand(AbrirPaginaKinect);
+
+                AbrirPaginaCadastroCommand =
+                    new RelayCommand(AbrirPaginaCadastro);
+
+                AbrirPaginaHistoricoCommand =
+                    new RelayCommand(AbrirPaginaHistorico);
+
+                PaginaAtual =
+                    new KinectPage();
+
                 LoggerService.Info(
                     "Comandos configurados.");
 
@@ -459,21 +510,25 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 ExecutarNaUI(() =>
                 {
-                    StatusSignalR = "SignalR: Conectando";
+                    StatusSignalR =
+                        "SignalR: Conectando";
                 });
 
-                await _signalRService.ConectarAsync();
+                await _signalRService
+                    .ConectarAsync();
 
                 // Aguarda um pequeno tempo para garantir handshake
                 await Task.Delay(1000);
 
                 if (_signalRService.EstaConectado)
                 {
-                    _signalRConectado = true;
+                    _signalRConectado =
+                        true;
 
                     ExecutarNaUI(() =>
                     {
-                        StatusSignalR = "SignalR: Conectado";
+                        StatusSignalR =
+                            "SignalR: Conectado";
 
                         Status =
                             "Conectado ao MVC via SignalR.";
@@ -482,12 +537,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     LoggerService.Info(
                         "Conexão SignalR estabelecida com sucesso.");
 
-                    await _signalRService.EnviarStatusAsync(
-                        "Aplicação Kinect conectada.");
+                    await _signalRService
+                        .EnviarStatusAsync(
+                            "Aplicação Kinect conectada.");
                 }
                 else
                 {
-                    _signalRConectado = false;
+                    _signalRConectado =
+                        false;
 
                     ExecutarNaUI(() =>
                     {
@@ -504,7 +561,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
             catch (Exception ex)
             {
-                _signalRConectado = false;
+                _signalRConectado =
+                    false;
 
                 ExecutarNaUI(() =>
                 {
@@ -520,8 +578,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     ex);
             }
         }
-
-
 
         // ==========================================
         // STATUS SIGNALR
@@ -1097,7 +1153,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             // ==========================================
 
             if (_signalRService.EstaConectado &&
-    DateTime.Now >= _proximoEnvioSignalR)
+                DateTime.Now >= _proximoEnvioSignalR)
             {
                 _proximoEnvioSignalR =
                     DateTime.Now.AddSeconds(
@@ -1223,6 +1279,37 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     "Erro ao encerrar aplicação.",
                     ex);
             }
+        }
+
+        // ==========================================
+        // ABRIR PÁGINAS
+        // ==========================================
+
+        private void AbrirPaginaKinect()
+        {
+            PaginaAtual =
+                new KinectPage();
+
+            LoggerService.Info(
+                "Página Kinect / Mapeamento aberta.");
+        }
+
+        private void AbrirPaginaCadastro()
+        {
+            PaginaAtual =
+                new CadastroEspacoPage();
+
+            LoggerService.Info(
+                "Página Cadastro do Espaço aberta.");
+        }
+
+        private void AbrirPaginaHistorico()
+        {
+            PaginaAtual =
+                new HistoricoMedicoesPage();
+
+            LoggerService.Info(
+                "Página Histórico de Medições aberta.");
         }
     }
 }

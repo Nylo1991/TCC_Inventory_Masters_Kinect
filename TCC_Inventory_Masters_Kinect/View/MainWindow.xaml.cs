@@ -21,8 +21,13 @@ namespace TCC_Inventory_Masters_Kinect.View
         {
             InitializeComponent();
 
-            DataContext =
-                new MainViewModel();
+            // Evita criar dois MainViewModel.
+            // Se o DataContext já estiver definido no XAML, ele reaproveita.
+            if (DataContext == null)
+            {
+                DataContext =
+                    new MainViewModel();
+            }
 
             Closing +=
                 MainWindow_Closing;
