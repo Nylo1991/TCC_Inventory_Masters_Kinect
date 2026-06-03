@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using TCC_Inventory_Masters_Kinect.View;
-
 using TCC_Inventory_Masters_Kinect.Command;
 using TCC_Inventory_Masters_Kinect.ConfigKinect;
 using TCC_Inventory_Masters_Kinect.Logs;
@@ -42,40 +40,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             false;
 
         // ==========================================
-        // NAVEGAÇÃO DE PÁGINAS
-        // ==========================================
-
-        private object _paginaAtual;
-
-        public object PaginaAtual
-        {
-            get => _paginaAtual;
-
-            set
-            {
-                _paginaAtual =
-                    value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public ICommand AbrirPaginaKinectCommand
-        {
-            get;
-        }
-
-        public ICommand AbrirPaginaCadastroCommand
-        {
-            get;
-        }
-
-        public ICommand AbrirPaginaHistoricoCommand
-        {
-            get;
-        }
-
-        // ==========================================
         // STATUS GERAL
         // ==========================================
 
@@ -88,7 +52,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _status = value;
+                _status =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -106,7 +72,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _statusKinect = value;
+                _statusKinect =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -120,7 +88,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _statusSQLite = value;
+                _statusSQLite =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -134,7 +104,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _statusSignalR = value;
+                _statusSignalR =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -148,7 +120,29 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _statusMvcFirebase = value;
+                _statusMvcFirebase =
+                    value;
+
+                OnPropertyChanged();
+            }
+        }
+
+        // ==========================================
+        // STATUS DE ENVIO PARA OUTRA APLICAÇÃO
+        // ==========================================
+
+        private string _mensagemEnvioAplicacao =
+            "Envio externo: aguardando comunicação com o MVC.";
+
+        public string MensagemEnvioAplicacao
+        {
+            get => _mensagemEnvioAplicacao;
+
+            set
+            {
+                _mensagemEnvioAplicacao =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -166,7 +160,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _volumeTexto = value;
+                _volumeTexto =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -184,7 +180,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _nomeEspaco = value;
+                _nomeEspaco =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -198,7 +196,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _volumeMaximo = value;
+                _volumeMaximo =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -212,7 +212,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _percentualAlerta = value;
+                _percentualAlerta =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -230,7 +232,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _quantidadePontos3D = value;
+                _quantidadePontos3D =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -244,7 +248,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _ultimoSnapshot = value;
+                _ultimoSnapshot =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -258,7 +264,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _percentualOcupacaoTexto = value;
+                _percentualOcupacaoTexto =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -272,7 +280,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _espacoLivreTexto = value;
+                _espacoLivreTexto =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -289,7 +299,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             set
             {
-                _cameraImage = value;
+                _cameraImage =
+                    value;
+
                 OnPropertyChanged();
             }
         }
@@ -395,6 +407,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 StatusMvcFirebase =
                     "MVC/Firebase: Aguardando";
 
+                MensagemEnvioAplicacao =
+                    "Envio externo: aguardando comunicação com o MVC.";
+
                 QuantidadePontos3D =
                     "Pontos 3D: 0";
 
@@ -419,22 +434,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 CalibrarCommand =
                     new RelayCommand(CalibrarChao);
-
-                // ==========================================
-                // COMANDOS DE NAVEGAÇÃO
-                // ==========================================
-
-                AbrirPaginaKinectCommand =
-                    new RelayCommand(AbrirPaginaKinect);
-
-                AbrirPaginaCadastroCommand =
-                    new RelayCommand(AbrirPaginaCadastro);
-
-                AbrirPaginaHistoricoCommand =
-                    new RelayCommand(AbrirPaginaHistorico);
-
-                PaginaAtual =
-                    new KinectPage();
 
                 LoggerService.Info(
                     "Comandos configurados.");
@@ -467,6 +466,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 Status =
                     "Erro ao inicializar sistema: " + ex.Message;
+
+                MensagemEnvioAplicacao =
+                    "Não foi possível inicializar a comunicação externa.";
             }
         }
 
@@ -512,12 +514,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 {
                     StatusSignalR =
                         "SignalR: Conectando";
+
+                    MensagemEnvioAplicacao =
+                        "Tentando conectar ao MVC para envio externo.";
                 });
 
                 await _signalRService
                     .ConectarAsync();
 
-                // Aguarda um pequeno tempo para garantir handshake
                 await Task.Delay(1000);
 
                 if (_signalRService.EstaConectado)
@@ -532,6 +536,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                         Status =
                             "Conectado ao MVC via SignalR.";
+
+                        MensagemEnvioAplicacao =
+                            "Comunicação com MVC ativa. Aguardando envio de medições.";
                     });
 
                     LoggerService.Info(
@@ -553,6 +560,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                         Status =
                             "Falha ao conectar SignalR.";
+
+                        MensagemEnvioAplicacao =
+                            "Não foi possível conectar ao MVC. As medições serão mantidas apenas no SQLite local.";
                     });
 
                     LoggerService.Info(
@@ -571,6 +581,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                     Status =
                         $"Erro ao conectar SignalR: {ex.Message}";
+
+                    MensagemEnvioAplicacao =
+                        "Erro na comunicação externa. Medições não enviadas ao MVC.";
                 });
 
                 LoggerService.Erro(
@@ -596,6 +609,19 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 Status =
                     msg;
+
+                if (msg.Contains("Conectado"))
+                {
+                    MensagemEnvioAplicacao =
+                        "Comunicação externa ativa com o MVC.";
+                }
+                else if (msg.Contains("Sem conexão") ||
+                         msg.Contains("Falha") ||
+                         msg.Contains("Erro"))
+                {
+                    MensagemEnvioAplicacao =
+                        "Sem comunicação externa. As medições permanecem no SQLite local.";
+                }
             });
 
             LoggerService.Info(
@@ -827,6 +853,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                     StatusMvcFirebase =
                         "MVC/Firebase: Aguardando";
+
+                    MensagemEnvioAplicacao =
+                        "Kinect desligado. Nenhuma medição será enviada para outra aplicação.";
                 });
 
                 if (_signalRConectado)
@@ -848,6 +877,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                         Status =
                             "Kinect desligado e conexão com MVC encerrada.";
+
+                        MensagemEnvioAplicacao =
+                            "Conexão externa encerrada. Sistema sem envio para o MVC.";
                     });
 
                     LoggerService.Info(
@@ -1173,30 +1205,57 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                             StatusMvcFirebase =
                                 "MVC/Firebase: Enviando";
+
+                            MensagemEnvioAplicacao =
+                                "Enviando medição para outra aplicação via SignalR.";
                         });
 
-                        await _signalRService
-                            .EnviarVolumeAsync(
-                                volumeCm3);
+                        bool enviado =
+                            await _signalRService
+                                .EnviarVolumeAsync(
+                                    volumeCm3);
 
-                        await _signalRService
-                            .EnviarStatusAsync(
-                                "Volume enviado pelo Kinect.");
-
-                        LoggerService.Info(
-                            $"Volume enviado ao MVC via SignalR: {volumeCm3:F0} cm³");
-
-                        ExecutarNaUI(() =>
+                        if (enviado)
                         {
-                            StatusSignalR =
-                                "SignalR: Enviado";
+                            await _signalRService
+                                .EnviarStatusAsync(
+                                    "Volume enviado pelo Kinect.");
 
-                            StatusMvcFirebase =
-                                "MVC/Firebase: Enviado";
+                            LoggerService.Info(
+                                $"Volume enviado ao MVC via SignalR: {volumeCm3:F0} cm³");
 
-                            Status =
-                                $"Informações enviadas ao MVC via SignalR às {DateTime.Now:HH:mm:ss}.";
-                        });
+                            ExecutarNaUI(() =>
+                            {
+                                StatusSignalR =
+                                    "SignalR: Enviado";
+
+                                StatusMvcFirebase =
+                                    "MVC/Firebase: Enviado";
+
+                                Status =
+                                    $"Informações enviadas ao MVC via SignalR às {DateTime.Now:HH:mm:ss}.";
+
+                                MensagemEnvioAplicacao =
+                                    $"Última medição enviada ao MVC: {volumeCm3:F0} cm³ às {DateTime.Now:HH:mm:ss}.";
+                            });
+                        }
+                        else
+                        {
+                            ExecutarNaUI(() =>
+                            {
+                                StatusSignalR =
+                                    "SignalR: Falha no envio";
+
+                                StatusMvcFirebase =
+                                    "MVC/Firebase: Falha no envio";
+
+                                Status =
+                                    "Falha ao enviar informações via SignalR.";
+
+                                MensagemEnvioAplicacao =
+                                    "A medição não foi enviada para outra aplicação. Registro mantido apenas no SQLite local.";
+                            });
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1217,9 +1276,23 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                             Status =
                                 "Falha ao enviar informações via SignalR. Erro: " + ex.Message;
+
+                            MensagemEnvioAplicacao =
+                                "Erro no envio externo. A medição foi mantida apenas no SQLite local.";
                         });
                     }
                 });
+            }
+            else
+            {
+                if (!_signalRService.EstaConectado)
+                {
+                    ExecutarNaUI(() =>
+                    {
+                        MensagemEnvioAplicacao =
+                            "Medição salva localmente. Sem conexão com outra aplicação no momento.";
+                    });
+                }
             }
         }
 
@@ -1241,6 +1314,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 {
                     Status =
                         "Encerrando aplicação...";
+
+                    MensagemEnvioAplicacao =
+                        "Encerrando comunicação externa e finalizando aplicação.";
                 });
 
                 _kinectService
@@ -1268,6 +1344,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                     Status =
                         "Aplicação encerrada.";
+
+                    MensagemEnvioAplicacao =
+                        "Aplicação encerrada. Nenhuma comunicação externa ativa.";
                 });
 
                 LoggerService.Info(
@@ -1279,37 +1358,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     "Erro ao encerrar aplicação.",
                     ex);
             }
-        }
-
-        // ==========================================
-        // ABRIR PÁGINAS
-        // ==========================================
-
-        private void AbrirPaginaKinect()
-        {
-            PaginaAtual =
-                new KinectPage();
-
-            LoggerService.Info(
-                "Página Kinect / Mapeamento aberta.");
-        }
-
-        private void AbrirPaginaCadastro()
-        {
-            PaginaAtual =
-                new CadastroEspacoPage();
-
-            LoggerService.Info(
-                "Página Cadastro do Espaço aberta.");
-        }
-
-        private void AbrirPaginaHistorico()
-        {
-            PaginaAtual =
-                new HistoricoMedicoesPage();
-
-            LoggerService.Info(
-                "Página Histórico de Medições aberta.");
         }
     }
 }

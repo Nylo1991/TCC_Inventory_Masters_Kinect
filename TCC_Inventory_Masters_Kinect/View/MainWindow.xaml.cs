@@ -17,20 +17,68 @@ namespace TCC_Inventory_Masters_Kinect.View
         private bool _encerramentoEmAndamento =
             false;
 
+        private MainViewModel _viewModel;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            // Evita criar dois MainViewModel.
-            // Se o DataContext já estiver definido no XAML, ele reaproveita.
-            if (DataContext == null)
-            {
-                DataContext =
-                    new MainViewModel();
-            }
+            _viewModel =
+                new MainViewModel();
+
+            DataContext =
+                _viewModel;
 
             Closing +=
                 MainWindow_Closing;
+        }
+
+        private void AbrirKinect_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            KinectWindow janela =
+                new KinectWindow();
+
+            janela.DataContext =
+                _viewModel;
+
+            janela.Owner =
+                this;
+
+            janela.Show();
+        }
+
+        private void AbrirCadastro_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            CadastroEspacoWindow janela =
+                new CadastroEspacoWindow();
+
+            janela.DataContext =
+                _viewModel;
+
+            janela.Owner =
+                this;
+
+            janela.Show();
+        }
+
+        private void AbrirHistorico_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            HistoricoMedicoesWindow janela =
+                new HistoricoMedicoesWindow();
+
+            janela.DataContext =
+                _viewModel;
+
+            janela.Owner =
+                this;
+
+            janela.Show();
         }
 
         private async void MainWindow_Closing(

@@ -280,15 +280,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="View\CadastroEspacoPage.xaml">
+    <Page Include="View\cadastroEspacoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\HistoricoMedicoesPage.xaml">
+    <Page Include="View\HistoricoMedicoesWindowxaml.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\KinectPage.xaml">
+    <Page Include="View\KinectWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -315,14 +315,14 @@
     <Compile Include="Service\SignalRService.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="View\CadastroEspacoPage.xaml.cs">
-      <DependentUpon>CadastroEspacoPage.xaml</DependentUpon>
+    <Compile Include="View\cadastroEspacoWindow.xaml.cs">
+      <DependentUpon>cadastroEspacoWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\HistoricoMedicoesPage.xaml.cs">
-      <DependentUpon>HistoricoMedicoesPage.xaml</DependentUpon>
+    <Compile Include="View\HistoricoMedicoesWindowxaml.xaml.cs">
+      <DependentUpon>HistoricoMedicoesWindowxaml.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\KinectPage.xaml.cs">
-      <DependentUpon>KinectPage.xaml</DependentUpon>
+    <Compile Include="View\KinectWindow.xaml.cs">
+      <DependentUpon>KinectWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

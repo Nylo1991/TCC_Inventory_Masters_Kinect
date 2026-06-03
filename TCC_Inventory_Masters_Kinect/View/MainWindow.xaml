@@ -3,30 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Inventory Masters"
         Height="675"
-        Width="1150"
+        Width="1200"
         WindowStartupLocation="CenterScreen"
         Background="#EEF2F7">
 
     <Window.Resources>
 
-        <!-- ABA ESTILO NAVEGADOR -->
-        <Style x:Key="BrowserTabStyle"
+        <!-- ESTILO DOS BOTÕES DO TOPO -->
+        <Style x:Key="TabButtonStyle"
                TargetType="Button">
 
             <Setter Property="Height"
-                    Value="44"/>
+                    Value="46"/>
 
             <Setter Property="MinWidth"
                     Value="190"/>
 
             <Setter Property="Margin"
-                    Value="0,0,6,0"/>
+                    Value="0,0,8,0"/>
 
             <Setter Property="Padding"
                     Value="18,0"/>
 
             <Setter Property="Background"
-                    Value="#E5E7EB"/>
+                    Value="#E5EAF2"/>
 
             <Setter Property="Foreground"
                     Value="#0F172A"/>
@@ -54,7 +54,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="14,14,0,0">
+                                CornerRadius="16,16,0,0">
 
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"/>
@@ -90,19 +90,17 @@
     <Grid>
 
         <Grid.RowDefinitions>
-            <!-- ABAS NO TOPO -->
+            <!-- Botões no topo -->
             <RowDefinition Height="Auto"/>
 
-            <!-- CABEÇALHO -->
+            <!-- Cabeçalho -->
             <RowDefinition Height="Auto"/>
 
-            <!-- CONTEÚDO -->
+            <!-- Área principal -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ================================================= -->
-        <!-- TOPO COM ABAS, IGUAL NAVEGADOR -->
-        <!-- ================================================= -->
+        <!-- BARRA SUPERIOR DE JANELAS -->
 
         <Border Grid.Row="0"
                 Background="#DDE3EC"
@@ -112,28 +110,26 @@
                         VerticalAlignment="Bottom">
 
                 <Button Content="Kinect / Mapeamento"
-                        Style="{StaticResource BrowserTabStyle}"
-                        Command="{Binding AbrirPaginaKinectCommand}"/>
+                        Style="{StaticResource TabButtonStyle}"
+                        Click="AbrirKinect_Click"/>
 
                 <Button Content="Cadastro do Espaço"
-                        Style="{StaticResource BrowserTabStyle}"
-                        Command="{Binding AbrirPaginaCadastroCommand}"/>
+                        Style="{StaticResource TabButtonStyle}"
+                        Click="AbrirCadastro_Click"/>
 
                 <Button Content="Histórico de Medições"
-                        Style="{StaticResource BrowserTabStyle}"
-                        Command="{Binding AbrirPaginaHistoricoCommand}"/>
+                        Style="{StaticResource TabButtonStyle}"
+                        Click="AbrirHistorico_Click"/>
 
             </StackPanel>
 
         </Border>
 
-        <!-- ================================================= -->
         <!-- CABEÇALHO -->
-        <!-- ================================================= -->
 
         <Border Grid.Row="1"
                 Background="#EEF2F7"
-                Padding="30,24,30,22">
+                Padding="30,26,30,24">
 
             <Grid>
 
@@ -175,15 +171,36 @@
 
         </Border>
 
-        <!-- ================================================= -->
-        <!-- ÁREA ONDE AS PÁGINAS MUDAM -->
-        <!-- ================================================= -->
+        <!-- ÁREA PRINCIPAL DA JANELA INICIAL -->
 
         <Border Grid.Row="2"
                 Background="#EEF2F7"
                 Padding="30,0,30,30">
 
-            <ContentControl Content="{Binding PaginaAtual}"/>
+            <Border Background="White"
+                    CornerRadius="22"
+                    Padding="40"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="1">
+
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+
+                    <TextBlock Text="Bem-vindo ao Inventory Masters"
+                               FontSize="32"
+                               FontWeight="Bold"
+                               Foreground="#4F46E5"
+                               HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="Use os botões no topo para abrir as janelas do sistema."
+                               FontSize="17"
+                               Foreground="#64748B"
+                               Margin="0,12,0,0"
+                               HorizontalAlignment="Center"/>
+
+                </StackPanel>
+
+            </Border>
 
         </Border>
 

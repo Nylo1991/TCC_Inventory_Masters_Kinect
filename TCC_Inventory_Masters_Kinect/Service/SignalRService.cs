@@ -14,6 +14,16 @@ namespace TCC_Inventory_Masters_Kinect.Service
         private HubConnection _connection;
 
         /// <summary>
+        /// Último erro registrado na comunicação SignalR.
+        /// </summary>
+        public string UltimoErro
+        {
+            get;
+            private set;
+        } =
+        string.Empty;
+
+        /// <summary>
         /// Evento utilizado para atualizar a interface
         /// sobre o status da conexão SignalR.
         /// </summary>
@@ -33,132 +43,260 @@ namespace TCC_Inventory_Masters_Kinect.Service
             _connection.State == HubConnectionState.Connected;
 
         // ======================================
-        // MÉTODOS
+        // CONECTAR AO SIGNALR
         // ======================================
 
         public async Task ConectarAsync()
         {
             try
             {
-                LoggerService.Info("Iniciando conexão com o MVC via SignalR.");
+                UltimoErro =
+                    string.Empty;
 
-                _connection = new HubConnectionBuilder()
+                LoggerService.Info(
+                    "Iniciando conexão com o MVC via SignalR.");
+
+                LoggerService.Info(
+                    "URL SignalR: " + KinectConfig.UrlSignalR);
+
+                if (string.IsNullOrWhiteSpace(
+                    KinectConfig.UrlSignalR))
+                {
+                    UltimoErro =
+                        "URL do SignalR não configurada.";
+
+                    StatusSignalRAtualizado?.Invoke(
+                        "SignalR: URL não configurada");
+
+                    return;
+                }
+
+                if (_connection != null &&
+                    _connection.State == HubConnectionState.Connected)
+                {
+                    LoggerService.Info(
+                        "SignalR já estava conectado.");
+
+                    StatusSignalRAtualizado?.Invoke(
+                        "SignalR: Conectado");
+
+                    return;
+                }
+
+                _connection =
+                    new HubConnectionBuilder()
                     .WithUrl(KinectConfig.UrlSignalR)
                     .WithAutomaticReconnect()
                     .Build();
 
                 _connection.Reconnecting += error =>
                 {
-                    LoggerService.Info("Reconectando ao MVC via SignalR.");
+                    LoggerService.Info(
+                        "Reconectando ao MVC via SignalR.");
 
                     StatusSignalRAtualizado?.Invoke(
-                        "Reconectando ao MVC via SignalR...");
+                        "SignalR: Reconectando");
 
                     return Task.CompletedTask;
                 };
 
                 _connection.Reconnected += connectionId =>
                 {
-                    LoggerService.Info("Reconectado ao MVC via SignalR.");
+                    LoggerService.Info(
+                        "Reconectado ao MVC via SignalR.");
 
                     StatusSignalRAtualizado?.Invoke(
-                        "Reconectado ao MVC via SignalR.");
+                        "SignalR: Reconectado");
 
                     return Task.CompletedTask;
                 };
 
                 _connection.Closed += error =>
                 {
-                    LoggerService.Info("Conexão com MVC encerrada.");
+                    LoggerService.Info(
+                        "Conexão com MVC encerrada.");
 
                     StatusSignalRAtualizado?.Invoke(
-                        "Conexão com MVC encerrada.");
+                        "SignalR: Desconectado");
 
                     return Task.CompletedTask;
                 };
 
-                await _connection.StartAsync();
+                await _connection
+                    .StartAsync();
 
-                LoggerService.Info("Conectado ao MVC via SignalR.");
+                LoggerService.Info(
+                    "Conectado ao MVC via SignalR.");
 
                 StatusSignalRAtualizado?.Invoke(
-                    "Conectado ao MVC via SignalR.");
+                    "SignalR: Conectado");
             }
             catch (Exception ex)
             {
-                LoggerService.Erro("Erro ao conectar ao MVC via SignalR.", ex);
+                UltimoErro =
+                    ex.Message;
+
+                if (ex.InnerException != null)
+                {
+                    UltimoErro +=
+                        " | Detalhes: " +
+                        ex.InnerException.Message;
+                }
+
+                LoggerService.Erro(
+                    "Erro ao conectar ao MVC via SignalR.",
+                    ex);
 
                 StatusSignalRAtualizado?.Invoke(
-                    "Erro ao conectar ao MVC via SignalR: " + ex.Message);
+                    "SignalR: Sem conexão");
 
                 throw;
             }
         }
 
-        public async Task EnviarVolumeAsync(double volumeCm3)
+        // ======================================
+        // ENVIAR VOLUME
+        // ======================================
+
+        public async Task<bool> EnviarVolumeAsync(
+            double volumeCm3)
         {
             try
             {
-                if (_connection != null &&
-                    _connection.State == HubConnectionState.Connected)
+                UltimoErro =
+                    string.Empty;
+
+                if (_connection == null)
                 {
-                    await _connection.InvokeAsync(
+                    UltimoErro =
+                        "A conexão SignalR ainda não foi inicializada.";
+
+                    LoggerService.Info(
+                        "Volume não enviado: conexão SignalR nula.");
+
+                    StatusSignalRAtualizado?.Invoke(
+                        "SignalR: Sem conexão");
+
+                    return false;
+                }
+
+                if (_connection.State !=
+                    HubConnectionState.Connected)
+                {
+                    UltimoErro =
+                        "SignalR não está conectado. Estado atual: " +
+                        _connection.State;
+
+                    LoggerService.Info(
+                        "Volume não enviado: " + UltimoErro);
+
+                    StatusSignalRAtualizado?.Invoke(
+                        "SignalR: Sem conexão");
+
+                    return false;
+                }
+
+                await _connection
+                    .InvokeAsync(
                         "EnviarVolume",
                         volumeCm3);
 
-                    LoggerService.Info(
-                        $"Volume enviado ao MVC via SignalR: {volumeCm3:F2} cm³.");
-                }
-                else
-                {
-                    LoggerService.Info(
-                        "Volume não enviado: conexão SignalR não está ativa.");
+                LoggerService.Info(
+                    $"Volume enviado ao MVC via SignalR: {volumeCm3:F2} cm³.");
 
-                    StatusSignalRAtualizado?.Invoke(
-                        "Volume não enviado: sem conexão com MVC.");
-                }
+                StatusSignalRAtualizado?.Invoke(
+                    "SignalR: Enviado");
+
+                return true;
             }
             catch (Exception ex)
             {
-                LoggerService.Erro("Erro ao enviar volume ao MVC.", ex);
+                UltimoErro =
+                    ex.Message;
+
+                if (ex.InnerException != null)
+                {
+                    UltimoErro +=
+                        " | Detalhes: " +
+                        ex.InnerException.Message;
+                }
+
+                LoggerService.Erro(
+                    "Erro ao enviar volume ao MVC.",
+                    ex);
 
                 StatusSignalRAtualizado?.Invoke(
-                    "Erro ao enviar volume ao MVC: " + ex.Message);
+                    "SignalR: Falha no envio");
 
-                throw;
+                return false;
             }
         }
 
-        public async Task EnviarStatusAsync(string status)
+        // ======================================
+        // ENVIAR STATUS
+        // ======================================
+
+        public async Task EnviarStatusAsync(
+            string status)
         {
             try
             {
-                if (_connection != null &&
-                    _connection.State == HubConnectionState.Connected)
+                if (_connection == null)
                 {
-                    await _connection.InvokeAsync(
+                    LoggerService.Info(
+                        "Status não enviado: conexão SignalR nula.");
+
+                    StatusSignalRAtualizado?.Invoke(
+                        "SignalR: Sem conexão");
+
+                    return;
+                }
+
+                if (_connection.State !=
+                    HubConnectionState.Connected)
+                {
+                    LoggerService.Info(
+                        "Status não enviado: conexão SignalR não está ativa. Estado: " +
+                        _connection.State);
+
+                    StatusSignalRAtualizado?.Invoke(
+                        "SignalR: Sem conexão");
+
+                    return;
+                }
+
+                await _connection
+                    .InvokeAsync(
                         "EnviarStatus",
                         status);
 
-                    LoggerService.Info(
-                        "Status enviado ao MVC via SignalR: " + status);
-                }
-                else
-                {
-                    LoggerService.Info(
-                        "Status não enviado: conexão SignalR não está ativa.");
-                }
+                LoggerService.Info(
+                    "Status enviado ao MVC via SignalR: " + status);
             }
             catch (Exception ex)
             {
-                LoggerService.Erro("Erro ao enviar status ao MVC.", ex);
+                UltimoErro =
+                    ex.Message;
+
+                if (ex.InnerException != null)
+                {
+                    UltimoErro +=
+                        " | Detalhes: " +
+                        ex.InnerException.Message;
+                }
+
+                LoggerService.Erro(
+                    "Erro ao enviar status ao MVC.",
+                    ex);
 
                 StatusSignalRAtualizado?.Invoke(
-                    "Erro ao enviar status ao MVC: " + ex.Message);
-
-                throw;
+                    "SignalR: Erro ao enviar status");
             }
         }
+
+        // ======================================
+        // DESCONECTAR
+        // ======================================
 
         public async Task DesconectarAsync()
         {
@@ -166,22 +304,40 @@ namespace TCC_Inventory_Masters_Kinect.Service
             {
                 if (_connection != null)
                 {
-                    LoggerService.Info("Desconectando do MVC via SignalR.");
+                    LoggerService.Info(
+                        "Desconectando do MVC via SignalR.");
 
-                    await _connection.DisposeAsync();
+                    if (_connection.State !=
+                        HubConnectionState.Disconnected)
+                    {
+                        await _connection
+                            .StopAsync();
+                    }
 
-                    LoggerService.Info("Desconectado do MVC.");
+                    await _connection
+                        .DisposeAsync();
+
+                    _connection =
+                        null;
+
+                    LoggerService.Info(
+                        "Desconectado do MVC.");
 
                     StatusSignalRAtualizado?.Invoke(
-                        "Desconectado do MVC.");
+                        "SignalR: Desconectado");
                 }
             }
             catch (Exception ex)
             {
-                LoggerService.Erro("Erro ao desconectar do MVC.", ex);
+                UltimoErro =
+                    ex.Message;
+
+                LoggerService.Erro(
+                    "Erro ao desconectar do MVC.",
+                    ex);
 
                 StatusSignalRAtualizado?.Invoke(
-                    "Erro ao desconectar do MVC: " + ex.Message);
+                    "SignalR: Erro ao desconectar");
             }
         }
     }
