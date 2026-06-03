@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using MVC_InventoryMasters.Models;
+using MVC_InventoryMasters.Repositories;
 using System;
 using System.Threading.Tasks;
 
@@ -14,6 +16,14 @@ namespace MVC_InventoryMasters.Hubs
     public class MedicaoHub : Hub
     {
 
+        private readonly MedicaoVolumeRepository _medicaoRepository;
+
+        public MedicaoHub(
+            MedicaoVolumeRepository medicaoRepository)
+        {
+            _medicaoRepository = medicaoRepository;
+        }
+
         /// <summary>
         /// Recebe uma medição de volume enviada por um sensor
         /// e retransmite para todos os clientes conectados.
@@ -23,16 +33,43 @@ namespace MVC_InventoryMasters.Hubs
         /// </param>
         public async Task EnviarVolume(double volume)
         {
-            Console.WriteLine(
-                $"[SignalR] Volume recebido: {volume:F2} m³ | Cliente: {Context.ConnectionId}");
-
-            await Clients.All.SendAsync("NovaMedicao", new
+            try
             {
-                volumeMedido = volume,
-                origemLeitura = Context.ConnectionId,
-                status = "Normal",
-                dataHora = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
-            });
+                Console.WriteLine(
+                    $"[SignalR] Volume recebido: {volume:F2}");
+
+                var medicao = new MedicaoVolume
+                {
+                    OrigemLeitura = "Kinect",
+                    Status = "normal",
+                    VolumeMedido = volume,
+                    DataHora = DateTime.UtcNow
+                };
+
+                // SALVA NO FIRESTORE
+                await _medicaoRepository.Adicionar(medicao);
+
+                Console.WriteLine(
+                    "[Firestore] Medição salva com sucesso.");
+
+                // ENVIA PARA DASHBOARD
+                await Clients.All.SendAsync(
+                    "NovaMedicao",
+                    new
+                    {
+                        volumeMedido = volume,
+                        origemLeitura = "Kinect",
+                        status = "normal",
+                        dataHora = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+                    });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"[ERRO] {ex}");
+
+                throw;
+            }
         }
 
         /// <summary>
