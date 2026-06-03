@@ -1,107 +1,191 @@
 ﻿<Window x:Class="TCC_Inventory_Masters_Kinect.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:pages="clr-namespace:TCC_Inventory_Masters_Kinect.View"
         Title="Inventory Masters"
-        Height="600"
-        Width="850"
+        Height="675"
+        Width="1150"
         WindowStartupLocation="CenterScreen"
         Background="#EEF2F7">
 
     <Window.Resources>
 
-        <Style x:Key="MenuButtonStyle"
+        <!-- ABA ESTILO NAVEGADOR -->
+        <Style x:Key="BrowserTabStyle"
                TargetType="Button">
+
             <Setter Property="Height"
-                    Value="42"/>
+                    Value="44"/>
+
+            <Setter Property="MinWidth"
+                    Value="190"/>
+
             <Setter Property="Margin"
-                    Value="0,0,10,0"/>
+                    Value="0,0,6,0"/>
+
             <Setter Property="Padding"
                     Value="18,0"/>
-            <Setter Property="FontSize"
-                    Value="15"/>
-            <Setter Property="FontWeight"
-                    Value="SemiBold"/>
+
             <Setter Property="Background"
-                    Value="White"/>
+                    Value="#E5E7EB"/>
+
             <Setter Property="Foreground"
-                    Value="#1E293B"/>
+                    Value="#0F172A"/>
+
             <Setter Property="BorderBrush"
-                    Value="#D1D5DB"/>
+                    Value="#CBD5E1"/>
+
             <Setter Property="BorderThickness"
                     Value="1"/>
+
+            <Setter Property="FontSize"
+                    Value="15"/>
+
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+
             <Setter Property="Cursor"
                     Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="TabBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="14,14,0,0">
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="TabBorder"
+                                        Property="Background"
+                                        Value="White"/>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+                                <Setter TargetName="TabBorder"
+                                        Property="Background"
+                                        Value="#FFFFFF"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
         </Style>
 
     </Window.Resources>
 
-    <Grid Margin="30">
+    <Grid>
 
         <Grid.RowDefinitions>
+            <!-- ABAS NO TOPO -->
             <RowDefinition Height="Auto"/>
+
+            <!-- CABEÇALHO -->
             <RowDefinition Height="Auto"/>
+
+            <!-- CONTEÚDO -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- CABEÇALHO -->
+        <!-- ================================================= -->
+        <!-- TOPO COM ABAS, IGUAL NAVEGADOR -->
+        <!-- ================================================= -->
 
-        <Grid Grid.Row="0"
-              Margin="0,0,0,20">
+        <Border Grid.Row="0"
+                Background="#DDE3EC"
+                Padding="30,14,30,0">
 
-            <StackPanel Orientation="Vertical"
-                        HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Bottom">
 
-                <TextBlock Text="Inventory Masters"
-                           FontSize="36"
-                           FontWeight="Bold"
-                           Foreground="#4F46E5"/>
+                <Button Content="Kinect / Mapeamento"
+                        Style="{StaticResource BrowserTabStyle}"
+                        Command="{Binding AbrirPaginaKinectCommand}"/>
 
-                <TextBlock Text="Mapeamento Inteligente de Espaços com Kinect"
-                           FontSize="18"
-                           Foreground="#64748B"/>
+                <Button Content="Cadastro do Espaço"
+                        Style="{StaticResource BrowserTabStyle}"
+                        Command="{Binding AbrirPaginaCadastroCommand}"/>
+
+                <Button Content="Histórico de Medições"
+                        Style="{StaticResource BrowserTabStyle}"
+                        Command="{Binding AbrirPaginaHistoricoCommand}"/>
+
             </StackPanel>
 
-            <Border HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Background="White"
-                    CornerRadius="14"
-                    Padding="22,12"
-                    BorderBrush="#E5E7EB"
-                    BorderThickness="1">
+        </Border>
 
-                <TextBlock Text="Sistema Kinect"
-                           FontSize="15"
-                           FontWeight="Bold"
-                           Foreground="#1E293B"/>
-            </Border>
+        <!-- ================================================= -->
+        <!-- CABEÇALHO -->
+        <!-- ================================================= -->
 
-        </Grid>
+        <Border Grid.Row="1"
+                Background="#EEF2F7"
+                Padding="30,24,30,22">
 
-        <!-- MENU DE PÁGINAS -->
+            <Grid>
 
-        <StackPanel Grid.Row="1"
-                    Orientation="Horizontal"
-                    Margin="0,0,0,25">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <Button Content="Kinect / Mapeamento"
-                    Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding AbrirPaginaKinectCommand}"/>
+                <StackPanel Grid.Column="0">
 
-            <Button Content="Cadastro do Espaço"
-                    Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding AbrirPaginaCadastroCommand}"/>
+                    <TextBlock Text="Inventory Masters"
+                               FontSize="34"
+                               FontWeight="Bold"
+                               Foreground="#4F46E5"/>
 
-            <Button Content="Histórico de Medições"
-                    Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding AbrirPaginaHistoricoCommand}"/>
+                    <TextBlock Text="Mapeamento Inteligente de Espaços com Kinect"
+                               FontSize="17"
+                               Foreground="#64748B"
+                               Margin="0,6,0,0"/>
 
-        </StackPanel>
+                </StackPanel>
 
-        <!-- ÁREA QUE MUDA DE PÁGINA -->
+                <Border Grid.Column="1"
+                        Background="White"
+                        CornerRadius="18"
+                        Padding="24,12"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1"
+                        VerticalAlignment="Top">
 
-        <ContentControl Grid.Row="2"
-                        Content="{Binding PaginaAtual}"/>
+                    <TextBlock Text="Sistema Kinect"
+                               FontSize="15"
+                               FontWeight="Bold"
+                               Foreground="#1E293B"/>
+
+                </Border>
+
+            </Grid>
+
+        </Border>
+
+        <!-- ================================================= -->
+        <!-- ÁREA ONDE AS PÁGINAS MUDAM -->
+        <!-- ================================================= -->
+
+        <Border Grid.Row="2"
+                Background="#EEF2F7"
+                Padding="30,0,30,30">
+
+            <ContentControl Content="{Binding PaginaAtual}"/>
+
+        </Border>
 
     </Grid>
 
