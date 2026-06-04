@@ -17,9 +17,10 @@ namespace MVC_InventoryMasters.Models
 
         [FirestoreProperty]
         [Required(ErrorMessage = "O e-mail é obrigatório.")]
-        /// Validação do formato de e-mail
+        [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
         [RegularExpression(@"^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$",
-           ErrorMessage = "E-mail inválido. O formato correto é nome@dominio.com")]
+            ErrorMessage = "E-mail inválido. Utilize o formato nome@dominio.com")]
+        [Display(Name = "E-mail de Contato")]
         public string? Email { get; set; }
 
         [FirestoreProperty]
@@ -36,6 +37,7 @@ namespace MVC_InventoryMasters.Models
         public DateTime? Data_Cadastro { get; set; } = DateTime.Now;
 
         [FirestoreProperty]
+
         public bool Ativo { get; set; } = true;
     }
 }

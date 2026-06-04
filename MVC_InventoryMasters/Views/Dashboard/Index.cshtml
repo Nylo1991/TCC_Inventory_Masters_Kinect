@@ -161,10 +161,31 @@
 
 @section Scripts
 {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    ```
     <script>
+
+        // ======================================
+        // DADOS INICIAIS VINDOS DO FIRESTORE
+        // ======================================
+
+        const medicoesIniciais = [
+        @if (Model.Medicoes != null && Model.Medicoes.Any())
+        {
+                foreach (var m in Model.Medicoes
+                        .OrderBy(x => x.DataHora)
+                        .TakeLast(20))
+                {
+                        <text>
+                        {
+                            volume: @(m.VolumeMedido ?? 0),
+                            data: "@(m.DataHora?.ToString("HH:mm:ss"))"
+                        },
+                        </text>
+                }
+        }
+        ];
 
         // ======================================
         // TOAST
@@ -172,7 +193,8 @@
 
         function showToast(message) {
 
-            const toast = document.getElementById("toast");
+            const toast =
+                document.getElementById("toast");
 
             toast.innerText = message;
             toast.style.display = "block";
@@ -183,50 +205,63 @@
         }
 
         // ======================================
+        // PREPARA DADOS DO GRÁFICO
+        // ======================================
+
+        const labelsIniciais =
+            medicoesIniciais.map(x => x.data);
+
+        const volumesIniciais =
+            medicoesIniciais.map(x => x.volume);
+
+        // ======================================
         // CHART
         // ======================================
 
-        const ctx = document
-            .getElementById("volumeChart")
-            .getContext("2d");
+        const ctx =
+            document
+                .getElementById("volumeChart")
+                .getContext("2d");
 
-        const volumeChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: [],
-                datasets: [{
-                    label: "Volume Medido",
-                    data: [],
-                    borderColor: "#16a34a",
-                    backgroundColor: "rgba(22,163,74,0.15)",
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                animation: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
+        const volumeChart =
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labelsIniciais,
+                    datasets: [{
+                        label: "Volume Medido",
+                        data: volumesIniciais,
+                        borderColor: "#16a34a",
+                        backgroundColor: "rgba(22,163,74,0.15)",
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    animation: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
 
         // ======================================
         // SIGNALR
         // ======================================
 
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/medicaoHub")
-            .withAutomaticReconnect()
-            .build();
+        const connection =
+            new signalR.HubConnectionBuilder()
+                .withUrl("/medicaoHub")
+                .withAutomaticReconnect()
+                .build();
 
         connection.start()
             .then(() => {
 
-                console.log("✅ SignalR conectado");
+                console.log("SignalR conectado");
                 showToast("Conectado ao servidor");
 
             })
@@ -259,16 +294,18 @@
         });
 
         // ======================================
-        // EVENTO RECEBIDO DO HUB
+        // NOVA MEDIÇÃO
         // ======================================
 
         connection.on("NovaMedicao", function (m) {
 
-            console.log("📡 Nova medição:", m);
+            console.log("Nova medição recebida:", m);
 
-            const volume = Number(m.volumeMedido || 0);
+            const volume =
+                Number(m.volumeMedido || 0);
 
-            const hora = new Date().toLocaleTimeString();
+            const hora =
+                new Date().toLocaleTimeString();
 
             // KPI
 
@@ -297,13 +334,14 @@
                     </tr>
                 `;
 
-                tabela.insertAdjacentHTML("afterbegin", row);
+                tabela.insertAdjacentHTML(
+                    "afterbegin",
+                    row);
 
                 while (tabela.rows.length > 20) {
 
                     tabela.deleteRow(
-                        tabela.rows.length - 1
-                    );
+                        tabela.rows.length - 1);
                 }
             }
 
@@ -322,20 +360,10 @@
 
             volumeChart.update();
 
-            // ALERTAS
+            // ALERTA
 
-            if (volume > 80) {
-
-                showToast("🚨 Volume crítico detectado!");
-
-            } else {
-
-                showToast("📡 Nova medição recebida");
-            }
-
+            
         });
 
     </script>
-    ```
-
 }

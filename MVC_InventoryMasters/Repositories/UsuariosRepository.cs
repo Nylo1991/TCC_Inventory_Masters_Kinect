@@ -126,6 +126,7 @@ namespace MVC_InventoryMasters.Repositories
         /// </param>
         public async Task Atualizar(Usuario usuario)
         {
+
             await _db
                 .Collection(_colecao)
                 .Document(usuario.Id)
