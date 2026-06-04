@@ -17,6 +17,7 @@ builder.Services.AddScoped<MedicaoVolumeRepository>();
 builder.Services.AddScoped<NotificacaoRepository>();
 builder.Services.AddScoped<ParametrosSistemaRepository>();
 builder.Services.AddScoped<UsuariosRepository>();
+builder.Services.AddScoped<PerfisRepository>();
 
 // Configuração do CORS (deve ser a primeira coisa a ser definida antes do build)
 builder.Services.AddCors(options =>

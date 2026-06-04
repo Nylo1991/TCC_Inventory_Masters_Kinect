@@ -31,9 +31,24 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Perfil" class="form-label"></label>
-                    <input asp-for="Perfil" class="form-control" />
-                    <span asp-validation-for="Perfil" class="text-danger"></span>
+
+                    <label asp-for="Perfil" class="form-label">
+                        Perfil
+                    </label>
+
+                    <select asp-for="Perfil"
+                            asp-items="ViewBag.Perfis"
+                            class="form-select">
+
+                        <option value="">
+                            Selecione um perfil
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="Perfil"
+                          class="text-danger"></span>
+
                 </div>
 
                 <div class="mb-3">
