@@ -36,7 +36,23 @@
                 <td>@parceiro.Nome</td>
                 <td>@parceiro.Empresa</td>
                 <td>@parceiro.Email</td>
-                <td>@parceiro.Telefone</td>
+                <td>
+                    @{
+                        var telefone = parceiro.Telefone?.Replace(" ", "")
+                        .Replace("(", "")
+                        .Replace(")", "")
+                        .Replace("-", "");
+
+                        if (!string.IsNullOrEmpty(telefone) && telefone.Length == 11)
+                        {
+                            @($"({telefone.Substring(0, 2)}) {telefone.Substring(2, 1)} {telefone.Substring(3, 4)}-{telefone.Substring(7, 4)}")
+                        }
+                        else
+                        {
+                            @parceiro.Telefone
+                        }
+                    }
+                </td>
                 <td>
                     @(parceiro.Ativo ? "Ativo" : "Inativo")
                 </td>

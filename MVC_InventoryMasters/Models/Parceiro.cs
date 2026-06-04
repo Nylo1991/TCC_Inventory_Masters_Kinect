@@ -27,7 +27,15 @@ namespace MVC_InventoryMasters.Models
         [FirestoreProperty]
         [Required(ErrorMessage = "O telefone é obrigatório.")]
         [Display(Name = "Telefone")]
-        [StringLength(15, ErrorMessage = "Telefone muito longo.")]
+        [StringLength(
+        16,
+        MinimumLength = 16,
+        ErrorMessage = "O telefone deve estar no formato (31) 9 9999-9999."
+            )]
+        [RegularExpression(
+            @"^\(\d{2}\)\s\d\s\d{4}-\d{4}$",
+            ErrorMessage = "Informe um telefone válido. Exemplo: (31) 9 9999-9999."
+        )]
         public string? Telefone { get; set; }
 
         [FirestoreProperty]
