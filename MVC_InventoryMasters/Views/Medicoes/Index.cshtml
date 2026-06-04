@@ -35,7 +35,9 @@
 
                 <thead>
                     <tr>
-                        <th>Volume</th>
+                        <th>Volume (m³)</th>
+                        <th>Origem</th>
+                        <th>Status</th>
                         <th>Data</th>
                     </tr>
                 </thead>
@@ -45,7 +47,9 @@
                     @foreach (var item in Model.OrderByDescending(x => x.DataHora))
                     {
                         <tr>
-                            <td>@item.VolumeMedido</td>
+                            <td>@(item.VolumeMedido?.ToString("N2") ?? "0,00")</td>
+                            <td>@item.OrigemLeitura</td>
+                            <td>@item.Status</td>
                             <td>@item.DataHora</td>
                         </tr>
                     }
