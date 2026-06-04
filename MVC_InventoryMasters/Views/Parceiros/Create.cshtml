@@ -4,14 +4,6 @@
     ViewData["Title"] = "Novo Parceiro";
 }
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-
-<script>
-    $(document).ready(function () {
-        $('#Telefone').mask('(00) 0 0000-0000');
-    });
-</script>
-
 <div class="card shadow-sm">
 
     <div class="card-header">
@@ -19,6 +11,13 @@
     </div>
 
     <div class="card-body">
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All"
+                 class="alert alert-danger">
+            </div>
+        }
 
         <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
@@ -74,15 +73,9 @@
             </div>
 
             <div class="form-check mb-3">
-
-                <input asp-for="Ativo"
-                       class="form-check-input" />
-
-                <label asp-for="Ativo"
-                       class="form-check-label">
-                    Parceiro Ativo
-                </label>
-
+                <input asp-for="Ativo" class="form-check-input" />
+                <label class="form-check-label">Usuário Ativo</label>
+                <span asp-validation-for="Ativo" class="text-danger"></span>
             </div>
 
             <button type="submit"

@@ -49,11 +49,6 @@ namespace MVC_InventoryMasters.Controllers
         {
             var perfis = await _perfisRepository.ListarTodos();
 
-            foreach (var perfil in perfis)
-            {
-                Console.WriteLine($"Perfil: {perfil.Nome}");
-            }
-
             ViewBag.Perfis = perfis
                 .Select(p => new SelectListItem
                 {
@@ -132,10 +127,18 @@ namespace MVC_InventoryMasters.Controllers
         /// <param name="usuario">
         /// Objeto contendo os dados atualizados.
         /// </param>
+        /// <summary>
+        /// Salva as alterações realizadas em um usuário.
+        /// </summary>
+        /// <param name="usuario">
+        /// Objeto contendo os dados atualizados.
+        /// </param>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Usuario usuario)
         {
+            ModelState.Remove(nameof(usuario.Senha));
+
             if (!ModelState.IsValid)
             {
                 await CarregarPerfis();
@@ -147,7 +150,30 @@ namespace MVC_InventoryMasters.Controllers
             if (existente == null)
                 return NotFound();
 
+            bool houveAlteracao =
+                existente.Nome != usuario.Nome ||
+                existente.Email != usuario.Email ||
+                existente.Perfil != usuario.Perfil ||
+                existente.Ativo != usuario.Ativo;
+
+            if (!houveAlteracao)
+            {
+                ViewBag.Aviso = "Nenhuma alteração foi realizada no usuário.";
+
+                await CarregarPerfis();
+
+                return View(usuario);
+            }
+
+            // Mantém a senha atual
+            usuario.Senha = existente.Senha;
+
+            // Mantém a data de cadastro
+            usuario.Data_Cadastro = existente.Data_Cadastro;
+
             await _repository.Atualizar(usuario);
+
+            TempData["Sucesso"] = "Usuário atualizado com sucesso.";
 
             return RedirectToAction(nameof(Index));
         }

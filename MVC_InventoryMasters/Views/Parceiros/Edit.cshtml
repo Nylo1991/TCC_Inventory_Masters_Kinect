@@ -4,7 +4,6 @@
     ViewData["Title"] = "Editar Parceiro";
 }
 
-
 <div class="card shadow-sm">
 
     <div class="card-header">
@@ -13,7 +12,14 @@
 
     <div class="card-body">
 
-        <form asp-action="Edit">
+        @if (ViewBag.Aviso != null)
+        {
+            <div class="alert alert-warning">
+                @ViewBag.Aviso
+            </div>
+        }
+
+        <form asp-action="Edit" method="post">
 
             <input asp-for="Id" type="hidden" />
 
@@ -41,7 +47,8 @@
                 <label asp-for="Telefone" class="form-label"></label>
 
                 <input asp-for="Telefone"
-                       class="form-control" />
+                       class="form-control"
+                       id="Telefone" />
 
                 <span asp-validation-for="Telefone"
                       class="text-danger"></span>
@@ -67,15 +74,9 @@
             </div>
 
             <div class="form-check mb-3">
-
-                <input asp-for="Ativo"
-                       class="form-check-input" />
-
-                <label asp-for="Ativo"
-                       class="form-check-label">
-                    Parceiro Ativo
-                </label>
-
+                <input asp-for="Ativo" class="form-check-input" />
+                <label class="form-check-label">Parceiro Ativo</label>
+                <span asp-validation-for="Ativo" class="text-danger"></span>
             </div>
 
             <button type="submit"
@@ -97,3 +98,17 @@
     </div>
 
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#Telefone").mask("(00) 0 0000-0000");
+        });
+    </script>
+}

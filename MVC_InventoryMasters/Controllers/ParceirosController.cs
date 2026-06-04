@@ -104,19 +104,51 @@ namespace MVC_InventoryMasters.Controllers
         /// </param>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(
-            Parceiro parceiro)
+        public async Task<IActionResult> Edit(Parceiro parceiro)
         {
+
+
             if (!ModelState.IsValid)
+            {
                 return View(parceiro);
+            }
 
-            var parceiroExistente =
-                await _repository.BuscarPorId(parceiro.Id);
+            var existente = await _repository.BuscarPorId(parceiro.Id);
 
-            if (parceiroExistente == null)
+            if (existente == null)
                 return NotFound();
 
+            string telefoneBanco = new string(
+    (existente.Telefone ?? "")
+    .Where(char.IsDigit)
+    .ToArray());
+
+            string telefoneTela = new string(
+                (parceiro.Telefone ?? "")
+                .Where(char.IsDigit)
+                .ToArray());
+
+            bool houveAlteracao =
+     existente.Nome?.Trim() != parceiro.Nome?.Trim() ||
+     existente.Email?.Trim() != parceiro.Email?.Trim() ||
+     telefoneBanco != telefoneTela ||
+     existente.Empresa?.Trim() != parceiro.Empresa?.Trim() ||
+     existente.Endereco?.Trim() != parceiro.Endereco?.Trim() ||
+     existente.Ativo != parceiro.Ativo;
+
+            if (!houveAlteracao)
+            {
+                ViewBag.Aviso = "Nenhuma alteração foi realizada no parceiro.";
+
+                return View(parceiro);
+            }
+
+            // Mantém a data de cadastro
+            parceiro.Data_Cadastro = existente.Data_Cadastro;
+
             await _repository.Atualizar(parceiro);
+
+            TempData["Sucesso"] = "Parceiro atualizado com sucesso.";
 
             return RedirectToAction(nameof(Index));
         }

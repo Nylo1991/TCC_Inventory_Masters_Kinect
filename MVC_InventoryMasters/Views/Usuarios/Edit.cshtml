@@ -13,6 +13,14 @@
 
         <div class="card-body">
 
+            @if (ViewBag.Aviso != null)
+            {
+                <div class="alert alert-warning">
+                    @ViewBag.Aviso
+                </div>
+            }
+
+
             <form asp-action="Edit" method="post">
                 @Html.AntiForgeryToken()
 
@@ -49,12 +57,6 @@
                     <span asp-validation-for="Perfil"
                           class="text-danger"></span>
 
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Senha" class="form-label"></label>
-                    <input asp-for="Senha" type="password" class="form-control" />
-                    <span asp-validation-for="Senha" class="text-danger"></span>
                 </div>
 
                 <div class="form-check mb-3">

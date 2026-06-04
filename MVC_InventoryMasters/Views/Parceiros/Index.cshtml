@@ -54,7 +54,14 @@
                     }
                 </td>
                 <td>
-                    @(parceiro.Ativo ? "Ativo" : "Inativo")
+                    @if (parceiro.Ativo)
+                    {
+                        <span class="badge bg-success">Ativo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inativo</span>
+                    }
                 </td>
                 <td>
                     <a asp-action="Edit"

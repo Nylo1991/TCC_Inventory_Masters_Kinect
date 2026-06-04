@@ -52,8 +52,8 @@ namespace MVC_InventoryMasters.Models
         [Required(ErrorMessage = "A data de cadastro é obrigatória.")]
         public DateTime Data_Cadastro { get; set; } = DateTime.UtcNow;
 
-        [FirestoreProperty]        
-        [Range(typeof(bool), "true", "true", ErrorMessage = "Você deve marcar o status como Ativo.")]
+
+        [FirestoreProperty]
         public bool Ativo { get; set; } = true;
     }
 }
