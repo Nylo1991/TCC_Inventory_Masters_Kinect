@@ -8,202 +8,77 @@
         Background="#EEF2F7">
 
     <Window.Resources>
-
-        <!-- ESTILO DOS BOTÕES DO TOPO -->
-        <Style x:Key="TabButtonStyle"
-               TargetType="Button">
-
-            <Setter Property="Height"
-                    Value="46"/>
-
-            <Setter Property="MinWidth"
-                    Value="190"/>
-
-            <Setter Property="Margin"
-                    Value="0,0,8,0"/>
-
-            <Setter Property="Padding"
-                    Value="18,0"/>
-
-            <Setter Property="Background"
-                    Value="#E5EAF2"/>
-
-            <Setter Property="Foreground"
-                    Value="#0F172A"/>
-
-            <Setter Property="BorderBrush"
-                    Value="#CBD5E1"/>
-
-            <Setter Property="BorderThickness"
-                    Value="1"/>
-
-            <Setter Property="FontSize"
-                    Value="15"/>
-
-            <Setter Property="FontWeight"
-                    Value="SemiBold"/>
-
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-
+        <Style x:Key="TabButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="46"/>
+            <Setter Property="MinWidth" Value="190"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="Background" Value="#E5EAF2"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-
                         <Border x:Name="TabBorder"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="16,16,0,0">
-
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-
                         <ControlTemplate.Triggers>
-
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter TargetName="TabBorder"
-                                        Property="Background"
-                                        Value="White"/>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="White"/>
                             </Trigger>
-
-                            <Trigger Property="IsPressed"
-                                     Value="True">
-                                <Setter TargetName="TabBorder"
-                                        Property="Background"
-                                        Value="#FFFFFF"/>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="#FFFFFF"/>
                             </Trigger>
-
                         </ControlTemplate.Triggers>
-
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-
         </Style>
-
     </Window.Resources>
 
     <Grid>
-
         <Grid.RowDefinitions>
-            <!-- Botões no topo -->
             <RowDefinition Height="Auto"/>
-
-            <!-- Cabeçalho -->
             <RowDefinition Height="Auto"/>
-
-            <!-- Área principal -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- BARRA SUPERIOR DE JANELAS -->
-
-        <Border Grid.Row="0"
-                Background="#DDE3EC"
-                Padding="30,14,30,0">
-
-            <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Bottom">
-
-                <Button Content="Kinect / Mapeamento"
-                        Style="{StaticResource TabButtonStyle}"
-                        Click="AbrirKinect_Click"/>
-
-                <Button Content="Cadastro do Espaço"
-                        Style="{StaticResource TabButtonStyle}"
-                        Click="AbrirCadastro_Click"/>
-
-                <Button Content="Histórico de Medições"
-                        Style="{StaticResource TabButtonStyle}"
-                        Click="AbrirHistorico_Click"/>
-
+        <Border Grid.Row="0" Background="#DDE3EC" Padding="30,14,30,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                <Button Content="Kinect / Mapeamento" Style="{StaticResource TabButtonStyle}" Click="AbrirKinect_Click"/>
+                <Button Content="Cadastro do Espaço" Style="{StaticResource TabButtonStyle}" Click="AbrirCadastro_Click"/>
+                <Button Content="Histórico de Medições" Style="{StaticResource TabButtonStyle}" Click="AbrirHistorico_Click"/>
             </StackPanel>
-
         </Border>
 
-        <!-- CABEÇALHO -->
-
-        <Border Grid.Row="1"
-                Background="#EEF2F7"
-                Padding="30,26,30,24">
-
+        <Border Grid.Row="1" Background="#EEF2F7" Padding="30,26,30,24">
             <Grid>
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-
                 <StackPanel Grid.Column="0">
-
-                    <TextBlock Text="Inventory Masters"
-                               FontSize="34"
-                               FontWeight="Bold"
-                               Foreground="#4F46E5"/>
-
-                    <TextBlock Text="Mapeamento Inteligente de Espaços com Kinect"
-                               FontSize="17"
-                               Foreground="#64748B"
-                               Margin="0,6,0,0"/>
-
+                    <TextBlock Text="Inventory Masters" FontSize="34" FontWeight="Bold" Foreground="#4F46E5"/>
+                    <TextBlock Text="Mapeamento Inteligente de Espaços com Kinect" FontSize="17" Foreground="#64748B" Margin="0,6,0,0"/>
                 </StackPanel>
-
-                <Border Grid.Column="1"
-                        Background="White"
-                        CornerRadius="18"
-                        Padding="24,12"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1"
-                        VerticalAlignment="Top">
-
-                    <TextBlock Text="Sistema Kinect"
-                               FontSize="15"
-                               FontWeight="Bold"
-                               Foreground="#1E293B"/>
-
+                <Border Grid.Column="1" Background="White" CornerRadius="18" Padding="24,12" BorderBrush="#E5E7EB" BorderThickness="1" VerticalAlignment="Top">
+                    <TextBlock Text="Sistema Kinect" FontSize="15" FontWeight="Bold" Foreground="#1E293B"/>
                 </Border>
-
             </Grid>
-
         </Border>
 
-        <!-- ÁREA PRINCIPAL DA JANELA INICIAL -->
-
-        <Border Grid.Row="2"
-                Background="#EEF2F7"
-                Padding="30,0,30,30">
-
-            <Border Background="White"
-                    CornerRadius="22"
-                    Padding="40"
-                    BorderBrush="#E5E7EB"
-                    BorderThickness="1">
-
-                <StackPanel VerticalAlignment="Center"
-                            HorizontalAlignment="Center">
-
-                    <TextBlock Text="Bem-vindo ao Inventory Masters"
-                               FontSize="32"
-                               FontWeight="Bold"
-                               Foreground="#4F46E5"
-                               HorizontalAlignment="Center"/>
-
-                    <TextBlock Text="Use os botões no topo para abrir as janelas do sistema."
-                               FontSize="17"
-                               Foreground="#64748B"
-                               Margin="0,12,0,0"
-                               HorizontalAlignment="Center"/>
-
-                </StackPanel>
-
+        <Border Grid.Row="2" Background="#EEF2F7" Padding="30,0,30,30">
+            <Border Background="White" CornerRadius="22" BorderBrush="#E5E7EB" BorderThickness="1">
+                <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
             </Border>
-
         </Border>
-
     </Grid>
-
 </Window>
