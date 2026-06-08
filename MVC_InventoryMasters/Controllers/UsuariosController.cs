@@ -5,34 +5,11 @@ using MVC_InventoryMasters.Repositories;
 
 namespace MVC_InventoryMasters.Controllers
 {
-    /// <summary>
-    /// Controller responsável pelo gerenciamento
-    /// dos usuários do sistema Inventory Masters.
-    ///
-    /// Fluxo padrão:
-    /// View -> Controller -> Repository -> Firestore
-    ///
-    /// Funções:
-    /// - Listar usuários
-    /// - Criar usuário
-    /// - Editar usuário
-    /// - Excluir usuário
-    /// </summary>
     public class UsuariosController : Controller
     {
         private readonly UsuariosRepository _repository;
         private readonly PerfisRepository _perfisRepository;
 
-        /// <summary>
-        /// Injeta os repositórios necessários para
-        /// gerenciamento de usuários e perfis.
-        /// </summary>
-        /// <param name="repository">
-        /// Repositório responsável pelos usuários.
-        /// </param>
-        /// <param name="perfisRepository">
-        /// Repositório responsável pela leitura dos perfis.
-        /// </param>
         public UsuariosController(
             UsuariosRepository repository,
             PerfisRepository perfisRepository)
@@ -41,10 +18,6 @@ namespace MVC_InventoryMasters.Controllers
             _perfisRepository = perfisRepository;
         }
 
-        /// <summary>
-        /// Carrega os perfis cadastrados no Firebase
-        /// para utilização nos DropDownLists.
-        /// </summary>
         private async Task CarregarPerfis()
         {
             var perfis = await _perfisRepository.ListarTodos();
@@ -58,9 +31,6 @@ namespace MVC_InventoryMasters.Controllers
                 .ToList();
         }
 
-        /// <summary>
-        /// Lista todos os usuários cadastrados.
-        /// </summary>
         public async Task<IActionResult> Index()
         {
             var usuarios = await _repository.ListarTodos();
@@ -69,21 +39,19 @@ namespace MVC_InventoryMasters.Controllers
 
         /// <summary>
         /// Exibe a tela de criação de usuário.
-        /// Também carrega os perfis disponíveis.
+        /// Também carrega os perfis disponíveis e define "Ativo" como true por padrão.
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> Create()
         {
             await CarregarPerfis();
-            return View();
+
+            // Criamos a instância e definimos Ativo como true por padrão
+            var novoUsuario = new Usuario { Ativo = true };
+
+            return View(novoUsuario);
         }
 
-        /// <summary>
-        /// Salva um novo usuário no Firestore.
-        /// </summary>
-        /// <param name="usuario">
-        /// Dados do usuário preenchidos no formulário.
-        /// </param>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Usuario usuario)
@@ -99,12 +67,6 @@ namespace MVC_InventoryMasters.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// Exibe os dados do usuário para edição.
-        /// </summary>
-        /// <param name="id">
-        /// Identificador do usuário.
-        /// </param>
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -121,18 +83,6 @@ namespace MVC_InventoryMasters.Controllers
             return View(usuario);
         }
 
-        /// <summary>
-        /// Salva as alterações realizadas em um usuário.
-        /// </summary>
-        /// <param name="usuario">
-        /// Objeto contendo os dados atualizados.
-        /// </param>
-        /// <summary>
-        /// Salva as alterações realizadas em um usuário.
-        /// </summary>
-        /// <param name="usuario">
-        /// Objeto contendo os dados atualizados.
-        /// </param>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Usuario usuario)
@@ -159,31 +109,19 @@ namespace MVC_InventoryMasters.Controllers
             if (!houveAlteracao)
             {
                 ViewBag.Aviso = "Nenhuma alteração foi realizada no usuário.";
-
                 await CarregarPerfis();
-
                 return View(usuario);
             }
 
-            // Mantém a senha atual
             usuario.Senha = existente.Senha;
-
-            // Mantém a data de cadastro
             usuario.Data_Cadastro = existente.Data_Cadastro;
 
             await _repository.Atualizar(usuario);
-
             TempData["Sucesso"] = "Usuário atualizado com sucesso.";
 
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// Exibe a tela de confirmação para exclusão.
-        /// </summary>
-        /// <param name="id">
-        /// Identificador do usuário.
-        /// </param>
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
@@ -198,12 +136,6 @@ namespace MVC_InventoryMasters.Controllers
             return View(usuario);
         }
 
-        /// <summary>
-        /// Confirma e executa a exclusão do usuário.
-        /// </summary>
-        /// <param name="id">
-        /// Identificador do usuário.
-        /// </param>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -212,7 +144,6 @@ namespace MVC_InventoryMasters.Controllers
                 return BadRequest();
 
             await _repository.Excluir(id);
-
             return RedirectToAction(nameof(Index));
         }
     }
