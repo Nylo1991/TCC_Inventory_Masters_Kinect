@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using TCC_Inventory_Masters_Kinect.Command;
+using TCC_Inventory_Masters_Kinect.Command.TCC_Inventory_Masters_Kinect.Command;
 using TCC_Inventory_Masters_Kinect.ConfigKinect;
 using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Model;
