@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using TCC_Inventory_Masters_Kinect.Data;
 
 namespace TCC_Inventory_Masters_Kinect.Logs
 {
@@ -8,36 +9,24 @@ namespace TCC_Inventory_Masters_Kinect.Logs
     {
         private static readonly object _lock = new object();
 
-        private static readonly string _logDirectory =
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, 
-                "Logs");
-
-        private static readonly string _logFile =
-            Path.Combine(_logDirectory, 
-                "kinect_log.txt");
-
         public static void Info(string mensagem)
         {
-            Escrever("INFO", mensagem);
+            SalvarLog("INFO", mensagem);
         }
 
         public static void Erro(string mensagem, Exception ex = null)
         {
             string detalhe = ex == null
                 ? mensagem
-                : mensagem + " | Erro: " + ex.Message;
+                : $"{mensagem} | Erro: {ex.Message}";
 
-            if (ex != null && ex.InnerException != null)
+            if (ex?.InnerException != null)
             {
-                detalhe += " | Detalhes: " + ex.InnerException.Message;
+                detalhe += $" | Detalhes: {ex.InnerException.Message}";
             }
 
-            Escrever("ERRO", detalhe);
+            SalvarLog("ERRO", detalhe);
         }
-
-        // ==========================================
-        // PADRÃO LogInformation
-        // ==========================================
 
         public static void LogInformation(string mensagem)
         {
@@ -46,7 +35,7 @@ namespace TCC_Inventory_Masters_Kinect.Logs
 
         public static void LogWarning(string mensagem)
         {
-            Escrever("AVISO", mensagem);
+            SalvarLog("AVISO", mensagem);
         }
 
         public static void LogError(string mensagem, Exception ex = null)
@@ -54,33 +43,34 @@ namespace TCC_Inventory_Masters_Kinect.Logs
             Erro(mensagem, ex);
         }
 
-        private static void Escrever(string tipo, string mensagem)
+        private static void SalvarLog(string nivel, string mensagem)
         {
             try
             {
-                string linha =
-                    $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{tipo}] {mensagem}";
-
-                // Aparece na janela Output/Saída do Visual Studio
+                // Também mostra no Output do Visual Studio
+                string linha = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{nivel}] {mensagem}";
                 Debug.WriteLine(linha);
                 Trace.WriteLine(linha);
 
-                // Também grava em arquivo
                 lock (_lock)
                 {
-                    if (!Directory.Exists(_logDirectory))
+                    using (var context = new AppDbContext())
                     {
-                        Directory.CreateDirectory(_logDirectory);
-                    }
+                        var log = new Log
+                        {
+                            DataHora = DateTime.Now,
+                            Nivel = nivel,
+                            Mensagem = mensagem
+                        };
 
-                    File.AppendAllText(
-                        _logFile,
-                        linha + Environment.NewLine);
+                        context.Logs.Add(log);
+                        context.SaveChanges();
+                    }
                 }
             }
             catch
             {
-                // Nunca deixar erro de log derrubar o sistema.
+                // Nunca deixar erro de log derrubar o sistema
             }
         }
     }
