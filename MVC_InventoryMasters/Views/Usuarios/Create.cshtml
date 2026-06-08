@@ -5,54 +5,45 @@
 }
 
 <div class="container">
-
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
             <h4>Novo Usuário</h4>
         </div>
-
         <div class="card-body">
-
-
             <form asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
 
                 <div class="mb-3">
                     <label asp-for="Nome" class="form-label"></label>
-                    <input asp-for="Nome" class="form-control" />
+                    <input asp-for="Nome" class="form-control"
+                           data-bs-toggle="tooltip"
+                           title="Insira o nome completo do usuário para identificação no sistema." />
                     <span asp-validation-for="Nome" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
                     <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" />
+                    <input asp-for="Email" class="form-control"
+                           data-bs-toggle="tooltip"
+                           title="Digite um e-mail válido; este será o login do usuário." />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-
-                    <label asp-for="Perfil" class="form-label">
-                        Perfil
-                    </label>
-
-                    <select asp-for="Perfil"
-                            asp-items="ViewBag.Perfis"
-                            class="form-select">
-
-                        <option value="">
-                            Selecione um perfil
-                        </option>
-
+                    <label asp-for="Perfil" class="form-label">Perfil</label>
+                    <select asp-for="Perfil" asp-items="ViewBag.Perfis" class="form-select"
+                            data-bs-toggle="tooltip"
+                            title="Escolha o nível de acesso e permissões deste usuário no sistema.">
+                        <option value="">Selecione um perfil</option>
                     </select>
-
-                    <span asp-validation-for="Perfil"
-                          class="text-danger"></span>
-
+                    <span asp-validation-for="Perfil" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
                     <label asp-for="Senha" class="form-label"></label>
-                    <input asp-for="Senha" type="password" class="form-control" />
+                    <input asp-for="Senha" type="password" class="form-control"
+                           data-bs-toggle="tooltip"
+                           title="A senha deve conter entre 6 e 20 caracteres." />
                     <span asp-validation-for="Senha" class="text-danger"></span>
                 </div>
 
@@ -62,16 +53,24 @@
                     <span asp-validation-for="Ativo" class="text-danger"></span>
                 </div>
 
-                <button type="submit" class="btn btn-success">
-                    Salvar
-                </button>
-
-                <a asp-action="Index" class="btn btn-secondary">
-                    Cancelar
-                </a>
-
+                <button type="submit" class="btn btn-success">Salvar</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
             </form>
-
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Ativa os tooltips do Bootstrap
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
