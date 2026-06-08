@@ -4,76 +4,51 @@ using System.Windows.Input;
 
 namespace TCC_Inventory_Masters_Kinect.Command
 {
-    public class RelayCommand : ICommand
+    namespace TCC_Inventory_Masters_Kinect.Command
     {
-        // ==========================================
-        // 1. CAMPOS PRIVADOS
-        // ==========================================
-
-        // Guarda uma ação assíncrona, usada quando o comando precisa executar await.
-        private readonly Func<Task> _executeAsync;
-
-        // Guarda uma ação comum, usada quando o comando não é assíncrono.
-        private readonly Action _execute;
-
-        // Guarda a condição para permitir ou bloquear a execução do comando.
-        private readonly Func<bool> _canExecute;
-
-        // ==========================================
-        // 2. CONSTRUTOR PARA COMANDO ASSÍNCRONO
-        // ==========================================
-
-        public RelayCommand(Func<Task> executeAsync, Func<bool> canExecute = null)
+        public class RelayCommand : ICommand
         {
-            _executeAsync = executeAsync;
-            _execute = null;
-            _canExecute = canExecute;
-        }
+            private readonly Func<Task> _executeAsync;
+            private readonly Action _execute;
+            private readonly Func<bool> _canExecute;
 
-        // ==========================================
-        // 3. CONSTRUTOR PARA COMANDO NORMAL
-        // ==========================================
-
-        public RelayCommand(Action execute, Func<bool> canExecute = null)
-        {
-            _execute = execute;
-            _executeAsync = null;
-            _canExecute = canExecute;
-        }
-
-        // ==========================================
-        // 4. VERIFICA SE O COMANDO PODE EXECUTAR
-        // ==========================================
-
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute == null || _canExecute();
-        }
-
-        // ==========================================
-        // 5. EXECUTA O COMANDO
-        // ==========================================
-
-        public async void Execute(object parameter)
-        {
-            if (_executeAsync != null)
+            public RelayCommand(Func<Task> executeAsync, Func<bool> canExecute = null)
             {
-                await _executeAsync();
+                _executeAsync = executeAsync;
+                _execute = null;
+                _canExecute = canExecute;
             }
-            else
+
+            public RelayCommand(Action execute, Func<bool> canExecute = null)
             {
-                _execute?.Invoke();
+                _execute = execute;
+                _executeAsync = null;
+                _canExecute = canExecute;
             }
-        }
 
-        // ==========================================
-        // 6. EVENTO DE ATUALIZAÇÃO DO COMANDO
-        // ==========================================
+            public bool CanExecute(object parameter)
+            {
+                return _canExecute == null || _canExecute();
+            }
 
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            public async void Execute(object parameter)
+            {
+                if (_executeAsync != null)
+                {
+                    await _executeAsync();
+                }
+                else
+                {
+                    _execute?.Invoke();
+                }
+            }
+
+            public event EventHandler CanExecuteChanged
+            {
+                add { CommandManager.RequerySuggested += value; }
+                remove { CommandManager.RequerySuggested -= value; }
+            }
         }
     }
+
 }
