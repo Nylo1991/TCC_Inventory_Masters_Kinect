@@ -311,6 +311,7 @@
     <Compile Include="ConfigKinect\KinectConfig.cs" />
     <Compile Include="Data\AppDbContext.cs" />
     <Compile Include="Logs\LoggerService.cs" />
+    <Compile Include="Model\Log.cs" />
     <Compile Include="Model\EspacoMapeado.cs" />
     <Compile Include="Model\HistoricoOcupacao.cs" />
     <Compile Include="Model\MedicaoVolume.cs" />

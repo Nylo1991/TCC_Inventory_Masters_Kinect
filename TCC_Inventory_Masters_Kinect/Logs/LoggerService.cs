@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using TCC_Inventory_Masters_Kinect.Data;
+using TCC_Inventory_Masters_Kinect.Model;
 
 namespace TCC_Inventory_Masters_Kinect.Logs
 {
@@ -47,7 +48,7 @@ namespace TCC_Inventory_Masters_Kinect.Logs
         {
             try
             {
-                // Também mostra no Output do Visual Studio
+                
                 string linha = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{nivel}] {mensagem}";
                 Debug.WriteLine(linha);
                 Trace.WriteLine(linha);
