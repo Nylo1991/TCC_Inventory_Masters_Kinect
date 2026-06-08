@@ -10,178 +10,174 @@ namespace TCC_Inventory_Masters_Kinect.Repository
 {
     public class KinectRepository : IKinectRepository
     {
-        // ==========================================
-        // MEDIÇÃO DE VOLUME
-        // ==========================================
-
-        public void SalvarMedicao(
-            MedicaoVolume medicao)
+        public void SalvarMedicao(MedicaoVolume medicao)
         {
             try
             {
                 using (var db = new AppDbContext())
                 {
-                    db.MedicaoVolumes.Add(
-                        medicao);
-
+                    db.MedicaoVolumes.Add(medicao);
                     db.SaveChanges();
                 }
 
                 LoggerService.Info(
-                    $"Medição salva no SQLite. Volume: {medicao.VolumeCm3:F0} cm³");
+                    $"Medicao salva no SQLite. Volume: {medicao.VolumeCm3:F0} cm3");
             }
             catch (Exception ex)
             {
                 LoggerService.Erro(
-                    "Erro ao salvar medição no SQLite.",
-                    ex);
+                    "Erro ao salvar medicao no SQLite.", ex);
             }
         }
 
-        // ==========================================
-        // BUSCAR ÚLTIMAS MEDIÇÕES
-        // ==========================================
-
-        public List<MedicaoVolume> ObterUltimasMedicoes(
-            int quantidade)
+        public List<MedicaoVolume> ObterUltimasMedicoes(int quantidade)
         {
             try
             {
                 using (var db = new AppDbContext())
                 {
                     return db.MedicaoVolumes
-                        .OrderByDescending(
-                            x => x.Id)
-                        .Take(
-                            quantidade)
+                        .OrderByDescending(x => x.Id)
+                        .Take(quantidade)
                         .ToList();
                 }
             }
             catch (Exception ex)
             {
                 LoggerService.Erro(
-                    "Erro ao buscar histórico de medições no SQLite.",
-                    ex);
+                    "Erro ao buscar historico de medicoes no SQLite.", ex);
 
                 return new List<MedicaoVolume>();
             }
         }
 
-        // ==========================================
-        // ESPAÇO MAPEADO
-        // ==========================================
-
-        public void SalvarEspaco(
-            EspacoMapeado espaco)
+        public void SalvarEspaco(EspacoMapeado espaco)
         {
             try
             {
                 using (var db = new AppDbContext())
                 {
-                    db.EspacosMapeados.Add(
-                        espaco);
-
+                    db.EspacosMapeados.Add(espaco);
                     db.SaveChanges();
                 }
 
                 LoggerService.Info(
-                    "Espaço mapeado salvo no SQLite: " + espaco.NomeEspaco);
+                    "Espaco mapeado salvo no SQLite: " + espaco.NomeEspaco);
             }
             catch (Exception ex)
             {
                 LoggerService.Erro(
-                    "Erro ao salvar espaço mapeado no SQLite.",
-                    ex);
+                    "Erro ao salvar espaco mapeado no SQLite.", ex);
             }
         }
 
-        public EspacoMapeado ObterEspaco(
-            int id)
+        public EspacoMapeado ObterEspaco(int id)
         {
             try
             {
                 using (var db = new AppDbContext())
                 {
                     return db.EspacosMapeados
-                        .FirstOrDefault(
-                            x => x.Id == id);
+                        .FirstOrDefault(x => x.Id == id);
                 }
             }
             catch (Exception ex)
             {
                 LoggerService.Erro(
-                    "Erro ao buscar espaço por ID.",
-                    ex);
+                    "Erro ao buscar espaco por ID.", ex);
 
                 return null;
             }
         }
 
-        public EspacoMapeado ObterEspacoPorNome(
-            string nomeEspaco)
+        public EspacoMapeado ObterEspacoPorNome(string nomeEspaco)
         {
             try
             {
                 using (var db = new AppDbContext())
                 {
                     return db.EspacosMapeados
-                        .FirstOrDefault(
-                            x => x.NomeEspaco ==
-                                 nomeEspaco);
+                        .FirstOrDefault(x => x.NomeEspaco == nomeEspaco);
                 }
             }
             catch (Exception ex)
             {
                 LoggerService.Erro(
-                    "Erro ao buscar espaço por nome.",
-                    ex);
+                    "Erro ao buscar espaco por nome.", ex);
 
                 return null;
             }
         }
 
-        // ==========================================
-        // HISTÓRICO DE OCUPAÇÃO
-        // ==========================================
-
-        public void SalvarHistorico(
-            HistoricoOcupacao historico)
+        public void SalvarHistorico(HistoricoOcupacao historico)
         {
             try
             {
                 using (var db = new AppDbContext())
                 {
-                    db.HistoricosOcupacao.Add(
-                        historico);
-
+                    db.HistoricosOcupacao.Add(historico);
                     db.SaveChanges();
                 }
 
                 LoggerService.Info(
-                    "Histórico de ocupação salvo no SQLite.");
+                    "Historico de ocupacao salvo no SQLite.");
             }
             catch (Exception ex)
             {
                 LoggerService.Erro(
-                    "Erro ao salvar histórico de ocupação no SQLite.",
-                    ex);
+                    "Erro ao salvar historico de ocupacao no SQLite.", ex);
             }
         }
 
-        // ==========================================
-        // SNAPSHOT ESPACIAL
-        // ==========================================
-
-        public void SalvarSnapshot(
-            SnapshotEspacial snapshot)
+        public List<HistoricoOcupacao> ObterHistoricoPorEspaco(int espacoId)
         {
             try
             {
                 using (var db = new AppDbContext())
                 {
-                    db.SnapshotsEspaciais.Add(
-                        snapshot);
+                    return db.HistoricosOcupacao
+                        .Where(x => x.EspacoMapeadoId == espacoId)
+                        .OrderByDescending(x => x.Id)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Erro(
+                    "Erro ao buscar historico por espaco.", ex);
 
+                return new List<HistoricoOcupacao>();
+            }
+        }
+
+        public List<HistoricoOcupacao> ObterUltimosHistoricos(int quantidade)
+        {
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    return db.HistoricosOcupacao
+                        .OrderByDescending(x => x.Id)
+                        .Take(quantidade)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Erro(
+                    "Erro ao buscar ultimos historicos.", ex);
+
+                return new List<HistoricoOcupacao>();
+            }
+        }
+
+        public void SalvarSnapshot(SnapshotEspacial snapshot)
+        {
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    db.SnapshotsEspaciais.Add(snapshot);
                     db.SaveChanges();
                 }
 
@@ -191,8 +187,49 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             catch (Exception ex)
             {
                 LoggerService.Erro(
-                    "Erro ao salvar snapshot espacial no SQLite.",
-                    ex);
+                    "Erro ao salvar snapshot espacial no SQLite.", ex);
+            }
+        }
+
+        public List<SnapshotEspacial> ObterSnapshotsPorEspaco(int espacoId)
+        {
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    return db.SnapshotsEspaciais
+                        .Where(x => x.EspacoMapeadoId == espacoId)
+                        .OrderByDescending(x => x.Id)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Erro(
+                    "Erro ao buscar snapshots por espaco.", ex);
+
+                return new List<SnapshotEspacial>();
+            }
+        }
+
+        public SnapshotEspacial ObterUltimoSnapshot(int espacoId)
+        {
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    return db.SnapshotsEspaciais
+                        .Where(x => x.EspacoMapeadoId == espacoId)
+                        .OrderByDescending(x => x.Id)
+                        .FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Erro(
+                    "Erro ao buscar ultimo snapshot.", ex);
+
+                return null;
             }
         }
     }

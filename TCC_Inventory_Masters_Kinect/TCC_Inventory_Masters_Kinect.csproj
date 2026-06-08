@@ -307,7 +307,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Command\RelayCommands.cs" />
+    <Compile Include="Command\RelayCommand.cs" />
     <Compile Include="ConfigKinect\KinectConfig.cs" />
     <Compile Include="Data\AppDbContext.cs" />
     <Compile Include="Logs\LoggerService.cs" />
