@@ -27,11 +27,16 @@ namespace TCC_Inventory_Masters_Kinect.Service
         private double _ultimoVolume;
         private DateTime _proximoLogVolume = DateTime.MinValue;
 
+        // ==================== NOVO: Calibração de Espaço ====================
+        public double VolumeMaximo { get; private set; }
+        public bool EstaCalibrado => _calibrado && VolumeMaximo > 0;
+
         public event Action<double> MedidaAtualizada;
         public event Action<string> StatusAtualizado;
         public event Action<ImageSource> CameraAtualizada;
         public event Action<List<Point3DData>> PointCloudAtualizada;
         public event Action<SnapshotEspacial> SnapshotCriado;
+        public event Action<double> CalibracaoConcluida; // Novo evento
 
         public bool InicializarKinect()
         {
@@ -55,7 +60,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 _colorPixels = new byte[Sensor.ColorStream.FramePixelDataLength];
                 _colorBitmap = new WriteableBitmap(640, 480, 96, 96, PixelFormats.Bgr32, null);
 
-                // Assinatura de eventos
                 Sensor.ColorFrameReady += Sensor_ColorFrameReady;
                 Sensor.DepthFrameReady += Sensor_DepthFrameReady;
 
@@ -72,7 +76,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
         private void Sensor_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
-            // Proteção tripla contra NullReference
             if (_encerrando || Sensor == null || _colorPixels == null || _colorBitmap == null) return;
 
             try
@@ -90,7 +93,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
         private void Sensor_DepthFrameReady(object sender, DepthImageFrameReadyEventArgs e)
         {
-            // Proteção tripla contra NullReference
             if (_encerrando || Sensor == null || _depthPixels == null) return;
 
             try
@@ -119,25 +121,56 @@ namespace TCC_Inventory_Masters_Kinect.Service
         public void CalibrarChao()
         {
             if (_depthPixels == null) return;
+
             _referenciaChao = new int[_depthPixels.Length];
-            for (int i = 0; i < _depthPixels.Length; i++) _referenciaChao[i] = _depthPixels[i].Depth;
+            for (int i = 0; i < _depthPixels.Length; i++)
+                _referenciaChao[i] = _depthPixels[i].Depth;
+
             _calibrado = true;
             _historicoVolume.Clear();
             _ultimoVolume = 0;
-            StatusAtualizado?.Invoke("Chão calibrado.");
+            VolumeMaximo = 0; // Reset ao recalibrar o chão
+
+            StatusAtualizado?.Invoke("Chão calibrado. Agora clique em 'Calibrar Espaço'.");
+        }
+
+        // ==================== NOVO: Método de Calibração do Espaço ====================
+        public void CalibrarEspaco()
+        {
+            if (!_calibrado || _referenciaChao == null)
+            {
+                StatusAtualizado?.Invoke("Calibre o chão primeiro antes de calibrar o espaço.");
+                return;
+            }
+
+            // Define o volume atual como o volume máximo do espaço
+            VolumeMaximo = _ultimoVolume > 0 ? _ultimoVolume : 1.0;
+
+            StatusAtualizado?.Invoke($"Espaço calibrado. Volume máximo: {VolumeMaximo:F2} m³");
+            CalibracaoConcluida?.Invoke(VolumeMaximo);
         }
 
         private void GerarPointCloud(int width, int height)
         {
             if (_depthPixels == null) return;
             _pontos3D.Clear();
+
             for (int i = 0; i < _depthPixels.Length; i++)
             {
                 int depth = _depthPixels[i].Depth;
                 if (depth <= 0) continue;
-                _pontos3D.Add(new Point3DData { X = i % width, Y = i / width, Z = depth, DataCaptura = DateTime.Now });
+
+                _pontos3D.Add(new Point3DData
+                {
+                    X = i % width,
+                    Y = i / width,
+                    Z = depth,
+                    DataCaptura = DateTime.Now
+                });
+
                 if (_pontos3D.Count >= KinectConfig.MaxPontos3D) break;
             }
+
             PointCloudAtualizada?.Invoke(_pontos3D);
         }
 
@@ -156,6 +189,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
             double suavizado = (_ultimoVolume * 0.7) + ((volumeTotal / 1000.0) * 0.3);
             _ultimoVolume = suavizado;
+
             MedidaAtualizada?.Invoke(suavizado);
         }
 
@@ -168,7 +202,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
         public void DesligarKinect()
         {
-            _encerrando = true; // Impede processamento imediato
+            _encerrando = true;
 
             if (Sensor != null)
             {
