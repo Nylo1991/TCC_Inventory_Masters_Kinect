@@ -27,12 +27,12 @@ namespace TCC_Inventory_Masters_Kinect.Data
             return new SQLiteConnection($"Data Source={dbPath};Version=3;");
         }
 
+        // Tabelas antigas (mantidas)
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
-        public DbSet<EspacoMapeado> EspacosMapeados { get; set; }
-        public DbSet<Point3DData> Points3D { get; set; }
         public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
-        public DbSet<SnapshotEspacial> SnapshotsEspaciais { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<Space> Spaces { get; set; }
+        public DbSet<SpaceHistory> SpaceHistories { get; set; }
 
         private void CriarTabelaManual()
         {
@@ -41,6 +41,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
                 conn.Open();
 
                 string sql = @"
+                    -- Tabelas existentes
                     CREATE TABLE IF NOT EXISTS MedicaoVolumes (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         VolumeCm3 REAL NOT NULL,
@@ -48,22 +49,6 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         KinectLigado INTEGER NOT NULL,
                         Calibrado INTEGER NOT NULL,
                         Status TEXT
-                    );
-
-                    CREATE TABLE IF NOT EXISTS EspacosMapeados (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        NomeEspaco TEXT NOT NULL,
-                        VolumeMaximoCm3 REAL NOT NULL,
-                        PercentualAlerta REAL NOT NULL,
-                        DataCriacao TEXT NOT NULL
-                    );
-
-                    CREATE TABLE IF NOT EXISTS Point3DData (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        EspacoMapeadoId INTEGER NOT NULL,
-                        PosicaoX REAL NOT NULL,
-                        PosicaoY REAL NOT NULL,
-                        PosicaoZ REAL NOT NULL
                     );
 
                     CREATE TABLE IF NOT EXISTS HistoricosOcupacao (
@@ -74,19 +59,29 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         DataHora TEXT NOT NULL
                     );
 
-                    CREATE TABLE IF NOT EXISTS SnapshotsEspaciais (
+                    CREATE TABLE IF NOT EXISTS Logs (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        EspacoMapeadoId INTEGER NOT NULL,
-                        NomeSnapshot TEXT,
-                        CaminhoArquivo TEXT,
-                        DataCaptura TEXT NOT NULL
+                        DataHora TEXT NOT NULL,
+                        Nivel TEXT NOT NULL,
+                        Mensagem TEXT NOT NULL
                     );
-                       CREATE TABLE IF NOT EXISTS Logs (               
-                       Id INTEGER PRIMARY KEY AUTOINCREMENT,                
-                       DataHora TEXT NOT NULL,             
-                       Nivel TEXT NOT NULL,               
-                       Mensagem TEXT NOT NULL           
-                      );
+
+                    -- Novas tabelas
+                    CREATE TABLE IF NOT EXISTS Spaces (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Name TEXT NOT NULL,
+                        MaxVolume REAL NOT NULL,
+                        CalibratedAt TEXT NOT NULL
+                    );
+
+                    CREATE TABLE IF NOT EXISTS SpaceHistories (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        SpaceId INTEGER NOT NULL,
+                        CurrentVolume REAL NOT NULL,
+                        Percentage REAL NOT NULL,
+                        RecordedAt TEXT NOT NULL,
+                        FOREIGN KEY (SpaceId) REFERENCES Spaces(Id)
+                    );
                 ";
 
                 using (var cmd = new SQLiteCommand(sql, conn))

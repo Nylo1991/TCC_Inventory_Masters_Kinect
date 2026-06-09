@@ -1,22 +1,73 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Google.Cloud.Firestore;
+using System.ComponentModel.DataAnnotations;
 
 namespace MVC_InventoryMasters.Models
 {
+    [FirestoreData]
     public class ParametrosSistema
     {
-        [Key]
-        public int Id { get; set; }
+        /// <summary>
+        /// Volume máximo suportado pelo armazenamento.
+        /// </summary>
+        [FirestoreProperty]
+        [Display(Name = "Capacidade Máxima")]
+        public double CapacidadeMaxima { get; set; }
 
-        [Required]
-        public string NomeParametro { get; set; } // Ex: "VolumeMaximoEstoque"
+        /// <summary>
+        /// Volume mínimo considerado para alerta.
+        /// </summary>
+        [FirestoreProperty]
+        [Display(Name = "Capacidade Mínima")]
+        public double CapacidadeMinima { get; set; }
 
-        [Required]
-        public double ValorMaximo { get; set; }   // Valor limite para gatilho de alerta
+        /// <summary>
+        /// Percentual para disparo de alertas.
+        /// Ex.: 80%
+        /// </summary>
+        [FirestoreProperty]
+        [Display(Name = "Percentual de Alerta")]
+        [Range(1, 100)]
+        public int PercentualAlerta { get; set; }
 
-        public double ValorMinimo { get; set; }   // Opcional: limite mínimo, se necessário
+        /// <summary>
+        /// Unidade utilizada nas medições.
+        /// </summary>
+        [FirestoreProperty]
+        [Display(Name = "Unidade de Medida")]
+        public string UnidadeMedida { get; set; } = "m³";
 
-        public string UnidadeMedida { get; set; } // Ex: "cm3"
-
+        /// <summary>
+        /// Data da última atualização.
+        /// </summary>
+        [FirestoreProperty]
         public DateTime DataAtualizacao { get; set; }
+
+        // ===========================
+        // ABA NOTIFICAÇÕES (FUTURO)
+        // ===========================
+
+        /// <summary>
+        /// Habilita notificações automáticas.
+        /// </summary>
+        [FirestoreProperty]
+        public bool NotificacaoAutomatica { get; set; } = true;
+
+        /// <summary>
+        /// Exibe alertas diretamente no Dashboard.
+        /// </summary>
+        [FirestoreProperty]
+        public bool ExibirAlertaDashboard { get; set; } = true;
+
+        /// <summary>
+        /// Parceiro padrão para notificações automáticas.
+        /// </summary>
+        [FirestoreProperty]
+        public string ParceiroPadraoId { get; set; }
+
+        /// <summary>
+        /// Quantidade de dias sem coleta para gerar alerta.
+        /// </summary>
+        [FirestoreProperty]
+        public int DiasSemColetaAlerta { get; set; } = 15;
     }
 }

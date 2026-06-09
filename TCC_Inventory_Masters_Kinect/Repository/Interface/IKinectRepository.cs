@@ -5,19 +5,20 @@ namespace TCC_Inventory_Masters_Kinect.Repository.Interface
 {
     public interface IKinectRepository
     {
+        // ==================== MEDIÇÕES ====================
         void SalvarMedicao(MedicaoVolume medicao);
         List<MedicaoVolume> ObterUltimasMedicoes(int quantidade);
 
-        void SalvarEspaco(EspacoMapeado espaco);
-        EspacoMapeado ObterEspaco(int id);
-        EspacoMapeado ObterEspacoPorNome(string nomeEspaco);
+        // ==================== ESPAÇOS ====================
+        void SalvarEspaco(Space space);
+        void AtualizarEspaco(Space space);
+        List<Space> ObterTodosEspacos();
+        Space ObterEspaco(int id);
+        Space ObterEspacoPorNome(string nomeEspaco);
 
+        // ==================== HISTÓRICO DE OCUPAÇÃO ====================
         void SalvarHistorico(HistoricoOcupacao historico);
         List<HistoricoOcupacao> ObterHistoricoPorEspaco(int espacoId);
         List<HistoricoOcupacao> ObterUltimosHistoricos(int quantidade);
-
-        void SalvarSnapshot(SnapshotEspacial snapshot);
-        List<SnapshotEspacial> ObterSnapshotsPorEspaco(int espacoId);
-        SnapshotEspacial ObterUltimoSnapshot(int espacoId);
     }
 }
