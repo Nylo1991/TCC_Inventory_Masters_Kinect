@@ -7,31 +7,40 @@ namespace MVC_InventoryMasters.Repositories
 {
     public class ParametrosSistemaRepository
     {
-        private readonly string _colecao = "Parametros";
+        private readonly string _colecao = "parametrosSistema";
         private readonly FirestoreDb _db;
 
         public ParametrosSistemaRepository(FirebaseService firebaseService)
         {
             _db = firebaseService.Firestore;
         }
-     
+
         public ParametrosSistema Buscar()
         {
-            // Busca o documento "configuracoes" dentro da coleção "Parametros"
-            var docRef = _db.Collection(_colecao).Document("configuracoes");
-            var snapshot = docRef.GetSnapshotAsync().Result;
+            var docRef = _db
+                .Collection("parametrosSistema")
+                .Document("configuracao");
+
+            var snapshot =
+                docRef.GetSnapshotAsync().Result;
 
             if (snapshot.Exists)
-            { 
+            {
                 return snapshot.ConvertTo<ParametrosSistema>();
             }
-            // Retorna uma configuração padrão se o documento não existir
+
             return new ParametrosSistema();
         }
-        
+
         public void Salvar(ParametrosSistema parametros)
         {
-            var docRef = _db.Collection(_colecao).Document("configuracoes");
+            parametros.DataAtualizacao =
+                DateTime.UtcNow;
+
+            var docRef = _db
+                .Collection("parametrosSistema")
+                .Document("configuracao");
+
             docRef.SetAsync(parametros).Wait();
         }
     }
