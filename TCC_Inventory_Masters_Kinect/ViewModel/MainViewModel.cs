@@ -29,6 +29,17 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             MedirCommand = new RelayCommand(ExecutarMedicao);
 
             StatusMessage = "Pronto";
+
+            // Inicia o Kinect automaticamente
+            try
+            {
+                _kinectService.Start();
+                StatusMessage = "Kinect conectado";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = "Erro ao conectar Kinect";
+            }
         }
 
         private async void ExecutarCalibracao()

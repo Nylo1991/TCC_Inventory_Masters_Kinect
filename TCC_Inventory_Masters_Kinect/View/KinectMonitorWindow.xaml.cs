@@ -1,5 +1,6 @@
-﻿using System.Windows;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Windows;
+using TCC_Inventory_Masters_Kinect.ViewModel;
 
 namespace TCC_Inventory_Masters_Kinect.View
 {
@@ -8,8 +9,8 @@ namespace TCC_Inventory_Masters_Kinect.View
         public KinectMonitorWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();   // ← Testando com MainViewModel}
         }
-
         private void KinectWindow_Closing(object sender, CancelEventArgs e)
         {
             // Código ao fechar a janela

@@ -283,10 +283,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="View\cadastroEspacoWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\HistoricoMedicoesWindowxaml.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -317,9 +313,6 @@
     <Compile Include="Service\SignalRService.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="View\cadastroEspacoWindow.xaml.cs">
-      <DependentUpon>cadastroEspacoWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\HistoricoMedicoesWindowxaml.xaml.cs">
       <DependentUpon>HistoricoMedicoesWindowxaml.xaml</DependentUpon>
     </Compile>
