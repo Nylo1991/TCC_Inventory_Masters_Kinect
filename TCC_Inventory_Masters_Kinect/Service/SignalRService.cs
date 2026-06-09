@@ -302,43 +302,30 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
-                if (_connection != null)
+                if (_connection == null)
                 {
-                    LoggerService.Info(
-                        "Desconectando do MVC via SignalR.");
-
-                    if (_connection.State !=
-                        HubConnectionState.Disconnected)
-                    {
-                        await _connection
-                            .StopAsync();
-                    }
-
-                    await _connection
-                        .DisposeAsync();
-
-                    _connection =
-                        null;
-
-                    LoggerService.Info(
-                        "Desconectado do MVC.");
-
-                    StatusSignalRAtualizado?.Invoke(
-                        "SignalR: Desconectado");
+                    return;
                 }
+
+                if (_connection.State != HubConnectionState.Disconnected)
+                {
+                    LoggerService.Info("Desconectando do MVC via SignalR.");
+                    await _connection.StopAsync();
+                }
+
+                await _connection.DisposeAsync();
+                _connection = null;
+
+                LoggerService.Info("Desconectado do MVC.");
+                StatusSignalRAtualizado?.Invoke("SignalR: Desconectado");
             }
             catch (Exception ex)
             {
-                UltimoErro =
-                    ex.Message;
-
-                LoggerService.Erro(
-                    "Erro ao desconectar do MVC.",
-                    ex);
-
-                StatusSignalRAtualizado?.Invoke(
-                    "SignalR: Erro ao desconectar");
+                UltimoErro = ex.Message;
+                LoggerService.Erro("Erro ao desconectar do MVC.", ex);
+                StatusSignalRAtualizado?.Invoke("SignalR: Erro ao desconectar");
             }
         }
+
     }
 }

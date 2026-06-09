@@ -28,10 +28,8 @@ namespace TCC_Inventory_Masters_Kinect.Data
         }
 
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
-        public DbSet<EspacoMapeado> EspacosMapeados { get; set; }
-        public DbSet<Point3DData> Points3D { get; set; }
-        public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
-        public DbSet<SnapshotEspacial> SnapshotsEspaciais { get; set; }
+   
+       public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
         public DbSet<Log> Logs { get; set; }
 
         private void CriarTabelaManual()
@@ -50,22 +48,6 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         Status TEXT
                     );
 
-                    CREATE TABLE IF NOT EXISTS EspacosMapeados (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        NomeEspaco TEXT NOT NULL,
-                        VolumeMaximoCm3 REAL NOT NULL,
-                        PercentualAlerta REAL NOT NULL,
-                        DataCriacao TEXT NOT NULL
-                    );
-
-                    CREATE TABLE IF NOT EXISTS Point3DData (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        EspacoMapeadoId INTEGER NOT NULL,
-                        PosicaoX REAL NOT NULL,
-                        PosicaoY REAL NOT NULL,
-                        PosicaoZ REAL NOT NULL
-                    );
-
                     CREATE TABLE IF NOT EXISTS HistoricosOcupacao (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         EspacoMapeadoId INTEGER NOT NULL,
@@ -74,13 +56,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         DataHora TEXT NOT NULL
                     );
 
-                    CREATE TABLE IF NOT EXISTS SnapshotsEspaciais (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        EspacoMapeadoId INTEGER NOT NULL,
-                        NomeSnapshot TEXT,
-                        CaminhoArquivo TEXT,
-                        DataCaptura TEXT NOT NULL
-                    );
+                   
                        CREATE TABLE IF NOT EXISTS Logs (               
                        Id INTEGER PRIMARY KEY AUTOINCREMENT,                
                        DataHora TEXT NOT NULL,             

@@ -291,17 +291,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\KinectVisualizer.xaml">
+    <Page Include="View\KinectMonitorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\KinectWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -311,12 +303,13 @@
     <Compile Include="ConfigKinect\KinectConfig.cs" />
     <Compile Include="Data\AppDbContext.cs" />
     <Compile Include="Logs\LoggerService.cs" />
+    <Compile Include="Model\CalibrationProgress.cs" />
+    <Compile Include="Model\CalibrationResult.cs" />
     <Compile Include="Model\Log.cs" />
-    <Compile Include="Model\EspacoMapeado.cs" />
     <Compile Include="Model\HistoricoOcupacao.cs" />
     <Compile Include="Model\MedicaoVolume.cs" />
-    <Compile Include="Model\Point3DData.cs" />
-    <Compile Include="Model\SnapshotEspacial.cs" />
+    <Compile Include="Model\Space.cs" />
+    <Compile Include="Model\SpaceHistory.cs" />
     <Compile Include="Repository\Interface\IKinectRepository.cs" />
     <Compile Include="Repository\KinectRepository.cs" />
     <Compile Include="Service\KinectService.cs" />
@@ -329,15 +322,8 @@
     <Compile Include="View\HistoricoMedicoesWindowxaml.xaml.cs">
       <DependentUpon>HistoricoMedicoesWindowxaml.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\KinectVisualizer.xaml.cs">
-      <DependentUpon>KinectVisualizer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\KinectWindow.xaml.cs">
-      <DependentUpon>KinectWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
+    <Compile Include="View\KinectMonitorWindow.xaml.cs">
+      <DependentUpon>KinectMonitorWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
