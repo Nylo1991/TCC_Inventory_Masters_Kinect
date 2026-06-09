@@ -1,11 +1,11 @@
 ﻿@model MVC_InventoryMasters.ViewModels.DashboardViewModel
+@using System.Globalization
 
 @{
     ViewData["Title"] = "Dashboard";
 }
 
 <div class="container-fluid">
-
     <div class="card shadow-sm mb-4">
         <div class="card-header"><h5 class="mb-0">📊 Volume em Tempo Real</h5></div>
         <div class="card-body">
@@ -21,60 +21,79 @@
                     <table class="table table-hover">
                         <thead><tr><th>Nome</th><th>Email</th></tr></thead>
                         <tbody>
-                            @foreach (var p in Model.Parceiros.OrderByDescending(x => x.Id).Take(5))
+                            @if (Model.Parceiros != null)
                             {
-                                <tr><td>@p.Nome</td><td>@p.Email</td></tr>
+                                foreach (var p in Model.Parceiros.OrderByDescending(x => x.Id).Take(5))
+                                {
+                                    <tr><td>@p.Nome</td><td>@p.Email</td></tr>
+                                }
                             }
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0">📡 Medições em Tempo Real</h5></div>
+                <div class="card-header"><h5 class="mb-0">📈 % de Ocupação do Estoque</h5></div>
                 <div class="card-body">
-                    <table class="table table-hover">
-                        <thead><tr><th>Volume (m³)</th><th>Data</th></tr></thead>
-                        <tbody id="logMedicoes">
-                            @foreach (var m in Model.Medicoes.OrderByDescending(x => x.DataHora).Take(5))
-                            {
-                                <tr>
-                                    <td>@(m.VolumeMedido?.ToString("N2") ?? "0,00")</td>
-                                    <td>@m.DataHora</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                    <canvas id="occupancyChart" style="max-height: 250px;"></canvas>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-md-3">
-            <div class="card text-center p-3 shadow-sm">
-                <div class="dashboard-title">Parceiros</div>
-                <div class="dashboard-number">@(Model.Parceiros?.Count ?? 0)</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-center p-3 shadow-sm">
-                <div class="dashboard-title">Usuários</div>
-                <div class="dashboard-number">@(Model.Usuarios?.Count ?? 0)</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-center p-3 shadow-sm">
-                <div class="dashboard-title">Medições</div>
-                <div class="dashboard-number" id="totalMedicoes">@(Model.Medicoes?.Count ?? 0)</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-center p-3 shadow-sm">
-                <div class="dashboard-title">Alertas</div>
-                <div class="dashboard-number">@(Model.Alertas?.Count ?? 0)</div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let occupancyChart;
+
+        const initialPercent = parseFloat("@Model.PercentualOcupacao.ToString(CultureInfo.InvariantCulture)");
+        const capacidadeTotal = @(Model.Parametros?.CapacidadeMaxima.ToString(CultureInfo.InvariantCulture) ?? "1000.0");
+        const percentualAlerta = @(Model.Parametros?.PercentualAlerta ?? 80);
+
+        // Função com faixa de Atenção (Amarela)
+        function obterCorOcupacao(percentual) {
+        if (percentual >= percentualAlerta) return '#dc2626';      // Vermelho (Crítico)
+        if (percentual >= (percentualAlerta - 20)) return '#eab308'; // Amarelo (Atenção - 20% abaixo do alerta)
+        return '#16a34a';                                        // Verde (Normal)
+        }
+
+        const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/medicaoHub")
+        .build();
+
+        const ctxOcupacao = document.getElementById('occupancyChart').getContext('2d');
+        occupancyChart = new Chart(ctxOcupacao, {
+        type: 'doughnut',
+        data: {
+        labels: ['Ocupado', 'Livre'],
+        datasets: [{
+        data: [initialPercent, 100 - initialPercent],
+        backgroundColor: [obterCorOcupacao(initialPercent), '#e5e7eb']
+        }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } }
+        }
+        });
+
+        connection.on("NovaMedicao", function (m) {
+        const novoVolume = Number(m.volumeMedido || 0);
+        const novoPercentual = Math.min((novoVolume / capacidadeTotal) * 100, 100);
+
+        // Atualiza dados e cor dinamicamente
+        occupancyChart.data.datasets[0].data = [novoPercentual, 100 - novoPercentual];
+        occupancyChart.data.datasets[0].backgroundColor = [obterCorOcupacao(novoPercentual), '#e5e7eb'];
+
+        occupancyChart.update();
+        });
+
+        connection.start().catch(err => console.error(err.toString()));
+    </script>
+}
