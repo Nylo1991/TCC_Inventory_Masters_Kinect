@@ -5,6 +5,19 @@
 }
 
 <div class="container-fluid">
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Sucesso"]
+        </div>
+    }
+
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Erro"]
+        </div>
+    }
 
     <div class="card shadow-sm">
 
