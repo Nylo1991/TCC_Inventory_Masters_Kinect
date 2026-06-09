@@ -1,4 +1,6 @@
 ﻿using MVC_InventoryMasters.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MVC_InventoryMasters.ViewModels
 {
@@ -8,28 +10,23 @@ namespace MVC_InventoryMasters.ViewModels
         public List<Notificacao> Alertas { get; set; } = new();
         public List<Parceiro> Parceiros { get; set; } = new();
         public List<Usuario> Usuarios { get; set; } = new();
-        public List<Notificacao> Notificacoes { get; set; } = new();
+
+        // Propriedade para o cálculo do gráfico de pizza
+        public decimal PercentualOcupacao { get; set; }
 
         public ParametrosSistema Parametros { get; set; } = new();
         public string MensagemErro { get; set; }
 
-        // KPIs
         public int TotalParceiros => Parceiros?.Count ?? 0;
         public int TotalMedicoes => Medicoes?.Count ?? 0;
         public int TotalAlertas => Alertas?.Count ?? 0;
         public int TotalUsuarios => Usuarios?.Count ?? 0;
 
-        // Últimos registros (ORDENAÇÃO CORRETA)
-        public List<Parceiro> UltimosParceiros =>
-            Parceiros?
-                .OrderByDescending(p => p.Data_Cadastro)
+        // Lista de notificações para o novo Dashboard
+        public List<Notificacao> UltimasNotificacoes =>
+            Alertas?
+                .OrderByDescending(n => n.DataHora)
                 .Take(5)
                 .ToList();
-
-        /*public List<MedicaoVolume> UltimasMedicoes =>
-            Medicoes?
-                .OrderByDescending(m => m.Data_Cadastro)
-                .Take(5)
-                .ToList();*/
     }
 }
