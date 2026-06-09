@@ -31,28 +31,33 @@ namespace MVC_InventoryMasters.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Busca dos dados nos repositórios
+            // Busca dos dados básicos nos repositórios
             var parceiros = await _parceirosRepo.ListarTodos();
             var usuarios = await _usuariosRepo.ListarTodos();
             var medicoes = await _medicaoRepo.ListarTodos();
             var alertas = await _notificacaoRepo.ListarTodos();
 
-            // Cálculo do percentual de ocupação
+            // 1. Busca os parâmetros reais configurados no Firestore
+            var parametros = _parametrosRepo.Buscar();
+
+            // 2. Cálculo do percentual de ocupação baseado na capacidade configurada
             var ultimaMedicao = medicoes.OrderByDescending(m => m.DataHora).FirstOrDefault()?.VolumeMedido ?? 0;
 
-            // Capacidade máxima (pode ser ajustada para vir de _parametrosRepo se necessário)
-            decimal capacidadeTotal = 10000.0m;
+            // Se a capacidade não estiver configurada, usa 10000.0 como fallback de segurança
+            double capacidade = parametros.CapacidadeMaxima > 0 ? parametros.CapacidadeMaxima : 10000.0;
 
-            // Cálculo garantindo conversão para decimal e limitando em 100%
-            decimal percentual = capacidadeTotal > 0 ? ((decimal)ultimaMedicao / capacidadeTotal) * 100 : 0;
+            // Cálculo garantindo conversão para decimal para o ViewModel
+            decimal percentual = capacidade > 0 ? (decimal)((double)ultimaMedicao / capacidade) * 100 : 0;
 
+            // 3. Montagem do ViewModel com dados dinâmicos
             var model = new DashboardViewModel
             {
                 Parceiros = parceiros,
                 Usuarios = usuarios,
                 Medicoes = medicoes,
                 Alertas = alertas,
-                PercentualOcupacao = Math.Min(percentual, 100)
+                PercentualOcupacao = Math.Min(percentual, 100),
+                Parametros = parametros 
             };
 
             return View(model);

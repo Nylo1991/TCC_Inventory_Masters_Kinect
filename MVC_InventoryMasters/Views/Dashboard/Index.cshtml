@@ -1,11 +1,11 @@
 ﻿@model MVC_InventoryMasters.ViewModels.DashboardViewModel
+@using System.Globalization
 
 @{
     ViewData["Title"] = "Dashboard";
 }
 
 <div class="container-fluid">
-
     <div class="card shadow-sm mb-4">
         <div class="card-header"><h5 class="mb-0">📊 Volume em Tempo Real</h5></div>
         <div class="card-body">
@@ -56,18 +56,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Variáveis globais para os gráficos
         let occupancyChart;
-        let volumeChart;
 
-        // Inicialização do gráfico de ocupação
+        // Garante que o valor venha com ponto para o JS
+        const initialPercent = parseFloat("@Model.PercentualOcupacao.ToString(CultureInfo.InvariantCulture)");
+
+        console.log("Inicializando com percentual:", initialPercent);
+
+        const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/medicaoHub")
+        .build();
+
         const ctxOcupacao = document.getElementById('occupancyChart').getContext('2d');
         occupancyChart = new Chart(ctxOcupacao, {
         type: 'doughnut',
         data: {
         labels: ['Ocupado', 'Livre'],
         datasets: [{
-        data: [@Model.PercentualOcupacao, 100 - @Model.PercentualOcupacao],
+        data: [initialPercent, 100 - initialPercent],
         backgroundColor: ['#16a34a', '#e5e7eb']
         }]
         },
@@ -78,29 +84,18 @@
         }
         });
 
-        // ... (seu código de inicialização do volumeChart vai aqui) ...
-
-        // Lógica de atualização via SignalR
         connection.on("NovaMedicao", function (m) {
-        // ... (seu código de atualização do volumeChart aqui) ...
-
-        // ATUALIZAR O GRÁFICO DE OCUPAÇÃO
         const novoVolume = Number(m.volumeMedido || 0);
-        const capacidadeTotal = 10000.0;
+        const capacidadeTotal = @(Model.Parametros?.CapacidadeMaxima.ToString(CultureInfo.InvariantCulture) ?? "10000.0");
+
         const novoPercentual = Math.min((novoVolume / capacidadeTotal) * 100, 100);
 
+        console.log("Novo volume recebido:", novoVolume, "Novo percentual:", novoPercentual);
+
         occupancyChart.data.datasets[0].data = [novoPercentual, 100 - novoPercentual];
-
-        // Atualiza o tooltip do gráfico
-        occupancyChart.options.plugins.tooltip = {
-        callbacks: {
-        label: function(context) {
-        return context.label + ': ' + novoPercentual.toFixed(2) + '%';
-        }
-        }
-        };
-
         occupancyChart.update();
         });
+
+        connection.start().catch(err => console.error(err.toString()));
     </script>
 }
