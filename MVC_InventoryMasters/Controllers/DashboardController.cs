@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC_InventoryMasters.Repositories;
 using MVC_InventoryMasters.ViewModels;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -36,15 +37,14 @@ namespace MVC_InventoryMasters.Controllers
             var medicoes = await _medicaoRepo.ListarTodos();
             var alertas = await _notificacaoRepo.ListarTodos();
 
-            // Cálculo da Ocupação
+            // Cálculo do percentual de ocupação
             var ultimaMedicao = medicoes.OrderByDescending(m => m.DataHora).FirstOrDefault()?.VolumeMedido ?? 0;
 
+            // Capacidade máxima (pode ser ajustada para vir de _parametrosRepo se necessário)
             decimal capacidadeTotal = 10000.0m;
-            // Correção aplicada: conversão explícita para decimal para evitar conflito de tipos
-            decimal percentual = capacidadeTotal > 0 ? ((decimal)ultimaMedicao / capacidadeTotal) * 100 : 0;
 
-            // Garantir que não passe de 100% por segurança
-            if (percentual > 100) percentual = 100;
+            // Cálculo garantindo conversão para decimal e limitando em 100%
+            decimal percentual = capacidadeTotal > 0 ? ((decimal)ultimaMedicao / capacidadeTotal) * 100 : 0;
 
             var model = new DashboardViewModel
             {
@@ -52,7 +52,7 @@ namespace MVC_InventoryMasters.Controllers
                 Usuarios = usuarios,
                 Medicoes = medicoes,
                 Alertas = alertas,
-                PercentualOcupacao = percentual
+                PercentualOcupacao = Math.Min(percentual, 100)
             };
 
             return View(model);
