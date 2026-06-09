@@ -1,0 +1,82 @@
+﻿@model MVC_InventoryMasters.Models.ParametrosSistema
+
+@{
+    ViewData["Title"] = "Configurações";
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h4 class="mb-0">
+                Configurações do Sistema
+            </h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <form asp-controller="Parametros"
+                  asp-action="Salvar"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Capacidade Máxima (m³)
+                        </label>
+
+                        <input asp-for="CapacidadeMaxima"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Capacidade Mínima (m³)
+                        </label>
+
+                        <input asp-for="CapacidadeMinima"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Percentual de Alerta (%)
+                        </label>
+
+                        <input asp-for="PercentualAlerta"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+                <div class="mt-4">
+
+                    <button type="submit"
+                            class="btn btn-success">
+
+                        <i class="bi bi-check-circle"></i>
+                        Salvar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
