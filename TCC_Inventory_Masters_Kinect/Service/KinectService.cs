@@ -1,34 +1,41 @@
-﻿using Microsoft.Kinect;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TCC_Inventory_Masters_Kinect.Logs;
+using Microsoft.Kinect;
+using TCC_Inventory_Masters_Kinect.Logs; // Mantenha se usar LoggerService
 
 namespace TCC_Inventory_Masters_Kinect.Service
 {
     public class KinectService
     {
         private KinectSensor _sensor;
-        private DepthImageFrame _lastDepthFrame;
-        private Skeleton[] _skeletons = new Skeleton[6];
 
         public bool IsConnected => _sensor != null && _sensor.Status == KinectStatus.Connected;
 
         public KinectService()
         {
-            _sensor = KinectSensor.KinectSensors[0];
+            if (KinectSensor.KinectSensors.Count > 0)
+            {
+                _sensor = KinectSensor.KinectSensors[0];
+            }
         }
 
         public void Start()
         {
-            if (_sensor == null || _sensor.Status != KinectStatus.Connected)
-                throw new Exception("Kinect v1 não encontrado ou não conectado.");
+            if (_sensor == null)
+                throw new Exception("Nenhum Kinect foi encontrado no computador.");
 
+            if (_sensor.Status != KinectStatus.Connected)
+                throw new Exception("Kinect v1 não está conectado.");
+
+            // Habilita os streams
+            _sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
             _sensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
             _sensor.SkeletonStream.Enable();
 
+            // Inicia o sensor (ESSENCIAL)
             _sensor.Start();
         }
 
@@ -37,11 +44,89 @@ namespace TCC_Inventory_Masters_Kinect.Service
             _sensor?.Stop();
         }
 
-        // Captura simples de volume (versão básica para v1)
+        // ==================== CÂMERA RGB ====================
+        public BitmapSource CapturarFrameCamera()
+        {
+            if (!IsConnected || _sensor.ColorStream == null)
+                return null;
+
+            try
+            {
+                using (var frame = _sensor.ColorStream.OpenNextFrame(1000))
+                {
+                    if (frame == null) return null;
+
+                    byte[] pixelData = new byte[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(pixelData);
+
+                    return BitmapSource.Create(
+                        frame.Width,
+                        frame.Height,
+                        96, 96,
+                        PixelFormats.Bgr32,
+                        null,
+                        pixelData,
+                        frame.Width * frame.BytesPerPixel
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao capturar câmera: {ex.Message}");
+                return null;
+            }
+        }
+
+        // ==================== DEPTH COLORIDO ====================
+        public BitmapSource CapturarDepthColorido()
+        {
+            if (!IsConnected) return null;
+
+            try
+            {
+                using (var frame = _sensor.DepthStream.OpenNextFrame(1000))
+                {
+                    if (frame == null) return null;
+
+                    short[] depthData = new short[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(depthData);
+
+                    byte[] pixels = new byte[frame.Width * frame.Height * 4];
+                    int index = 0;
+
+                    for (int i = 0; i < depthData.Length; i++)
+                    {
+                        int depth = depthData[i] >> 3;
+                        byte intensity = (depth == 0) ? (byte)0 : (byte)(255 - Math.Min(255, depth * 255 / 4000));
+
+                        pixels[index++] = intensity;               // B
+                        pixels[index++] = (byte)(intensity * 0.7); // G
+                        pixels[index++] = (byte)(intensity * 0.4); // R
+                        pixels[index++] = 255;                     // A
+                    }
+
+                    return BitmapSource.Create(
+                        frame.Width,
+                        frame.Height,
+                        96, 96,
+                        PixelFormats.Bgra32,
+                        null,
+                        pixels,
+                        frame.Width * 4
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao capturar depth: {ex.Message}");
+                return null;
+            }
+        }
+
+        // ==================== MEDIÇÃO DE VOLUME ====================
         public async Task<double> MeasureCurrentVolumeAsync(CancellationToken token)
         {
-            if (!IsConnected)
-                return 0;
+            if (!IsConnected) return 0;
 
             try
             {
@@ -52,40 +137,38 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     short[] depthData = new short[frame.PixelDataLength];
                     frame.CopyPixelDataTo(depthData);
 
-                    // Cálculo simples de volume baseado na profundidade
-                    double volume = 0;
-                    int validPoints = 0;
+                    double soma = 0;
+                    int validos = 0;
 
                     for (int i = 0; i < depthData.Length; i++)
                     {
-                        int depth = depthData[i] >> 3; // Remove player index
+                        int depth = depthData[i] >> 3;
                         if (depth > 0 && depth < 4000)
                         {
-                            volume += depth;
-                            validPoints++;
+                            soma += depth;
+                            validos++;
                         }
                     }
 
-                    if (validPoints == 0) return 0;
+                    if (validos == 0) return 0;
 
-                    double averageDepth = volume / validPoints;
-                    return averageDepth * 100; // Convertendo para cm³ aproximado
+                    double media = soma / validos;
+                    return media * 100; // aproximação em cm³
                 }
             }
             catch (Exception ex)
             {
-                LoggerService.Erro("Erro ao medir volume no Kinect v1.", ex);
+                Console.WriteLine($"Erro ao medir volume: {ex.Message}");
                 return 0;
             }
         }
 
-        // Calibração básica do chão (versão simplificada)
-        public async Task<CalibrationResult> CalibrateAsync(IProgress<CalibrationProgress> progress, CancellationToken token)
+        // ==================== CALIBRAÇÃO ====================
+        public async Task<CalibrationResult> CalibrateAsync(CancellationToken token, IProgress<CalibrationProgress> progress = null)
         {
-            progress?.Report(new CalibrationProgress { Status = "Calibrando Kinect v1..." });
+            progress?.Report(new CalibrationProgress { Status = "Calibrando Kinect..." });
 
-            // Simulação de calibração (pode ser melhorada depois)
-            await Task.Delay(1500, token);
+            await Task.Delay(1500, token); // Simulação (substitua pela lógica real depois)
 
             return new CalibrationResult
             {
@@ -93,13 +176,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 TotalPointsFound = 25000
             };
         }
-
-        internal async Task CalibrateAsync(Progress<Model.CalibrationProgress> progress, CancellationToken none)
-        {
-            throw new NotImplementedException();
-        }
     }
 
+    // ==================== CLASSES AUXILIARES ====================
     public class CalibrationResult
     {
         public double MaxVolume { get; set; }

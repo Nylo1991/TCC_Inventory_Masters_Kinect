@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using TCC_Inventory_Masters_Kinect.Command.TCC_Inventory_Masters_Kinect.Command;
+using TCC_Inventory_Masters_Kinect.Command;
 using TCC_Inventory_Masters_Kinect.Model;
 using TCC_Inventory_Masters_Kinect.Repository;
 using TCC_Inventory_Masters_Kinect.Service;
@@ -10,6 +10,7 @@ using TCC_Inventory_Masters_Kinect.Service;
 namespace TCC_Inventory_Masters_Kinect.ViewModel
 {
     public class MainViewModel
+
     {
         private readonly KinectService _kinectService;
         private readonly KinectRepository _repository;
@@ -30,7 +31,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             StatusMessage = "Pronto";
 
-            // Inicia o Kinect automaticamente
             try
             {
                 _kinectService.Start();
@@ -38,7 +38,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
             catch (Exception ex)
             {
-                StatusMessage = "Erro ao conectar Kinect";
+                StatusMessage = $"Erro ao conectar Kinect: {ex.Message}";
             }
         }
 
@@ -49,32 +49,27 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 IsCalibrating = true;
                 StatusMessage = "Calibrando...";
 
-                var progress = new Progress<Model.CalibrationProgress>(p =>
-                {
-                    StatusMessage = p.Status;
-                });
-
-                await _kinectService.CalibrateAsync(progress, CancellationToken.None);
+                // Chama sem Progress - apenas aguarda a conclusão
+                await _kinectService.CalibrateAsync(CancellationToken.None);
 
                 var novoEspaco = new Space
                 {
-                    Name = "Espaço Principal"
+                    Name = "Espaco Principal"
                 };
 
                 _repository.SalvarEspaco(novoEspaco);
 
-                StatusMessage = "Calibração concluída!";
+                StatusMessage = "Calibracao concluida!";
             }
             catch (Exception ex)
             {
-                StatusMessage = "Erro na calibração";
+                StatusMessage = $"Erro na calibracao: {ex.Message}";
             }
             finally
             {
                 IsCalibrating = false;
             }
         }
-
 
         private async void ExecutarMedicao()
         {
@@ -89,16 +84,19 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     var medicao = new MedicaoVolume
                     {
                         VolumeCm3 = volume
-                        // Removido DataMedicao e EspacoId (não existem no seu modelo atual)
                     };
 
                     _repository.SalvarMedicao(medicao);
-                    StatusMessage = $"Medido: {volume:F0} cm³";
+                    StatusMessage = $"Medido: {volume:F0} cm3";
+                }
+                else
+                {
+                    StatusMessage = "Nenhum objeto detectado";
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                StatusMessage = "Erro na medição";
+                StatusMessage = $"Erro na medicao: {ex.Message}";
             }
         }
     }
