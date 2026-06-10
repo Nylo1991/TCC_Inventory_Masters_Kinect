@@ -6,7 +6,7 @@
 }
 <div class="container-fluid">
     <div class="card shadow-sm mb-4">
-        <div class="card-header"><h5 class="mb-0">📊 Volume em Tempo Real</h5></div>
+        <div class="card-header"><h5 class="mb-0">📊 (m³) Volume em tempo real </h5></div>
         <div class="card-body">
             <canvas id="volumeChart" height="100"></canvas>
         </div>
@@ -45,7 +45,7 @@
 
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0">📈 % de Ocupação do Estoque</h5></div>
+                <div class="card-header"><h5 class="mb-0">📈 % de Ocupação do estoque</h5></div>
                 <div class="card-body">
                     <canvas id="occupancyChart" style="max-height: 250px;"></canvas>
                 </div>
@@ -66,7 +66,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let occupancyChart;
-        let volumeChart; 
+        let volumeChart;
 
         const initialPercent = parseFloat("@Model.PercentualOcupacao.ToString(CultureInfo.InvariantCulture)");
         const capacidadeTotal = @(Model.Parametros?.CapacidadeMaxima.ToString(CultureInfo.InvariantCulture) ?? "1000.0");
@@ -81,13 +81,21 @@
         const connection = new signalR.HubConnectionBuilder()
         .withUrl("/medicaoHub")
         .build();
-
-        // Inicialização do volumeChart
+        
         const ctxVolume = document.getElementById('volumeChart').getContext('2d');
         volumeChart = new Chart(ctxVolume, {
         type: 'line',
-        data: { labels: [], datasets: [{ label: 'Volume (m³)', data: [], borderColor: '#16a34a', fill: false }] },
-        options: { responsive: true, maintainAspectRatio: false }
+        data: { labels: [], datasets: [{ label: 'Volume (m³)', data: [], borderColor: '#16a34a', fill: false, tension: 0.3 }] },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+        y: {
+        beginAtZero: true,
+        suggestedMax: capacidadeTotal
+        }
+        }
+        }
         });
 
         const ctxOcupacao = document.getElementById('occupancyChart').getContext('2d');
@@ -119,7 +127,10 @@
         // Atualiza Gráfico de Volume
         volumeChart.data.labels.push(new Date().toLocaleTimeString());
         volumeChart.data.datasets[0].data.push(novoVolume);
-        if (volumeChart.data.labels.length > 10) { volumeChart.data.labels.shift(); volumeChart.data.datasets[0].data.shift(); }
+       // if (volumeChart.data.labels.length > 10) {
+       // volumeChart.data.labels.shift();
+       // volumeChart.data.datasets[0].data.shift();
+       // }
         volumeChart.update();
         });
 
