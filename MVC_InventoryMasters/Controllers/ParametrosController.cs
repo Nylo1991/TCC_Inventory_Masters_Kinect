@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
-using MVC_InventoryMasters.Services;
 
 namespace MVC_InventoryMasters.Controllers
 {
@@ -43,8 +42,39 @@ namespace MVC_InventoryMasters.Controllers
                     return View("Index", model);
                 }
 
-                model.DataAtualizacao =
-                    DateTime.UtcNow;
+                // Regra de negócio:
+                // Mínimo deve ser menor que Máximo
+                if (model.CapacidadeMinima >= model.CapacidadeMaxima)
+                {
+                    ModelState.AddModelError(
+                        nameof(model.CapacidadeMinima),
+                        "A capacidade mínima deve ser menor que a capacidade máxima.");
+
+                    return View("Index", model);
+                }
+
+                // Busca configuração atual
+                var atual = _repository.Buscar();
+
+                // Verifica se houve alteração
+                bool houveAlteracao =
+                    atual.CapacidadeMaxima != model.CapacidadeMaxima ||
+                    atual.CapacidadeMinima != model.CapacidadeMinima ||
+                    atual.PercentualAlerta != model.PercentualAlerta ||
+                    atual.NotificacaoAutomatica != model.NotificacaoAutomatica ||
+                    atual.ExibirAlertaDashboard != model.ExibirAlertaDashboard ||
+                    atual.ParceiroPadraoId != model.ParceiroPadraoId ||
+                    atual.DiasSemColetaAlerta != model.DiasSemColetaAlerta;
+
+                if (!houveAlteracao)
+                {
+                    TempData["Aviso"] =
+                        "Nenhuma alteração foi realizada.";
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                model.DataAtualizacao = DateTime.UtcNow;
 
                 _repository.Salvar(model);
 
@@ -61,6 +91,5 @@ namespace MVC_InventoryMasters.Controllers
                 return View("Index", model);
             }
         }
-
     }
 }

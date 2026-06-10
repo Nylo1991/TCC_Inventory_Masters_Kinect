@@ -24,68 +24,71 @@ namespace MVC_InventoryMasters.Repositories
         /// </summary>
         public ParametrosSistema Buscar()
         {
-            var docRef = _db
-                .Collection(_colecao)
-                .Document("configuracao");
+            try
+            {
+                var docRef = _db
+                    .Collection(_colecao)
+                    .Document("configuracao");
 
-            var snapshot = docRef
-                .GetSnapshotAsync()
-                .Result;
+                var snapshot = docRef
+                    .GetSnapshotAsync()
+                    .Result;
 
-            if (!snapshot.Exists)
+                if (!snapshot.Exists)
+                {
+                    return new ParametrosSistema();
+                }
+
+                var dados = snapshot.ToDictionary();
+
+                return new ParametrosSistema
+                {
+                    CapacidadeMaxima =
+                        dados.TryGetValue("CapacidadeMaxima", out var capacidadeMaxima)
+                            ? Convert.ToDouble(capacidadeMaxima)
+                            : 0,
+
+                    CapacidadeMinima =
+                        dados.TryGetValue("CapacidadeMinima", out var capacidadeMinima)
+                            ? Convert.ToDouble(capacidadeMinima)
+                            : 0,
+
+                    PercentualAlerta =
+                        dados.TryGetValue("PercentualAlerta", out var percentualAlerta)
+                            ? Convert.ToInt32(percentualAlerta)
+                            : 80,
+
+                    DataAtualizacao =
+                        dados.TryGetValue("DataAtualizacao", out var dataAtualizacao)
+                        && dataAtualizacao is Timestamp timestamp
+                            ? timestamp.ToDateTime()
+                            : DateTime.MinValue,
+
+                    NotificacaoAutomatica =
+                        dados.TryGetValue("NotificacaoAutomatica", out var notificacaoAutomatica)
+                            ? Convert.ToBoolean(notificacaoAutomatica)
+                            : true,
+
+                    ExibirAlertaDashboard =
+                        dados.TryGetValue("ExibirAlertaDashboard", out var exibirAlertaDashboard)
+                            ? Convert.ToBoolean(exibirAlertaDashboard)
+                            : true,
+
+                    ParceiroPadraoId =
+                        dados.TryGetValue("ParceiroPadraoId", out var parceiroPadraoId)
+                            ? parceiroPadraoId?.ToString()
+                            : null,
+
+                    DiasSemColetaAlerta =
+                        dados.TryGetValue("DiasSemColetaAlerta", out var diasSemColeta)
+                            ? Convert.ToInt32(diasSemColeta)
+                            : 15
+                };
+            }
+            catch
             {
                 return new ParametrosSistema();
             }
-
-            var dados = snapshot.ToDictionary();
-
-            return new ParametrosSistema
-            {
-                CapacidadeMaxima =
-                    dados.ContainsKey("CapacidadeMaxima")
-                        ? Convert.ToDouble(dados["CapacidadeMaxima"])
-                        : 0,
-
-                CapacidadeMinima =
-                    dados.ContainsKey("CapacidadeMinima")
-                        ? Convert.ToDouble(dados["CapacidadeMinima"])
-                        : 0,
-
-                PercentualAlerta =
-                    dados.ContainsKey("PercentualAlerta")
-                        ? Convert.ToInt32(dados["PercentualAlerta"])
-                        : 80,
-
-                UnidadeMedida =
-                    dados.ContainsKey("UnidadeMedida")
-                        ? dados["UnidadeMedida"]?.ToString() ?? "m³"
-                        : "m³",
-
-                DataAtualizacao =
-                    dados.ContainsKey("DataAtualizacao")
-                        ? ((Timestamp)dados["DataAtualizacao"]).ToDateTime()
-                        : DateTime.MinValue,
-
-                NotificacaoAutomatica =
-                    dados.ContainsKey("NotificacaoAutomatica")
-                        ? Convert.ToBoolean(dados["NotificacaoAutomatica"])
-                        : true,
-
-                ExibirAlertaDashboard =
-                    dados.ContainsKey("ExibirAlertaDashboard")
-                        ? Convert.ToBoolean(dados["ExibirAlertaDashboard"])
-                        : true,
-
-                ParceiroPadraoId =
-                    dados.ContainsKey("ParceiroPadraoId")
-                        ? dados["ParceiroPadraoId"]?.ToString()
-                        : null,
-
-                DiasSemColetaAlerta =
-                    dados.ContainsKey("DiasSemColetaAlerta")
-                        ? Convert.ToInt32(dados["DiasSemColetaAlerta"])
-                        : 15
-            };
         }
 
         /// <summary>
@@ -93,19 +96,19 @@ namespace MVC_InventoryMasters.Repositories
         /// </summary>
         public void Salvar(ParametrosSistema parametros)
         {
+            parametros.DataAtualizacao = DateTime.UtcNow;
+
             var dados = new Dictionary<string, object>
             {
                 { "CapacidadeMaxima", parametros.CapacidadeMaxima },
                 { "CapacidadeMinima", parametros.CapacidadeMinima },
                 { "PercentualAlerta", parametros.PercentualAlerta },
-                { "UnidadeMedida", parametros.UnidadeMedida ?? "m³" },
-                { "DataAtualizacao", DateTime.UtcNow },
+                //{ "UnidadeMedida", parametros.UnidadeMedida ?? "m³" },
+                { "DataAtualizacao", parametros.DataAtualizacao },
 
                 { "NotificacaoAutomatica", parametros.NotificacaoAutomatica },
                 { "ExibirAlertaDashboard", parametros.ExibirAlertaDashboard },
-
                 { "ParceiroPadraoId", parametros.ParceiroPadraoId ?? string.Empty },
-
                 { "DiasSemColetaAlerta", parametros.DiasSemColetaAlerta }
             };
 

@@ -5,84 +5,142 @@
 }
 
 <div class="container-fluid">
+
     @if (TempData["Sucesso"] != null)
     {
-        <div class="alert alert-success">
+        <div class="alert alert-success alert-dismissible fade show">
             @TempData["Sucesso"]
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
         </div>
     }
 
     @if (TempData["Erro"] != null)
     {
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissible fade show">
             @TempData["Erro"]
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
+
+    @if (TempData["Aviso"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show">
+            @TempData["Aviso"]
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
         </div>
     }
 
     <div class="card shadow-sm">
 
         <div class="card-header">
-
             <h4 class="mb-0">
+                <i class="bi bi-gear"></i>
                 Configurações do Sistema
             </h4>
-
         </div>
 
         <div class="card-body">
 
-            <form asp-controller="Parametros"
+            <form id="formConfiguracoes"
+                  asp-controller="Parametros"
                   asp-action="Salvar"
                   method="post">
 
                 @Html.AntiForgeryToken()
 
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
                 <div class="row">
 
-                    <div class="col-md-4">
+                    <div class="col-md-4 mb-3">
 
-                        <label class="form-label">
-                            Capacidade Máxima (m³)
+                        <label asp-for="CapacidadeMaxima"
+                               class="form-label">
                         </label>
 
                         <input asp-for="CapacidadeMaxima"
+                               type="number"
+                               min="1"
+                               step="0.01"
                                class="form-control" />
+
+                        <span asp-validation-for="CapacidadeMaxima"
+                              class="text-danger">
+                        </span>
 
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-4 mb-3">
 
-                        <label class="form-label">
-                            Capacidade Mínima (m³)
+                        <label asp-for="CapacidadeMinima"
+                               class="form-label">
                         </label>
 
                         <input asp-for="CapacidadeMinima"
+                               type="number"
+                               min="0"
+                               step="0.01"
                                class="form-control" />
+
+                        <span asp-validation-for="CapacidadeMinima"
+                              class="text-danger">
+                        </span>
 
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-4 mb-3">
 
-                        <label class="form-label">
-                            Percentual de Alerta (%)
+                        <label asp-for="PercentualAlerta"
+                               class="form-label">
                         </label>
 
                         <input asp-for="PercentualAlerta"
+                               type="number"
+                               min="1"
+                               max="100"
                                class="form-control" />
+
+                        <span asp-validation-for="PercentualAlerta"
+                              class="text-danger">
+                        </span>
 
                     </div>
 
                 </div>
 
-                <div class="mt-4">
+                <hr />
 
-                    <button type="submit"
-                            class="btn btn-success">
+                <div class="d-flex gap-2">
+
+                    <button id="btnSalvar"
+                            type="submit"
+                            class="btn btn-success"
+                            disabled>
 
                         <i class="bi bi-check-circle"></i>
-                        Salvar
+                        Salvar Alterações
 
                     </button>
+
+                    <a asp-action="Index"
+                       asp-controller="Home"
+                       class="btn btn-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+                        Voltar
+
+                    </a>
 
                 </div>
 
@@ -93,3 +151,34 @@
     </div>
 
 </div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        const form =
+            document.getElementById("formConfiguracoes");
+
+        const btnSalvar =
+            document.getElementById("btnSalvar");
+
+        let alterado = false;
+
+        form.querySelectorAll("input").forEach(campo => {
+
+            campo.addEventListener("input", () => {
+
+                if (!alterado)
+                {
+                    alterado = true;
+                    btnSalvar.disabled = false;
+                }
+
+            });
+
+        });
+
+    </script>
+}
