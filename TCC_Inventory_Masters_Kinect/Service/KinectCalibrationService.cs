@@ -27,17 +27,16 @@ namespace TCC_Inventory_Masters_Kinect.Service
             IProgress<CalibrationProgress> progress = null,
             CancellationToken cancellationToken = default)
         {
-            // Executa a calibração
-            var result = await _kinectService.CalibrateAsync(progress, cancellationToken);
+            // Chama o método com a ordem correta de parâmetros
+            var result = await _kinectService.CalibrateAsync(cancellationToken, progress);
 
             // Cria e salva o espaço calibrado
             var space = new Space
             {
                 Name = spaceName,
-                MaxVolume = result.MaxVolume
-                // Removido: CalibratedAt = result.CalibratedAt
+                MaxVolume = result.MaxVolume,
+                CalibratedAt = DateTime.Now   // Define a data da calibração
             };
-
 
             _context.Spaces.Add(space);
             await _context.SaveChangesAsync(cancellationToken);

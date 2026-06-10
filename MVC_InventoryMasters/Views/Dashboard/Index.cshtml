@@ -43,8 +43,7 @@
             </div>
         </div>
     </div>
-</div>
-
+</div> 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -55,7 +54,11 @@
         const capacidadeTotal = @(Model.Parametros?.CapacidadeMaxima.ToString(CultureInfo.InvariantCulture) ?? "1000.0");
         const percentualAlerta = @(Model.Parametros?.PercentualAlerta ?? 80);
 
-        // Função com faixa de Atenção (Amarela)
+        /// <summary>
+        /// Retorna a cor correspondente ao percentual de ocupação:
+        /// </summary>
+        /// <param name="percentual">Percentual de ocupação</param>
+        /// <returns>Cor correspondente</returns>
         function obterCorOcupacao(percentual) {
         if (percentual >= percentualAlerta) return '#dc2626';      // Vermelho (Crítico)
         if (percentual >= (percentualAlerta - 20)) return '#eab308'; // Amarelo (Atenção - 20% abaixo do alerta)
@@ -86,8 +89,7 @@
         connection.on("NovaMedicao", function (m) {
         const novoVolume = Number(m.volumeMedido || 0);
         const novoPercentual = Math.min((novoVolume / capacidadeTotal) * 100, 100);
-
-        // Atualiza dados e cor dinamicamente
+        
         occupancyChart.data.datasets[0].data = [novoPercentual, 100 - novoPercentual];
         occupancyChart.data.datasets[0].backgroundColor = [obterCorOcupacao(novoPercentual), '#e5e7eb'];
 

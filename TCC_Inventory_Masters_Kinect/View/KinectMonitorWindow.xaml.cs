@@ -9,7 +9,7 @@ namespace TCC_Inventory_Masters_Kinect.View
         public KinectMonitorWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();   // ← Testando com MainViewModel}
+            DataContext = new KinectMonitorWindowViewModel ();   // ← Testando com MainViewModel}
         }
         private void KinectWindow_Closing(object sender, CancelEventArgs e)
         {
