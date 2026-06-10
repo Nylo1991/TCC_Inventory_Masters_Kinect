@@ -17,9 +17,10 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header"><h5 class="mb-0">🔔 Últimas notificações enviadas</h5></div>
                 <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
+                    <table class="table table-hover mb-0">                       
                         <thead>
                             <tr>
+                                <th>Parceiro</th>
                                 <th>Mensagem</th>
                                 <th>Volume (m³)</th>
                                 <th>Data</th>
@@ -30,7 +31,21 @@
                             {
                                 foreach (var n in Model.Alertas.OrderByDescending(x => x.DataHora).Take(5))
                                 {
+                                    // Busca o parceiro correspondente pelo ID
+                                    var p = Model.Parceiros?.FirstOrDefault(x => x.Id == n.ParceiroId);
+
                                     <tr>
+                                        <td>
+                                            @if (p != null)
+                                            {
+                                                <div><strong>@p.Nome</strong></div>
+                                                <small class="text-muted"><i class="bi bi-envelope"></i> @p.Email</small>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Sem parceiro</span>
+                                            }
+                                        </td>
                                         <td>@n.Mensagem</td>
                                         <td><strong>@(n.VolumeMedido?.ToString("F2") ?? "0.00") m³</strong></td>
                                         <td>@n.DataHora.ToString("dd/MM HH:mm")</td>
