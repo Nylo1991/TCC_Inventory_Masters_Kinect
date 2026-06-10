@@ -12,21 +12,23 @@ namespace MVC_InventoryMasters.Services
         private readonly FirestoreDb _firestore;
         public FirestoreDb Firestore => _firestore;
 
+        /// <summary>
+        /// Construtor da classe FirebaseService, responsável por inicializar a conexão com o Firestore.
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <exception cref="FileNotFoundException"></exception>
         public FirebaseService(IConfiguration configuration)
         {
             string projectId = configuration["Firebase:ProjectId"];
             string credentialFileName = configuration["Firebase:CredentialPath"];
-
-            // Resolve o caminho completo a partir da pasta base da aplicação (onde está o executável)
+            
             string credentialPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, credentialFileName);
 
-            // Verifica se o arquivo existe antes de tentar carregar
             if (!File.Exists(credentialPath))
             {
                 throw new FileNotFoundException($"Arquivo de credenciais não encontrado em: {credentialPath}");
-            }
-
-            // Define a variável de ambiente para o SDK do Google
+            }           
+                      
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialPath);
 
             if (FirebaseApp.DefaultInstance == null)

@@ -7,90 +7,74 @@
     <title>@ViewData["Title"] - Inventory Masters</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-
 <body>
 
     <div class="wrapper">
 
-        <!-- Sidebar -->
         <aside class="sidebar">
 
             <div class="logo-area">
                 <h4>📦 Inventory Masters</h4>
-                <small>Controle Inteligente</small>
+                <small>Gestão de Estoque Inteligente</small>
             </div>
 
             <nav class="menu">
 
-                <a asp-controller="Home"
-                   asp-action="Index">
-                    <i class="bi bi-speedometer2"></i>
-                    Dashboard
+                <a asp-controller="Home" asp-action="Index"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Visão geral do sistema">
+                    <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
 
-                <a asp-controller="Parceiros"
-                   asp-action="Index">
-                    <i class="bi bi-buildings"></i>
-                    Parceiros
+                <a asp-controller="Parceiros" asp-action="Index"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Gerenciar empresas parceiras e contatos">
+                    <i class="bi bi-buildings"></i> Parceiros
                 </a>
 
-                <a asp-controller="Usuarios"
-                   asp-action="Index">
-                    <i class="bi bi-people"></i>
-                    Usuários
+                <a asp-controller="Usuarios" asp-action="Index"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Gerenciar usuários do sistema">
+                    <i class="bi bi-people"></i> Usuários
                 </a>
 
-                <a asp-controller="Medicoes"
-                   asp-action="Index">
-                    <i class="bi bi-rulers"></i>
-                    Medições
+                <a asp-controller="Medicoes" asp-action="Index"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Consultar medições de volume">
+                    <i class="bi bi-rulers"></i> Medições
                 </a>
 
-                <a asp-controller="Notificacoes"
-                   asp-action="Index">
-                    <i class="bi bi-bell"></i>
-                    Notificações
+                <a asp-controller="Notificacoes" asp-action="Index"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Histórico de alertas enviados">
+                    <i class="bi bi-bell"></i> Notificações
                 </a>
 
-                <a asp-controller="Parametros"
-                   asp-action="Index">
-                    <i class="bi bi-gear"></i>
-                    Configurações
+                <a asp-controller="Parametros" asp-action="Index"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Configurar limites e parâmetros do sistema">
+                    <i class="bi bi-gear"></i> Configurações
                 </a>
 
             </nav>
 
         </aside>
 
-        <!-- Conteúdo -->
         <div class="main-content">
 
-            <!-- Topbar -->
             <header class="topbar">
-
-                <div>
+                <div class="d-flex align-items-center gap-3">
+                    <button id="sidebarToggle" class="btn btn-light btn-sm">
+                        <i class="bi bi-list"></i>
+                    </button>
                     <h5 class="m-0">@ViewData["Title"]</h5>
                 </div>
 
                 <div class="user-info">
-
                     <i class="bi bi-person-circle"></i>
-
                     <span>Administrador</span>
-
                 </div>
-
             </header>
 
             <main class="content">
-
                 @RenderBody()
-
             </main>
 
         </div>
@@ -100,7 +84,21 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        // Inicialização dos Tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
 
+        // Toggle Sidebar
+        document.getElementById("sidebarToggle").addEventListener("click", function () {
+        document.querySelector(".wrapper").classList.toggle("collapsed");
+        });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -41,10 +41,16 @@ namespace MVC_InventoryMasters.Models
         [FirestoreProperty]
         public string? StatusEnvio { get; set; }
 
+        [FirestoreProperty]
+        public string? ParceiroQueAceitouId { get; set; } 
+
         /// <summary>
         /// Mensagem descritiva do evento.
         /// </summary>
         [FirestoreProperty]
         public string? Mensagem { get; set; }
+
     }
+
+
 }
