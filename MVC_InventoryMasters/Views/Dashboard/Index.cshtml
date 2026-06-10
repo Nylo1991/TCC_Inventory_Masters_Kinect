@@ -4,7 +4,6 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
-
 <div class="container-fluid">
     <div class="card shadow-sm mb-4">
         <div class="card-header"><h5 class="mb-0">📊 Volume em Tempo Real</h5></div>
@@ -67,6 +66,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let occupancyChart;
+        let volumeChart; 
 
         const initialPercent = parseFloat("@Model.PercentualOcupacao.ToString(CultureInfo.InvariantCulture)");
         const capacidadeTotal = @(Model.Parametros?.CapacidadeMaxima.ToString(CultureInfo.InvariantCulture) ?? "1000.0");
@@ -81,6 +81,14 @@
         const connection = new signalR.HubConnectionBuilder()
         .withUrl("/medicaoHub")
         .build();
+
+        // Inicialização do volumeChart
+        const ctxVolume = document.getElementById('volumeChart').getContext('2d');
+        volumeChart = new Chart(ctxVolume, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label: 'Volume (m³)', data: [], borderColor: '#16a34a', fill: false }] },
+        options: { responsive: true, maintainAspectRatio: false }
+        });
 
         const ctxOcupacao = document.getElementById('occupancyChart').getContext('2d');
         occupancyChart = new Chart(ctxOcupacao, {
@@ -103,10 +111,16 @@
         const novoVolume = Number(m.volumeMedido || 0);
         const novoPercentual = Math.min((novoVolume / capacidadeTotal) * 100, 100);
 
+        // Atualiza Gráfico de Ocupação
         occupancyChart.data.datasets[0].data = [novoPercentual, 100 - novoPercentual];
         occupancyChart.data.datasets[0].backgroundColor = [obterCorOcupacao(novoPercentual), '#e5e7eb'];
-
         occupancyChart.update();
+
+        // Atualiza Gráfico de Volume
+        volumeChart.data.labels.push(new Date().toLocaleTimeString());
+        volumeChart.data.datasets[0].data.push(novoVolume);
+        if (volumeChart.data.labels.length > 10) { volumeChart.data.labels.shift(); volumeChart.data.datasets[0].data.shift(); }
+        volumeChart.update();
         });
 
         connection.start().catch(err => console.error(err.toString()));
