@@ -304,8 +304,6 @@
     <Compile Include="Model\Log.cs" />
     <Compile Include="Model\HistoricoOcupacao.cs" />
     <Compile Include="Model\MedicaoVolume.cs" />
-    <Compile Include="Model\Space.cs" />
-    <Compile Include="Model\SpaceHistory.cs" />
     <Compile Include="Repository\Interface\IKinectRepository.cs" />
     <Compile Include="Repository\KinectRepository.cs" />
     <Compile Include="Service\KinectCalibrationService.cs" />
