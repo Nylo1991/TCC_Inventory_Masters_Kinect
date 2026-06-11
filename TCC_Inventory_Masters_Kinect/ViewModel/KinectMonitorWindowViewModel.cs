@@ -30,36 +30,106 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             set => SetProperty(ref _depthImage, value);
         }
 
-        // ─── STATUS ─────────────────────────────────────────────────────
-        private string _statusKinect = "Kinect: Desconectado";
+        // ─── STATUS DINÂMICOS (nenhum texto pré-definido) ───────────────
+        private string _statusKinect;
         public string StatusKinect
         {
             get => _statusKinect;
             set => SetProperty(ref _statusKinect, value);
         }
 
-        private string _status = "Pronto.";
+        private string _statusSQLite;
+        public string StatusSQLite
+        {
+            get => _statusSQLite;
+            set => SetProperty(ref _statusSQLite, value);
+        }
+
+        private string _statusSignalR;
+        public string StatusSignalR
+        {
+            get => _statusSignalR;
+            set => SetProperty(ref _statusSignalR, value);
+        }
+
+        private string _statusMvcFirebase;
+        public string StatusMvcFirebase
+        {
+            get => _statusMvcFirebase;
+            set => SetProperty(ref _statusMvcFirebase, value);
+        }
+
+        private string _status;
         public string Status
         {
             get => _status;
             set => SetProperty(ref _status, value);
         }
 
-        // ─── OUTRAS PROPRIEDADES (mantidas) ─────────────────────────────
-        public string StatusSQLite { get; set; } = "SQLite: Aguardando...";
-        public string StatusSignalR { get; set; } = "SignalR: Desconectado";
-        public string StatusMvcFirebase { get; set; } = "MVC/Firebase: Aguardando...";
+        private string _mensagemEnvioAplicacao;
+        public string MensagemEnvioAplicacao
+        {
+            get => _mensagemEnvioAplicacao;
+            set => SetProperty(ref _mensagemEnvioAplicacao, value);
+        }
 
-        public string VolumeTexto { get; set; } = "Volume: --";
-        public string PercentualOcupacaoTexto { get; set; } = "Ocupacao: --%";
-        public string EspacoLivreTexto { get; set; } = "Espaco livre: --";
-        public string QuantidadePontos3D { get; set; } = "Pontos 3D: 0";
-        public string UltimoSnapshot { get; set; } = "Ultimo snapshot: --";
+        // ─── PROPRIEDADES DE MEDIÇÃO DINÂMICAS ─────────────────────────
+        private string _volumeTexto;
+        public string VolumeTexto
+        {
+            get => _volumeTexto;
+            set => SetProperty(ref _volumeTexto, value);
+        }
 
-        public string NomeEspaco { get; set; } = "Estoque Principal";
-        public string PercentualAlerta { get; set; } = "80";
-        public string VolumeMaximo { get; set; } = "0";
-        public string MensagemEnvioAplicacao { get; set; } = "Nenhum envio realizado.";
+        private string _percentualOcupacaoTexto;
+        public string PercentualOcupacaoTexto
+        {
+            get => _percentualOcupacaoTexto;
+            set => SetProperty(ref _percentualOcupacaoTexto, value);
+        }
+
+        private string _espacoLivreTexto;
+        public string EspacoLivreTexto
+        {
+            get => _espacoLivreTexto;
+            set => SetProperty(ref _espacoLivreTexto, value);
+        }
+
+        private string _quantidadePontos3D;
+        public string QuantidadePontos3D
+        {
+            get => _quantidadePontos3D;
+            set => SetProperty(ref _quantidadePontos3D, value);
+        }
+
+        private string _ultimoSnapshot;
+        public string UltimoSnapshot
+        {
+            get => _ultimoSnapshot;
+            set => SetProperty(ref _ultimoSnapshot, value);
+        }
+
+        // ─── PROPRIEDADES DE CONFIGURAÇÃO DINÂMICAS ────────────────────
+        private string _nomeEspaco;
+        public string NomeEspaco
+        {
+            get => _nomeEspaco;
+            set => SetProperty(ref _nomeEspaco, value);
+        }
+
+        private string _percentualAlerta;
+        public string PercentualAlerta
+        {
+            get => _percentualAlerta;
+            set => SetProperty(ref _percentualAlerta, value);
+        }
+
+        private string _volumeMaximo;
+        public string VolumeMaximo
+        {
+            get => _volumeMaximo;
+            set => SetProperty(ref _volumeMaximo, value);
+        }
 
         // ─── COMANDOS ───────────────────────────────────────────────────
         public ICommand LigarKinectCommand { get; }
@@ -67,52 +137,50 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         public ICommand CalibrarCommand { get; }
         public ICommand CalibrarEspacoCommand { get; }
 
+        // ─── CONSTRUTOR ─────────────────────────────────────────────────
         public KinectMonitorWindowViewModel()
         {
             _kinectService = new KinectService();
 
             LigarKinectCommand = new RelayCommand(LigarKinect);
             DesligarKinectCommand = new RelayCommand(DesligarKinect);
-            CalibrarCommand = new RelayCommand(CalibrarChao);
-            CalibrarEspacoCommand = new RelayCommand(CalibrarEspaco);
+            CalibrarCommand = new RelayCommand(CalibrarChaoAsync);
+            CalibrarEspacoCommand = new RelayCommand(CalibrarEspacoAsync);
         }
 
-        // ─── LIGAR KINECT COM TIMER ─────────────────────────────────────
+        // ─── LIGAR KINECT ───────────────────────────────────────────────
         private void LigarKinect()
         {
             try
             {
                 _kinectService.Start();
-                StatusKinect = "Kinect: Conectado";
-                Status = "Kinect ligado com sucesso.";
-
-                // Inicia o timer para capturar frames
+                StatusKinect = "Kinect conectado";
+                Status = "Kinect iniciado com sucesso";
                 IniciarTimerFrames();
             }
             catch (Exception ex)
             {
-                StatusKinect = "Kinect: Erro ao conectar";
-                Status = $"Erro: {ex.Message}";
+                StatusKinect = $"Kinect: erro ao conectar";
+                Status = $"Erro ao iniciar Kinect: {ex.Message}";
             }
         }
 
+        // ─── TIMER DE FRAMES ────────────────────────────────────────────
         private void IniciarTimerFrames()
         {
             _frameTimer?.Stop();
 
             _frameTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(33) // ~30 FPS
+                Interval = TimeSpan.FromMilliseconds(33)
             };
 
             _frameTimer.Tick += (s, e) =>
             {
-                // Atualiza Camera RGB
                 var cameraFrame = _kinectService.CapturarFrameCamera();
                 if (cameraFrame != null)
                     CameraImage = cameraFrame;
 
-                // Atualiza Depth (nuvem de pontos)
                 var depthFrame = _kinectService.CapturarDepthColorido();
                 if (depthFrame != null)
                     DepthImage = depthFrame;
@@ -121,51 +189,69 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             _frameTimer.Start();
         }
 
+        // ─── DESLIGAR KINECT ────────────────────────────────────────────
         private void DesligarKinect()
         {
             _frameTimer?.Stop();
             _frameTimer = null;
 
             _kinectService.Stop();
-            StatusKinect = "Kinect: Desconectado";
+
             CameraImage = null;
             DepthImage = null;
-            Status = "Kinect desligado.";
+
+            StatusKinect = "Kinect desligado";
+            Status = "Kinect encerrado pelo usuario";
         }
 
-        private async void CalibrarChao()
+        // ─── CALIBRAÇÃO DE CHÃO ─────────────────────────────────────────
+        private async Task CalibrarChaoAsync()
         {
             try
             {
-                Status = "Calibrando chao... aguarde.";
+                Status = "Calibrando chao, aguarde...";
+
                 var resultado = await _kinectService.CalibrateAsync(CancellationToken.None);
-                Status = $"Chao calibrado! Pontos: {resultado.TotalPointsFound}";
-                MessageBox.Show($"Calibracao concluida!\nPontos: {resultado.TotalPointsFound}", "Calibracao OK");
+
+                QuantidadePontos3D = resultado.TotalPointsFound.ToString();
+                Status = $"Chao calibrado com sucesso. Pontos detectados: {resultado.TotalPointsFound}";
+
+                MessageBox.Show(
+                    $"Calibracao do chao concluida!\nPontos detectados: {resultado.TotalPointsFound}",
+                    "Calibracao concluida");
             }
             catch (Exception ex)
             {
-                Status = $"Erro na calibracao: {ex.Message}";
-                MessageBox.Show(ex.Message, "Erro");
+                Status = $"Erro na calibracao do chao: {ex.Message}";
+                MessageBox.Show($"Falha na calibracao: {ex.Message}", "Erro");
             }
         }
 
-        private async void CalibrarEspaco()
+        // ─── CALIBRAÇÃO DE ESPAÇO ───────────────────────────────────────
+        private async Task CalibrarEspacoAsync()
         {
             try
             {
-                Status = "Calibrando espaco... aguarde.";
+                Status = "Calibrando espaco, aguarde...";
+
                 var resultado = await _kinectService.CalibrateAsync(CancellationToken.None);
+
                 VolumeMaximo = resultado.MaxVolume.ToString("F0");
-                Status = $"Espaco calibrado! Volume maximo: {resultado.MaxVolume:F0} cm³";
-                MessageBox.Show($"Volume maximo definido: {resultado.MaxVolume:F0} cm³", "Espaco OK");
+                VolumeTexto = $"{resultado.MaxVolume:F0} cm³";
+                Status = $"Espaco calibrado. Volume maximo definido: {resultado.MaxVolume:F0} cm³";
+
+                MessageBox.Show(
+                    $"Calibracao do espaco concluida!\nVolume maximo: {resultado.MaxVolume:F0} cm³",
+                    "Calibracao concluida");
             }
             catch (Exception ex)
             {
-                Status = $"Erro: {ex.Message}";
-                MessageBox.Show(ex.Message, "Erro");
+                Status = $"Erro na calibracao do espaco: {ex.Message}";
+                MessageBox.Show($"Falha na calibracao: {ex.Message}", "Erro");
             }
         }
 
+        // ─── DISPOSE ────────────────────────────────────────────────────
         public void Dispose()
         {
             _frameTimer?.Stop();
