@@ -30,8 +30,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
         public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
         public DbSet<Log> Logs { get; set; }
-        public DbSet<Space> Spaces { get; set; }
-        public DbSet<SpaceHistory> SpaceHistories { get; set; }
+        
 
         private void CriarTabelaManual()
         {
@@ -65,22 +64,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         Mensagem TEXT NOT NULL
                     );
 
-                    -- Novas tabelas
-                    CREATE TABLE IF NOT EXISTS Spaces (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Name TEXT NOT NULL,
-                        MaxVolume REAL NOT NULL,
-                        CalibratedAt TEXT NOT NULL
-                    );
-
-                    CREATE TABLE IF NOT EXISTS SpaceHistories (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        SpaceId INTEGER NOT NULL,
-                        CurrentVolume REAL NOT NULL,
-                        Percentage REAL NOT NULL,
-                        RecordedAt TEXT NOT NULL,
-                        FOREIGN KEY (SpaceId) REFERENCES Spaces(Id)
-                    );
+                 
                 ";
 
                 using (var cmd = new SQLiteCommand(sql, conn))

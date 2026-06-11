@@ -13,6 +13,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
     public class KinectMonitorWindowViewModel : BaseViewModel
     {
         private readonly KinectService _kinectService;
+        private readonly SignalRService _signalRService;
+
+        private DispatcherTimer _envioVolumeTimer; 
+        private double _ultimoVolumeMaximo = 0;
         private DispatcherTimer _frameTimer;
 
         // ─── PROPRIEDADES DE IMAGEM ─────────────────────────────────────
@@ -141,6 +145,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         public KinectMonitorWindowViewModel()
         {
             _kinectService = new KinectService();
+            _signalRService = new SignalRService();
 
             LigarKinectCommand = new RelayCommand(LigarKinect);
             DesligarKinectCommand = new RelayCommand(DesligarKinect);
@@ -149,21 +154,58 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         }
 
         // ─── LIGAR KINECT ───────────────────────────────────────────────
-        private void LigarKinect()
+        private async void LigarKinect()
         {
             try
             {
                 _kinectService.Start();
                 StatusKinect = "Kinect conectado";
                 Status = "Kinect iniciado com sucesso";
+
+                // ==================== CONEXÃO SIGNALR ====================
+                StatusSignalR = "SignalR: Conectando...";
+                await _signalRService.ConectarAsync();
+
+                if (_signalRService.EstaConectado)
+                    StatusSignalR = "SignalR: Conectado";
+                else
+                    StatusSignalR = "SignalR: Falha na conexão";
+                // =========================================================
+
                 IniciarTimerFrames();
             }
             catch (Exception ex)
             {
-                StatusKinect = $"Kinect: erro ao conectar";
+                StatusKinect = "Kinect: erro ao conectar";
                 Status = $"Erro ao iniciar Kinect: {ex.Message}";
             }
         }
+
+
+        private void IniciarEnvioPeriodicoDeVolume()
+        {
+            _envioVolumeTimer?.Stop();
+
+            _envioVolumeTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(15)
+            };
+
+            _envioVolumeTimer.Tick += async (s, e) =>
+            {
+                if (_signalRService.EstaConectado && _ultimoVolumeMaximo > 0)
+                {
+                    // Envia silenciosamente (sem atualizar a interface)
+                    await _signalRService.EnviarVolumeAsync(_ultimoVolumeMaximo);
+
+                    // REMOVIDO: não atualiza mais MensagemEnvioAplicacao aqui
+                }
+            };
+
+            _envioVolumeTimer.Start();
+        }
+
+
 
         // ─── TIMER DE FRAMES ────────────────────────────────────────────
         private void IniciarTimerFrames()
@@ -202,6 +244,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             StatusKinect = "Kinect desligado";
             Status = "Kinect encerrado pelo usuario";
+
+            _envioVolumeTimer?.Stop();     // ← Adicione
+            _envioVolumeTimer = null;      // ← Adicione
+
         }
 
         // ─── CALIBRAÇÃO DE CHÃO ─────────────────────────────────────────
@@ -232,30 +278,41 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         {
             try
             {
-                Status = "Calibrando espaco, aguarde...";
+                Status = "Calibrando espaço, aguarde...";
 
                 var resultado = await _kinectService.CalibrateAsync(CancellationToken.None);
 
                 VolumeMaximo = resultado.MaxVolume.ToString("F0");
                 VolumeTexto = $"{resultado.MaxVolume:F0} cm³";
-                Status = $"Espaco calibrado. Volume maximo definido: {resultado.MaxVolume:F0} cm³";
+                _ultimoVolumeMaximo = resultado.MaxVolume;   // Salva o valor para envio periódico
+
+                Status = $"Espaço calibrado. Volume máximo: {resultado.MaxVolume:F0} cm³";
+
+                // Envia imediatamente na primeira calibração
+                if (_signalRService.EstaConectado)
+                {
+                    await _signalRService.EnviarVolumeAsync(resultado.MaxVolume);
+                    MensagemEnvioAplicacao = $"Volume enviado com sucesso: {resultado.MaxVolume:F0} cm³";
+                }
+
+                else
+                {
+                    MensagemEnvioAplicacao = "SignalR não está conectado.";
+                }
+              
 
                 MessageBox.Show(
-                    $"Calibracao do espaco concluida!\nVolume maximo: {resultado.MaxVolume:F0} cm³",
-                    "Calibracao concluida");
+                    $"Calibração concluída!\nVolume máximo: {resultado.MaxVolume:F0} cm³",
+                    "Calibração concluída");
             }
             catch (Exception ex)
             {
-                Status = $"Erro na calibracao do espaco: {ex.Message}";
-                MessageBox.Show($"Falha na calibracao: {ex.Message}", "Erro");
+                Status = $"Erro: {ex.Message}";
+                MensagemEnvioAplicacao = $"Erro: {ex.Message}";
+                MessageBox.Show($"Falha na calibração: {ex.Message}", "Erro");
             }
         }
 
-        // ─── DISPOSE ────────────────────────────────────────────────────
-        public void Dispose()
-        {
-            _frameTimer?.Stop();
-            _kinectService?.Stop();
-        }
+
     }
 }

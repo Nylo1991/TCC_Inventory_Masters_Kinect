@@ -13,13 +13,13 @@ namespace TCC_Inventory_Masters_Kinect.Service
     {
         private KinectSensor _sensor;
 
-        // Constantes do Kinect v1
+       
         private const int ANGULO_MIN = -27;
         private const int ANGULO_MAX = 27;
-        private const int PASSO_ANGULO = 5;     // Graus por passo
-        private const int FRAMES_POR_ANGULO = 5;    // Frames capturados por posicao
-        private const int ESPERA_MOTOR_MS = 1500;  // Tempo para o motor estabilizar (ms)
-        private const int DEPTH_MAX_MM = 4000;  // Distancia maxima valida em mm
+        private const int PASSO_ANGULO = 5;    
+        private const int FRAMES_POR_ANGULO = 5;    
+        private const int ESPERA_MOTOR_MS = 1500; 
+        private const int DEPTH_MAX_MM = 4000; 
 
         public bool IsConnected =>
             _sensor != null && _sensor.Status == KinectStatus.Connected;
@@ -30,7 +30,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 _sensor = KinectSensor.KinectSensors[0];
         }
 
-        // ==================== INICIALIZACAO ====================
+       
         public void Start()
         {
             if (_sensor == null)
@@ -50,7 +50,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
             _sensor?.Stop();
         }
 
-        // ==================== CAMERA RGB ====================
+     
         public BitmapSource CapturarFrameCamera()
         {
             if (!IsConnected || _sensor.ColorStream == null)
@@ -82,7 +82,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        // ==================== DEPTH COLORIDO ====================
+
         public BitmapSource CapturarDepthColorido()
         {
             if (!IsConnected) return null;
@@ -129,7 +129,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        // ==================== MEDICAO DE VOLUME ====================
+
         public async Task<double> MeasureCurrentVolumeAsync(CancellationToken token)
         {
             if (!IsConnected) return 0;
@@ -168,7 +168,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        // ==================== CALIBRACAO REAL COM MOTOR ====================
+
         public async Task<CalibrationResult> CalibrateAsync(
             CancellationToken token,
             IProgress<CalibrationProgress> progress = null)
@@ -183,7 +183,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
             try
             {
-                // ---- Passo 1: Varredura ANGULO_MIN ate ANGULO_MAX ----
+         
                 int totalPassos = ((ANGULO_MAX - ANGULO_MIN) / PASSO_ANGULO) + 1;
                 int passoAtual = 0;
 
@@ -201,12 +201,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                     await Task.Delay(ESPERA_MOTOR_MS, token);
 
-                    // -------------------------------------------------------
-                    // SEM "out" — usa tuple de retorno
-                    // -------------------------------------------------------
+                  
                     var (mediaDepth, totalPontos) =
                         await CapturarMediaDepthAsync(FRAMES_POR_ANGULO, token);
-                    // -------------------------------------------------------
+          
 
                     leiturasPorAngulo.Add((angulo, mediaDepth, totalPontos));
 
@@ -223,7 +221,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     });
                 }
 
-                // ---- Passo 2: Detectar o chao ----
+             
                 progress?.Report(new CalibrationProgress
                 {
                     Status = "Calculando plano do chao...",
@@ -232,7 +230,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 var resultadoChao = DetectarChao(leiturasPorAngulo);
 
-                // ---- Passo 3: Calcular volume maximo ----
+              
                 progress?.Report(new CalibrationProgress
                 {
                     Status = "Calculando volume maximo...",
@@ -241,7 +239,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 double volumeMaximo = CalcularVolumeMaximo(resultadoChao.DistanciaChaoMm);
 
-                // ---- Passo 4: Restaurar angulo original ----
+              
                 progress?.Report(new CalibrationProgress
                 {
                     Status = "Restaurando posicao do Kinect...",
@@ -284,7 +282,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        // ==================== AUXILIAR: MOVER MOTOR ====================
+        
         private async Task MoverMotorAsync(
             int angulo,
             CancellationToken token,
@@ -305,7 +303,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
             catch (InvalidOperationException ex)
             {
-                // SDK lanca excecao se mover o motor rapido demais — aguarda e tenta novamente
+                
                 LoggerService.LogWarning(
                     $"Motor ocupado, aguardando 2s. Erro: {ex.Message}");
 
@@ -322,8 +320,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        // ==================== AUXILIAR: CAPTURAR MEDIA DE DEPTH ====================
-        // RETORNA TUPLE — sem parametros "out" (out nao e permitido em metodos async)
+  
         private async Task<(double MediaDepth, int TotalPontos)> CapturarMediaDepthAsync(
             int quantidadeFrames,
             CancellationToken token)
@@ -358,7 +355,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                         framesValidos++;
                     }
                 }
-                catch { /* Frame perdido, continua */ }
+                catch {  }
 
                 await Task.Delay(30, token);
             }
@@ -370,7 +367,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
             return (media, pontosTotal);
         }
 
-        // ==================== AUXILIAR: DETECTAR CHAO ====================
+    
         private (double DistanciaChaoMm, int AnguloDetectado, int TotalPontos) DetectarChao(
             List<(int Angulo, double MediaDepth, int Pontos)> leituras)
         {
@@ -399,12 +396,12 @@ namespace TCC_Inventory_Masters_Kinect.Service
             return (distanciaChaoReal, anguloChao, pontosChao);
         }
 
-        // ==================== AUXILIAR: CALCULAR VOLUME MAXIMO ====================
+        
         private double CalcularVolumeMaximo(double distanciaChaoMm)
         {
             if (distanciaChaoMm <= 0) return 0;
 
-            // FOV do Kinect v1: 57 graus horizontal, 43 graus vertical
+          
             double fovH = 57.0 * Math.PI / 180.0;
             double fovV = 43.0 * Math.PI / 180.0;
 
@@ -412,12 +409,12 @@ namespace TCC_Inventory_Masters_Kinect.Service
             double profundidade = 2 * distanciaChaoMm * Math.Tan(fovV / 2);
             double altura = distanciaChaoMm;
 
-            // mm3 -> cm3
+           
             return (largura * profundidade * altura) / 1000.0;
         }
     }
 
-    // ==================== CLASSES AUXILIARES ====================
+    
     public class CalibrationResult
     {
         public double MaxVolume { get; set; }

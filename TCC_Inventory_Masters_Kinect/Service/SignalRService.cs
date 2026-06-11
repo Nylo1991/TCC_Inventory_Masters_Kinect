@@ -154,10 +154,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        // ======================================
-        // ENVIAR VOLUME
-        // ======================================
-
         public async Task<bool> EnviarVolumeAsync(
             double volumeCm3)
         {
@@ -232,9 +228,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        // ======================================
-        // ENVIAR STATUS
-        // ======================================
+
 
         public async Task EnviarStatusAsync(
             string status)
@@ -294,9 +288,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        // ======================================
-        // DESCONECTAR
-        // ======================================
 
         public async Task DesconectarAsync()
         {
