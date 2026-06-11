@@ -4,10 +4,9 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
-
 <div class="container-fluid">
     <div class="card shadow-sm mb-4">
-        <div class="card-header"><h5 class="mb-0">📊 Volume em Tempo Real</h5></div>
+        <div class="card-header"><h5 class="mb-0">📊 (m³) Volume em tempo real</h5></div>
         <div class="card-body">
             <canvas id="volumeChart" height="100"></canvas>
         </div>
@@ -16,16 +15,54 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0">Últimos Parceiros</h5></div>
-                <div class="card-body">
-                    <table class="table table-hover">
-                        <thead><tr><th>Nome</th><th>Email</th></tr></thead>
+                <div class="card-header"><h5 class="mb-0">🔔 Últimas notificações enviadas</h5></div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Parceiro</th>
+                                <th>Mensagem</th>
+                                <th>Volume (m³)</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            @if (Model.Parceiros != null)
+                            @if (Model.Alertas != null)
                             {
-                                foreach (var p in Model.Parceiros.OrderByDescending(x => x.Id).Take(5))
+                                foreach (var n in Model.Alertas.OrderByDescending(x => x.DataHora).Take(5))
                                 {
-                                    <tr><td>@p.Nome</td><td>@p.Email</td></tr>
+                                    var p = Model.Parceiros?.FirstOrDefault(x => x.Id == n.ParceiroId);
+                                    <tr>
+                                        <td>
+                                            @if (n.StatusEnvio == "Aceito")
+                                            {
+                                                <span class="badge bg-success">Aceito</span>
+                                            }
+                                            else if (n.StatusEnvio == "Erro")
+                                            {
+                                                <span class="badge bg-danger">Erro</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark">Pendente</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (p != null)
+                                            {
+                                                <div><strong>@p.Nome</strong></div>
+                                            }
+                                            else
+                                            {
+
+                                                <span class="text-muted">Sem parceiro</span>
+                                            }
+                                        </td>
+                                        <td>@n.Mensagem</td>
+                                        <td><strong>@(n.VolumeMedido?.ToString("F2") ?? "0.00") m³</strong></td>
+                                        <td>@n.DataHora.ToString("dd/MM HH:mm")</td>
+                                    </tr>
                                 }
                             }
                         </tbody>
@@ -36,38 +73,61 @@
 
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0">📈 % de Ocupação do Estoque</h5></div>
+                <div class="card-header"><h5 class="mb-0">📈 % de Ocupação do estoque</h5></div>
                 <div class="card-body">
                     <canvas id="occupancyChart" style="max-height: 250px;"></canvas>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+
+    <div class="row mt-4">
+        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><div class="dashboard-title">Parceiros</div><div class="dashboard-number" id="cardParceiros">@(Model.Parceiros?.Count ?? 0)</div></div></div>
+        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><div class="dashboard-title">Usuários</div><div class="dashboard-number" id="cardUsuarios">@(Model.Usuarios?.Count ?? 0)</div></div></div>
+        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><div class="dashboard-title">Medições</div><div class="dashboard-number" id="totalMedicoes">@(Model.Medicoes?.Count ?? 0)</div></div></div>
+        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><div class="dashboard-title">Alertas</div><div class="dashboard-number" id="cardAlertas">@(Model.Alertas?.Count ?? 0)</div></div></div>
+    </div>
+</div>
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // --- Configuração dos Gráficos ---
         let occupancyChart;
+        let volumeChart;
 
         const initialPercent = parseFloat("@Model.PercentualOcupacao.ToString(CultureInfo.InvariantCulture)");
         const capacidadeTotal = @(Model.Parametros?.CapacidadeMaxima.ToString(CultureInfo.InvariantCulture) ?? "1000.0");
         const percentualAlerta = @(Model.Parametros?.PercentualAlerta ?? 80);
 
-        /// <summary>
-        /// Retorna a cor correspondente ao percentual de ocupação:
-        /// </summary>
-        /// <param name="percentual">Percentual de ocupação</param>
-        /// <returns>Cor correspondente</returns>
         function obterCorOcupacao(percentual) {
-        if (percentual >= percentualAlerta) return '#dc2626';      // Vermelho (Crítico)
-        if (percentual >= (percentualAlerta - 20)) return '#eab308'; // Amarelo (Atenção - 20% abaixo do alerta)
-        return '#16a34a';                                        // Verde (Normal)
+        if (percentual >= percentualAlerta) return '#dc2626';
+        if (percentual >= (percentualAlerta - 20)) return '#eab308';
+        return '#16a34a';
         }
 
-        const connection = new signalR.HubConnectionBuilder()
+        // --- 1. Conexão para MedicaoHub (Gráficos) ---
+        const connectionMed = new signalR.HubConnectionBuilder()
         .withUrl("/medicaoHub")
         .build();
+
+        // --- 2. Conexão para NotificacaoHub (Tabela) ---
+        const connectionNotif = new signalR.HubConnectionBuilder()
+        .withUrl("/notificacaoHub")
+        .withAutomaticReconnect()
+        .build();
+
+        // Inicialização dos Gráficos
+        const ctxVolume = document.getElementById('volumeChart').getContext('2d');
+        volumeChart = new Chart(ctxVolume, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label: 'Volume (m³)', data: [], borderColor: '#16a34a', fill: false, tension: 0.3 }] },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true, suggestedMax: capacidadeTotal } }
+        }
+        });
 
         const ctxOcupacao = document.getElementById('occupancyChart').getContext('2d');
         occupancyChart = new Chart(ctxOcupacao, {
@@ -86,16 +146,35 @@
         }
         });
 
-        connection.on("NovaMedicao", function (m) {
+        // --- Eventos do SignalR ---
+        connectionMed.on("NovaMedicao", function (m) {
         const novoVolume = Number(m.volumeMedido || 0);
         const novoPercentual = Math.min((novoVolume / capacidadeTotal) * 100, 100);
-        
+
+        // 1. Atualização dos Gráficos
         occupancyChart.data.datasets[0].data = [novoPercentual, 100 - novoPercentual];
         occupancyChart.data.datasets[0].backgroundColor = [obterCorOcupacao(novoPercentual), '#e5e7eb'];
-
         occupancyChart.update();
+
+        volumeChart.data.labels.push(new Date().toLocaleTimeString());
+        volumeChart.data.datasets[0].data.push(novoVolume);
+        volumeChart.update();
+
+        // 2. Atualização Dinâmica dos Cards
+        const elMedicoes = document.getElementById('totalMedicoes');
+        if (elMedicoes) {
+        elMedicoes.innerText = parseInt(elMedicoes.innerText || 0) + 1;
+        }
         });
 
-        connection.start().catch(err => console.error(err.toString()));
+        // Recarrega Tabela de Notificações
+        connectionNotif.on("RecarregarTabela", () => {
+        console.log("Atualização de notificações recebida! Recarregando tabela...");
+        location.reload();
+        });
+
+        // Início das conexões
+        connectionMed.start().catch(err => console.error("MedicaoHub Error: " + err));
+        connectionNotif.start().catch(err => console.error("NotificacaoHub Error: " + err));
     </script>
 }

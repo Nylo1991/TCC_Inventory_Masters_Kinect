@@ -57,6 +57,7 @@ app.UseAuthorization();
 
 // 3. Mapeamento de Hubs e Controllers
 app.MapHub<MedicaoHub>("/medicaoHub");
+app.MapHub<NotificacaoHub>("/notificacaoHub");
 
 app.MapControllerRoute(
     name: "default",

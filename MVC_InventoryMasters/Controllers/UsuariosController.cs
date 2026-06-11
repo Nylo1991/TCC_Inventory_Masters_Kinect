@@ -31,10 +31,26 @@ namespace MVC_InventoryMasters.Controllers
                 .ToList();
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina = 1)
         {
-            var usuarios = await _repository.ListarTodos();
-            return View(usuarios);
+            int itensPorPagina = 10;
+            var todosUsuarios = await _repository.ListarTodos();
+            int totalRegistros = todosUsuarios.Count();
+
+            // Cálculo do total de páginas
+            var totalPaginas = (int)Math.Ceiling(totalRegistros / (double)itensPorPagina);
+
+            // Paginação dos dados (usando LINQ)
+            var usuariosPaginados = todosUsuarios
+                .Skip((pagina - 1) * itensPorPagina)
+                .Take(itensPorPagina)
+                .ToList();
+
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.PaginaAtual = pagina;
+            ViewBag.TotalRegistros = totalRegistros;
+
+            return View(usuariosPaginados);
         }
 
         /// <summary>
@@ -45,8 +61,7 @@ namespace MVC_InventoryMasters.Controllers
         public async Task<IActionResult> Create()
         {
             await CarregarPerfis();
-
-            // Criamos a instância e definimos Ativo como true por padrão
+            
             var novoUsuario = new Usuario { Ativo = true };
 
             return View(novoUsuario);
@@ -124,6 +139,20 @@ namespace MVC_InventoryMasters.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return BadRequest();
+
+            var usuario = await _repository.BuscarPorId(id);
+
+            if (usuario == null)
+                return NotFound();
+
+            return View(usuario);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrEmpty(id))
                 return BadRequest();
