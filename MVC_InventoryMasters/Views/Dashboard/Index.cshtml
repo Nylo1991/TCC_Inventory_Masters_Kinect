@@ -3,8 +3,7 @@
 
 @{
     ViewData["Title"] = "Dashboard";
-
-    // CORRECAO: conversao explicita para evitar CS0019 (double? vs decimal)
+    
     var percentualOcupacao = Model.PercentualOcupacao.ToString(CultureInfo.InvariantCulture);
     var capacidadeMaxima = (Model.Parametros?.CapacidadeMaxima != null
                                 ? Convert.ToDouble(Model.Parametros.CapacidadeMaxima)
@@ -20,7 +19,7 @@
         <h5 class="mb-0 fw-bold">Monitoramento de Volume em Tempo Real</h5>
     </div>
 
-    @* Volume e Ocupacao *@
+    @* Volume e Ocupação *@
     <div class="row g-3 mb-3">
         <div class="col-md-8">
             <div class="card shadow-sm h-100">
@@ -45,7 +44,7 @@
         </div>
     </div>
 
-    @* Tabela de Notificacoes e Cards *@
+    @* Tabela de Notificações e Cards *@
     <div class="row g-3">
         <div class="col-md-8">
             <div class="card shadow-sm h-100">
@@ -171,7 +170,7 @@
         return '#16a34a';
         }
 
-        // Conexoes SignalR
+        // Conexões SignalR
         var connectionMed = new signalR.HubConnectionBuilder()
         .withUrl("/medicaoHub")
         .withAutomaticReconnect()
@@ -182,7 +181,7 @@
         .withAutomaticReconnect()
         .build();
 
-        // Grafico de Linha: Volume
+        // Gráfico de Linha: Volume
         var ctxVolume = document.getElementById('volumeChart').getContext('2d');
         var volumeChart = new Chart(ctxVolume, {
         type: 'line',
@@ -210,7 +209,7 @@
         }
         });
 
-        // Grafico de Ocupacao
+        // Gráfico de Ocupação
         var ctxOcupacao = document.getElementById('occupancyChart').getContext('2d');
         var occupancyChart = new Chart(ctxOcupacao, {
         type: 'doughnut',
@@ -231,17 +230,17 @@
         }
         });
 
-        // Nova Medicao
+        // Nova Medição
         connectionMed.on("NovaMedicao", function (m) {
         var novoVolume = Number(m.volumeMedido || 0);
         var novoPercentual = Math.min((novoVolume / capacidadeTotal) * 100, 100);
 
-        // Atualiza grafico de ocupacao
+        // Atualiza gráfico de ocupação
         occupancyChart.data.datasets[0].data = [novoPercentual, 100 - novoPercentual];
         occupancyChart.data.datasets[0].backgroundColor = [obterCorOcupacao(novoPercentual), '#e5e7eb'];
         occupancyChart.update();
 
-        // Atualiza grafico de linha de volume
+        // Atualiza gráfico de linha de volume
         if (volumeChart.data.labels.length >= 20) {
         volumeChart.data.labels.shift();
         volumeChart.data.datasets[0].data.shift();
@@ -250,19 +249,18 @@
         volumeChart.data.datasets[0].data.push(novoVolume);
         volumeChart.update();
 
-        // Incrementa contador de medicoes no card
+        // Incrementa contador de medições no card
         var elMedicoes = document.getElementById('totalMedicoes');
         if (elMedicoes) {
         elMedicoes.innerText = parseInt(elMedicoes.innerText || '0') + 1;
         }
         });
 
-        // Recarregar Tabela de Notificacoes
+        // Recarrega Tabela de Notificações
         connectionNotif.on("RecarregarTabela", function () {
         location.reload();
         });
-
-        // Inicia conexoes
+        
         connectionMed.start()
         .catch(function (err) { console.error("MedicaoHub - Erro ao conectar: " + err); });
 
