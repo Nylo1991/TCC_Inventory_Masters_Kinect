@@ -36,11 +36,9 @@ namespace MVC_InventoryMasters.Controllers
             var usuarios = await _usuariosRepo.ListarTodos();
             var medicoes = await _medicaoRepo.ListarTodos();
             var alertas = await _notificacaoRepo.ListarTodos();
-
-            // 1. Busca os parâmetros reais configurados no Firestore
+            
             var parametros = _parametrosRepo.Buscar();
-
-            // 2. Cálculo do percentual de ocupação baseado na capacidade configurada
+           
             var ultimaMedicao = medicoes.OrderByDescending(m => m.DataHora).FirstOrDefault()?.VolumeMedido ?? 0;
 
             // Se a capacidade não estiver configurada, usa 10000.0 como fallback de segurança
@@ -48,8 +46,7 @@ namespace MVC_InventoryMasters.Controllers
 
             // Cálculo garantindo conversão para decimal para o ViewModel
             decimal percentual = capacidade > 0 ? (decimal)((double)ultimaMedicao / capacidade) * 100 : 0;
-
-            // 3. Montagem do ViewModel com dados dinâmicos
+          
             var model = new DashboardViewModel
             {
                 Parceiros = parceiros,

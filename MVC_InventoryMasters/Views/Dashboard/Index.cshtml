@@ -4,26 +4,62 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
-<div class="container-fluid">
-    <div class="card shadow-sm mb-4">
-        <div class="card-header"><h5 class="mb-0">📊 (m³) Volume em tempo real</h5></div>
-        <div class="card-body">
-            <canvas id="volumeChart" height="100"></canvas>
-        </div>
+
+<div class="container-fluid py-3">
+
+    @* Cabecalho *@
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <h5 class="mb-0 fw-bold">
+            Monitoramento de Volume em Tempo Real
+        </h5>       
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0">🔔 Últimas notificações enviadas</h5></div>
+    @* Volume e Ocupação *@
+    <div class="row g-3 mb-3">
+
+        <div class="col-md-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">Medições Kinect</h6>
+                    <span class="text-muted" style="font-size:0.75rem;"></span>
+                </div>
+                <div class="card-body">
+                    <canvas id="volumeChart" height="130"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">% de Ocupação do Estoque</h6>                    
+                </div>
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <canvas id="occupancyChart" style="max-height: 220px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @* Tabela de Notificacoes e Cards *@
+    <div class="row g-3">
+
+        <div class="col-md-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">                       
+                        Últimas notificações enviadas
+                    </h6>                    
+                </div>
                 <div class="card-body p-0">
                     <table class="table table-hover mb-0">
-                        <thead>
+                        <thead color: #1e293b>
                             <tr>
-                                <th>Status</th>
+                                <th>StatusEnvio</th>
                                 <th>Parceiro</th>
                                 <th>Mensagem</th>
-                                <th>Volume (m³)</th>
+                                <th>Volume</th>
                                 <th>Data</th>
                             </tr>
                         </thead>
@@ -45,54 +81,88 @@
                                             }
                                             else
                                             {
-                                                <span class="badge bg-warning text-dark">Pendente</span>
+                                                <span class="badge bg-info text-dark">Info</span>
                                             }
                                         </td>
                                         <td>
                                             @if (p != null)
                                             {
-                                                <div><strong>@p.Nome</strong></div>
+                                                <strong>@p.Nome</strong>
                                             }
                                             else
                                             {
-
                                                 <span class="text-muted">Sem parceiro</span>
                                             }
                                         </td>
                                         <td>@n.Mensagem</td>
                                         <td><strong>@(n.VolumeMedido?.ToString("F2") ?? "0.00") m³</strong></td>
-                                        <td>@n.DataHora.ToString("dd/MM HH:mm")</td>
+                                        <td>@n.DataHora.ToString("dd/MM/yyyy HH:mm")</td>
                                     </tr>
                                 }
                             }
                         </tbody>
                     </table>
-                </div>
+                </div>               
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0">📈 % de Ocupação do estoque</h5></div>
-                <div class="card-body">
-                    <canvas id="occupancyChart" style="max-height: 250px;"></canvas>
+        <div class="col-md-4">
+            <div class="row g-3 h-100">
+
+                <div class="col-6">
+                    <div class="card text-center p-3 shadow-sm h-100"
+                         style="border: 2px solid #16a34a; border-radius: 12px;">
+                        <div class="fw-semibold mb-1" style="color:#16a34a; font-size:0.9rem;">Parceiros:</div>
+                        <div class="fw-bold" id="cardParceiros"
+                             style="font-size: 2.8rem; line-height:1.1; color:#111;">
+                            @(Model.Parceiros?.Count ?? 0)
+                        </div>
+                    </div>
                 </div>
+
+                <div class="col-6">
+                    <div class="card text-center p-3 shadow-sm h-100"
+                         style="border: 2px solid #2563eb; border-radius: 12px;">
+                        <div class="fw-semibold mb-1" style="color:#2563eb; font-size:0.9rem;">Usuarios:</div>
+                        <div class="fw-bold" id="cardUsuarios"
+                             style="font-size: 2.8rem; line-height:1.1; color:#111;">
+                            @(Model.Usuarios?.Count ?? 0)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="card text-center p-3 shadow-sm h-100"
+                         style="border: 2px solid #d97706; border-radius: 12px;">
+                        <div class="fw-semibold mb-1" style="color:#d97706; font-size:0.9rem;">Medicoes:</div>
+                        <div class="fw-bold" id="totalMedicoes"
+                             style="font-size: 2.8rem; line-height:1.1; color:#111;">
+                            @(Model.Medicoes?.Count ?? 0)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="card text-center p-3 shadow-sm h-100"
+                         style="border: 2px solid #dc2626; border-radius: 12px;">
+                        <div class="fw-semibold mb-1" style="color:#dc2626; font-size:0.9rem;">Alertas:</div>
+                        <div class="fw-bold" id="cardAlertas"
+                             style="font-size: 2.8rem; line-height:1.1; color:#111;">
+                            @(Model.Alertas?.Count ?? 0)
+                        </div>
+                    </div>
+                </div>               
+
             </div>
         </div>
-    </div>
 
-    <div class="row mt-4">
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><div class="dashboard-title">Parceiros</div><div class="dashboard-number" id="cardParceiros">@(Model.Parceiros?.Count ?? 0)</div></div></div>
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><div class="dashboard-title">Usuários</div><div class="dashboard-number" id="cardUsuarios">@(Model.Usuarios?.Count ?? 0)</div></div></div>
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><div class="dashboard-title">Medições</div><div class="dashboard-number" id="totalMedicoes">@(Model.Medicoes?.Count ?? 0)</div></div></div>
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><div class="dashboard-title">Alertas</div><div class="dashboard-number" id="cardAlertas">@(Model.Alertas?.Count ?? 0)</div></div></div>
     </div>
 </div>
+
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // --- Configuração dos Gráficos ---
         let occupancyChart;
         let volumeChart;
 
@@ -106,18 +176,15 @@
         return '#16a34a';
         }
 
-        // --- 1. Conexão para MedicaoHub (Gráficos) ---
         const connectionMed = new signalR.HubConnectionBuilder()
         .withUrl("/medicaoHub")
         .build();
 
-        // --- 2. Conexão para NotificacaoHub (Tabela) ---
         const connectionNotif = new signalR.HubConnectionBuilder()
         .withUrl("/notificacaoHub")
         .withAutomaticReconnect()
         .build();
 
-        // Inicialização dos Gráficos
         const ctxVolume = document.getElementById('volumeChart').getContext('2d');
         volumeChart = new Chart(ctxVolume, {
         type: 'line',
@@ -146,12 +213,10 @@
         }
         });
 
-        // --- Eventos do SignalR ---
         connectionMed.on("NovaMedicao", function (m) {
         const novoVolume = Number(m.volumeMedido || 0);
         const novoPercentual = Math.min((novoVolume / capacidadeTotal) * 100, 100);
 
-        // 1. Atualização dos Gráficos
         occupancyChart.data.datasets[0].data = [novoPercentual, 100 - novoPercentual];
         occupancyChart.data.datasets[0].backgroundColor = [obterCorOcupacao(novoPercentual), '#e5e7eb'];
         occupancyChart.update();
@@ -160,20 +225,16 @@
         volumeChart.data.datasets[0].data.push(novoVolume);
         volumeChart.update();
 
-        // 2. Atualização Dinâmica dos Cards
         const elMedicoes = document.getElementById('totalMedicoes');
         if (elMedicoes) {
         elMedicoes.innerText = parseInt(elMedicoes.innerText || 0) + 1;
         }
         });
 
-        // Recarrega Tabela de Notificações
         connectionNotif.on("RecarregarTabela", () => {
-        console.log("Atualização de notificações recebida! Recarregando tabela...");
         location.reload();
         });
 
-        // Início das conexões
         connectionMed.start().catch(err => console.error("MedicaoHub Error: " + err));
         connectionNotif.start().catch(err => console.error("NotificacaoHub Error: " + err));
     </script>
