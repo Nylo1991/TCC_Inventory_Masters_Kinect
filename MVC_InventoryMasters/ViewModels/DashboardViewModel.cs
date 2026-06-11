@@ -11,9 +11,7 @@ namespace MVC_InventoryMasters.ViewModels
         public List<Parceiro> Parceiros { get; set; } = new();
         public List<Usuario> Usuarios { get; set; } = new();
 
-        // Propriedade para o cálculo do gráfico de pizza
         public decimal PercentualOcupacao { get; set; }
-
         public ParametrosSistema Parametros { get; set; } = new();
         public string MensagemErro { get; set; }
 
@@ -22,7 +20,6 @@ namespace MVC_InventoryMasters.ViewModels
         public int TotalAlertas => Alertas?.Count ?? 0;
         public int TotalUsuarios => Usuarios?.Count ?? 0;
 
-        // Lista de notificações para o novo Dashboard
         public List<Notificacao> UltimasNotificacoes =>
             Alertas?
                 .OrderByDescending(n => n.DataHora)
