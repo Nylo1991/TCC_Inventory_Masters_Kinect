@@ -27,7 +27,6 @@ namespace TCC_Inventory_Masters_Kinect.Data
             return new SQLiteConnection($"Data Source={dbPath};Version=3;");
         }
 
-        // Tabelas antigas (mantidas)
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
         public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
         public DbSet<Log> Logs { get; set; }

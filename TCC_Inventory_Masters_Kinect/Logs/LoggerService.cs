@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Model;
 
@@ -71,7 +72,7 @@ namespace TCC_Inventory_Masters_Kinect.Logs
             }
             catch
             {
-                // Nunca deixar erro de log derrubar o sistema
+          
             }
         }
     }
