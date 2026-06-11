@@ -72,7 +72,7 @@ namespace TCC_Inventory_Masters_Kinect.Logs
             }
             catch
             {
-          
+          // não deixa vazia ter tratamento 
             }
         }
     }

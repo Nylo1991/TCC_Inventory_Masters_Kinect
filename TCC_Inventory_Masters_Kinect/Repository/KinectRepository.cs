@@ -10,7 +10,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
 {
     public class KinectRepository : IKinectRepository
     {
-        // ==================== MEDIÇÕES ====================
+      
         public void SalvarMedicao(MedicaoVolume medicao)
         {
             try
@@ -48,91 +48,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             }
         }
 
-        // ==================== ESPAÇOS ====================
-        public void SalvarEspaco(Space space)
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    db.Spaces.Add(space);
-                    db.SaveChanges();
-                }
 
-                LoggerService.Info("Espaço salvo no SQLite: " + space.Name);
-            }
-            catch (Exception ex)
-            {
-                LoggerService.Erro("Erro ao salvar espaço no SQLite.", ex);
-            }
-        }
-
-        public void AtualizarEspaco(Space space)
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    db.Entry(space).State = System.Data.Entity.EntityState.Modified;  // .NET Framework
-                    db.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerService.Erro("Erro ao atualizar espaço.", ex);
-            }
-        }
-
-
-        public List<Space> ObterTodosEspacos()
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    return db.Spaces.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerService.Erro("Erro ao buscar todos os espaços.", ex);
-                return new List<Space>();
-            }
-        }
-
-        public Space ObterEspaco(int id)
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    return db.Spaces.FirstOrDefault(x => x.Id == id);
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerService.Erro("Erro ao buscar espaço por ID.", ex);
-                return null;
-            }
-        }
-
-        public Space ObterEspacoPorNome(string nomeEspaco)
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    return db.Spaces.FirstOrDefault(x => x.Name == nomeEspaco);
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerService.Erro("Erro ao buscar espaço por nome.", ex);
-                return null;
-            }
-        }
-
-        // ==================== HISTÓRICO DE OCUPAÇÃO ====================
         public void SalvarHistorico(HistoricoOcupacao historico)
         {
             try
