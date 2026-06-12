@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
+using System.Linq;
+using System.Threading.Tasks;
+using System;
 
 namespace MVC_InventoryMasters.Controllers
 {
@@ -37,10 +40,8 @@ namespace MVC_InventoryMasters.Controllers
             var todosUsuarios = await _repository.ListarTodos();
             int totalRegistros = todosUsuarios.Count();
 
-            // Cálculo do total de páginas
             var totalPaginas = (int)Math.Ceiling(totalRegistros / (double)itensPorPagina);
 
-            // Paginação dos dados (usando LINQ)
             var usuariosPaginados = todosUsuarios
                 .Skip((pagina - 1) * itensPorPagina)
                 .Take(itensPorPagina)
@@ -53,17 +54,11 @@ namespace MVC_InventoryMasters.Controllers
             return View(usuariosPaginados);
         }
 
-        /// <summary>
-        /// Exibe a tela de criação de usuário.
-        /// Também carrega os perfis disponíveis e define "Ativo" como true por padrão.
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> Create()
         {
             await CarregarPerfis();
-            
             var novoUsuario = new Usuario { Ativo = true };
-
             return View(novoUsuario);
         }
 
@@ -78,23 +73,18 @@ namespace MVC_InventoryMasters.Controllers
             }
 
             await _repository.Adicionar(usuario);
-
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            if (string.IsNullOrEmpty(id))
-                return BadRequest();
+            if (string.IsNullOrEmpty(id)) return BadRequest();
 
             var usuario = await _repository.BuscarPorId(id);
-
-            if (usuario == null)
-                return NotFound();
+            if (usuario == null) return NotFound();
 
             await CarregarPerfis();
-
             return View(usuario);
         }
 
@@ -111,22 +101,7 @@ namespace MVC_InventoryMasters.Controllers
             }
 
             var existente = await _repository.BuscarPorId(usuario.Id);
-
-            if (existente == null)
-                return NotFound();
-
-            bool houveAlteracao =
-                existente.Nome != usuario.Nome ||
-                existente.Email != usuario.Email ||
-                existente.Perfil != usuario.Perfil ||
-                existente.Ativo != usuario.Ativo;
-
-            if (!houveAlteracao)
-            {
-                ViewBag.Aviso = "Nenhuma alteração foi realizada no usuário.";
-                await CarregarPerfis();
-                return View(usuario);
-            }
+            if (existente == null) return NotFound();
 
             usuario.Senha = existente.Senha;
             usuario.Data_Cadastro = existente.Data_Cadastro;
@@ -140,17 +115,25 @@ namespace MVC_InventoryMasters.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
-            if (string.IsNullOrEmpty(id))
-                return BadRequest();
+            if (string.IsNullOrEmpty(id)) return BadRequest();
 
             var usuario = await _repository.BuscarPorId(id);
-
-            if (usuario == null)
-                return NotFound();
+            if (usuario == null) return NotFound();
 
             return View(usuario);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return BadRequest();
+
+            await _repository.Excluir(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        // AÇÃO DETAILS AJUSTADA E INTEGRADA
         [HttpGet]
         public async Task<IActionResult> Details(string id)
         {
@@ -163,17 +146,6 @@ namespace MVC_InventoryMasters.Controllers
                 return NotFound();
 
             return View(usuario);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-                return BadRequest();
-
-            await _repository.Excluir(id);
-            return RedirectToAction(nameof(Index));
         }
     }
 }
