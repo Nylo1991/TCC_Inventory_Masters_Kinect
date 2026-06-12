@@ -283,6 +283,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="View\KinectLogin.xaml.cs">
+      <DependentUpon>KinectLogin.xaml</DependentUpon>
+    </Compile>
     <Page Include="View\HistoricoMedicoesWindowxaml.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -318,6 +321,10 @@
     <Compile Include="View\KinectMonitorWindow.xaml.cs">
       <DependentUpon>KinectMonitorWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="View\KinectLogin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
