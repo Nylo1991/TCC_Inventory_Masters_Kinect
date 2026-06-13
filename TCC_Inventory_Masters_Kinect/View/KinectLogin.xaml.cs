@@ -13,6 +13,36 @@ namespace TCC_Inventory_Masters_Kinect.View
         public Page1()
         {
             InitializeComponent();
+            AtualizarModoTela();
+        }
+
+        private void AtualizarModoTela()
+        {
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    bool existeUsuario = db.UsuariosAcesso.Any();
+
+                    if (existeUsuario)
+                    {
+                        TituloTextBlock.Text = "Acesso ao Kinect";
+                        SubtituloTextBlock.Text = "Entre para iniciar o monitoramento volumetrico";
+                        EntrarButton.Content = "Entrar";
+                    }
+                    else
+                    {
+                        TituloTextBlock.Text = "Criar administrador";
+                        SubtituloTextBlock.Text = "Cadastre o primeiro acesso do sistema";
+                        EntrarButton.Content = "Criar e entrar";
+                    }
+                }
+            }
+            catch
+            {
+                MensagemTextBlock.Text = "Erro ao verificar usuarios.";
+                LoggerService.Erro("Erro ao verificar usuarios no login.");
+            }
         }
 
         private void Entrar_Click(object sender, RoutedEventArgs e)
@@ -30,6 +60,27 @@ namespace TCC_Inventory_Masters_Kinect.View
 
                 using (var db = new AppDbContext())
                 {
+                    bool existeUsuario = db.UsuariosAcesso.Any();
+
+                    if (!existeUsuario)
+                    {
+                        var primeiroUsuario = new UsuarioAcesso
+                        {
+                            Usuario = usuario,
+                            Senha = senha,
+                            Perfil = "Administrador",
+                            CriadoEm = DateTime.Now,
+                            Ativo = true
+                        };
+
+                        db.UsuariosAcesso.Add(primeiroUsuario);
+                        db.SaveChanges();
+
+                        LoggerService.Info("Primeiro usuario administrador criado.");
+                        AbrirMonitor();
+                        return;
+                    }
+
                     var usuarioAcesso = db.UsuariosAcesso
                         .FirstOrDefault(x =>
                             x.Usuario == usuario &&
@@ -45,11 +96,7 @@ namespace TCC_Inventory_Masters_Kinect.View
                 }
 
                 LoggerService.Info("Login realizado com sucesso.");
-
-                var janela = new KinectMonitorWindow();
-                janela.Show();
-
-                Window.GetWindow(this)?.Close();
+                AbrirMonitor();
             }
             catch
             {
@@ -58,41 +105,12 @@ namespace TCC_Inventory_Masters_Kinect.View
             }
         }
 
-        private void CriarAdmin_Click(object sender, RoutedEventArgs e)
+        private void AbrirMonitor()
         {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    bool existeAdmin = db.UsuariosAcesso.Any(x => x.Usuario == "admin");
+            var janela = new KinectMonitorWindow();
+            janela.Show();
 
-                    if (existeAdmin)
-                    {
-                        MensagemTextBlock.Text = "Administrador inicial ja existe.";
-                        return;
-                    }
-
-                    var admin = new UsuarioAcesso
-                    {
-                        Usuario = "admin",
-                        Senha = "123",
-                        Perfil = "Administrador",
-                        CriadoEm = DateTime.Now,
-                        Ativo = true
-                    };
-
-                    db.UsuariosAcesso.Add(admin);
-                    db.SaveChanges();
-                }
-
-                MensagemTextBlock.Text = "Administrador criado. Usuario: admin | Senha: 123";
-                LoggerService.Info("Administrador inicial criado.");
-            }
-            catch
-            {
-                MensagemTextBlock.Text = "Erro ao criar administrador inicial.";
-                LoggerService.Erro("Erro ao criar administrador inicial.");
-            }
+            Window.GetWindow(this)?.Close();
         }
     }
 }
