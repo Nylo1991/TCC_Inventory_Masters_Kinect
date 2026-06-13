@@ -67,6 +67,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         Mensagem TEXT NOT NULL
                     );
 
+
                  
                 ";
 
