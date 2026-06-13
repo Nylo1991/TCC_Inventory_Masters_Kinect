@@ -3,10 +3,14 @@
 @{
     ViewData["Title"] = "Parceiros";
     
+    // Lógica para manter o filtro visível se o usuário estiver usando algum filtro
     bool filtroAtivo = !string.IsNullOrEmpty(ViewBag.Termo) ||
                        !string.IsNullOrEmpty(ViewBag.DataInicio) ||
                        !string.IsNullOrEmpty(ViewBag.DataFim) ||
                        ViewBag.Ativo != null;
+
+    // Prepara o parâmetro de status para os links de paginação
+    string ativoParam = ViewBag.Ativo != null ? ViewBag.Ativo.ToString().ToLower() : "";
 }
 
 <div class="container-fluid px-4 mt-4">
@@ -16,7 +20,7 @@
             <a asp-action="Create" class="btn btn-success">
                 <i class="bi bi-plus-lg"></i> Novo Parceiro
             </a>
-            <button class="btn btn-outline-secondary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#filtroAvancado">
+            <button class="btn btn-outline-primary border-2 ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#filtroAvancado">
                 <i class="bi bi-funnel"></i> Filtros Avançados
             </button>
         </div>
@@ -114,20 +118,20 @@
                         <li class="page-item @(ViewBag.PaginaAtual == 1 ? "disabled" : "")">
                             <a class="page-link" asp-action="Index" asp-route-pagina="@(ViewBag.PaginaAtual - 1)"
                                asp-route-termo="@ViewBag.Termo" asp-route-dataInicio="@ViewBag.DataInicio"
-                               asp-route-dataFim="@ViewBag.DataFim" asp-route-ativo="@ViewBag.Ativo">&lt;</a>
+                               asp-route-dataFim="@ViewBag.DataFim" asp-route-ativo="@ativoParam">&lt;</a>
                         </li>
                         @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
                         {
                             <li class="page-item @(i == ViewBag.PaginaAtual ? "active" : "")">
                                 <a class="page-link" asp-action="Index" asp-route-pagina="@i"
                                    asp-route-termo="@ViewBag.Termo" asp-route-dataInicio="@ViewBag.DataInicio"
-                                   asp-route-dataFim="@ViewBag.DataFim" asp-route-ativo="@ViewBag.Ativo">@i</a>
+                                   asp-route-dataFim="@ViewBag.DataFim" asp-route-ativo="@ativoParam">@i</a>
                             </li>
                         }
                         <li class="page-item @(ViewBag.PaginaAtual == ViewBag.TotalPaginas ? "disabled" : "")">
                             <a class="page-link" asp-action="Index" asp-route-pagina="@(ViewBag.PaginaAtual + 1)"
                                asp-route-termo="@ViewBag.Termo" asp-route-dataInicio="@ViewBag.DataInicio"
-                               asp-route-dataFim="@ViewBag.DataFim" asp-route-ativo="@ViewBag.Ativo">&gt;</a>
+                               asp-route-dataFim="@ViewBag.DataFim" asp-route-ativo="@ativoParam">&gt;</a>
                         </li>
                     </ul>
                 </nav>
