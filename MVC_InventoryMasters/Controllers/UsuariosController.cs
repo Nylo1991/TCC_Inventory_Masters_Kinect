@@ -24,7 +24,6 @@ namespace MVC_InventoryMasters.Controllers
         private async Task CarregarPerfis()
         {
             var perfis = await _perfisRepository.ListarTodos();
-
             ViewBag.Perfis = perfis
                 .Select(p => new SelectListItem
                 {
@@ -103,6 +102,21 @@ namespace MVC_InventoryMasters.Controllers
             var existente = await _repository.BuscarPorId(usuario.Id);
             if (existente == null) return NotFound();
 
+            // Lógica de verificação de alteração real
+            bool houveAlteracao =
+                !string.Equals(usuario.Nome?.Trim(), existente.Nome?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(usuario.Email?.Trim(), existente.Email?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(usuario.Perfil?.Trim(), existente.Perfil?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                usuario.Ativo != existente.Ativo;
+
+            if (!houveAlteracao)
+            {
+                await CarregarPerfis();
+                ViewBag.Aviso = "Nenhuma alteração foi realizada. Os dados permanecem os mesmos.";
+                return View(usuario);
+            }
+
+            // Mantém dados sensíveis e de controle
             usuario.Senha = existente.Senha;
             usuario.Data_Cadastro = existente.Data_Cadastro;
 
@@ -133,7 +147,6 @@ namespace MVC_InventoryMasters.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // AÇÃO DETAILS AJUSTADA E INTEGRADA
         [HttpGet]
         public async Task<IActionResult> Details(string id)
         {
@@ -141,7 +154,6 @@ namespace MVC_InventoryMasters.Controllers
                 return BadRequest();
 
             var usuario = await _repository.BuscarPorId(id);
-
             if (usuario == null)
                 return NotFound();
 
