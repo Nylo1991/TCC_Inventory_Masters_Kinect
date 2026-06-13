@@ -309,7 +309,6 @@
     <Compile Include="Model\MedicaoVolume.cs" />
     <Compile Include="Repository\Interface\IKinectRepository.cs" />
     <Compile Include="Repository\KinectRepository.cs" />
-    <Compile Include="Service\KinectCalibrationService.cs" />
     <Compile Include="Service\KinectService.cs" />
     <Compile Include="Service\SignalRService.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
