@@ -48,15 +48,15 @@
                                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                         ...
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item" asp-action="Details" asp-route-id="@parceiro.Id">
-                                                <i class="bi bi-eye"></i> Detalhes
-                                            </a>
-                                        </li>
+                                    <ul class="dropdown-menu dropdown-menu-end">                                       
                                         <li>
                                             <a class="dropdown-item" asp-action="Edit" asp-route-id="@parceiro.Id">
                                                 <i class="bi bi-pencil"></i> Editar
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Details" asp-route-id="@parceiro.Id">
+                                                <i class="bi bi-eye"></i> Detalhes
                                             </a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
