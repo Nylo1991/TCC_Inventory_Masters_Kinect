@@ -305,7 +305,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 }
 
                 _ultimoVolumeAtual = volumeAtual;
-                VolumeTexto = $"{volumeAtual:F0} cm3";
+                VolumeTexto = FormatarVolume(volumeAtual);
 
                 var medicao = new MedicaoVolume
                 {
@@ -324,7 +324,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 if (_signalRService.EstaConectado)
                 {
                     await _signalRService.EnviarVolumeAsync(volumeAtual);
-                    MensagemEnvioAplicacao = $"Volume enviado automaticamente: {volumeAtual:F0} cm3";
+                    MensagemEnvioAplicacao = $"Volume enviado automaticamente: {FormatarVolume(volumeAtual)}";
                 }
             };
 
@@ -469,6 +469,16 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         {
             var medicoes = _repository.ObterMedicoesEmOrdemCrescente(100);
             HistoricoMedicoes = new ObservableCollection<MedicaoVolume>(medicoes);
+        }
+
+        private string FormatarVolume(double volumeCm3)
+        {
+            if (volumeCm3 >= 1000000)
+            {
+                return $"{volumeCm3 / 1000000.0:F3} m3";
+            }
+
+            return $"{volumeCm3:N0} cm3";
         }
     }
 }
