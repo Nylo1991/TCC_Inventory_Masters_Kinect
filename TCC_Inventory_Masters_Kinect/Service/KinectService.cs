@@ -13,6 +13,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
     public class KinectService
     {
         private KinectSensor _sensor;
+        private short[] _depthCalibrado;
+        private int _larguraDepth;
+        private int _alturaDepth;
 
         private const int ANGULO_MIN = -27;
         private const int ANGULO_MAX = 27;
@@ -20,6 +23,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
         private const int FRAMES_POR_ANGULO = 5;
         private const int ESPERA_MOTOR_MS = 1500;
         private const int DEPTH_MAX_MM = 4000;
+        private const int DEPTH_MIN_MM = 500;
+        private const int LIMITE_MINIMO_ALTURA_MM = 30;
 
         public event Action<BitmapSource> CameraFrameAtualizado;
 
@@ -167,6 +172,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     for (int i = 0; i < depthData.Length; i++)
                     {
                         int depth = depthData[i] >> 3;
+
                         byte intensity = depth == 0
                             ? (byte)0
                             : (byte)(255 - Math.Min(255, depth * 255 / DEPTH_MAX_MM));
@@ -199,20 +205,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        public async Task<CalibrationResult> CalibrateAndSaveAsync(
-            string spaceName,
-            IProgress<CalibrationProgress> progress = null,
-            CancellationToken cancellationToken = default)
-        {
-            LoggerService.Info($"Iniciando calibracao do espaco: {spaceName}");
-
-            var result = await CalibrateAsync(cancellationToken, progress);
-
-            LoggerService.Info($"Calibracao finalizada para o espaco: {spaceName}");
-
-            return result;
-        }
-
         public async Task<CalibrationResult> CalibrateAsync(
             CancellationToken token,
             IProgress<CalibrationProgress> progress = null)
@@ -223,7 +215,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 throw new InvalidOperationException("Kinect nao esta conectado para calibrar.");
             }
 
-            LoggerService.Info("Iniciando calibracao com motor de inclinacao.");
+            LoggerService.Info("Iniciando calibracao volumetrica.");
 
             int anguloOriginal = _sensor.ElevationAngle;
             var leiturasPorAngulo = new List<(int Angulo, double MediaDepth, int Pontos)>();
@@ -242,7 +234,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     progress?.Report(new CalibrationProgress
                     {
                         Status = $"Estabilizando em {angulo} graus...",
-                        Percentage = (int)((passoAtual / (double)totalPassos) * 80)
+                        Percentage = (int)((passoAtual / (double)totalPassos) * 70)
                     });
 
                     await Task.Delay(ESPERA_MOTOR_MS, token);
@@ -258,25 +250,29 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     progress?.Report(new CalibrationProgress
                     {
                         Status = $"Capturado angulo {angulo} graus ({passoAtual}/{totalPassos})",
-                        Percentage = (int)((passoAtual / (double)totalPassos) * 80)
+                        Percentage = (int)((passoAtual / (double)totalPassos) * 70)
                     });
                 }
 
                 progress?.Report(new CalibrationProgress
                 {
-                    Status = "Calculando plano do chao...",
-                    Percentage = 85
+                    Status = "Detectando plano de referencia...",
+                    Percentage = 80
                 });
 
                 var resultadoChao = DetectarChao(leiturasPorAngulo);
 
                 progress?.Report(new CalibrationProgress
                 {
-                    Status = "Calculando volume maximo...",
-                    Percentage = 92
+                    Status = "Capturando mapa volumetrico vazio...",
+                    Percentage = 88
                 });
 
-                double volumeMaximo = CalcularVolumeMaximo(resultadoChao.DistanciaChaoMm);
+                bool mapaCapturado = CapturarMapaDepthCalibrado();
+
+                double volumeMaximo = mapaCapturado
+                    ? CalcularVolumeReferenciaCm3(_depthCalibrado, _larguraDepth, _alturaDepth)
+                    : 0;
 
                 progress?.Report(new CalibrationProgress
                 {
@@ -293,7 +289,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     Percentage = 100
                 });
 
-                LoggerService.Info($"Calibracao concluida | Chao em: {resultadoChao.DistanciaChaoMm:F1} mm | Volume: {volumeMaximo:F0} cm3");
+                LoggerService.Info($"Calibracao concluida | Chao em: {resultadoChao.DistanciaChaoMm:F1} mm | Volume referencia: {volumeMaximo:F0} cm3");
 
                 return new CalibrationResult
                 {
@@ -331,6 +327,46 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 }
 
                 throw;
+            }
+        }
+
+        public double CalcularVolumeAtualCm3()
+        {
+            if (!IsConnected)
+            {
+                LoggerService.Erro("Kinect nao conectado para calcular volume atual.");
+                return 0;
+            }
+
+            if (_depthCalibrado == null)
+            {
+                return 0;
+            }
+
+            try
+            {
+                using (var frame = _sensor.DepthStream.OpenNextFrame(1000))
+                {
+                    if (frame == null)
+                    {
+                        return 0;
+                    }
+
+                    short[] depthAtual = new short[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(depthAtual);
+
+                    return CalcularVolumeRealCm3(
+                        _depthCalibrado,
+                        depthAtual,
+                        frame.Width,
+                        frame.Height
+                    );
+                }
+            }
+            catch
+            {
+                LoggerService.Erro("Erro ao calcular volume atual pelo Kinect.");
+                return 0;
             }
         }
 
@@ -397,7 +433,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                         {
                             int depth = depthData[i] >> 3;
 
-                            if (depth > 300 && depth < DEPTH_MAX_MM)
+                            if (depth > DEPTH_MIN_MM && depth < DEPTH_MAX_MM)
                             {
                                 somaTotal += depth;
                                 pontosTotal++;
@@ -453,6 +489,72 @@ namespace TCC_Inventory_Masters_Kinect.Service
             return (distanciaChaoReal, anguloChao, pontosChao);
         }
 
+        private bool CapturarMapaDepthCalibrado()
+        {
+            if (!IsConnected)
+            {
+                LoggerService.Erro("Kinect nao conectado para capturar mapa calibrado.");
+                return false;
+            }
+
+            try
+            {
+                using (var frame = _sensor.DepthStream.OpenNextFrame(1000))
+                {
+                    if (frame == null)
+                    {
+                        LoggerService.Erro("Frame de profundidade calibrado nao capturado.");
+                        return false;
+                    }
+
+                    _depthCalibrado = new short[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(_depthCalibrado);
+
+                    _larguraDepth = frame.Width;
+                    _alturaDepth = frame.Height;
+
+                    LoggerService.Info("Mapa de profundidade calibrado capturado.");
+
+                    return true;
+                }
+            }
+            catch
+            {
+                LoggerService.Erro("Erro ao capturar mapa de profundidade calibrado.");
+                return false;
+            }
+        }
+
+        private double CalcularVolumeReferenciaCm3(short[] depthCalibrado, int largura, int altura)
+        {
+            if (depthCalibrado == null || largura <= 0 || altura <= 0)
+            {
+                LoggerService.Erro("Mapa calibrado invalido para calcular volume de referencia.");
+                return 0;
+            }
+
+            double fovHorizontal = 57.0 * Math.PI / 180.0;
+            double fovVertical = 43.0 * Math.PI / 180.0;
+            double volumeTotalMm3 = 0;
+
+            for (int i = 0; i < depthCalibrado.Length; i++)
+            {
+                int profundidadeMm = depthCalibrado[i] >> 3;
+
+                if (profundidadeMm <= DEPTH_MIN_MM || profundidadeMm >= DEPTH_MAX_MM)
+                {
+                    continue;
+                }
+
+                double larguraPixelMm = (2 * profundidadeMm * Math.Tan(fovHorizontal / 2)) / largura;
+                double alturaPixelMm = (2 * profundidadeMm * Math.Tan(fovVertical / 2)) / altura;
+
+                volumeTotalMm3 += profundidadeMm * larguraPixelMm * alturaPixelMm;
+            }
+
+            return volumeTotalMm3 / 1000.0;
+        }
+
         private double CalcularVolumeRealCm3(short[] depthCalibrado, short[] depthAtual, int largura, int altura)
         {
             if (depthCalibrado == null || depthAtual == null)
@@ -476,19 +578,19 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 int profundidadeBaseMm = depthCalibrado[i] >> 3;
                 int profundidadeAtualMm = depthAtual[i] >> 3;
 
-                if (profundidadeBaseMm <= 500 || profundidadeBaseMm >= 4000)
+                if (profundidadeBaseMm <= DEPTH_MIN_MM || profundidadeBaseMm >= DEPTH_MAX_MM)
                 {
                     continue;
                 }
 
-                if (profundidadeAtualMm <= 500 || profundidadeAtualMm >= 4000)
+                if (profundidadeAtualMm <= DEPTH_MIN_MM || profundidadeAtualMm >= DEPTH_MAX_MM)
                 {
                     continue;
                 }
 
                 int diferencaMm = profundidadeBaseMm - profundidadeAtualMm;
 
-                if (diferencaMm < 30)
+                if (diferencaMm < LIMITE_MINIMO_ALTURA_MM)
                 {
                     continue;
                 }
@@ -499,11 +601,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 volumeTotalMm3 += diferencaMm * larguraPixelMm * alturaPixelMm;
             }
 
-            double volumeCm3 = volumeTotalMm3 / 1000.0;
-
-            LoggerService.Info($"Volume real calculado pelo mapa de profundidade: {volumeCm3:F0} cm3");
-
-            return volumeCm3;
+            return volumeTotalMm3 / 1000.0;
         }
     }
 }
