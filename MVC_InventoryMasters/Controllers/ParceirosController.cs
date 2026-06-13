@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,33 +16,47 @@ namespace MVC_InventoryMasters.Controllers
             _repository = repository;
         }
 
-        public async Task<IActionResult> Index()
+        // AÇÃO INDEX COM PAGINAÇÃO
+        public async Task<IActionResult> Index(int pagina = 1)
         {
-            var parceiros = await _repository.ListarTodos();
-            return View(parceiros);
+            int itensPorPagina = 10;
+            var todosParceiros = await _repository.ListarTodos();
+            int totalRegistros = todosParceiros.Count();
+
+            var totalPaginas = (int)Math.Ceiling(totalRegistros / (double)itensPorPagina);
+
+            var parceirosPaginados = todosParceiros
+                .Skip((pagina - 1) * itensPorPagina)
+                .Take(itensPorPagina)
+                .ToList();
+
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.PaginaAtual = pagina;
+            ViewBag.TotalRegistros = totalRegistros;
+
+            return View(parceirosPaginados);
         }
 
-        /// <summary>
-        /// Exibe o formulário de cadastro com Ativo = true por padrão.
-        /// </summary>
+        // AÇÃO DETAILS ADICIONADA
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Details(string id)
         {
-            // Instancia o objeto com Ativo = true para marcar o checkbox na View
-            var novoParceiro = new Parceiro { Ativo = true };
+            if (string.IsNullOrEmpty(id)) return BadRequest();
 
-            return View(novoParceiro);
+            var parceiro = await _repository.BuscarPorId(id);
+            if (parceiro == null) return NotFound();
+
+            return View(parceiro);
         }
+
+        [HttpGet]
+        public IActionResult Create() => View(new Parceiro { Ativo = true });
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Parceiro parceiro)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(parceiro);
-            }
-
+            if (!ModelState.IsValid) return View(parceiro);
             await _repository.Adicionar(parceiro);
             return RedirectToAction(nameof(Index));
         }
@@ -50,10 +65,8 @@ namespace MVC_InventoryMasters.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             if (string.IsNullOrEmpty(id)) return BadRequest();
-
             var parceiro = await _repository.BuscarPorId(id);
             if (parceiro == null) return NotFound();
-
             return View(parceiro);
         }
 
@@ -65,24 +78,6 @@ namespace MVC_InventoryMasters.Controllers
 
             var existente = await _repository.BuscarPorId(parceiro.Id);
             if (existente == null) return NotFound();
-
-            // Lógica de verificação de alterações
-            string telefoneBanco = new string((existente.Telefone ?? "").Where(char.IsDigit).ToArray());
-            string telefoneTela = new string((parceiro.Telefone ?? "").Where(char.IsDigit).ToArray());
-
-            bool houveAlteracao =
-                existente.Nome?.Trim() != parceiro.Nome?.Trim() ||
-                existente.Email?.Trim() != parceiro.Email?.Trim() ||
-                telefoneBanco != telefoneTela ||
-                existente.Empresa?.Trim() != parceiro.Empresa?.Trim() ||
-                existente.Endereco?.Trim() != parceiro.Endereco?.Trim() ||
-                existente.Ativo != parceiro.Ativo;
-
-            if (!houveAlteracao)
-            {
-                ViewBag.Aviso = "Nenhuma alteração foi realizada no parceiro.";
-                return View(parceiro);
-            }
 
             parceiro.Data_Cadastro = existente.Data_Cadastro;
             await _repository.Atualizar(parceiro);

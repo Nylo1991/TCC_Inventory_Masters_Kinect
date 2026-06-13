@@ -4,81 +4,74 @@
     ViewData["Title"] = "Parceiros";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Parceiros</h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Novo Parceiro
+        </a>
+    </div>
 
-    <h2>Parceiros</h2>
-
-    <a asp-action="Create"
-       class="btn btn-primary">
-        Novo Parceiro
-    </a>
-
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Empresa</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>Status</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var parceiro in Model)
+                    {
+                        <tr>
+                            <td><strong>@parceiro.Nome</strong></td>
+                            <td>@parceiro.Empresa</td>
+                            <td>@parceiro.Email</td>
+                            <td>@parceiro.Telefone</td>
+                            <td>
+                                @if (parceiro.Ativo)
+                                {
+                                    <span class="badge bg-success">Ativo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Inativo</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        ...
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Details" asp-route-id="@parceiro.Id">
+                                                <i class="bi bi-eye"></i> Detalhes
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@parceiro.Id">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@parceiro.Id">
+                                                <i class="bi bi-trash"></i> Excluir
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
-<table class="table table-hover">
-
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Empresa</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        @foreach (var parceiro in Model)
-        {
-            <tr>
-                <td>@parceiro.Nome</td>
-                <td>@parceiro.Empresa</td>
-                <td>@parceiro.Email</td>
-                <td>
-                    @{
-                        var telefone = parceiro.Telefone?.Replace(" ", "")
-                        .Replace("(", "")
-                        .Replace(")", "")
-                        .Replace("-", "");
-
-                        if (!string.IsNullOrEmpty(telefone) && telefone.Length == 11)
-                        {
-                            @($"({telefone.Substring(0, 2)}) {telefone.Substring(2, 1)} {telefone.Substring(3, 4)}-{telefone.Substring(7, 4)}")
-                        }
-                        else
-                        {
-                            @parceiro.Telefone
-                        }
-                    }
-                </td>
-                <td>
-                    @if (parceiro.Ativo)
-                    {
-                        <span class="badge bg-success">Ativo</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger">Inativo</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit"
-                       asp-route-id="@parceiro.Id"
-                       class="btn btn-warning btn-sm">
-                        Editar
-                    </a>
-
-                    <a asp-action="Delete"
-                       asp-route-id="@parceiro.Id"
-                       class="btn btn-danger btn-sm">
-                        Excluir
-                    </a>
-                </td>
-            </tr>
-        }
-
-    </tbody>
-
-</table>
