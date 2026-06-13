@@ -16,19 +16,34 @@ namespace MVC_InventoryMasters.Controllers
             _repository = repository;
         }
 
-        public async Task<IActionResult> Index(int pagina = 1)
+        public async Task<IActionResult> Index(
+            int pagina = 1,
+            string termo = null,
+            DateTime? dataInicio = null,
+            DateTime? dataFim = null,
+            bool? ativo = null)
         {
             int itensPorPagina = 10;
-            var todosParceiros = await _repository.ListarTodos();
-            int totalRegistros = todosParceiros.Count();
 
+            // 1. Obtém a lista filtrada pelo repositório
+            var listaFiltrada = await _repository.FiltrarAvancado(termo, dataInicio, dataFim, ativo);
+
+            // 2. Paginação baseada no resultado do filtro
+            int totalRegistros = listaFiltrada.Count();
             var totalPaginas = (int)Math.Ceiling(totalRegistros / (double)itensPorPagina);
 
-            var parceirosPaginados = todosParceiros
+            var parceirosPaginados = listaFiltrada
                 .Skip((pagina - 1) * itensPorPagina)
                 .Take(itensPorPagina)
                 .ToList();
 
+            // 3. Passa os filtros para a ViewBag (para o formulário lembrar o que foi pesquisado)
+            ViewBag.Termo = termo;
+            ViewBag.DataInicio = dataInicio?.ToString("yyyy-MM-dd");
+            ViewBag.DataFim = dataFim?.ToString("yyyy-MM-dd");
+            ViewBag.Ativo = ativo;
+
+            // 4. Dados da paginação
             ViewBag.TotalPaginas = totalPaginas;
             ViewBag.PaginaAtual = pagina;
             ViewBag.TotalRegistros = totalRegistros;

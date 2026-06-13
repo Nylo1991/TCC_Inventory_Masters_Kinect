@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Parceiros";
-    // Lógica para manter o filtro visível se o usuário estiver usando um filtro
+    
     bool filtroAtivo = !string.IsNullOrEmpty(ViewBag.Termo) ||
                        !string.IsNullOrEmpty(ViewBag.DataInicio) ||
                        !string.IsNullOrEmpty(ViewBag.DataFim) ||
