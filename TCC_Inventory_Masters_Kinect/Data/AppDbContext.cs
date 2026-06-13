@@ -48,15 +48,18 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         Calibrado INTEGER NOT NULL,
                         Status TEXT
                     );
-
                     CREATE TABLE IF NOT EXISTS HistoricosOcupacao (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        EspacoMapeadoId INTEGER NOT NULL,
-                        VolumeAtualCm3 REAL NOT NULL,
-                        PercentualOcupacao REAL NOT NULL,
-                        DataHora TEXT NOT NULL
-                    );
-
+                       Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       EspacoMapeadoId INTEGER NOT NULL,
+                       VolumeAtualCm3 REAL NOT NULL,
+                       VolumeMaximoCm3 REAL NOT NULL,
+                       EspacoLivreCm3 REAL NOT NULL,
+                       PercentualOcupacao REAL NOT NULL,
+                       LimiteUltrapassado INTEGER NOT NULL,
+                       NivelOcupacao TEXT,
+                       Status TEXT,
+                       DataHora TEXT NOT NULL
+                     );
                     CREATE TABLE IF NOT EXISTS Logs (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         DataHora TEXT NOT NULL,
