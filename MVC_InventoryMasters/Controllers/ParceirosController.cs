@@ -16,7 +16,6 @@ namespace MVC_InventoryMasters.Controllers
             _repository = repository;
         }
 
-        // AÇÃO INDEX COM PAGINAÇÃO
         public async Task<IActionResult> Index(int pagina = 1)
         {
             int itensPorPagina = 10;
@@ -37,7 +36,6 @@ namespace MVC_InventoryMasters.Controllers
             return View(parceirosPaginados);
         }
 
-        // AÇÃO DETAILS ADICIONADA
         [HttpGet]
         public async Task<IActionResult> Details(string id)
         {
@@ -57,7 +55,9 @@ namespace MVC_InventoryMasters.Controllers
         public async Task<IActionResult> Create(Parceiro parceiro)
         {
             if (!ModelState.IsValid) return View(parceiro);
+
             await _repository.Adicionar(parceiro);
+            TempData["Sucesso"] = "Parceiro cadastrado com sucesso.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -65,8 +65,10 @@ namespace MVC_InventoryMasters.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             if (string.IsNullOrEmpty(id)) return BadRequest();
+
             var parceiro = await _repository.BuscarPorId(id);
             if (parceiro == null) return NotFound();
+
             return View(parceiro);
         }
 
@@ -79,10 +81,30 @@ namespace MVC_InventoryMasters.Controllers
             var existente = await _repository.BuscarPorId(parceiro.Id);
             if (existente == null) return NotFound();
 
-            parceiro.Data_Cadastro = existente.Data_Cadastro;
-            await _repository.Atualizar(parceiro);
+            // Normalização de telefone para comparação segura
+            var telExistente = new string((existente.Telefone ?? "").Where(char.IsDigit).ToArray());
+            var telFormulario = new string((parceiro.Telefone ?? "").Where(char.IsDigit).ToArray());
 
+            bool houveAlteracao =
+                !string.Equals(parceiro.Nome?.Trim(), existente.Nome?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(parceiro.Email?.Trim(), existente.Email?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                telExistente != telFormulario ||
+                !string.Equals(parceiro.Empresa?.Trim(), existente.Empresa?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(parceiro.Endereco?.Trim(), existente.Endereco?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                parceiro.Ativo != existente.Ativo;
+
+            if (!houveAlteracao)
+            {
+                ViewBag.Aviso = "Nenhuma alteração foi realizada. Os dados permanecem os mesmos.";
+                return View(parceiro);
+            }
+
+            // Preserva dados de controle
+            parceiro.Data_Cadastro = existente.Data_Cadastro;
+
+            await _repository.Atualizar(parceiro);
             TempData["Sucesso"] = "Parceiro atualizado com sucesso.";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -90,8 +112,10 @@ namespace MVC_InventoryMasters.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (string.IsNullOrEmpty(id)) return BadRequest();
+
             var parceiro = await _repository.BuscarPorId(id);
             if (parceiro == null) return NotFound();
+
             return View(parceiro);
         }
 
@@ -100,7 +124,9 @@ namespace MVC_InventoryMasters.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             if (string.IsNullOrEmpty(id)) return BadRequest();
+
             await _repository.Excluir(id);
+            TempData["Sucesso"] = "Parceiro excluído com sucesso.";
             return RedirectToAction(nameof(Index));
         }
     }
