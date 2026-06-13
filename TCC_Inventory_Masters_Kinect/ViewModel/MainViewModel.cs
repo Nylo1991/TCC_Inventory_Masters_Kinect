@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -37,6 +38,13 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         {
             get => _depthImage;
             set => SetProperty(ref _depthImage, value);
+        }
+
+        private string _usuarioLogado;
+        public string UsuarioLogado
+        {
+            get => _usuarioLogado;
+            set => SetProperty(ref _usuarioLogado, value);
         }
 
         private string _statusMessage;
@@ -109,6 +117,20 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             set => SetProperty(ref _mensagemEnvioAplicacao, value);
         }
 
+        private string _nomeEspaco;
+        public string NomeEspaco
+        {
+            get => _nomeEspaco;
+            set => SetProperty(ref _nomeEspaco, value);
+        }
+
+        private string _percentualAlerta;
+        public string PercentualAlerta
+        {
+            get => _percentualAlerta;
+            set => SetProperty(ref _percentualAlerta, value);
+        }
+
         private bool _isCalibrating;
         public bool IsCalibrating
         {
@@ -116,13 +138,40 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             set => SetProperty(ref _isCalibrating, value);
         }
 
+        private ObservableCollection<MedicaoVolume> _historicoMedicoes;
+        public ObservableCollection<MedicaoVolume> HistoricoMedicoes
+        {
+            get => _historicoMedicoes;
+            set => SetProperty(ref _historicoMedicoes, value);
+        }
+        private bool _espacoSalvo;
+        public bool EspacoSalvo
+        {
+            get => _espacoSalvo;
+            set => SetProperty(ref _espacoSalvo, value);
+        }
+
+        private string _mensagemEspaco;
+        public string MensagemEspaco
+        {
+            get => _mensagemEspaco;
+            set => SetProperty(ref _mensagemEspaco, value);
+        }
         public ICommand LigarKinectCommand { get; }
         public ICommand DesligarKinectCommand { get; }
         public ICommand CalibrarCommand { get; }
         public ICommand MedirCommand { get; }
+        public ICommand SalvarEspacoCommand { get; }
 
         public MainViewModel()
+            : this("Administrador")
         {
+        }
+
+        public MainViewModel(string usuarioLogado)
+        {
+            UsuarioLogado = usuarioLogado;
+
             _kinectService = new KinectService();
             _signalRService = new SignalRService();
             _repository = new KinectRepository();
@@ -133,18 +182,63 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             DesligarKinectCommand = new RelayCommand(DesligarKinect);
             CalibrarCommand = new RelayCommand(ExecutarCalibracaoAsync);
             MedirCommand = new RelayCommand(ExecutarMedicaoAsync);
+            SalvarEspacoCommand = new RelayCommand(SalvarEspaco);
 
             StatusMessage = "Pronto";
             StatusKinect = "Kinect desligado";
             StatusSignalR = "SignalR: Desconectado";
             StatusSQLite = "SQLite: Aguardando";
             VolumeTexto = "0 cm3";
+            MensagemEnvioAplicacao = "Aguardando envio.";
+
+            CarregarHistoricoMedicoes();
+        }
+
+        private void AtualizarCameraRgb(BitmapSource imagem)
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                CameraImage = imagem;
+            }));
+        }
+
+        private void SalvarEspaco()
+        {
+            if (string.IsNullOrWhiteSpace(NomeEspaco))
+            {
+                MensagemEspaco = "Informe o nome do espaco.";
+                LoggerService.LogWarning("Tentativa de salvar espaco sem nome.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(PercentualAlerta))
+            {
+                MensagemEspaco = "Informe o limite de ocupacao.";
+                LoggerService.LogWarning("Tentativa de salvar espaco sem limite de ocupacao.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(VolumeMaximo))
+            {
+                MensagemEspaco = "Calibre o espaco antes de salvar.";
+                LoggerService.LogWarning("Tentativa de salvar espaco sem volume maximo.");
+                return;
+            }
+
+            EspacoSalvo = true;
+            MensagemEspaco = "Espaco salvo. Historico liberado.";
+            StatusMessage = "Espaco salvo com sucesso.";
+
+            LoggerService.Info($"Espaco salvo: {NomeEspaco}");
         }
 
         private async Task LigarKinectAsync()
         {
             try
             {
+                _kinectService.CameraFrameAtualizado -= AtualizarCameraRgb;
+                _kinectService.CameraFrameAtualizado += AtualizarCameraRgb;
+
                 _kinectService.Start();
 
                 StatusKinect = "Kinect conectado";
@@ -158,7 +252,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     : "SignalR: Sem conexao";
 
                 IniciarTimerFrames();
-                IniciarTimerVolume();
                 IniciarEnvioPeriodicoDeVolume();
 
                 LoggerService.Info("Kinect iniciado pela MainViewModel.");
@@ -177,18 +270,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             _frameTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(33)
+                Interval = TimeSpan.FromMilliseconds(100)
             };
 
             _frameTimer.Tick += (s, e) =>
             {
-                var cameraFrame = _kinectService.CapturarFrameCamera();
-
-                if (cameraFrame != null)
-                {
-                    CameraImage = cameraFrame;
-                }
-
                 var depthFrame = _kinectService.CapturarDepthColorido();
 
                 if (depthFrame != null)
@@ -206,10 +292,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             _volumeTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(500)
+                Interval = TimeSpan.FromSeconds(30)
             };
 
-            _volumeTimer.Tick += (s, e) =>
+            _volumeTimer.Tick += async (s, e) =>
             {
                 double volumeAtual = _kinectService.CalcularVolumeAtualCm3();
 
@@ -220,11 +306,30 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 _ultimoVolumeAtual = volumeAtual;
                 VolumeTexto = $"{volumeAtual:F0} cm3";
+
+                var medicao = new MedicaoVolume
+                {
+                    VolumeCm3 = volumeAtual,
+                    DataHora = DateTime.Now,
+                    KinectLigado = _kinectService.IsConnected,
+                    Calibrado = true,
+                    Status = "Medicao automatica"
+                };
+
+                _repository.SalvarMedicao(medicao);
+                CarregarHistoricoMedicoes();
+
+                StatusSQLite = "SQLite: Medicao automatica salva";
+
+                if (_signalRService.EstaConectado)
+                {
+                    await _signalRService.EnviarVolumeAsync(volumeAtual);
+                    MensagemEnvioAplicacao = $"Volume enviado automaticamente: {volumeAtual:F0} cm3";
+                }
             };
 
             _volumeTimer.Start();
         }
-
         private void IniciarEnvioPeriodicoDeVolume()
         {
             _envioVolumeTimer?.Stop();
@@ -256,6 +361,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             _envioVolumeTimer?.Stop();
             _envioVolumeTimer = null;
 
+            _kinectService.CameraFrameAtualizado -= AtualizarCameraRgb;
             _kinectService.Stop();
 
             CameraImage = null;
@@ -281,6 +387,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 StatusMessage = $"Calibracao concluida. Volume maximo: {resultado.MaxVolume:F0} cm3";
 
+                IniciarTimerVolume();
+
                 LoggerService.Info($"Calibracao concluida. Volume maximo: {resultado.MaxVolume:F0} cm3");
             }
             catch
@@ -299,6 +407,13 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             try
             {
                 StatusMessage = "Medindo...";
+
+                if (!_kinectService.IsConnected)
+                {
+                    StatusMessage = "Kinect nao esta conectado";
+                    LoggerService.LogWarning("Tentativa de medicao com Kinect desconectado.");
+                    return;
+                }
 
                 double volume = _kinectService.CalcularVolumeAtualCm3();
 
@@ -319,6 +434,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     };
 
                     _repository.SalvarMedicao(medicao);
+                    CarregarHistoricoMedicoes();
 
                     StatusSQLite = "SQLite: Medicao salva";
                     StatusMessage = $"Medido: {volume:F0} cm3";
@@ -347,6 +463,12 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 MensagemEnvioAplicacao = "Erro na medicao";
                 LoggerService.Erro("Erro na medicao pela MainViewModel.");
             }
+        }
+
+        public void CarregarHistoricoMedicoes()
+        {
+            var medicoes = _repository.ObterMedicoesEmOrdemCrescente(100);
+            HistoricoMedicoes = new ObservableCollection<MedicaoVolume>(medicoes);
         }
     }
 }
