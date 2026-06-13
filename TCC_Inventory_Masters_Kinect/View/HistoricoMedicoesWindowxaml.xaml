@@ -1,61 +1,142 @@
 ﻿<Window x:Class="TCC_Inventory_Masters_Kinect.View.HistoricoMedicoesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Histórico de Medições"
-        Height="600"
-        Width="900"
+        Title="Historico de Medicoes"
+        Height="620"
+        Width="980"
         WindowStartupLocation="CenterOwner"
-        Background="#EEF2F7">
+        Background="#F4F6F8">
 
-    <Grid Margin="24">
-
+    <Grid Background="#F4F6F8">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="64"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Histórico de Medições"
-                   FontSize="28"
-                   FontWeight="Bold"
-                   Foreground="#4F46E5"
-                   Margin="0,0,0,20"/>
+        <Border Grid.Row="0"
+                Background="#108A3B"
+                Padding="24,0">
+            <Grid>
+                <TextBlock Text="Historico de Medicoes"
+                           Foreground="White"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
 
-        <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding HistoricoMedicoes}"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  IsReadOnly="True"
-                  Background="White">
+                <Button Content="Fechar"
+                        Width="90"
+                        Height="34"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="White"
+                        Foreground="#108A3B"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Click="Fechar_Click"/>
+            </Grid>
+        </Border>
 
-            <DataGrid.Columns>
+        <Border Grid.Row="1"
+                Background="White"
+                CornerRadius="8"
+                Margin="22"
+                Padding="18"
+                BorderBrush="#DADDE2"
+                BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                <DataGridTextColumn Header="ID"
-                                    Binding="{Binding Id}"
-                                    Width="80"/>
+                <StackPanel Margin="0,0,0,14">
+                    <TextBlock Text="Medicoes Salvas"
+                               Foreground="#111111"
+                               FontSize="20"
+                               FontWeight="Bold"/>
 
-                <DataGridTextColumn Header="Volume"
-                                    Binding="{Binding VolumeCm3}"
-                                    Width="*"/>
+                    <TextBlock Text="Dados salvos em tempo real"
+                               Foreground="#6B7280"
+                               FontSize="13"
+                               Margin="0,4,0,0"
+                               ToolTip="dados sendo enviados do banco de dados."/>
+                </StackPanel>
 
-                <DataGridTextColumn Header="Data/Hora"
-                                    Binding="{Binding DataHora}"
-                                    Width="220"/>
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding HistoricoMedicoes}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserResizeRows="False"
+                          IsReadOnly="True"
+                          Background="White"
+                          RowBackground="White"
+                          AlternatingRowBackground="#F4F6F8"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#DADDE2"
+                          VerticalGridLinesBrush="Transparent"
+                          HeadersVisibility="Column"
+                          BorderBrush="#DADDE2"
+                          BorderThickness="1"
+                          FontSize="13"
+                          RowHeight="34"
+                          ColumnHeaderHeight="42"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow">
+                    <DataGrid.Resources>
+                        <Style TargetType="ScrollBar">
+                            <Setter Property="Width" Value="10"/>
+                        </Style>
+                    </DataGrid.Resources>
 
-                <DataGridTextColumn Header="Kinect"
-                                    Binding="{Binding KinectLigado}"
-                                    Width="120"/>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#0B3323"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Padding" Value="10,0"/>
+                            <Setter Property="BorderBrush" Value="#0B3323"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
 
-                <DataGridTextColumn Header="Calibrado"
-                                    Binding="{Binding Calibrado}"
-                                    Width="120"/>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="10,0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        </Style>
+                    </DataGrid.CellStyle>
 
-                <DataGridTextColumn Header="Status"
-                                    Binding="{Binding Status}"
-                                    Width="180"/>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID"
+                                            Binding="{Binding Id}"
+                                            Width="70"/>
 
-            </DataGrid.Columns>
+                        <DataGridTextColumn Header="Volume (cm3)"
+                                            Binding="{Binding VolumeCm3, StringFormat={}{0:F0}}"
+                                            Width="160"
+                                            />
 
-        </DataGrid>
+                        <DataGridTextColumn Header="Data/Hora"
+                                            Binding="{Binding DataHora, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}"
+                                            Width="190"/>
 
+                        <DataGridTextColumn Header="Kinect"
+                                            Binding="{Binding KinectLigado}"
+                                            Width="110"/>
+
+                        <DataGridTextColumn Header="Calibrado"
+                                            Binding="{Binding Calibrado}"
+                                            Width="110"/>
+
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding Status}"
+                                            Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

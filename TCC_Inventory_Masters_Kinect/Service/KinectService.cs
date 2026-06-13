@@ -22,9 +22,14 @@ namespace TCC_Inventory_Masters_Kinect.Service
         private const int PASSO_ANGULO = 5;
         private const int FRAMES_POR_ANGULO = 5;
         private const int ESPERA_MOTOR_MS = 1500;
-        private const int DEPTH_MAX_MM = 4000;
-        private const int DEPTH_MIN_MM = 500;
-        private const int LIMITE_MINIMO_ALTURA_MM = 30;
+
+        private const int DEPTH_MIN_MM = 1200;
+        private const int DEPTH_MAX_MM = 3500;
+        private const int ALTURA_MINIMA_OBJETO_MM = 30;
+        private const int ALTURA_MAXIMA_OBJETO_MM = 1800;
+        private const int PONTOS_MINIMOS_VOLUME = 100;
+        private const double FOV_HORIZONTAL_GRAUS = 57.0;
+        private const double FOV_VERTICAL_GRAUS = 43.0;
 
         public event Action<BitmapSource> CameraFrameAtualizado;
 
@@ -55,7 +60,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
             _sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
             _sensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
+
+            _sensor.ColorFrameReady -= Sensor_ColorFrameReady;
             _sensor.ColorFrameReady += Sensor_ColorFrameReady;
+
             _sensor.Start();
 
             LoggerService.Info("Kinect iniciado com camera RGB e profundidade.");
@@ -173,9 +181,17 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     {
                         int depth = depthData[i] >> 3;
 
-                        byte intensity = depth == 0
-                            ? (byte)0
-                            : (byte)(255 - Math.Min(255, depth * 255 / DEPTH_MAX_MM));
+                        byte intensity;
+
+                        if (depth < DEPTH_MIN_MM || depth > DEPTH_MAX_MM)
+                        {
+                            intensity = 0;
+                        }
+                        else
+                        {
+                            double normalizado = (depth - DEPTH_MIN_MM) / (double)(DEPTH_MAX_MM - DEPTH_MIN_MM);
+                            intensity = (byte)(255 - Math.Min(255, Math.Max(0, normalizado * 255)));
+                        }
 
                         pixels[index++] = intensity;
                         pixels[index++] = (byte)(intensity * 0.7);
@@ -215,7 +231,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 throw new InvalidOperationException("Kinect nao esta conectado para calibrar.");
             }
 
-            LoggerService.Info("Iniciando calibracao volumetrica.");
+            LoggerService.Info("Iniciando calibracao volumetrica do espaco vazio.");
 
             int anguloOriginal = _sensor.ElevationAngle;
             var leiturasPorAngulo = new List<(int Angulo, double MediaDepth, int Pontos)>();
@@ -270,9 +286,19 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 bool mapaCapturado = CapturarMapaDepthCalibrado();
 
-                double volumeMaximo = mapaCapturado
-                    ? CalcularVolumeReferenciaCm3(_depthCalibrado, _larguraDepth, _alturaDepth)
-                    : 0;
+                if (!mapaCapturado)
+                {
+                    LoggerService.Erro("Calibracao interrompida: mapa volumetrico vazio nao capturado.");
+
+                    return new CalibrationResult
+                    {
+                        MaxVolume = 0,
+                        TotalPointsFound = 0,
+                        CalibratedAt = DateTime.Now
+                    };
+                }
+
+                double volumeMaximo = CalcularVolumeReferenciaCm3(_depthCalibrado, _larguraDepth, _alturaDepth);
 
                 progress?.Report(new CalibrationProgress
                 {
@@ -289,7 +315,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     Percentage = 100
                 });
 
-                LoggerService.Info($"Calibracao concluida | Chao em: {resultadoChao.DistanciaChaoMm:F1} mm | Volume referencia: {volumeMaximo:F0} cm3");
+                LoggerService.Info($"Calibracao concluida | Chao em: {resultadoChao.DistanciaChaoMm:F0} mm | Volume referencia: {volumeMaximo:F0} cm3");
 
                 return new CalibrationResult
                 {
@@ -354,6 +380,12 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                     short[] depthAtual = new short[frame.PixelDataLength];
                     frame.CopyPixelDataTo(depthAtual);
+
+                    if (_depthCalibrado.Length != depthAtual.Length)
+                    {
+                        LoggerService.Erro("Mapa calibrado e frame atual possuem tamanhos diferentes.");
+                        return 0;
+                    }
 
                     return CalcularVolumeRealCm3(
                         _depthCalibrado,
@@ -429,14 +461,21 @@ namespace TCC_Inventory_Masters_Kinect.Service
                         short[] depthData = new short[frame.PixelDataLength];
                         frame.CopyPixelDataTo(depthData);
 
-                        for (int i = 0; i < depthData.Length; i++)
-                        {
-                            int depth = depthData[i] >> 3;
+                        int margemX = frame.Width / 10;
+                        int margemY = frame.Height / 10;
 
-                            if (depth > DEPTH_MIN_MM && depth < DEPTH_MAX_MM)
+                        for (int y = margemY; y < frame.Height - margemY; y++)
+                        {
+                            for (int x = margemX; x < frame.Width - margemX; x++)
                             {
-                                somaTotal += depth;
-                                pontosTotal++;
+                                int i = y * frame.Width + x;
+                                int depth = depthData[i] >> 3;
+
+                                if (depth >= DEPTH_MIN_MM && depth <= DEPTH_MAX_MM)
+                                {
+                                    somaTotal += depth;
+                                    pontosTotal++;
+                                }
                             }
                         }
 
@@ -475,9 +514,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 }
             }
 
-            if (menorMedia == double.MaxValue)
+            if (menorMedia == double.MaxValue || pontosChao < PONTOS_MINIMOS_VOLUME)
             {
-                LoggerService.Erro("Nao foi possivel detectar o chao durante a calibracao.");
+                LoggerService.Erro("Nao foi possivel detectar plano de referencia com pontos suficientes.");
                 return (0, 0, 0);
             }
 
@@ -499,24 +538,78 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
             try
             {
-                using (var frame = _sensor.DepthStream.OpenNextFrame(1000))
+                const int quantidadeFrames = 10;
+
+                int[] somaDepth = null;
+                int[] contadorDepth = null;
+                int largura = 0;
+                int altura = 0;
+
+                for (int f = 0; f < quantidadeFrames; f++)
                 {
-                    if (frame == null)
+                    using (var frame = _sensor.DepthStream.OpenNextFrame(1000))
                     {
-                        LoggerService.Erro("Frame de profundidade calibrado nao capturado.");
-                        return false;
+                        if (frame == null)
+                        {
+                            continue;
+                        }
+
+                        if (somaDepth == null)
+                        {
+                            somaDepth = new int[frame.PixelDataLength];
+                            contadorDepth = new int[frame.PixelDataLength];
+                            largura = frame.Width;
+                            altura = frame.Height;
+                        }
+
+                        short[] depthFrame = new short[frame.PixelDataLength];
+                        frame.CopyPixelDataTo(depthFrame);
+
+                        for (int i = 0; i < depthFrame.Length; i++)
+                        {
+                            int depth = depthFrame[i] >> 3;
+
+                            if (depth >= DEPTH_MIN_MM && depth <= DEPTH_MAX_MM)
+                            {
+                                somaDepth[i] += depth;
+                                contadorDepth[i]++;
+                            }
+                        }
                     }
-
-                    _depthCalibrado = new short[frame.PixelDataLength];
-                    frame.CopyPixelDataTo(_depthCalibrado);
-
-                    _larguraDepth = frame.Width;
-                    _alturaDepth = frame.Height;
-
-                    LoggerService.Info("Mapa de profundidade calibrado capturado.");
-
-                    return true;
                 }
+
+                if (somaDepth == null || contadorDepth == null)
+                {
+                    LoggerService.Erro("Nenhum frame valido capturado para mapa calibrado.");
+                    return false;
+                }
+
+                _depthCalibrado = new short[somaDepth.Length];
+
+                int pontosValidos = 0;
+
+                for (int i = 0; i < somaDepth.Length; i++)
+                {
+                    if (contadorDepth[i] > 0)
+                    {
+                        int mediaDepth = somaDepth[i] / contadorDepth[i];
+                        _depthCalibrado[i] = (short)(mediaDepth << 3);
+                        pontosValidos++;
+                    }
+                }
+
+                if (pontosValidos < PONTOS_MINIMOS_VOLUME)
+                {
+                    LoggerService.Erro("Mapa calibrado possui poucos pontos validos.");
+                    return false;
+                }
+
+                _larguraDepth = largura;
+                _alturaDepth = altura;
+
+                LoggerService.Info($"Mapa de profundidade calibrado capturado. Pontos validos: {pontosValidos}");
+
+                return true;
             }
             catch
             {
@@ -533,26 +626,47 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 return 0;
             }
 
-            double fovHorizontal = 57.0 * Math.PI / 180.0;
-            double fovVertical = 43.0 * Math.PI / 180.0;
+            double fovHorizontal = FOV_HORIZONTAL_GRAUS * Math.PI / 180.0;
+            double fovVertical = FOV_VERTICAL_GRAUS * Math.PI / 180.0;
             double volumeTotalMm3 = 0;
+            int pontosValidos = 0;
 
-            for (int i = 0; i < depthCalibrado.Length; i++)
+            int margemX = largura / 10;
+            int margemY = altura / 10;
+
+            for (int y = margemY; y < altura - margemY; y++)
             {
-                int profundidadeMm = depthCalibrado[i] >> 3;
-
-                if (profundidadeMm <= DEPTH_MIN_MM || profundidadeMm >= DEPTH_MAX_MM)
+                for (int x = margemX; x < largura - margemX; x++)
                 {
-                    continue;
+                    int i = y * largura + x;
+                    int profundidadeMm = depthCalibrado[i] >> 3;
+
+                    if (profundidadeMm < DEPTH_MIN_MM || profundidadeMm > DEPTH_MAX_MM)
+                    {
+                        continue;
+                    }
+
+                    double larguraPixelMm = (2 * profundidadeMm * Math.Tan(fovHorizontal / 2)) / largura;
+                    double alturaPixelMm = (2 * profundidadeMm * Math.Tan(fovVertical / 2)) / altura;
+
+                    double alturaUtilMm = Math.Min(profundidadeMm, ALTURA_MAXIMA_OBJETO_MM);
+
+                    volumeTotalMm3 += alturaUtilMm * larguraPixelMm * alturaPixelMm;
+                    pontosValidos++;
                 }
-
-                double larguraPixelMm = (2 * profundidadeMm * Math.Tan(fovHorizontal / 2)) / largura;
-                double alturaPixelMm = (2 * profundidadeMm * Math.Tan(fovVertical / 2)) / altura;
-
-                volumeTotalMm3 += profundidadeMm * larguraPixelMm * alturaPixelMm;
             }
 
-            return volumeTotalMm3 / 1000.0;
+            if (pontosValidos < PONTOS_MINIMOS_VOLUME)
+            {
+                LoggerService.LogWarning("Volume de referencia descartado: poucos pontos validos.");
+                return 0;
+            }
+
+            double volumeCm3 = volumeTotalMm3 / 1000.0;
+
+            LoggerService.Info($"Volume de referencia calculado: {volumeCm3:F0} cm3 | Pontos validos: {pontosValidos}");
+
+            return volumeCm3;
         }
 
         private double CalcularVolumeRealCm3(short[] depthCalibrado, short[] depthAtual, int largura, int altura)
@@ -569,39 +683,64 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 return 0;
             }
 
-            double fovHorizontal = 57.0 * Math.PI / 180.0;
-            double fovVertical = 43.0 * Math.PI / 180.0;
+            double fovHorizontal = FOV_HORIZONTAL_GRAUS * Math.PI / 180.0;
+            double fovVertical = FOV_VERTICAL_GRAUS * Math.PI / 180.0;
             double volumeTotalMm3 = 0;
+            int pontosValidos = 0;
 
-            for (int i = 0; i < depthAtual.Length; i++)
+            int margemX = largura / 10;
+            int margemY = altura / 10;
+
+            for (int y = margemY; y < altura - margemY; y++)
             {
-                int profundidadeBaseMm = depthCalibrado[i] >> 3;
-                int profundidadeAtualMm = depthAtual[i] >> 3;
-
-                if (profundidadeBaseMm <= DEPTH_MIN_MM || profundidadeBaseMm >= DEPTH_MAX_MM)
+                for (int x = margemX; x < largura - margemX; x++)
                 {
-                    continue;
+                    int i = y * largura + x;
+
+                    int profundidadeBaseMm = depthCalibrado[i] >> 3;
+                    int profundidadeAtualMm = depthAtual[i] >> 3;
+
+                    if (profundidadeBaseMm < DEPTH_MIN_MM || profundidadeBaseMm > DEPTH_MAX_MM)
+                    {
+                        continue;
+                    }
+
+                    if (profundidadeAtualMm < DEPTH_MIN_MM || profundidadeAtualMm > DEPTH_MAX_MM)
+                    {
+                        continue;
+                    }
+
+                    int alturaObjetoMm = profundidadeBaseMm - profundidadeAtualMm;
+
+                    if (alturaObjetoMm < ALTURA_MINIMA_OBJETO_MM)
+                    {
+                        continue;
+                    }
+
+                    if (alturaObjetoMm > ALTURA_MAXIMA_OBJETO_MM)
+                    {
+                        continue;
+                    }
+
+                    double larguraPixelMm = (2 * profundidadeAtualMm * Math.Tan(fovHorizontal / 2)) / largura;
+                    double alturaPixelMm = (2 * profundidadeAtualMm * Math.Tan(fovVertical / 2)) / altura;
+
+                    volumeTotalMm3 += alturaObjetoMm * larguraPixelMm * alturaPixelMm;
+                    pontosValidos++;
                 }
-
-                if (profundidadeAtualMm <= DEPTH_MIN_MM || profundidadeAtualMm >= DEPTH_MAX_MM)
-                {
-                    continue;
-                }
-
-                int diferencaMm = profundidadeBaseMm - profundidadeAtualMm;
-
-                if (diferencaMm < LIMITE_MINIMO_ALTURA_MM)
-                {
-                    continue;
-                }
-
-                double larguraPixelMm = (2 * profundidadeBaseMm * Math.Tan(fovHorizontal / 2)) / largura;
-                double alturaPixelMm = (2 * profundidadeBaseMm * Math.Tan(fovVertical / 2)) / altura;
-
-                volumeTotalMm3 += diferencaMm * larguraPixelMm * alturaPixelMm;
             }
 
-            return volumeTotalMm3 / 1000.0;
+            if (pontosValidos < PONTOS_MINIMOS_VOLUME)
+            {
+                LoggerService.LogWarning("Leitura descartada: poucos pontos validos para volume.");
+                return 0;
+            }
+
+            double volumeCm3 = volumeTotalMm3 / 1000.0;
+
+            LoggerService.Info($"Volume calculado com filtros Kinect: {volumeCm3:F0} cm3 | Pontos validos: {pontosValidos}");
+
+            return volumeCm3;
         }
     }
 }

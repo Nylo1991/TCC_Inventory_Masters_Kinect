@@ -101,5 +101,24 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                 return new List<HistoricoOcupacao>();
             }
         }
+
+        public List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade)
+        {
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    return db.MedicaoVolumes
+                        .OrderBy(x => x.Id)
+                        .Take(quantidade)
+                        .ToList();
+                }
+            }
+            catch
+            {
+                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente.");
+                return new List<MedicaoVolume>();
+            }
+        }
     }
 }
