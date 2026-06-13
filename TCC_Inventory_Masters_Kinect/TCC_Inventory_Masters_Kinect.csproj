@@ -283,6 +283,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\UsuarioAcesso.cs" />
     <Compile Include="View\KinectLogin.xaml.cs">
       <DependentUpon>KinectLogin.xaml</DependentUpon>
     </Compile>

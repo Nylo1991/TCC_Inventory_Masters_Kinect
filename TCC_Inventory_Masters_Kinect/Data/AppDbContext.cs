@@ -29,6 +29,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
 
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
         public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
+        public DbSet<UsuarioAcesso> UsuariosAcesso { get; set; }
         public DbSet<Log> Logs { get; set; }
         
 
@@ -65,6 +66,14 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         DataHora TEXT NOT NULL,
                         Nivel TEXT NOT NULL,
                         Mensagem TEXT NOT NULL
+                     );
+                    CREATE TABLE IF NOT EXISTS UsuariosAcesso (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Usuario TEXT NOT NULL,
+                        Senha TEXT NOT NULL,
+                        Perfil TEXT NOT NULL,
+                        TEXT NOT NULL,
+                            
                     );
 
 
