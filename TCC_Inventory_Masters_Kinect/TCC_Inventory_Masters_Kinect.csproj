@@ -283,6 +283,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\UsuarioAcesso.cs" />
     <Compile Include="View\KinectLogin.xaml.cs">
       <DependentUpon>KinectLogin.xaml</DependentUpon>
     </Compile>
@@ -309,11 +310,9 @@
     <Compile Include="Model\MedicaoVolume.cs" />
     <Compile Include="Repository\Interface\IKinectRepository.cs" />
     <Compile Include="Repository\KinectRepository.cs" />
-    <Compile Include="Service\KinectCalibrationService.cs" />
     <Compile Include="Service\KinectService.cs" />
     <Compile Include="Service\SignalRService.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
-    <Compile Include="ViewModel\KinectMonitorWindowViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\HistoricoMedicoesWindowxaml.xaml.cs">
       <DependentUpon>HistoricoMedicoesWindowxaml.xaml</DependentUpon>

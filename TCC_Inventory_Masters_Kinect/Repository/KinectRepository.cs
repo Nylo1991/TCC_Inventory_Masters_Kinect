@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Logs;
@@ -10,7 +9,6 @@ namespace TCC_Inventory_Masters_Kinect.Repository
 {
     public class KinectRepository : IKinectRepository
     {
-      
         public void SalvarMedicao(MedicaoVolume medicao)
         {
             try
@@ -23,9 +21,9 @@ namespace TCC_Inventory_Masters_Kinect.Repository
 
                 LoggerService.Info($"Medicao salva no SQLite. Volume: {medicao.VolumeCm3:F0} cm³");
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao salvar medicao no SQLite.", ex);
+                LoggerService.Erro("Erro ao salvar medicao no SQLite.");
             }
         }
 
@@ -41,13 +39,12 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                         .ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao buscar historico de medicoes no SQLite.", ex);
+                LoggerService.Erro("Erro ao buscar historico de medicoes no SQLite.");
                 return new List<MedicaoVolume>();
             }
         }
-
 
         public void SalvarHistorico(HistoricoOcupacao historico)
         {
@@ -59,11 +56,11 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                     db.SaveChanges();
                 }
 
-                LoggerService.Info("Histórico de ocupação salvo no SQLite.");
+                LoggerService.Info("Historico de ocupacao salvo no SQLite.");
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao salvar histórico de ocupação no SQLite.", ex);
+                LoggerService.Erro("Erro ao salvar historico de ocupacao no SQLite.");
             }
         }
 
@@ -79,9 +76,9 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                         .ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao buscar histórico por espaço.", ex);
+                LoggerService.Erro("Erro ao buscar historico por espaco.");
                 return new List<HistoricoOcupacao>();
             }
         }
@@ -98,9 +95,9 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                         .ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao buscar últimos históricos.", ex);
+                LoggerService.Erro("Erro ao buscar ultimos historicos.");
                 return new List<HistoricoOcupacao>();
             }
         }

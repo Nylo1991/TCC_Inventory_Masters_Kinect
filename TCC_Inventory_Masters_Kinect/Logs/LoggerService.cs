@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Windows;
 using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Model;
 
@@ -11,23 +9,20 @@ namespace TCC_Inventory_Masters_Kinect.Logs
     {
         private static readonly object _lock = new object();
 
+        private static readonly Action<string> _logger = linha =>
+        {
+            Debug.WriteLine(linha);
+            Trace.WriteLine(linha);
+        };
+
         public static void Info(string mensagem)
         {
             SalvarLog("INFO", mensagem);
         }
 
-        public static void Erro(string mensagem, Exception ex = null)
+        public static void Erro(string mensagem)
         {
-            string detalhe = ex == null
-                ? mensagem
-                : $"{mensagem} | Erro: {ex.Message}";
-
-            if (ex?.InnerException != null)
-            {
-                detalhe += $" | Detalhes: {ex.InnerException.Message}";
-            }
-
-            SalvarLog("ERRO", detalhe);
+            SalvarLog("ERRO", mensagem);
         }
 
         public static void LogInformation(string mensagem)
@@ -40,19 +35,18 @@ namespace TCC_Inventory_Masters_Kinect.Logs
             SalvarLog("AVISO", mensagem);
         }
 
-        public static void LogError(string mensagem, Exception ex = null)
+        public static void LogError(string mensagem)
         {
-            Erro(mensagem, ex);
+            Erro(mensagem);
         }
 
         private static void SalvarLog(string nivel, string mensagem)
         {
             try
             {
-                
                 string linha = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{nivel}] {mensagem}";
-                Debug.WriteLine(linha);
-                Trace.WriteLine(linha);
+
+                _logger(linha);
 
                 lock (_lock)
                 {
@@ -72,7 +66,8 @@ namespace TCC_Inventory_Masters_Kinect.Logs
             }
             catch
             {
-          // não deixa vazia ter tratamento 
+                string linhaErro = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [ERRO] Falha ao salvar log";
+                _logger(linhaErro);
             }
         }
     }

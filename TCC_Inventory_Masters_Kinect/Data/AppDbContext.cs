@@ -29,6 +29,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
 
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
         public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
+        public DbSet<UsuarioAcesso> UsuariosAcesso { get; set; }
         public DbSet<Log> Logs { get; set; }
         
 
@@ -48,21 +49,33 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         Calibrado INTEGER NOT NULL,
                         Status TEXT
                     );
-
                     CREATE TABLE IF NOT EXISTS HistoricosOcupacao (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        EspacoMapeadoId INTEGER NOT NULL,
-                        VolumeAtualCm3 REAL NOT NULL,
-                        PercentualOcupacao REAL NOT NULL,
-                        DataHora TEXT NOT NULL
-                    );
-
+                       Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       EspacoMapeadoId INTEGER NOT NULL,
+                       VolumeAtualCm3 REAL NOT NULL,
+                       VolumeMaximoCm3 REAL NOT NULL,
+                       EspacoLivreCm3 REAL NOT NULL,
+                       PercentualOcupacao REAL NOT NULL,
+                       LimiteUltrapassado INTEGER NOT NULL,
+                       NivelOcupacao TEXT,
+                       Status TEXT,
+                       DataHora TEXT NOT NULL
+                     );
                     CREATE TABLE IF NOT EXISTS Logs (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         DataHora TEXT NOT NULL,
                         Nivel TEXT NOT NULL,
                         Mensagem TEXT NOT NULL
+                     );
+                    CREATE TABLE IF NOT EXISTS UsuariosAcesso (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Usuario TEXT NOT NULL,
+                        Senha TEXT NOT NULL,
+                        Perfil TEXT NOT NULL,
+                        TEXT NOT NULL,
+                            
                     );
+
 
                  
                 ";
