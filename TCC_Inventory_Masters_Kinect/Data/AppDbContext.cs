@@ -7,51 +7,16 @@ using TCC_Inventory_Masters_Kinect.Model;
 
 namespace TCC_Inventory_Masters_Kinect.Data
 {
-    /// <summary>
-    /// Contexto principal do banco SQLite da aplicação Inventory Masters Kinect.
-    /// Responsável pelo mapeamento das entidades e criação automática das tabelas locais.
-    /// </summary>
     [DbConfigurationType(typeof(SQLiteConfigurationInternal))]
     public class AppDbContext : DbContext
     {
-        private static readonly object _lockInicializacao = new object();
-        private static bool _bancoInicializado = false;
-
-        /// <summary>
-        /// Inicializa o contexto SQLite e garante a criação das tabelas necessárias.
-        /// A estrutura do banco é verificada apenas uma vez por execução da aplicação.
-        /// </summary>
         public AppDbContext()
             : base(CreateSQLiteConnection(), true)
         {
             Database.SetInitializer<AppDbContext>(null);
-
-            GarantirBancoInicializado();
+            CriarTabelaManual();
         }
 
-        /// <summary>
-        /// Tabela de medições volumétricas realizadas pelo Kinect.
-        /// </summary>
-        public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
-
-        /// <summary>
-        /// Tabela de histórico de ocupação dos espaços monitorados.
-        /// </summary>
-        public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
-
-        /// <summary>
-        /// Tabela de usuários com acesso ao sistema local.
-        /// </summary>
-        public DbSet<UsuarioAcesso> UsuariosAcesso { get; set; }
-
-        /// <summary>
-        /// Tabela de logs da aplicação.
-        /// </summary>
-        public DbSet<Log> Logs { get; set; }
-
-        /// <summary>
-        /// Cria a conexão SQLite apontando para o arquivo local inventorymasters.db.
-        /// </summary>
         private static SQLiteConnection CreateSQLiteConnection()
         {
             string dbPath = Path.Combine(
@@ -62,9 +27,11 @@ namespace TCC_Inventory_Masters_Kinect.Data
             return new SQLiteConnection($"Data Source={dbPath};Version=3;");
         }
 
-        /// <summary>
-        /// Mapeia as entidades para suas respectivas tabelas no SQLite.
-        /// </summary>
+        public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
+        public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
+        public DbSet<UsuarioAcesso> UsuariosAcesso { get; set; }
+        public DbSet<Log> Logs { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -75,35 +42,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
             modelBuilder.Entity<Log>().ToTable("Logs");
         }
 
-        /// <summary>
-        /// Garante que o banco seja inicializado apenas uma vez durante a execução da aplicação.
-        /// Evita múltiplas verificações desnecessárias ao criar vários AppDbContext.
-        /// </summary>
-        private static void GarantirBancoInicializado()
-        {
-            if (_bancoInicializado)
-            {
-                return;
-            }
-
-            lock (_lockInicializacao)
-            {
-                if (_bancoInicializado)
-                {
-                    return;
-                }
-
-                CriarTabelaManual();
-
-                _bancoInicializado = true;
-            }
-        }
-
-        /// <summary>
-        /// Cria manualmente as tabelas necessárias caso ainda não existam.
-        /// Também executa validações simples de colunas para compatibilidade com versões anteriores.
-        /// </summary>
-        private static void CriarTabelaManual()
+        private void CriarTabelaManual()
         {
             using (var conn = CreateSQLiteConnection())
             {
@@ -170,11 +109,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
             }
         }
 
-        /// <summary>
-        /// Garante que uma coluna exista em determinada tabela.
-        /// Caso a coluna não exista, ela é adicionada por meio de ALTER TABLE.
-        /// </summary>
-        private static void GarantirColuna(SQLiteConnection conn, string tabela, string coluna, string tipo)
+        private void GarantirColuna(SQLiteConnection conn, string tabela, string coluna, string tipo)
         {
             bool existe = false;
 
@@ -201,19 +136,12 @@ namespace TCC_Inventory_Masters_Kinect.Data
         }
     }
 
-    /// <summary>
-    /// Configuração interna do provider SQLite para uso com Entity Framework 6.
-    /// </summary>
     public class SQLiteConfigurationInternal : DbConfiguration
     {
-        /// <summary>
-        /// Registra os providers necessários para o funcionamento do SQLite com EF6.
-        /// </summary>
         public SQLiteConfigurationInternal()
         {
             SetProviderFactory("System.Data.SQLite", SQLiteFactory.Instance);
             SetProviderFactory("System.Data.SQLite.EF6", SQLiteProviderFactory.Instance);
-
             SetProviderServices(
                 "System.Data.SQLite",
                 (System.Data.Entity.Core.Common.DbProviderServices)
