@@ -14,6 +14,11 @@ using TCC_Inventory_Masters_Kinect.Service;
 
 namespace TCC_Inventory_Masters_Kinect.ViewModel
 {
+    /// <summary>
+    /// ViewModel principal da aplicação.
+    /// Responsável por integrar KinectService, SignalRService, SQLite e interface WPF.
+    /// Controla inicialização do Kinect, calibração, medição volumétrica, histórico e envio para aplicação web.
+    /// </summary>
     public class MainViewModel : BaseViewModel
     {
         private readonly KinectService _kinectService;
@@ -22,9 +27,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
         private DispatcherTimer _frameTimer;
         private DispatcherTimer _volumeTimer;
-        private DispatcherTimer _envioVolumeTimer;
 
         private double _ultimoVolumeAtual;
+        private double _volumeMaximoCm3;
 
         private BitmapSource _cameraImage;
         public BitmapSource CameraImage
@@ -138,12 +143,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             set => SetProperty(ref _isCalibrating, value);
         }
 
-        private ObservableCollection<MedicaoVolume> _historicoMedicoes;
-        public ObservableCollection<MedicaoVolume> HistoricoMedicoes
-        {
-            get => _historicoMedicoes;
-            set => SetProperty(ref _historicoMedicoes, value);
-        }
         private bool _espacoSalvo;
         public bool EspacoSalvo
         {
@@ -157,17 +156,31 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             get => _mensagemEspaco;
             set => SetProperty(ref _mensagemEspaco, value);
         }
+
+        private ObservableCollection<MedicaoVolume> _historicoMedicoes;
+        public ObservableCollection<MedicaoVolume> HistoricoMedicoes
+        {
+            get => _historicoMedicoes;
+            set => SetProperty(ref _historicoMedicoes, value);
+        }
+
         public ICommand LigarKinectCommand { get; }
         public ICommand DesligarKinectCommand { get; }
         public ICommand CalibrarCommand { get; }
         public ICommand MedirCommand { get; }
         public ICommand SalvarEspacoCommand { get; }
 
+        /// <summary>
+        /// Construtor padrão usado quando nenhum usuário é informado.
+        /// </summary>
         public MainViewModel()
             : this("Administrador")
         {
         }
 
+        /// <summary>
+        /// Inicializa serviços, comandos, status iniciais e histórico de medições.
+        /// </summary>
         public MainViewModel(string usuarioLogado)
         {
             UsuarioLogado = usuarioLogado;
@@ -188,12 +201,19 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             StatusKinect = "Kinect desligado";
             StatusSignalR = "SignalR: Desconectado";
             StatusSQLite = "SQLite: Aguardando";
-            VolumeTexto = "0 cm3";
+            VolumeTexto = "0 cm³";
+            VolumeMaximo = "0 cm³";
+            PercentualOcupacaoTexto = "0%";
+            EspacoLivreTexto = "0 cm³";
             MensagemEnvioAplicacao = "Aguardando envio.";
+            MensagemEspaco = "Calibre o espaço antes de salvar.";
 
             CarregarHistoricoMedicoes();
         }
 
+        /// <summary>
+        /// Atualiza a imagem RGB recebida pelo KinectService na interface WPF.
+        /// </summary>
         private void AtualizarCameraRgb(BitmapSource imagem)
         {
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -202,36 +222,46 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }));
         }
 
+        /// <summary>
+        /// Salva os dados básicos do espaço após a calibração.
+        /// A medição automática só é iniciada depois que o espaço é salvo.
+        /// </summary>
         private void SalvarEspaco()
         {
             if (string.IsNullOrWhiteSpace(NomeEspaco))
             {
-                MensagemEspaco = "Informe o nome do espaco.";
-                LoggerService.LogWarning("Tentativa de salvar espaco sem nome.");
+                MensagemEspaco = "Informe o nome do espaço.";
+                LoggerService.LogWarning("Tentativa de salvar espaço sem nome.");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(PercentualAlerta))
             {
-                MensagemEspaco = "Informe o limite de ocupacao.";
-                LoggerService.LogWarning("Tentativa de salvar espaco sem limite de ocupacao.");
+                MensagemEspaco = "Informe o limite de ocupação.";
+                LoggerService.LogWarning("Tentativa de salvar espaço sem limite de ocupação.");
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(VolumeMaximo))
+            if (_volumeMaximoCm3 <= 0)
             {
-                MensagemEspaco = "Calibre o espaco antes de salvar.";
-                LoggerService.LogWarning("Tentativa de salvar espaco sem volume maximo.");
+                MensagemEspaco = "Calibre o espaço antes de salvar.";
+                LoggerService.LogWarning("Tentativa de salvar espaço sem calibração.");
                 return;
             }
 
             EspacoSalvo = true;
-            MensagemEspaco = "Espaco salvo. Historico liberado.";
-            StatusMessage = "Espaco salvo com sucesso.";
+            MensagemEspaco = "Espaço salvo. Histórico e medição automática liberados.";
+            StatusMessage = "Espaço salvo com sucesso.";
 
-            LoggerService.Info($"Espaco salvo: {NomeEspaco}");
+            IniciarTimerVolume();
+
+            LoggerService.Info($"Espaço salvo: {NomeEspaco}");
         }
 
+        /// <summary>
+        /// Liga o Kinect, conecta ao SignalR e inicia a atualização visual dos frames.
+        /// O timer de volume não é iniciado aqui para evitar medição antes da calibração.
+        /// </summary>
         private async Task LigarKinectAsync()
         {
             try
@@ -249,10 +279,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 StatusSignalR = _signalRService.EstaConectado
                     ? "SignalR: Conectado"
-                    : "SignalR: Sem conexao";
+                    : "SignalR: Sem conexão";
 
                 IniciarTimerFrames();
-                IniciarEnvioPeriodicoDeVolume();
 
                 LoggerService.Info("Kinect iniciado pela MainViewModel.");
             }
@@ -264,6 +293,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
         }
 
+        /// <summary>
+        /// Timer responsável por atualizar o mapa visual de profundidade na tela.
+        /// </summary>
         private void IniciarTimerFrames()
         {
             _frameTimer?.Stop();
@@ -286,70 +318,33 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             _frameTimer.Start();
         }
 
+        /// <summary>
+        /// Timer único de medição automática.
+        /// Mede o volume, atualiza a interface, salva no SQLite e envia via SignalR.
+        /// Evita duplicidade de envio usando apenas um fluxo centralizado.
+        /// </summary>
         private void IniciarTimerVolume()
         {
             _volumeTimer?.Stop();
 
             _volumeTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(30)
+                Interval = TimeSpan.FromSeconds(15)
             };
 
             _volumeTimer.Tick += async (s, e) =>
             {
-                double volumeAtual = _kinectService.CalcularVolumeAtualCm3();
-
-                if (volumeAtual <= 0)
-                {
-                    return;
-                }
-
-                _ultimoVolumeAtual = volumeAtual;
-                VolumeTexto = FormatarVolume(volumeAtual);
-
-                var medicao = new MedicaoVolume
-                {
-                    VolumeCm3 = volumeAtual,
-                    DataHora = DateTime.Now,
-                    KinectLigado = _kinectService.IsConnected,
-                    Calibrado = true,
-                    Status = "Medicao automatica"
-                };
-
-                _repository.SalvarMedicao(medicao);
-                CarregarHistoricoMedicoes();
-
-                StatusSQLite = "SQLite: Medicao automatica salva";
-
-                if (_signalRService.EstaConectado)
-                {
-                    await _signalRService.EnviarVolumeAsync(volumeAtual);
-                    MensagemEnvioAplicacao = $"Volume enviado automaticamente: {FormatarVolume(volumeAtual)}";
-                }
+                await MedirSalvarEEnviarAsync("Medição automática");
             };
 
             _volumeTimer.Start();
-        }
-        private void IniciarEnvioPeriodicoDeVolume()
-        {
-            _envioVolumeTimer?.Stop();
 
-            _envioVolumeTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(15)
-            };
-
-            _envioVolumeTimer.Tick += async (s, e) =>
-            {
-                if (_signalRService.EstaConectado && _ultimoVolumeAtual > 0)
-                {
-                    await _signalRService.EnviarVolumeAsync(_ultimoVolumeAtual);
-                }
-            };
-
-            _envioVolumeTimer.Start();
+            LoggerService.Info("Timer único de medição automática iniciado.");
         }
 
+        /// <summary>
+        /// Desliga o Kinect e encerra todos os timers ativos.
+        /// </summary>
         private void DesligarKinect()
         {
             _frameTimer?.Stop();
@@ -358,9 +353,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             _volumeTimer?.Stop();
             _volumeTimer = null;
 
-            _envioVolumeTimer?.Stop();
-            _envioVolumeTimer = null;
-
             _kinectService.CameraFrameAtualizado -= AtualizarCameraRgb;
             _kinectService.Stop();
 
@@ -368,33 +360,46 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             DepthImage = null;
 
             StatusKinect = "Kinect desligado";
-            StatusMessage = "Kinect encerrado pelo usuario";
+            StatusMessage = "Kinect encerrado pelo usuário";
 
             LoggerService.Info("Kinect desligado pela MainViewModel.");
         }
 
+        /// <summary>
+        /// Executa a calibração volumétrica do ambiente vazio.
+        /// Após calibrar, o espaço ainda precisa ser salvo para liberar medições automáticas.
+        /// </summary>
         private async Task ExecutarCalibracaoAsync()
         {
             try
             {
                 IsCalibrating = true;
-                StatusMessage = "Calibrando...";
+                EspacoSalvo = false;
+
+                _volumeTimer?.Stop();
+
+                StatusMessage = "Calibrando ambiente vazio...";
 
                 var resultado = await _kinectService.CalibrateAsync(CancellationToken.None);
 
-                VolumeMaximo = resultado.MaxVolume.ToString("F0");
+                _volumeMaximoCm3 = resultado.MaxVolume;
+
+                VolumeMaximo = FormatarVolume(resultado.MaxVolume);
                 QuantidadePontosDepth = resultado.TotalPointsFound.ToString();
 
-                StatusMessage = $"Calibracao concluida. Volume maximo: {resultado.MaxVolume:F0} cm3";
+                VolumeTexto = "0 cm³";
+                PercentualOcupacaoTexto = "0%";
+                EspacoLivreTexto = FormatarVolume(resultado.MaxVolume);
 
-                IniciarTimerVolume();
+                StatusMessage = $"Calibração concluída. Volume máximo: {FormatarVolume(resultado.MaxVolume)}";
+                MensagemEspaco = "Calibração concluída. Salve o espaço para liberar medições.";
 
-                LoggerService.Info($"Calibracao concluida. Volume maximo: {resultado.MaxVolume:F0} cm3");
+                LoggerService.Info($"Calibração concluída. Volume máximo: {resultado.MaxVolume:F0} cm3");
             }
             catch
             {
-                StatusMessage = "Erro na calibracao";
-                LoggerService.Erro("Erro na calibracao pela MainViewModel.");
+                StatusMessage = "Erro na calibração";
+                LoggerService.Erro("Erro na calibração pela MainViewModel.");
             }
             finally
             {
@@ -402,83 +407,131 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
         }
 
+        /// <summary>
+        /// Executa uma medição manual.
+        /// Usa o mesmo fluxo da medição automática para evitar inconsistência entre tela, SQLite e SignalR.
+        /// </summary>
         private async Task ExecutarMedicaoAsync()
+        {
+            await MedirSalvarEEnviarAsync("Medição realizada");
+        }
+
+        /// <summary>
+        /// Fluxo centralizado de medição volumétrica.
+        /// Calcula o volume pelo KinectService, atualiza indicadores, salva histórico e envia para a aplicação web.
+        /// </summary>
+        private async Task MedirSalvarEEnviarAsync(string statusMedicao)
         {
             try
             {
-                StatusMessage = "Medindo...";
-
                 if (!_kinectService.IsConnected)
                 {
-                    StatusMessage = "Kinect nao esta conectado";
-                    LoggerService.LogWarning("Tentativa de medicao com Kinect desconectado.");
+                    StatusMessage = "Kinect não está conectado.";
+                    LoggerService.LogWarning("Tentativa de medição com Kinect desconectado.");
                     return;
                 }
 
-                double volume = _kinectService.CalcularVolumeAtualCm3();
-
-                await Task.CompletedTask;
-
-                if (volume > 0)
+                if (_volumeMaximoCm3 <= 0)
                 {
-                    _ultimoVolumeAtual = volume;
-                    VolumeTexto = $"{volume:F0} cm3";
+                    StatusMessage = "Calibre o espaço antes de medir.";
+                    LoggerService.LogWarning("Tentativa de medição sem calibração.");
+                    return;
+                }
 
-                    var medicao = new MedicaoVolume
-                    {
-                        VolumeCm3 = volume,
-                        DataHora = DateTime.Now,
-                        KinectLigado = _kinectService.IsConnected,
-                        Calibrado = true,
-                        Status = "Medicao realizada"
-                    };
+                if (!EspacoSalvo)
+                {
+                    StatusMessage = "Salve o espaço antes de medir.";
+                    LoggerService.LogWarning("Tentativa de medição antes de salvar o espaço.");
+                    return;
+                }
 
-                    _repository.SalvarMedicao(medicao);
-                    CarregarHistoricoMedicoes();
+                double volumeAtual = _kinectService.CalcularVolumeAtualCm3();
 
-                    StatusSQLite = "SQLite: Medicao salva";
-                    StatusMessage = $"Medido: {volume:F0} cm3";
+                if (volumeAtual <= 0)
+                {
+                    StatusMessage = "Nenhum volume detectado.";
+                    LoggerService.LogWarning("Nenhum volume detectado na medição.");
+                    return;
+                }
 
-                    if (_signalRService.EstaConectado)
-                    {
-                        await _signalRService.EnviarVolumeAsync(volume);
-                        MensagemEnvioAplicacao = $"Volume enviado com sucesso: {volume:F0} cm3";
-                    }
-                    else
-                    {
-                        MensagemEnvioAplicacao = "SignalR nao esta conectado.";
-                    }
+                _ultimoVolumeAtual = volumeAtual;
 
-                    LoggerService.Info($"Medicao realizada. Volume: {volume:F0} cm3");
+                AtualizarIndicadoresVolume(volumeAtual);
+
+                var medicao = new MedicaoVolume
+                {
+                    VolumeCm3 = volumeAtual,
+                    DataHora = DateTime.Now,
+                    KinectLigado = _kinectService.IsConnected,
+                    Calibrado = true,
+                    Status = statusMedicao
+                };
+
+                _repository.SalvarMedicao(medicao);
+                CarregarHistoricoMedicoes();
+
+                StatusSQLite = "SQLite: Medição salva";
+                StatusMessage = $"Medido: {FormatarVolume(volumeAtual)}";
+
+                if (_signalRService.EstaConectado)
+                {
+                    await _signalRService.EnviarVolumeAsync(volumeAtual);
+                    MensagemEnvioAplicacao = $"Volume enviado: {FormatarVolume(volumeAtual)}";
                 }
                 else
                 {
-                    StatusMessage = "Nenhum volume detectado";
-                    LoggerService.LogWarning("Nenhum volume detectado na medicao.");
+                    MensagemEnvioAplicacao = "SignalR não está conectado.";
                 }
+
+                LoggerService.Info($"{statusMedicao}. Volume: {volumeAtual:F0} cm3");
             }
             catch
             {
-                StatusMessage = "Erro na medicao";
-                MensagemEnvioAplicacao = "Erro na medicao";
-                LoggerService.Erro("Erro na medicao pela MainViewModel.");
+                StatusMessage = "Erro na medição";
+                MensagemEnvioAplicacao = "Erro na medição";
+                LoggerService.Erro("Erro na medição pela MainViewModel.");
             }
         }
 
+        /// <summary>
+        /// Atualiza volume atual, percentual de ocupação e espaço livre com base no volume máximo calibrado.
+        /// </summary>
+        private void AtualizarIndicadoresVolume(double volumeAtualCm3)
+        {
+            VolumeTexto = FormatarVolume(volumeAtualCm3);
+
+            if (_volumeMaximoCm3 <= 0)
+            {
+                PercentualOcupacaoTexto = "0%";
+                EspacoLivreTexto = "0 cm³";
+                return;
+            }
+
+            double percentual = (volumeAtualCm3 / _volumeMaximoCm3) * 100.0;
+            percentual = Math.Max(0, Math.Min(100, percentual));
+
+            double espacoLivre = _volumeMaximoCm3 - volumeAtualCm3;
+            espacoLivre = Math.Max(0, espacoLivre);
+
+            PercentualOcupacaoTexto = $"{percentual:F1}%";
+            EspacoLivreTexto = FormatarVolume(espacoLivre);
+        }
+
+        /// <summary>
+        /// Carrega as últimas medições salvas no banco SQLite.
+        /// </summary>
         public void CarregarHistoricoMedicoes()
         {
             var medicoes = _repository.ObterMedicoesEmOrdemCrescente(100);
             HistoricoMedicoes = new ObservableCollection<MedicaoVolume>(medicoes);
         }
 
+        /// <summary>
+        /// Formata o volume padronizando a unidade em cm³ para a interface do sistema.
+        /// </summary>
         private string FormatarVolume(double volumeCm3)
         {
-            if (volumeCm3 >= 1000000)
-            {
-                return $"{volumeCm3 / 1000000.0:F3} m3";
-            }
-
-            return $"{volumeCm3:N0} cm3";
+            return $"{volumeCm3:N0} cm³";
         }
     }
 }
