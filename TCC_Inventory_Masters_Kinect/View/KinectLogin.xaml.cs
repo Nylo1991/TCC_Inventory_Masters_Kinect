@@ -6,7 +6,6 @@ using System.Windows;
 using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Model;
-using System.Text.RegularExpressions;
 
 namespace TCC_Inventory_Masters_Kinect.View
 {
@@ -153,6 +152,12 @@ namespace TCC_Inventory_Masters_Kinect.View
                     return;
                 }
 
+                if (senha.Contains(" "))
+                {
+                    MensagemTextBlock.Text = "A senha não pode conter espaços.";
+                    return;
+                }
+
                 if (senha.Length < 6)
                 {
                     MensagemTextBlock.Text = "A senha deve ter no minimo 6 caracteres.";
@@ -162,6 +167,12 @@ namespace TCC_Inventory_Masters_Kinect.View
                 if (string.IsNullOrWhiteSpace(confirmarSenha))
                 {
                     MensagemTextBlock.Text = "Confirme a senha.";
+                    return;
+                }
+
+                if (confirmarSenha.Contains(" "))
+                {
+                    MensagemTextBlock.Text = "A confirmação da senha não pode conter espaços.";
                     return;
                 }
 
