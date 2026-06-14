@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using MVC_InventoryMasters.Hubs;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MVC_InventoryMasters.Controllers
 {
@@ -14,16 +18,19 @@ namespace MVC_InventoryMasters.Controllers
     {
         private readonly MedicaoVolumeRepository _repo;
         private readonly IHubContext<MedicaoHub> _hub;
+        private readonly ILogger<MedicoesController> _logger;
 
         /// <summary>
         /// Construtor com injeção de dependência.
         /// </summary>
         public MedicoesController(
             MedicaoVolumeRepository repo,
-            IHubContext<MedicaoHub> hub)
+            IHubContext<MedicaoHub> hub,
+            ILogger<MedicoesController> logger)
         {
             _repo = repo;
             _hub = hub;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,8 +39,16 @@ namespace MVC_InventoryMasters.Controllers
         /// </summary>
         public async Task<IActionResult> Index()
         {
-            var medicoes = await _repo.ListarTodos();
-            return View(medicoes);
+            try
+            {
+                var medicoes = await _repo.ListarTodos();
+                return View(medicoes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro crítico ao carregar o histórico de medições (Index).");
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         /// <summary>
@@ -42,17 +57,26 @@ namespace MVC_InventoryMasters.Controllers
         /// </summary>
         public async Task<IActionResult> Summary()
         {
-            var medicoes = await _repo.ListarTodos();
-
-            var summary = new
+            try
             {
-                Total = medicoes.Count,
-                Media = medicoes.Any() ? medicoes.Average(m => m.VolumeMedido ?? 0) : 0,
-                Maximo = medicoes.Any() ? medicoes.Max(m => m.VolumeMedido ?? 0) : 0,
-                Minimo = medicoes.Any() ? medicoes.Min(m => m.VolumeMedido ?? 0) : 0
-            };
+                var medicoes = await _repo.ListarTodos();
 
-            return Json(summary);
+                var summary = new
+                {
+                    Total = medicoes.Count,
+                    Media = medicoes.Any() ? medicoes.Average(m => m.VolumeMedido ?? 0) : 0,
+                    Maximo = medicoes.Any() ? medicoes.Max(m => m.VolumeMedido ?? 0) : 0,
+                    Minimo = medicoes.Any() ? medicoes.Min(m => m.VolumeMedido ?? 0) : 0
+                };
+
+                return Json(summary);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao processar o resumo estatístico das medições (Summary).");
+                
+                return StatusCode(500, "Erro ao processar os dados estatísticos.");
+            }
         }
     }
 }

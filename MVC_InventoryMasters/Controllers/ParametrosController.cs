@@ -1,21 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
+using System;
 
 namespace MVC_InventoryMasters.Controllers
 {
     /// <summary>
-    /// Controller responsável pelas configurações
-    /// gerais do sistema.
+    /// Controller responsável pelas configurações gerais do sistema.
     /// </summary>
     public class ParametrosController : Controller
     {
         private readonly ParametrosSistemaRepository _repository;
+        private readonly ILogger<ParametrosController> _logger;
 
         public ParametrosController(
-            ParametrosSistemaRepository repository)
+            ParametrosSistemaRepository repository,
+            ILogger<ParametrosController> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
         /// <summary>
@@ -23,9 +27,17 @@ namespace MVC_InventoryMasters.Controllers
         /// </summary>
         public IActionResult Index()
         {
-            var model = _repository.Buscar();
-
-            return View(model);
+            try
+            {
+                var model = _repository.Buscar();
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao carregar a tela de parâmetros.");
+                TempData["Erro"] = "Ocorreu um erro ao carregar as configurações.";
+                return View(new ParametrosSistema());
+            }
         }
 
         /// <summary>
@@ -41,9 +53,7 @@ namespace MVC_InventoryMasters.Controllers
                 {
                     return View("Index", model);
                 }
-
-                // Regra de negócio:
-                // Mínimo deve ser menor que Máximo
+        
                 if (model.CapacidadeMinima >= model.CapacidadeMaxima)
                 {
                     ModelState.AddModelError(
@@ -53,10 +63,8 @@ namespace MVC_InventoryMasters.Controllers
                     return View("Index", model);
                 }
 
-                // Busca configuração atual
                 var atual = _repository.Buscar();
 
-                // Verifica se houve alteração
                 bool houveAlteracao =
                     atual.CapacidadeMaxima != model.CapacidadeMaxima ||
                     atual.CapacidadeMinima != model.CapacidadeMinima ||
@@ -68,9 +76,7 @@ namespace MVC_InventoryMasters.Controllers
 
                 if (!houveAlteracao)
                 {
-                    TempData["Aviso"] =
-                        "Nenhuma alteração foi realizada.";
-
+                    TempData["Aviso"] = "Nenhuma alteração foi realizada.";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -78,15 +84,14 @@ namespace MVC_InventoryMasters.Controllers
 
                 _repository.Salvar(model);
 
-                TempData["Sucesso"] =
-                    "Configurações atualizadas com sucesso.";
-
+                TempData["Sucesso"] = "Configurações atualizadas com sucesso.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
-            {
-                TempData["Erro"] =
-                    $"Erro ao salvar configurações: {ex.Message}";
+            {                
+                _logger.LogError(ex, "Erro crítico ao tentar salvar os parâmetros do sistema.");
+                
+                TempData["Erro"] = "Erro interno ao salvar configurações. Tente novamente mais tarde.";
 
                 return View("Index", model);
             }
