@@ -83,35 +83,23 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 _connection.ServerTimeout = TimeSpan.FromSeconds(30);
                 _connection.KeepAliveInterval = TimeSpan.FromSeconds(10);
 
-                _connection.Reconnecting += error =>
+                _connection.Reconnecting += _ =>
                 {
                     LoggerService.LogWarning("Reconectando ao MVC via SignalR.");
-
-                    if (error != null)
-                    {
-                        LoggerService.Erro("Motivo da reconexao SignalR.", error);
-                    }
-
                     StatusSignalRAtualizado?.Invoke("SignalR: Reconectando");
                     return Task.CompletedTask;
                 };
 
-                _connection.Reconnected += connectionId =>
+                _connection.Reconnected += _ =>
                 {
-                    LoggerService.Info("Reconectado ao MVC via SignalR. ConnectionId: " + connectionId);
+                    LoggerService.Info("Reconectado ao MVC via SignalR.");
                     StatusSignalRAtualizado?.Invoke("SignalR: Reconectado");
                     return Task.CompletedTask;
                 };
 
-                _connection.Closed += error =>
+                _connection.Closed += _ =>
                 {
                     LoggerService.LogWarning("Conexao com MVC encerrada.");
-
-                    if (error != null)
-                    {
-                        LoggerService.Erro("Motivo do encerramento SignalR.", error);
-                    }
-
                     StatusSignalRAtualizado?.Invoke("SignalR: Desconectado");
                     return Task.CompletedTask;
                 };
@@ -121,11 +109,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 LoggerService.Info("Conectado ao MVC via SignalR.");
                 StatusSignalRAtualizado?.Invoke("SignalR: Conectado");
             }
-            catch (Exception ex)
+            catch
             {
                 UltimoErro = "Erro ao conectar ao MVC via SignalR.";
 
-                LoggerService.Erro("Erro ao conectar ao MVC via SignalR.", ex);
+                LoggerService.Erro("Erro ao conectar ao MVC via SignalR.");
 
                 StatusSignalRAtualizado?.Invoke("SignalR: Sem conexao");
 
@@ -168,17 +156,17 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 await _connection.InvokeAsync("EnviarVolume", volumeCm3);
 
-                LoggerService.Info($"Volume enviado ao MVC via SignalR: {volumeCm3:N0} cm³.");
+                LoggerService.Info($"Volume enviado ao MVC via SignalR: {volumeCm3:N0} cm3.");
 
                 StatusSignalRAtualizado?.Invoke("SignalR: Volume enviado");
 
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 UltimoErro = "Erro ao enviar volume ao MVC.";
 
-                LoggerService.Erro("Erro ao enviar volume ao MVC.", ex);
+                LoggerService.Erro("Erro ao enviar volume ao MVC.");
 
                 StatusSignalRAtualizado?.Invoke("SignalR: Falha no envio");
 
@@ -222,11 +210,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 LoggerService.Info("Status enviado ao MVC via SignalR: " + status);
             }
-            catch (Exception ex)
+            catch
             {
                 UltimoErro = "Erro ao enviar status ao MVC.";
 
-                LoggerService.Erro("Erro ao enviar status ao MVC.", ex);
+                LoggerService.Erro("Erro ao enviar status ao MVC.");
 
                 StatusSignalRAtualizado?.Invoke("SignalR: Erro ao enviar status");
             }
@@ -258,11 +246,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 LoggerService.Info("Desconectado do MVC.");
                 StatusSignalRAtualizado?.Invoke("SignalR: Desconectado");
             }
-            catch (Exception ex)
+            catch
             {
                 UltimoErro = "Erro ao desconectar do MVC.";
 
-                LoggerService.Erro("Erro ao desconectar do MVC.", ex);
+                LoggerService.Erro("Erro ao desconectar do MVC.");
 
                 StatusSignalRAtualizado?.Invoke("SignalR: Erro ao desconectar");
             }

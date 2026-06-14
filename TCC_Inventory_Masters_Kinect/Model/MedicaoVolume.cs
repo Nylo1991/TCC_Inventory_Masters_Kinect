@@ -8,6 +8,11 @@ namespace TCC_Inventory_Masters_Kinect.Model
 
         public double VolumeCm3 { get; set; }
 
+        public double VolumeM3
+        {
+            get { return VolumeCm3 / 1000000.0; }
+        }
+
         public DateTime DataHora { get; set; }
 
         public bool KinectLigado { get; set; }
