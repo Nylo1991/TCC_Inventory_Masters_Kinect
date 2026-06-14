@@ -4,10 +4,6 @@ using MVC_InventoryMasters.Services;
 
 namespace MVC_InventoryMasters.Repositories
 {
-    /// <summary>
-    /// Responsável por gerenciar as medições do Kinect
-    /// na coleção "Medicoes" do Firestore.
-    /// </summary>
     public class MedicaoVolumeRepository
     {
         private readonly string _colecao = "Medicoes";
@@ -18,9 +14,6 @@ namespace MVC_InventoryMasters.Repositories
             _db = firebaseService.Firestore;
         }
 
-        /// <summary>
-        /// Salva uma nova medição no Firestore.
-        /// </summary>
         public async Task Adicionar(MedicaoVolume medicao)
         {
             medicao.DataHora = DateTime.UtcNow;
@@ -30,9 +23,6 @@ namespace MVC_InventoryMasters.Repositories
                 .AddAsync(medicao);
         }
 
-        /// <summary>
-        /// Retorna todas as medições registradas.
-        /// </summary>
         public async Task<List<MedicaoVolume>> ListarTodos()
         {
             List<MedicaoVolume> lista = new();
@@ -43,43 +33,96 @@ namespace MVC_InventoryMasters.Repositories
 
             foreach (DocumentSnapshot doc in snapshot.Documents)
             {
-                MedicaoVolume m = doc.ConvertTo<MedicaoVolume>();
-                m.Id = doc.Id;
-                lista.Add(m);
+                MedicaoVolume medicao = doc.ConvertTo<MedicaoVolume>();
+
+                medicao.Id = doc.Id;
+
+                lista.Add(medicao);
             }
 
             return lista;
         }
 
-        /// <summary>
-        /// Retorna resumo estatístico das medições.
-        /// Usado no Dashboard (KPIs).
-        /// </summary>
+        public async Task<List<MedicaoVolume>> FiltrarAvancado(
+            string origem,
+            string status,
+            DateTime? dataInicio,
+            DateTime? dataFim)
+        {
+            var lista = await ListarTodos();
+
+            if (!string.IsNullOrWhiteSpace(origem))
+            {
+                lista = lista
+                    .Where(x =>
+                        (x.OrigemLeitura ?? "")
+                        .Contains(origem, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                lista = lista
+                    .Where(x =>
+                        (x.Status ?? "")
+                        .Contains(status, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            if (dataInicio.HasValue)
+            {
+                lista = lista
+                    .Where(x =>
+                        x.DataHora.HasValue &&
+                        x.DataHora.Value.Date >= dataInicio.Value.Date)
+                    .ToList();
+            }
+
+            if (dataFim.HasValue)
+            {
+                lista = lista
+                    .Where(x =>
+                        x.DataHora.HasValue &&
+                        x.DataHora.Value.Date <= dataFim.Value.Date)
+                    .ToList();
+            }
+
+            return lista;
+        }
+
         public async Task<MedicaoSummary> ObterSummary()
         {
             var medicoes = await ListarTodos();
 
             if (!medicoes.Any())
+            {
                 return new MedicaoSummary();
+            }
 
             return new MedicaoSummary
             {
-                TotalMedicoes = medicoes.Count,                
-                MediaVolume = medicoes.Average(x => x.VolumeMedido ?? 0),
-                MaxVolume = medicoes.Max(x => x.VolumeMedido ?? 0),
-                MinVolume = medicoes.Min(x => x.VolumeMedido ?? 0)
+                TotalMedicoes = medicoes.Count,
+
+                MediaVolume = medicoes
+                    .Average(x => x.VolumeMedido ?? 0),
+
+                MaxVolume = medicoes
+                    .Max(x => x.VolumeMedido ?? 0),
+
+                MinVolume = medicoes
+                    .Min(x => x.VolumeMedido ?? 0)
             };
         }
     }
 
-    /// <summary>
-    /// Classe de resumo para Dashboard.
-    /// </summary>
     public class MedicaoSummary
     {
         public int TotalMedicoes { get; set; }
+
         public double MediaVolume { get; set; }
+
         public double MaxVolume { get; set; }
+
         public double MinVolume { get; set; }
     }
 }
