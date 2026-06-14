@@ -22,6 +22,18 @@ namespace TCC_Inventory_Masters_Kinect.Service
         private int _alturaDepth;
 
         /// <summary>
+        /// Indica se o ambiente já foi calibrado.
+        /// Impede o cálculo de volume antes da captura do mapa de referência.
+        /// </summary>
+        private bool _calibrado = false;
+
+        /// <summary>
+        /// Último volume suavizado calculado.
+        /// Usado para aplicar suavização ponderada entre leituras.
+        /// </summary>
+        private double _ultimoVolumeSuavizado = 0;
+
+        /// <summary>
         /// Histórico dos últimos volumes calculados.
         /// Utilizado para suavizar oscilações naturais do sensor de profundidade.
         /// </summary>
@@ -45,6 +57,12 @@ namespace TCC_Inventory_Masters_Kinect.Service
         private const int PONTOS_MINIMOS_VOLUME = 1000;
         private const double FOV_HORIZONTAL_GRAUS = 57.0;
         private const double FOV_VERTICAL_GRAUS = 43.0;
+
+        /// <summary>
+        /// Peso usado na suavização ponderada.
+        /// Quanto maior o valor, mais lenta e estável fica a alteração visual do volume.
+        /// </summary>
+        private const double PESO_SUAVIZACAO = 0.7;
 
         /// <summary>
         /// Evento disparado sempre que um novo frame da câmera RGB é capturado.
@@ -153,7 +171,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
         /// <summary>
         /// Captura manualmente um frame da câmera RGB do Kinect.
         /// </summary>
-        /// <returns>Imagem RGB capturada ou null em caso de falha.</returns>
         public BitmapSource CapturarFrameCamera()
         {
             if (!IsConnected || _sensor.ColorStream == null)
@@ -199,7 +216,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
         /// Captura o mapa de profundidade do Kinect e gera uma imagem colorida
         /// para visualização da distância dos objetos dentro da faixa válida.
         /// </summary>
-        /// <returns>Imagem colorida da profundidade ou null em caso de falha.</returns>
         public BitmapSource CapturarDepthColorido()
         {
             if (!IsConnected)
@@ -266,11 +282,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
         }
 
         /// <summary>
-        /// Aplica uma média móvel nos últimos volumes calculados.
-        /// Isso reduz oscilações visuais causadas por pequenas variações naturais do Kinect.
+        /// Aplica média móvel e suavização ponderada ao volume atual.
+        /// Reduz oscilações bruscas na exibição causadas pelo ruído natural do Kinect.
         /// </summary>
-        /// <param name="volumeAtual">Volume atual calculado em cm³.</param>
-        /// <returns>Volume estabilizado e arredondado sem casas decimais.</returns>
         private double EstabilizarVolume(double volumeAtual)
         {
             if (volumeAtual <= 0)
@@ -292,16 +306,30 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 soma += volume;
             }
 
-            double media = soma / _historicoVolumes.Count;
+            double mediaHistorico = soma / _historicoVolumes.Count;
 
-            return Math.Round(media, 0);
+            double volumeSuavizado;
+
+            if (_ultimoVolumeSuavizado <= 0)
+            {
+                volumeSuavizado = mediaHistorico;
+            }
+            else
+            {
+                volumeSuavizado =
+                    (_ultimoVolumeSuavizado * PESO_SUAVIZACAO) +
+                    (mediaHistorico * (1 - PESO_SUAVIZACAO));
+            }
+
+            _ultimoVolumeSuavizado = volumeSuavizado;
+
+            return Math.Round(volumeSuavizado, 0);
         }
 
         /// <summary>
         /// Calcula o volume atual detectado pelo Kinect em centímetros cúbicos.
-        /// Compara o mapa calibrado do ambiente vazio com o frame atual de profundidade.
+        /// O cálculo só é executado após a calibração do ambiente vazio.
         /// </summary>
-        /// <returns>Volume estabilizado em cm³.</returns>
         public double CalcularVolumeAtualCm3()
         {
             if (!IsConnected)
@@ -310,8 +338,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 return 0;
             }
 
-            if (_depthCalibrado == null)
+            if (!_calibrado || _depthCalibrado == null)
             {
+                LoggerService.LogWarning("Volume nao calculado: ambiente ainda nao calibrado.");
                 return 0;
             }
 
@@ -358,11 +387,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
         /// Calcula o volume real do objeto comparando a profundidade calibrada
         /// do ambiente vazio com a profundidade atual capturada pelo Kinect.
         /// </summary>
-        /// <param name="depthCalibrado">Mapa de profundidade do ambiente vazio.</param>
-        /// <param name="depthAtual">Mapa de profundidade atual com possível objeto.</param>
-        /// <param name="largura">Largura do frame de profundidade.</param>
-        /// <param name="altura">Altura do frame de profundidade.</param>
-        /// <returns>Volume calculado em cm³.</returns>
         private double CalcularVolumeRealCm3(short[] depthCalibrado, short[] depthAtual, int largura, int altura)
         {
             if (depthCalibrado == null || depthAtual == null)
@@ -439,12 +463,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
         /// <summary>
         /// Realiza a calibração volumétrica do ambiente vazio.
-        /// O Kinect movimenta o motor entre -27° e +27°, coleta leituras de profundidade
-        /// e cria um mapa base para comparação posterior com objetos.
+        /// Cria o mapa base usado como referência para o cálculo posterior do volume.
         /// </summary>
-        /// <param name="token">Token de cancelamento da calibração.</param>
-        /// <param name="progress">Progresso opcional para atualização da interface.</param>
-        /// <returns>Resultado da calibração, incluindo volume máximo e data.</returns>
         public async Task<CalibrationResult> CalibrateAsync(
             CancellationToken token,
             IProgress<CalibrationProgress> progress = null)
@@ -454,6 +474,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 LoggerService.Erro("Kinect nao esta conectado para calibrar.");
                 throw new InvalidOperationException("Kinect nao esta conectado para calibrar.");
             }
+
+            _calibrado = false;
 
             LoggerService.Info("Iniciando calibracao volumetrica do ambiente vazio.");
 
@@ -512,6 +534,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 if (!mapaCapturado)
                 {
+                    _calibrado = false;
+
                     LoggerService.Erro("Calibracao interrompida: mapa de referencia do ambiente nao capturado.");
 
                     return new CalibrationResult
@@ -523,6 +547,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 }
 
                 double volumeMaximo = CalcularVolumeReferenciaCm3(_depthCalibrado, _larguraDepth, _alturaDepth);
+
+                _calibrado = true;
 
                 progress?.Report(new CalibrationProgress
                 {
@@ -550,6 +576,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
             catch (OperationCanceledException)
             {
+                _calibrado = false;
+
                 LoggerService.LogWarning("Calibracao cancelada pelo usuario.");
 
                 try
@@ -565,6 +593,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
             catch
             {
+                _calibrado = false;
+
                 LoggerService.Erro("Erro durante a calibracao.");
 
                 try
@@ -623,7 +653,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
         /// Captura múltiplos frames de profundidade e calcula a média dos pontos válidos.
         /// Usado durante a calibração para reduzir ruídos de leitura.
         /// </summary>
-        /// <returns>Média da profundidade em milímetros e quantidade de pontos válidos.</returns>
         private async Task<(double MediaDepth, int TotalPontos)> CapturarMediaDepthAsync(
             int quantidadeFrames,
             CancellationToken token)
@@ -686,8 +715,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
         /// <summary>
         /// Identifica a leitura angular com menor profundidade média.
-        /// Essa informação é usada apenas como referência auxiliar da calibração,
-        /// pois o cálculo volumétrico principal usa o mapa completo do ambiente vazio.
+        /// Essa informação é usada apenas como referência auxiliar da calibração.
         /// </summary>
         private (double DistanciaChaoMm, int AnguloDetectado, int TotalPontos) DetectarChao(
             List<(int Angulo, double MediaDepth, int Pontos)> leituras)
@@ -722,10 +750,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
         /// <summary>
         /// Captura o mapa médio de profundidade do ambiente vazio.
-        /// Esse mapa calibrado é usado como referência para detectar objetos posteriormente.
-        /// Ao recalibrar, o histórico de volumes é limpo para evitar influência de leituras antigas.
+        /// Ao recalibrar, limpa o histórico de volumes e zera a suavização anterior.
         /// </summary>
-        /// <returns>True se o mapa foi capturado com pontos suficientes.</returns>
         private bool CapturarMapaDepthCalibrado()
         {
             if (!IsConnected)
@@ -783,7 +809,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 }
 
                 _depthCalibrado = new short[somaDepth.Length];
+
                 _historicoVolumes.Clear();
+                _ultimoVolumeSuavizado = 0;
 
                 int pontosValidos = 0;
 
@@ -821,7 +849,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
         /// Calcula o volume máximo de referência do espaço escaneado,
         /// considerando o campo de visão horizontal e vertical do Kinect.
         /// </summary>
-        /// <returns>Volume de referência em cm³, arredondado sem casas decimais.</returns>
         private double CalcularVolumeReferenciaCm3(short[] depthCalibrado, int largura, int altura)
         {
             if (depthCalibrado == null || largura <= 0 || altura <= 0)
