@@ -1,5 +1,12 @@
 ﻿namespace TCC_Inventory_Masters_Kinect.ConfigKinect
 {
+
+    /// <summary>
+    /// class KinectConfig 
+    /// Responsavel por centralizar os dados de forma que que não fiquem espalhados dentro do codigo 
+    /// de forma que qualquer alteração realizada seja feita aqui e altere dentro do codigo.
+    /// </summary>
+    /// 
     public static class KinectConfig
     {
        
