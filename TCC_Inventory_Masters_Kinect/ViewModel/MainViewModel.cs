@@ -159,6 +159,15 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             set => SetProperty(ref _historicoMedicoes, value);
         }
 
+        private string _statusAlertaTexto;
+        public string StatusAlertaTexto
+        {
+            get => _statusAlertaTexto;
+            set => SetProperty(ref _statusAlertaTexto, value);
+        }
+
+
+        public event Action CalibracaoFinalizada;
         public ICommand LigarKinectCommand { get; }
         public ICommand DesligarKinectCommand { get; }
         public ICommand CalibrarCommand { get; }
@@ -192,10 +201,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             StatusSQLite = "SQLite: Aguardando";
             VolumeTexto = "0.000 m3";
             VolumeMaximo = "0.000 m3";
-            PercentualOcupacaoTexto = "Ocupação: 0%";
+            PercentualOcupacaoTexto = "0%";
             EspacoLivreTexto = "0.000 m3";
             MensagemEnvioAplicacao = "Aguardando envio.";
             MensagemEspaco = "Calibre o espaço antes de salvar.";
+            StatusAlertaTexto = "OK";
 
             CarregarHistoricoMedicoes();
         }
@@ -357,6 +367,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 StatusMessage = $"Calibração concluída. Volume máximo: {FormatarVolumeM3(resultado.MaxVolume)}";
                 MensagemEspaco = "Calibração concluída. Salve o espaço para liberar medições.";
 
+                CalibracaoFinalizada?.Invoke();
+
                 LoggerService.Info($"Calibração concluída. Volume máximo: {resultado.MaxVolume:F0} cm3");
             }
             catch
@@ -465,8 +477,19 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             double espacoLivreCm3 = _volumeMaximoCm3 - volumeAtualCm3;
             espacoLivreCm3 = Math.Max(0, espacoLivreCm3);
 
-            PercentualOcupacaoTexto = $"Ocupação: {percentual:F1}%";
+            PercentualOcupacaoTexto = $"{percentual:F1}%";
             EspacoLivreTexto = FormatarVolumeM3(espacoLivreCm3);
+
+            double limite = 0;
+
+            if (!string.IsNullOrWhiteSpace(PercentualAlerta))
+            {
+                double.TryParse(PercentualAlerta, out limite);
+            }
+
+            StatusAlertaTexto = limite > 0 && percentual >= limite
+             ? "Limite"
+             : "Normal";
         }
 
         public void CarregarHistoricoMedicoes()

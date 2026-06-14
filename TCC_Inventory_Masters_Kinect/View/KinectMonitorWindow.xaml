@@ -154,39 +154,43 @@
             </Border>
 
             <Border Grid.Row="1"
-                    Background="White"
-                    BorderBrush="#DADDE2"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="0"
-                    ClipToBounds="True">
+                     Background="White"
+                      BorderBrush="#DADDE2"
+                       BorderThickness="1"
+                       CornerRadius="8"
+                         Padding="0"
+        ClipToBounds="True">
                 <Grid Background="#F4F6F8" ClipToBounds="True">
-                    <StackPanel HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Panel.ZIndex="0">
-                        <TextBlock Text="Video de Calibracao"
-                                   Foreground="#111111"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Center"/>
+                    <StackPanel x:Name="CalibrationMessagePanel"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Panel.ZIndex="0">
+                        <TextBlock x:Name="CalibrationTitleTextBlock"
+                       Text="Video de Calibracao"
+                       Foreground="#111111"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       HorizontalAlignment="Center"/>
 
-                        <TextBlock Text="O video inicia ao clicar em Calibrar"
-                                   Foreground="#6B7280"
-                                   FontSize="13"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,6,0,0"/>
+                        <TextBlock x:Name="CalibrationSubtitleTextBlock"
+                       Text="O video inicia ao clicar em Calibrar"
+                       Foreground="#6B7280"
+                       FontSize="13"
+                       HorizontalAlignment="Center"
+                       Margin="0,6,0,0"/>
                     </StackPanel>
 
                     <MediaElement x:Name="CalibrationVideoElement"
-                                  Source="Assets/calibracao.mp4"
-                                  LoadedBehavior="Manual"
-                                  UnloadedBehavior="Stop"
-                                  Stretch="UniformToFill"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch"
-                                  Visibility="Hidden"
-                                  Panel.ZIndex="1"
-                                  ToolTip="Espaco reservado para video de orientacao da calibracao."/>
+                        Source="Videos/calibracao.mp4"
+                          LoadedBehavior="Manual"
+                          UnloadedBehavior="Stop"
+                          Stretch="UniformToFill"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Visibility="Hidden"
+                           MediaEnded="CalibrationVideoElement_MediaEnded"
+                         Panel.ZIndex="1"
+                            ToolTip="Video de orientacao exibido durante a calibracao."/>
                 </Grid>
             </Border>
         </Grid>
@@ -248,63 +252,133 @@
                 </Border>
 
                 <Border Background="White"
-                        CornerRadius="8"
-                        Padding="16"
-                        Margin="0,0,0,12"
-                        BorderBrush="#DADDE2"
-                        BorderThickness="1">
+        CornerRadius="8"
+        Padding="16"
+        Margin="0,0,0,12"
+        BorderBrush="#DADDE2"
+        BorderThickness="1">
                     <StackPanel>
                         <TextBlock Text="Medicao de Volume"
-                                   Foreground="#111111"
-                                   FontWeight="Bold"
-                                   FontSize="16"
-                                   Margin="0,0,0,12"
-                                   ToolTip="Volume calculado comparando o mapa calibrado vazio com a profundidade atual."/>
+                   Foreground="#111111"
+                   FontWeight="Bold"
+                   FontSize="16"
+                   Margin="0,0,0,12"
+                   ToolTip="Resumo da ocupacao volumetrica calculada pelo Kinect."/>
 
                         <Border BorderBrush="#2563EB"
-                                BorderThickness="2"
-                                CornerRadius="8"
-                                Padding="14"
-                                Margin="0,0,0,10">
+                BorderThickness="2"
+                CornerRadius="8"
+                Padding="14"
+                Margin="0,0,0,12">
                             <StackPanel>
                                 <TextBlock Text="Volume atual"
-                                           Foreground="#2563EB"
-                                           FontSize="13"
-                                           FontWeight="SemiBold"
-                                           HorizontalAlignment="Center"/>
+                           Foreground="#2563EB"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           ToolTip="Volume atualmente ocupado no espaco monitorado."/>
 
                                 <TextBlock Text="{Binding VolumeTexto}"
-                                           Foreground="#111111"
-                                           FontSize="30"
-                                           FontWeight="Bold"
-                                           HorizontalAlignment="Center"
-                                           Margin="0,6,0,0"
-                                           TextWrapping="NoWrap"
-                                           TextTrimming="CharacterEllipsis"
-                                           ToolTip="Volume atual detectado pelo Kinect em centimetros cubicos."/>
+                           Foreground="#111111"
+                           FontSize="30"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="0,6,0,0"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip="Volume atual detectado pelo Kinect em metros cubicos."/>
                             </StackPanel>
                         </Border>
 
-                        <TextBlock Text="{Binding PercentualOcupacaoTexto}"
-                                   Foreground="#D97706"
-                                   FontSize="13"
-                                   Margin="0,4"
-                                   TextWrapping="Wrap"
-                                   ToolTip="Percentual de ocupacao calculado com base no volume maximo."/>
+                        <UniformGrid Columns="2" Rows="2">
+                            <Border BorderBrush="#D97706"
+                    BorderThickness="2"
+                    CornerRadius="8"
+                    Padding="10"
+                    Margin="0,0,6,6">
+                                <StackPanel>
+                                    <TextBlock Text="Ocupacao"
+                               Foreground="#D97706"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               ToolTip="Percentual ocupado em relacao ao volume maximo calibrado."/>
 
-                        <TextBlock Text="{Binding EspacoLivreTexto}"
-                                   Foreground="#16A34A"
-                                   FontSize="13"
-                                   Margin="0,4"
-                                   TextWrapping="Wrap"
-                                   ToolTip="Espaco livre estimado apos a medicao."/>
+                                    <TextBlock Text="{Binding PercentualOcupacaoTexto}"
+                               Foreground="#111111"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Border>
 
-                        <TextBlock Text="{Binding QuantidadePontosDepth}"
-                                   Foreground="#2563EB"
-                                   FontSize="13"
-                                   Margin="0,4"
-                                   TextWrapping="Wrap"
-                                   ToolTip="Quantidade de pontos de profundidade usados na calibracao."/>
+                            <Border BorderBrush="#16A34A"
+                    BorderThickness="2"
+                    CornerRadius="8"
+                    Padding="10"
+                    Margin="6,0,0,6">
+                                <StackPanel>
+                                    <TextBlock Text="Livre"
+                               Foreground="#16A34A"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               ToolTip="Volume livre estimado no espaco calibrado."/>
+
+                                    <TextBlock Text="{Binding EspacoLivreTexto}"
+                               Foreground="#111111"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border BorderBrush="#2563EB"
+                    BorderThickness="2"
+                    CornerRadius="8"
+                    Padding="10"
+                    Margin="0,6,6,0">
+                                <StackPanel>
+                                    <TextBlock Text="Pontos"
+                               Foreground="#2563EB"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               ToolTip="Quantidade de pontos de profundidade usados na calibracao."/>
+
+                                    <TextBlock Text="{Binding QuantidadePontosDepth}"
+                               Foreground="#111111"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border BorderBrush="#DC2626"
+                    BorderThickness="2"
+                    CornerRadius="8"
+                    Padding="10"
+                    Margin="6,6,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Alerta"
+                               Foreground="#DC2626"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               ToolTip="Indica se a ocupacao atingiu o limite informado no cadastro do espaco."/>
+
+                                    <TextBlock Text="{Binding StatusAlertaTexto}"
+                               Foreground="#111111"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
                     </StackPanel>
                 </Border>
 
@@ -352,7 +426,7 @@
                                  Padding="10,6"
                                  Margin="0,0,0,12"/>
 
-                        <TextBlock Text="Volume Maximo (cm3)"
+                        <TextBlock Text="Volume Maximo (m3)"
                                    Foreground="#6B7280"
                                    FontSize="12"
                                    FontWeight="SemiBold"
@@ -422,7 +496,7 @@
                                 Cursor="Hand"
                                 ToolTip="Captura o espaco vazio como referencia do volume maximo."/>
 
-                        <Button Content="Medir Volume Atual"
+                        <Button Content="Enviar Volume Atual"
                                 Command="{Binding MedirCommand}"
                                 Background="#2563EB"
                                 Foreground="White"
