@@ -10,12 +10,27 @@ using TCC_Inventory_Masters_Kinect.Model;
 
 namespace TCC_Inventory_Masters_Kinect.Service
 {
+    /// <summary>
+    /// Serviço responsável por controlar o Kinect v1, capturar imagem RGB,
+    /// capturar profundidade, realizar calibração do ambiente e calcular volume em cm³.
+    /// </summary>
     public class KinectService
     {
         private KinectSensor _sensor;
         private short[] _depthCalibrado;
         private int _larguraDepth;
         private int _alturaDepth;
+
+        /// <summary>
+        /// Histórico dos últimos volumes calculados.
+        /// Utilizado para suavizar oscilações naturais do sensor de profundidade.
+        /// </summary>
+        private readonly Queue<double> _historicoVolumes = new Queue<double>();
+
+        /// <summary>
+        /// Quantidade máxima de leituras usadas na média móvel do volume.
+        /// </summary>
+        private const int MAX_HISTORICO_VOLUME = 10;
 
         private const int ANGULO_MIN = -27;
         private const int ANGULO_MAX = 27;
@@ -31,11 +46,20 @@ namespace TCC_Inventory_Masters_Kinect.Service
         private const double FOV_HORIZONTAL_GRAUS = 57.0;
         private const double FOV_VERTICAL_GRAUS = 43.0;
 
+        /// <summary>
+        /// Evento disparado sempre que um novo frame da câmera RGB é capturado.
+        /// </summary>
         public event Action<BitmapSource> CameraFrameAtualizado;
 
+        /// <summary>
+        /// Indica se o Kinect está conectado e disponível para uso.
+        /// </summary>
         public bool IsConnected =>
             _sensor != null && _sensor.Status == KinectStatus.Connected;
 
+        /// <summary>
+        /// Inicializa o serviço tentando localizar o primeiro Kinect conectado ao computador.
+        /// </summary>
         public KinectService()
         {
             if (KinectSensor.KinectSensors.Count > 0)
@@ -44,6 +68,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
+        /// <summary>
+        /// Inicia o Kinect, habilitando a câmera RGB e o fluxo de profundidade.
+        /// Também registra o evento de atualização da câmera em tempo real.
+        /// </summary>
         public void Start()
         {
             if (_sensor == null)
@@ -69,6 +97,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
             LoggerService.Info("Kinect iniciado com camera RGB e profundidade.");
         }
 
+        /// <summary>
+        /// Finaliza o Kinect e remove eventos ativos para evitar consumo desnecessário
+        /// de recursos ou conflitos ao reiniciar o sensor.
+        /// </summary>
         public void Stop()
         {
             if (_sensor != null)
@@ -79,6 +111,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
+        /// <summary>
+        /// Evento interno responsável por capturar o frame RGB em tempo real
+        /// e convertê-lo para BitmapSource para exibição na interface.
+        /// </summary>
         private void Sensor_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
             try
@@ -114,6 +150,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
+        /// <summary>
+        /// Captura manualmente um frame da câmera RGB do Kinect.
+        /// </summary>
+        /// <returns>Imagem RGB capturada ou null em caso de falha.</returns>
         public BitmapSource CapturarFrameCamera()
         {
             if (!IsConnected || _sensor.ColorStream == null)
@@ -155,6 +195,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
+        /// <summary>
+        /// Captura o mapa de profundidade do Kinect e gera uma imagem colorida
+        /// para visualização da distância dos objetos dentro da faixa válida.
+        /// </summary>
+        /// <returns>Imagem colorida da profundidade ou null em caso de falha.</returns>
         public BitmapSource CapturarDepthColorido()
         {
             if (!IsConnected)
@@ -180,7 +225,6 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     for (int i = 0; i < depthData.Length; i++)
                     {
                         int depth = depthData[i] >> 3;
-
                         byte intensity;
 
                         if (depth < DEPTH_MIN_MM || depth > DEPTH_MAX_MM)
@@ -221,6 +265,186 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
+        /// <summary>
+        /// Aplica uma média móvel nos últimos volumes calculados.
+        /// Isso reduz oscilações visuais causadas por pequenas variações naturais do Kinect.
+        /// </summary>
+        /// <param name="volumeAtual">Volume atual calculado em cm³.</param>
+        /// <returns>Volume estabilizado e arredondado sem casas decimais.</returns>
+        private double EstabilizarVolume(double volumeAtual)
+        {
+            if (volumeAtual <= 0)
+            {
+                return 0;
+            }
+
+            _historicoVolumes.Enqueue(volumeAtual);
+
+            while (_historicoVolumes.Count > MAX_HISTORICO_VOLUME)
+            {
+                _historicoVolumes.Dequeue();
+            }
+
+            double soma = 0;
+
+            foreach (double volume in _historicoVolumes)
+            {
+                soma += volume;
+            }
+
+            double media = soma / _historicoVolumes.Count;
+
+            return Math.Round(media, 0);
+        }
+
+        /// <summary>
+        /// Calcula o volume atual detectado pelo Kinect em centímetros cúbicos.
+        /// Compara o mapa calibrado do ambiente vazio com o frame atual de profundidade.
+        /// </summary>
+        /// <returns>Volume estabilizado em cm³.</returns>
+        public double CalcularVolumeAtualCm3()
+        {
+            if (!IsConnected)
+            {
+                LoggerService.Erro("Kinect nao conectado para calcular volume atual.");
+                return 0;
+            }
+
+            if (_depthCalibrado == null)
+            {
+                return 0;
+            }
+
+            try
+            {
+                using (var frame = _sensor.DepthStream.OpenNextFrame(1000))
+                {
+                    if (frame == null)
+                    {
+                        return 0;
+                    }
+
+                    short[] depthAtual = new short[frame.PixelDataLength];
+                    frame.CopyPixelDataTo(depthAtual);
+
+                    if (_depthCalibrado.Length != depthAtual.Length)
+                    {
+                        LoggerService.Erro("Mapa calibrado e frame atual possuem tamanhos diferentes.");
+                        return 0;
+                    }
+
+                    double volumeCalculado = CalcularVolumeRealCm3(
+                        _depthCalibrado,
+                        depthAtual,
+                        frame.Width,
+                        frame.Height
+                    );
+
+                    double volumeEstabilizado = EstabilizarVolume(volumeCalculado);
+
+                    LoggerService.Info($"Volume estabilizado exibido: {volumeEstabilizado:N0} cm3");
+
+                    return volumeEstabilizado;
+                }
+            }
+            catch
+            {
+                LoggerService.Erro("Erro ao calcular volume atual pelo Kinect.");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Calcula o volume real do objeto comparando a profundidade calibrada
+        /// do ambiente vazio com a profundidade atual capturada pelo Kinect.
+        /// </summary>
+        /// <param name="depthCalibrado">Mapa de profundidade do ambiente vazio.</param>
+        /// <param name="depthAtual">Mapa de profundidade atual com possível objeto.</param>
+        /// <param name="largura">Largura do frame de profundidade.</param>
+        /// <param name="altura">Altura do frame de profundidade.</param>
+        /// <returns>Volume calculado em cm³.</returns>
+        private double CalcularVolumeRealCm3(short[] depthCalibrado, short[] depthAtual, int largura, int altura)
+        {
+            if (depthCalibrado == null || depthAtual == null)
+            {
+                LoggerService.Erro("Mapa de profundidade invalido para calculo de volume.");
+                return 0;
+            }
+
+            if (depthCalibrado.Length != depthAtual.Length)
+            {
+                LoggerService.Erro("Mapa calibrado e mapa atual possuem tamanhos diferentes.");
+                return 0;
+            }
+
+            double fovHorizontal = FOV_HORIZONTAL_GRAUS * Math.PI / 180.0;
+            double fovVertical = FOV_VERTICAL_GRAUS * Math.PI / 180.0;
+            double volumeTotalMm3 = 0;
+            int pontosValidos = 0;
+
+            int margemX = largura / 10;
+            int margemY = altura / 10;
+
+            for (int y = margemY; y < altura - margemY; y++)
+            {
+                for (int x = margemX; x < largura - margemX; x++)
+                {
+                    int i = y * largura + x;
+
+                    int profundidadeBaseMm = depthCalibrado[i] >> 3;
+                    int profundidadeAtualMm = depthAtual[i] >> 3;
+
+                    if (profundidadeBaseMm < DEPTH_MIN_MM || profundidadeBaseMm > DEPTH_MAX_MM)
+                    {
+                        continue;
+                    }
+
+                    if (profundidadeAtualMm < DEPTH_MIN_MM || profundidadeAtualMm > DEPTH_MAX_MM)
+                    {
+                        continue;
+                    }
+
+                    int alturaObjetoMm = profundidadeBaseMm - profundidadeAtualMm;
+
+                    if (alturaObjetoMm < ALTURA_MINIMA_OBJETO_MM)
+                    {
+                        continue;
+                    }
+
+                    if (alturaObjetoMm > ALTURA_MAXIMA_OBJETO_MM)
+                    {
+                        continue;
+                    }
+
+                    double larguraPixelMm = (2 * profundidadeAtualMm * Math.Tan(fovHorizontal / 2)) / largura;
+                    double alturaPixelMm = (2 * profundidadeAtualMm * Math.Tan(fovVertical / 2)) / altura;
+
+                    volumeTotalMm3 += alturaObjetoMm * larguraPixelMm * alturaPixelMm;
+                    pontosValidos++;
+                }
+            }
+
+            if (pontosValidos < PONTOS_MINIMOS_VOLUME)
+            {
+                LoggerService.LogWarning("Leitura descartada: poucos pontos validos para volume.");
+                return 0;
+            }
+
+            double volumeCm3 = volumeTotalMm3 / 1000.0;
+
+            LoggerService.Info($"Volume calculado com filtros Kinect: {volumeCm3:F0} cm3 | Pontos validos: {pontosValidos}");
+
+            return volumeCm3;
+        }
+
+        /// <summary>
+        /// Realiza a calibração volumétrica do ambiente vazio.
+        /// O Kinect movimenta o motor entre -27° e +27°, coleta leituras de profundidade
+        /// e cria um mapa base para comparação posterior com objetos.
+        /// </summary>
+        /// <param name="token">Token de cancelamento da calibração.</param>
+        /// <param name="progress">Progresso opcional para atualização da interface.</param>
+        /// <returns>Resultado da calibração, incluindo volume máximo e data.</returns>
         public async Task<CalibrationResult> CalibrateAsync(
             CancellationToken token,
             IProgress<CalibrationProgress> progress = null)
@@ -356,52 +580,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
-        public double CalcularVolumeAtualCm3()
-        {
-            if (!IsConnected)
-            {
-                LoggerService.Erro("Kinect nao conectado para calcular volume atual.");
-                return 0;
-            }
-
-            if (_depthCalibrado == null)
-            {
-                return 0;
-            }
-
-            try
-            {
-                using (var frame = _sensor.DepthStream.OpenNextFrame(1000))
-                {
-                    if (frame == null)
-                    {
-                        return 0;
-                    }
-
-                    short[] depthAtual = new short[frame.PixelDataLength];
-                    frame.CopyPixelDataTo(depthAtual);
-
-                    if (_depthCalibrado.Length != depthAtual.Length)
-                    {
-                        LoggerService.Erro("Mapa calibrado e frame atual possuem tamanhos diferentes.");
-                        return 0;
-                    }
-
-                    return CalcularVolumeRealCm3(
-                        _depthCalibrado,
-                        depthAtual,
-                        frame.Width,
-                        frame.Height
-                    );
-                }
-            }
-            catch
-            {
-                LoggerService.Erro("Erro ao calcular volume atual pelo Kinect.");
-                return 0;
-            }
-        }
-
+        /// <summary>
+        /// Move o motor vertical do Kinect para o ângulo informado,
+        /// respeitando os limites físicos de -27° a +27°.
+        /// </summary>
         private async Task MoverMotorAsync(
             int angulo,
             CancellationToken token,
@@ -437,6 +619,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
+        /// <summary>
+        /// Captura múltiplos frames de profundidade e calcula a média dos pontos válidos.
+        /// Usado durante a calibração para reduzir ruídos de leitura.
+        /// </summary>
+        /// <returns>Média da profundidade em milímetros e quantidade de pontos válidos.</returns>
         private async Task<(double MediaDepth, int TotalPontos)> CapturarMediaDepthAsync(
             int quantidadeFrames,
             CancellationToken token)
@@ -497,6 +684,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
             return (media, pontosTotal);
         }
 
+        /// <summary>
+        /// Identifica o plano de referência do chão com base nas leituras capturadas
+        /// durante a movimentação angular do Kinect.
+        /// </summary>
         private (double DistanciaChaoMm, int AnguloDetectado, int TotalPontos) DetectarChao(
             List<(int Angulo, double MediaDepth, int Pontos)> leituras)
         {
@@ -528,6 +719,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
             return (distanciaChaoReal, anguloChao, pontosChao);
         }
 
+        /// <summary>
+        /// Captura o mapa médio de profundidade do ambiente vazio.
+        /// Esse mapa calibrado é usado como referência para detectar objetos posteriormente.
+        /// </summary>
+        /// <returns>True se o mapa foi capturado com pontos suficientes.</returns>
         private bool CapturarMapaDepthCalibrado()
         {
             if (!IsConnected)
@@ -618,6 +814,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
         }
 
+        /// <summary>
+        /// Calcula o volume máximo de referência do espaço escaneado,
+        /// considerando o campo de visão horizontal e vertical do Kinect.
+        /// </summary>
+        /// <returns>Volume de referência em cm³, arredondado sem casas decimais.</returns>
         private double CalcularVolumeReferenciaCm3(short[] depthCalibrado, int largura, int altura)
         {
             if (depthCalibrado == null || largura <= 0 || altura <= 0)
@@ -666,81 +867,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
             LoggerService.Info($"Volume de referencia calculado: {volumeCm3:F0} cm3 | Pontos validos: {pontosValidos}");
 
-            return volumeCm3;
-        }
-
-        private double CalcularVolumeRealCm3(short[] depthCalibrado, short[] depthAtual, int largura, int altura)
-        {
-            if (depthCalibrado == null || depthAtual == null)
-            {
-                LoggerService.Erro("Mapa de profundidade invalido para calculo de volume.");
-                return 0;
-            }
-
-            if (depthCalibrado.Length != depthAtual.Length)
-            {
-                LoggerService.Erro("Mapa calibrado e mapa atual possuem tamanhos diferentes.");
-                return 0;
-            }
-
-            double fovHorizontal = FOV_HORIZONTAL_GRAUS * Math.PI / 180.0;
-            double fovVertical = FOV_VERTICAL_GRAUS * Math.PI / 180.0;
-            double volumeTotalMm3 = 0;
-            int pontosValidos = 0;
-
-            int margemX = largura / 10;
-            int margemY = altura / 10;
-
-            for (int y = margemY; y < altura - margemY; y++)
-            {
-                for (int x = margemX; x < largura - margemX; x++)
-                {
-                    int i = y * largura + x;
-
-                    int profundidadeBaseMm = depthCalibrado[i] >> 3;
-                    int profundidadeAtualMm = depthAtual[i] >> 3;
-
-                    if (profundidadeBaseMm < DEPTH_MIN_MM || profundidadeBaseMm > DEPTH_MAX_MM)
-                    {
-                        continue;
-                    }
-
-                    if (profundidadeAtualMm < DEPTH_MIN_MM || profundidadeAtualMm > DEPTH_MAX_MM)
-                    {
-                        continue;
-                    }
-
-                    int alturaObjetoMm = profundidadeBaseMm - profundidadeAtualMm;
-
-                    if (alturaObjetoMm < ALTURA_MINIMA_OBJETO_MM)
-                    {
-                        continue;
-                    }
-
-                    if (alturaObjetoMm > ALTURA_MAXIMA_OBJETO_MM)
-                    {
-                        continue;
-                    }
-
-                    double larguraPixelMm = (2 * profundidadeAtualMm * Math.Tan(fovHorizontal / 2)) / largura;
-                    double alturaPixelMm = (2 * profundidadeAtualMm * Math.Tan(fovVertical / 2)) / altura;
-
-                    volumeTotalMm3 += alturaObjetoMm * larguraPixelMm * alturaPixelMm;
-                    pontosValidos++;
-                }
-            }
-
-            if (pontosValidos < PONTOS_MINIMOS_VOLUME)
-            {
-                LoggerService.LogWarning("Leitura descartada: poucos pontos validos para volume.");
-                return 0;
-            }
-
-            double volumeCm3 = volumeTotalMm3 / 1000.0;
-
-            LoggerService.Info($"Volume calculado com filtros Kinect: {volumeCm3:F0} cm3 | Pontos validos: {pontosValidos}");
-
-            return volumeCm3;
+            return Math.Round(volumeCm3, 0);
         }
     }
 }
