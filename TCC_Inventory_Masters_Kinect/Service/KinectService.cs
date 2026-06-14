@@ -35,14 +35,14 @@ namespace TCC_Inventory_Masters_Kinect.Service
         private const int ANGULO_MIN = -27;
         private const int ANGULO_MAX = 27;
         private const int PASSO_ANGULO = 5;
-        private const int FRAMES_POR_ANGULO = 5;
+        private const int FRAMES_POR_ANGULO = 10;
         private const int ESPERA_MOTOR_MS = 1500;
 
         private const int DEPTH_MIN_MM = 1200;
         private const int DEPTH_MAX_MM = 3500;
         private const int ALTURA_MINIMA_OBJETO_MM = 30;
         private const int ALTURA_MAXIMA_OBJETO_MM = 1800;
-        private const int PONTOS_MINIMOS_VOLUME = 100;
+        private const int PONTOS_MINIMOS_VOLUME = 1000;
         private const double FOV_HORIZONTAL_GRAUS = 57.0;
         private const double FOV_VERTICAL_GRAUS = 43.0;
 
@@ -455,7 +455,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 throw new InvalidOperationException("Kinect nao esta conectado para calibrar.");
             }
 
-            LoggerService.Info("Iniciando calibracao volumetrica do espaco vazio.");
+            LoggerService.Info("Iniciando calibracao volumetrica do ambiente vazio.");
 
             int anguloOriginal = _sensor.ElevationAngle;
             var leiturasPorAngulo = new List<(int Angulo, double MediaDepth, int Pontos)>();
@@ -473,7 +473,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                     progress?.Report(new CalibrationProgress
                     {
-                        Status = $"Estabilizando em {angulo} graus...",
+                        Status = $"Estabilizando Kinect em {angulo} graus. Mantenha a área vazia...",
                         Percentage = (int)((passoAtual / (double)totalPassos) * 70)
                     });
 
@@ -496,7 +496,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 progress?.Report(new CalibrationProgress
                 {
-                    Status = "Detectando plano de referencia...",
+                    Status = "Analisando leituras do ambiente vazio...",
                     Percentage = 80
                 });
 
@@ -504,7 +504,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 progress?.Report(new CalibrationProgress
                 {
-                    Status = "Capturando mapa volumetrico vazio...",
+                    Status = "Mantenha a área vazia. Capturando referência do ambiente...",
                     Percentage = 88
                 });
 
@@ -512,7 +512,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 if (!mapaCapturado)
                 {
-                    LoggerService.Erro("Calibracao interrompida: mapa volumetrico vazio nao capturado.");
+                    LoggerService.Erro("Calibracao interrompida: mapa de referencia do ambiente nao capturado.");
 
                     return new CalibrationResult
                     {
@@ -526,7 +526,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 progress?.Report(new CalibrationProgress
                 {
-                    Status = "Restaurando posicao do Kinect...",
+                    Status = "Restaurando posicao original do Kinect...",
                     Percentage = 96
                 });
 
@@ -535,11 +535,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
                 progress?.Report(new CalibrationProgress
                 {
-                    Status = "Calibracao concluida!",
+                    Status = "Calibracao concluida. Ambiente vazio salvo como referencia.",
                     Percentage = 100
                 });
 
-                LoggerService.Info($"Calibracao concluida | Chao em: {resultadoChao.DistanciaChaoMm:F0} mm | Volume referencia: {volumeMaximo:F0} cm3");
+                LoggerService.Info($"Calibracao concluida | Referencia angular: {resultadoChao.AnguloDetectado} graus | Distancia media: {resultadoChao.DistanciaChaoMm:F0} mm | Volume referencia: {volumeMaximo:F0} cm3");
 
                 return new CalibrationResult
                 {
@@ -685,8 +685,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
         }
 
         /// <summary>
-        /// Identifica o plano de referência do chão com base nas leituras capturadas
-        /// durante a movimentação angular do Kinect.
+        /// Identifica a leitura angular com menor profundidade média.
+        /// Essa informação é usada apenas como referência auxiliar da calibração,
+        /// pois o cálculo volumétrico principal usa o mapa completo do ambiente vazio.
         /// </summary>
         private (double DistanciaChaoMm, int AnguloDetectado, int TotalPontos) DetectarChao(
             List<(int Angulo, double MediaDepth, int Pontos)> leituras)
@@ -707,14 +708,14 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
             if (menorMedia == double.MaxValue || pontosChao < PONTOS_MINIMOS_VOLUME)
             {
-                LoggerService.Erro("Nao foi possivel detectar plano de referencia com pontos suficientes.");
+                LoggerService.Erro("Nao foi possivel obter referencia angular com pontos suficientes.");
                 return (0, 0, 0);
             }
 
             double anguloRad = Math.Abs(anguloChao) * Math.PI / 180.0;
             double distanciaChaoReal = menorMedia * Math.Cos(anguloRad);
 
-            LoggerService.Info($"Chao detectado | Angulo: {anguloChao} graus | Distancia real: {distanciaChaoReal:F1} mm");
+            LoggerService.Info($"Referencia angular detectada | Angulo: {anguloChao} graus | Distancia media ajustada: {distanciaChaoReal:F1} mm");
 
             return (distanciaChaoReal, anguloChao, pontosChao);
         }
@@ -722,6 +723,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
         /// <summary>
         /// Captura o mapa médio de profundidade do ambiente vazio.
         /// Esse mapa calibrado é usado como referência para detectar objetos posteriormente.
+        /// Ao recalibrar, o histórico de volumes é limpo para evitar influência de leituras antigas.
         /// </summary>
         /// <returns>True se o mapa foi capturado com pontos suficientes.</returns>
         private bool CapturarMapaDepthCalibrado()
@@ -781,6 +783,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 }
 
                 _depthCalibrado = new short[somaDepth.Length];
+                _historicoVolumes.Clear();
 
                 int pontosValidos = 0;
 
@@ -803,7 +806,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 _larguraDepth = largura;
                 _alturaDepth = altura;
 
-                LoggerService.Info($"Mapa de profundidade calibrado capturado. Pontos validos: {pontosValidos}");
+                LoggerService.Info($"Mapa de referencia do ambiente capturado. Pontos validos: {pontosValidos}");
 
                 return true;
             }
