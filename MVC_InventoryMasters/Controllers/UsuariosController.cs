@@ -9,9 +9,6 @@ using System.Threading.Tasks;
 
 namespace MVC_InventoryMasters.Controllers
 {
-    /// <summary>
-    /// Controller responsável pelo gerenciamento de usuários do sistema.
-    /// </summary>
     public class UsuariosController : Controller
     {
         private readonly UsuariosRepository _repository;
@@ -40,18 +37,45 @@ namespace MVC_InventoryMasters.Controllers
                 .ToList();
         }
 
-        /// <summary>
-        /// Lista os usuários com paginação.
-        /// </summary>
-        /// <param name="pagina">Número da página atual para exibição.</param>
-        /// <returns>Retorna a view contendo a lista paginada de usuários.</returns>
-        /// <remarks>A paginação é fixa em 10 registros por página.</remarks>
-        public async Task<IActionResult> Index(int pagina = 1)
+        public async Task<IActionResult> Index(
+            int pagina = 1,
+            string termo = null,
+            string perfil = null,
+            bool? ativo = null)
         {
             try
             {
                 int itensPorPagina = 10;
+
                 var todosUsuarios = await _repository.ListarTodos();
+
+                if (!string.IsNullOrWhiteSpace(termo))
+                {
+                    todosUsuarios = todosUsuarios
+                        .Where(u =>
+                            (!string.IsNullOrEmpty(u.Nome) &&
+                             u.Nome.Contains(termo, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(u.Email) &&
+                             u.Email.Contains(termo, StringComparison.OrdinalIgnoreCase)))
+                        .ToList();
+                }
+
+                if (!string.IsNullOrWhiteSpace(perfil))
+                {
+                    todosUsuarios = todosUsuarios
+                        .Where(u =>
+                            !string.IsNullOrEmpty(u.Perfil) &&
+                            u.Perfil.Contains(perfil, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+                }
+
+                if (ativo.HasValue)
+                {
+                    todosUsuarios = todosUsuarios
+                        .Where(u => u.Ativo == ativo.Value)
+                        .ToList();
+                }
+
                 int totalRegistros = todosUsuarios.Count();
 
                 var totalPaginas = (int)Math.Ceiling(totalRegistros / (double)itensPorPagina);
@@ -61,6 +85,9 @@ namespace MVC_InventoryMasters.Controllers
                     .Take(itensPorPagina)
                     .ToList();
 
+                ViewBag.Termo = termo;
+                ViewBag.Perfil = perfil;
+                ViewBag.Ativo = ativo;
                 ViewBag.TotalPaginas = totalPaginas;
                 ViewBag.PaginaAtual = pagina;
                 ViewBag.TotalRegistros = totalRegistros;
@@ -74,10 +101,6 @@ namespace MVC_InventoryMasters.Controllers
             }
         }
 
-        /// <summary>
-        /// Exibe a tela de criação de um novo usuário.
-        /// </summary>
-        /// <returns>Retorna a view de criação carregada com os perfis disponíveis.</returns>
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -85,11 +108,6 @@ namespace MVC_InventoryMasters.Controllers
             return View(new Usuario { Ativo = true });
         }
 
-        /// <summary>
-        /// Persiste um novo usuário no banco de dados.
-        /// </summary>
-        /// <param name="usuario">Objeto contendo os dados do novo usuário.</param>
-        /// <returns>Redireciona para a listagem em caso de sucesso ou retorna a view com erros de validação.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Usuario usuario)
@@ -115,11 +133,6 @@ namespace MVC_InventoryMasters.Controllers
             }
         }
 
-        /// <summary>
-        /// Exibe a tela de edição de um usuário específico.
-        /// </summary>
-        /// <param name="id">O identificador único do usuário.</param>
-        /// <returns>Retorna a view de edição com os dados do usuário.</returns>
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -140,12 +153,6 @@ namespace MVC_InventoryMasters.Controllers
             }
         }
 
-        /// <summary>
-        /// Atualiza os dados de um usuário existente.
-        /// </summary>
-        /// <param name="usuario">Dados do usuário submetidos pelo formulário.</param>
-        /// <returns>Redireciona para a listagem ou retorna para a edição em caso de erro ou nenhuma alteração.</returns>
-        /// <remarks>Realiza a preservação da senha e data de cadastro original.</remarks>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Usuario usuario)
@@ -192,11 +199,6 @@ namespace MVC_InventoryMasters.Controllers
             }
         }
 
-        /// <summary>
-        /// Exibe a tela de confirmação de exclusão.
-        /// </summary>
-        /// <param name="id">O identificador único do usuário.</param>
-        /// <returns>Retorna a view de confirmação.</returns>
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
@@ -214,11 +216,6 @@ namespace MVC_InventoryMasters.Controllers
             }
         }
 
-        /// <summary>
-        /// Confirma a exclusão de um usuário no banco de dados.
-        /// </summary>
-        /// <param name="id">O identificador do usuário a ser removido.</param>
-        /// <returns>Redireciona para o Index após a exclusão.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -239,11 +236,6 @@ namespace MVC_InventoryMasters.Controllers
             }
         }
 
-        /// <summary>
-        /// Exibe os detalhes de um usuário.
-        /// </summary>
-        /// <param name="id">O identificador único do usuário.</param>
-        /// <returns>Retorna a view com as informações detalhadas.</returns>
         [HttpGet]
         public async Task<IActionResult> Details(string id)
         {
