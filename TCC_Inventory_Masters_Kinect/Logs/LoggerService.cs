@@ -5,6 +5,10 @@ using TCC_Inventory_Masters_Kinect.Model;
 
 namespace TCC_Inventory_Masters_Kinect.Logs
 {
+    /// <summary>
+    /// Serviço centralizado de logs da aplicação.
+    /// Registra mensagens no Debug, Trace e na tabela Logs do SQLite.
+    /// </summary>
     public static class LoggerService
     {
         private static readonly object _lock = new object();
@@ -15,31 +19,67 @@ namespace TCC_Inventory_Masters_Kinect.Logs
             Trace.WriteLine(linha);
         };
 
+        /// <summary>
+        /// Registra uma mensagem informativa.
+        /// </summary>
         public static void Info(string mensagem)
         {
             SalvarLog("INFO", mensagem);
         }
 
-        public static void Erro(string mensagem)
+        /// <summary>
+        /// Registra uma mensagem de erro.
+        /// O parâmetro Exception é opcional para permitir chamadas simples ou com exceção.
+        /// </summary>
+        public static void Erro(string mensagem, Exception ex = null)
         {
-            SalvarLog("ERRO", mensagem);
+            string detalhe = mensagem;
+
+            if (ex != null)
+            {
+                detalhe += $" | Erro: {ex.Message}";
+
+                if (ex.InnerException != null)
+                {
+                    detalhe += $" | Detalhes: {ex.InnerException.Message}";
+                }
+
+                if (!string.IsNullOrWhiteSpace(ex.StackTrace))
+                {
+                    detalhe += $" | StackTrace: {ex.StackTrace}";
+                }
+            }
+
+            SalvarLog("ERRO", detalhe);
         }
 
+        /// <summary>
+        /// Alias para Info.
+        /// </summary>
         public static void LogInformation(string mensagem)
         {
             Info(mensagem);
         }
 
+        /// <summary>
+        /// Registra uma mensagem de aviso.
+        /// </summary>
         public static void LogWarning(string mensagem)
         {
             SalvarLog("AVISO", mensagem);
         }
 
-        public static void LogError(string mensagem)
+        /// <summary>
+        /// Alias para Erro.
+        /// </summary>
+        public static void LogError(string mensagem, Exception ex = null)
         {
-            Erro(mensagem);
+            Erro(mensagem, ex);
         }
 
+        /// <summary>
+        /// Salva a mensagem de log no console de depuração e no banco SQLite.
+        /// </summary>
         private static void SalvarLog(string nivel, string mensagem)
         {
             try

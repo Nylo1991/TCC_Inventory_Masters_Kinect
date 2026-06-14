@@ -189,7 +189,7 @@ namespace TCC_Inventory_Masters_Kinect.View
                         Usuario = usuario,
                         Email = email,
                         Senha = senha,
-                        Perfil = "Administrador",
+                        Perfil = "",
                         CriadoEm = DateTime.Now,
                         Ativo = true
                     };
