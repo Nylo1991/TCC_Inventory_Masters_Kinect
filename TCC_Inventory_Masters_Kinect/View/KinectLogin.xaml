@@ -42,7 +42,8 @@
                                Text="Entre ou cadastre um acesso"
                                Foreground="#6B7280"
                                FontSize="14"
-                               Margin="0,8,0,24"/>
+                               Margin="0,8,0,24"
+                               ToolTip="Para acessa o sistema e necessario entrar ou realizar um cadastro ."/>
 
                     <Grid Margin="0,0,0,22">
                         <Grid.ColumnDefinitions>
@@ -72,11 +73,23 @@
                     </Grid>
 
                     <StackPanel x:Name="LoginPanel">
-                        <TextBlock Text="Usuario" Foreground="#111111" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                        <TextBox x:Name="LoginUsuarioTextBox" Height="42" FontSize="15" Padding="12,0" BorderBrush="#DADDE2" BorderThickness="1"/>
+                      <TextBlock Text="Usuario ou Email"
+                                Foreground="#111111"
+                                 FontSize="14"
+                                 FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+
+                        <TextBox x:Name="LoginUsuarioTextBox"
+                                  Height="42"
+                                    FontSize="15"
+                                    Padding="12,0"
+                                   BorderBrush="#DADDE2"
+                                    BorderThickness="1"
+                                   ToolTip="Digite seu usuario ou email cadastrado."/>
 
                         <TextBlock Text="Senha" Foreground="#111111" FontSize="14" FontWeight="SemiBold" Margin="0,16,0,6"/>
-                        <PasswordBox x:Name="LoginSenhaPasswordBox" Height="42" FontSize="15" Padding="12,0" BorderBrush="#DADDE2" BorderThickness="1"/>
+                        <PasswordBox x:Name="LoginSenhaPasswordBox" Height="42" FontSize="15" Padding="12,0" BorderBrush="#DADDE2" BorderThickness="1" 
+                                     ToolTip="Digite sua senha cadastrada."/>
                         <TextBlock Text="Minimo de 6 caracteres."
                           Foreground="#6B7280"
                           FontSize="12"

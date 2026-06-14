@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 using System.Windows;
 using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Model;
+using System.Text.RegularExpressions;
 
 namespace TCC_Inventory_Masters_Kinect.View
 {
@@ -81,23 +83,26 @@ namespace TCC_Inventory_Masters_Kinect.View
         {
             try
             {
-                string usuario = LoginUsuarioTextBox.Text?.Trim();
+                string identificador = LoginUsuarioTextBox.Text?.Trim().ToLower();
                 string senha = LoginSenhaPasswordBox.Password?.Trim();
 
-                if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(senha))
+                if (string.IsNullOrWhiteSpace(identificador) || string.IsNullOrWhiteSpace(senha))
                 {
-                    MensagemTextBlock.Text = "Informe usuario e senha.";
+                    MensagemTextBlock.Text = "Informe usuario ou email e senha.";
                     return;
                 }
 
                 using (var db = new AppDbContext())
                 {
                     var usuarioAcesso = db.UsuariosAcesso
-                        .FirstOrDefault(x => x.Usuario == usuario && x.Senha == senha && x.Ativo);
+                        .FirstOrDefault(x =>
+                            (x.Usuario.ToLower() == identificador || x.Email.ToLower() == identificador) &&
+                            x.Senha == senha &&
+                            x.Ativo);
 
                     if (usuarioAcesso == null)
                     {
-                        MensagemTextBlock.Text = "Usuario ou senha invalidos.";
+                        MensagemTextBlock.Text = "Usuario, email ou senha invalidos.";
                         LoggerService.LogWarning("Tentativa de login invalida.");
                         return;
                     }
@@ -120,7 +125,7 @@ namespace TCC_Inventory_Masters_Kinect.View
                 MensagemTextBlock.Text = string.Empty;
 
                 string usuario = CadastroUsuarioTextBox.Text?.Trim();
-                string email = CadastroEmailTextBox.Text?.Trim();
+                string email = CadastroEmailTextBox.Text?.Trim().ToLower();
                 string senha = CadastroSenhaPasswordBox.Password?.Trim();
                 string confirmarSenha = CadastroConfirmarSenhaPasswordBox.Password?.Trim();
 
@@ -168,7 +173,8 @@ namespace TCC_Inventory_Masters_Kinect.View
 
                 using (var db = new AppDbContext())
                 {
-                    bool usuarioJaExiste = db.UsuariosAcesso.Any(x => x.Usuario == usuario);
+                    bool usuarioJaExiste = db.UsuariosAcesso
+                        .Any(x => x.Usuario.ToLower() == usuario.ToLower());
 
                     if (usuarioJaExiste)
                     {
@@ -176,7 +182,8 @@ namespace TCC_Inventory_Masters_Kinect.View
                         return;
                     }
 
-                    bool emailJaExiste = db.UsuariosAcesso.Any(x => x.Email == email);
+                    bool emailJaExiste = db.UsuariosAcesso
+                        .Any(x => x.Email.ToLower() == email);
 
                     if (emailJaExiste)
                     {
@@ -189,7 +196,7 @@ namespace TCC_Inventory_Masters_Kinect.View
                         Usuario = usuario,
                         Email = email,
                         Senha = senha,
-                        Perfil = "",
+                        Perfil = "Usuario",
                         CriadoEm = DateTime.Now,
                         Ativo = true
                     };
@@ -210,10 +217,34 @@ namespace TCC_Inventory_Masters_Kinect.View
 
         private bool EmailValido(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
+            email = email.Trim();
+
+            if (email.Contains(" "))
+            {
+                return false;
+            }
+
+            if (email.Count(x => x == '@') != 1)
+            {
+                return false;
+            }
+
+            string padrao = @"^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$";
+
+            if (!Regex.IsMatch(email, padrao))
+            {
+                return false;
+            }
+
             try
             {
                 var endereco = new MailAddress(email);
-                return endereco.Address == email;
+                return endereco.Address.Equals(email, StringComparison.OrdinalIgnoreCase);
             }
             catch
             {
