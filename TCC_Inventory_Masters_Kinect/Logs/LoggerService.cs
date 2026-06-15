@@ -11,6 +11,11 @@ namespace TCC_Inventory_Masters_Kinect.Logs
     /// </summary>
     public static class LoggerService
     {
+
+        /// <summary>
+        /// O lock é necessário para garantir que múltiplas threads não tentem acessar o banco de dados ao mesmo tempo,
+        /// evitando conflitos e garantindo a integridade dos logs.
+        /// </summary>
         private static readonly object _lock = new object();
 
         private static readonly Action<string> _logger = linha =>
@@ -70,7 +75,7 @@ namespace TCC_Inventory_Masters_Kinect.Logs
         }
 
         /// <summary>
-        /// Alias para Erro.
+        ///  evento  que indica algo crítico que impediu uma funcionalidade de completar sua tarefa..
         /// </summary>
         public static void LogError(string mensagem, Exception ex = null)
         {
