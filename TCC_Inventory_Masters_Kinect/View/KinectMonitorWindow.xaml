@@ -184,7 +184,7 @@
                           Source="Videos/calibracao.mp4"
                           LoadedBehavior="Manual"
                            UnloadedBehavior="Stop"
-                           Stretch="Uniform"
+                           Stretch="UniformToFill"
                             HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch"
                              Visibility="Hidden"
