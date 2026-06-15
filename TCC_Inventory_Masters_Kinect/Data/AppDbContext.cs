@@ -5,18 +5,33 @@ using System.Data.SQLite.EF6;
 using System.IO;
 using TCC_Inventory_Masters_Kinect.Model;
 
+
 namespace TCC_Inventory_Masters_Kinect.Data
 {
+
+    /// <summary>
+    /// Classe de contexto do Entity Framework para acesso ao banco SQLite.
+    /// responsavel por arzamenar as medições volumétricas, históricos de ocupação, usuários de acesso e logs do sistema.
+    /// gerencia a conexão e as consultas queres serão realizadas ao banco de dados local.
+    /// </summary>
     [DbConfigurationType(typeof(SQLiteConfigurationInternal))]
     public class AppDbContext : DbContext
     {
+
+        /// <summary>
+        /// Responsavel por criar a conexão com o banco SQLite e garantir que as tabelas necessárias existam.
+        /// </summary>
         public AppDbContext()
             : base(CreateSQLiteConnection(), true)
         {
             Database.SetInitializer<AppDbContext>(null);
             CriarTabelaManual();
         }
-
+        /// <summary>
+        /// Cria a conexão com o banco SQLite utilizando o caminho do arquivo
+        /// "inventorymasters.db" localizado no diretório base da aplicação.
+        /// </summary>
+        /// <returns>Uma conexão SQLite configurada para o banco de dados local.</returns>
         private static SQLiteConnection CreateSQLiteConnection()
         {
             string dbPath = Path.Combine(
@@ -26,12 +41,19 @@ namespace TCC_Inventory_Masters_Kinect.Data
 
             return new SQLiteConnection($"Data Source={dbPath};Version=3;");
         }
-
+        /// <summary>
+        /// Responsavel por receber as entidades do modelo e
+        /// mapear para as tabelas correspondentes no banco SQLite.
+        /// </summary>
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
         public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
         public DbSet<UsuarioAcesso> UsuariosAcesso { get; set; }
         public DbSet<Log> Logs { get; set; }
 
+        /// <summary>
+        /// Configura o mapeamento das entidades para as tabelas do banco SQLite.
+        /// </summary>
+        /// <param name="modelBuilder">O construtor de modelo usado para configurar as entidades.</param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -41,7 +63,12 @@ namespace TCC_Inventory_Masters_Kinect.Data
             modelBuilder.Entity<UsuarioAcesso>().ToTable("UsuariosAcesso");
             modelBuilder.Entity<Log>().ToTable("Logs");
         }
-
+        /// <summary>
+        /// Responsavel por criar manualmente as tabelas no banco SQLite caso elas não existam. 
+        /// desta forma , garantimos que a estrutura do banco esteja correta mesmo 
+        /// sem usar migrações do Entity Framework,e o banco pode rodar em ambientes mesmo que não
+        /// possuam o Entity Framework instalado ou configurado.
+        /// </summary>
         private void CriarTabelaManual()
         {
             using (var conn = CreateSQLiteConnection())
@@ -89,6 +116,9 @@ namespace TCC_Inventory_Masters_Kinect.Data
                     );
                 ";
 
+                /// responsavel por criar as tabelas no banco SQLite caso elas não existam, 
+                /// garantindo a estrutura correta do banco mesmo sem usar migrações do Entity Framework.
+                /// 
                 using (var cmd = new SQLiteCommand(sql, conn))
                 {
                     cmd.ExecuteNonQuery();
@@ -108,7 +138,14 @@ namespace TCC_Inventory_Masters_Kinect.Data
                 GarantirColuna(conn, "HistoricosOcupacao", "Status", "TEXT");
             }
         }
-
+        /// <summary>
+        /// Verifica se uma coluna específica existe em uma tabela do banco SQLite e,
+        /// caso contrário, adiciona a coluna com o tipo especificado.
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="tabela"></param>
+        /// <param name="coluna"></param>
+        /// <param name="tipo"></param>
         private void GarantirColuna(SQLiteConnection conn, string tabela, string coluna, string tipo)
         {
             bool existe = false;
@@ -135,7 +172,10 @@ namespace TCC_Inventory_Masters_Kinect.Data
             }
         }
     }
-
+    /// <summary>
+    /// Configuração personalizada do Entity Framework para garantir a 
+    /// compatibilidade com o provedor SQLite.
+    /// </summary>
     public class SQLiteConfigurationInternal : DbConfiguration
     {
         public SQLiteConfigurationInternal()

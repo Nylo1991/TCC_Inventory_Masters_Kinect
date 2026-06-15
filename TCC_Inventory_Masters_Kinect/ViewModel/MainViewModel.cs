@@ -351,7 +351,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 _volumeTimer?.Stop();
 
-                StatusMessage = "Calibrando ambiente vazio...";
+                StatusMessage = "Calibrando ambiente ...";
 
                 var resultado = await _kinectService.CalibrateAsync(CancellationToken.None);
 
@@ -361,7 +361,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 QuantidadePontosDepth = resultado.TotalPointsFound.ToString();
 
                 VolumeTexto = "0.000 m3";
-                PercentualOcupacaoTexto = "Ocupação: 0%";
+                PercentualOcupacaoTexto = "0%";
                 EspacoLivreTexto = FormatarVolumeM3(resultado.MaxVolume);
 
                 StatusMessage = $"Calibração concluída. Volume máximo: {FormatarVolumeM3(resultado.MaxVolume)}";
