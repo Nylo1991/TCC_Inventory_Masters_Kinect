@@ -181,16 +181,16 @@
                     </StackPanel>
 
                     <MediaElement x:Name="CalibrationVideoElement"
-                        Source="Videos/calibracao.mp4"
+                          Source="Videos/calibracao.mp4"
                           LoadedBehavior="Manual"
-                          UnloadedBehavior="Stop"
-                          Stretch="UniformToFill"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Visibility="Hidden"
+                           UnloadedBehavior="Stop"
+                           Stretch="Uniform"
+                            HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch"
+                             Visibility="Hidden"
                            MediaEnded="CalibrationVideoElement_MediaEnded"
-                         Panel.ZIndex="1"
-                            ToolTip="Video de orientacao exibido durante a calibracao."/>
+                            Panel.ZIndex="1"
+                              ToolTip="Video de orientacao exibido durante a calibracao."/>
                 </Grid>
             </Border>
         </Grid>
