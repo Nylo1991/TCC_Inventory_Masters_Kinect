@@ -1,7 +1,11 @@
 ﻿using System;
 
+
 namespace TCC_Inventory_Masters_Kinect.Model
 {
+    /// <summary>
+    /// Modelo de dados para representar uma medição volumétrica realizada pelo Kinect.
+    /// </summary>
     public class MedicaoVolume
     {
         public int Id { get; set; }
