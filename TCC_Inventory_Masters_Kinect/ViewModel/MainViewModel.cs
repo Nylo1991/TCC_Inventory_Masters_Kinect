@@ -14,8 +14,17 @@ using TCC_Inventory_Masters_Kinect.Service;
 
 namespace TCC_Inventory_Masters_Kinect.ViewModel
 {
+    /// <summary>
+    ///  ViewModel principal da aplicação, responsável por gerenciar o estado do Kinect, 
+    ///  exibir as imagens, realizar calibração e medições de volume, e comunicar com o SignalR e o banco de dados SQLite.
+    /// </summary>
     public class MainViewModel : BaseViewModel
     {
+
+        /// <summary>
+        /// serviço resposnaevl por gerenciar a interação de comunicação com o Kinect, 
+        /// incluindo captura de frames, calibração e cálculo de volume.
+        /// </summary>
         private readonly KinectService _kinectService;
         private readonly SignalRService _signalRService;
         private readonly KinectRepository _repository;
@@ -25,6 +34,13 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
         private double _ultimoVolumeAtual;
         private double _volumeMaximoCm3;
+
+        /// <summary>
+        /// eventos respnsaveis por atualizar as mudanças como : imagens da câmera RGB e Depth, 
+        /// os indicadores de volume, status de conexão e mensagens para o usuário.
+        /// são responsaveis por atualizar a interface do usuário em tempo real, 
+        /// garantindo que as informações exibidas estejam sempre atualizadas com o estado atual do Kinect e das medições.
+        /// </summary>
 
         private BitmapSource _cameraImage;
         public BitmapSource CameraImage
@@ -166,6 +182,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             set => SetProperty(ref _statusAlertaTexto, value);
         }
 
+        /// <summary>
+        /// eventos responsáveis por acionar as ações de ligar/desligar o Kinect,
+        /// calibrar o ambiente, realizar medições e salvar o espaço.
+        /// </summary>
 
         public event Action CalibracaoFinalizada;
         public ICommand LigarKinectCommand { get; }
@@ -181,12 +201,18 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
         public MainViewModel(string usuarioLogado)
         {
-            UsuarioLogado = usuarioLogado;
 
+            /// instancia dos serviços pilares do sistema - KinectService para gerenciar o Kinect,
+            /// SignalRService para comunicação em tempo real, 
+            /// e KinectRepository para acesso ao banco de dados SQLite.
+            UsuarioLogado = usuarioLogado;
             _kinectService = new KinectService();
             _signalRService = new SignalRService();
             _repository = new KinectRepository();
 
+            /// conexão  direta entre os eventos do KinectService e SignalRService com as propriedades do ViewModel,
+            /// para exibir mudança no status de conexão , atualizações de frames e resultados de calibração e medições.
+            /// 
             _signalRService.StatusSignalRAtualizado += status => StatusSignalR = status;
 
             LigarKinectCommand = new RelayCommand(LigarKinectAsync);
@@ -194,6 +220,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             CalibrarCommand = new RelayCommand(ExecutarCalibracaoAsync);
             MedirCommand = new RelayCommand(ExecutarMedicaoAsync);
             SalvarEspacoCommand = new RelayCommand(SalvarEspaco);
+
+
+            // inicialização dos estados iniciais das propriedades,
+            // garantindo que a interface do usuário comece com informações claras e consistentes.
 
             StatusMessage = "Pronto";
             StatusKinect = "Kinect desligado";
@@ -210,6 +240,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             CarregarHistoricoMedicoes();
         }
 
+        /// <summary>
+        /// método responsável por atualizar a imagem da câmera RGB exibida na interface do usuário.
+        /// </summary>
+        /// <param name="imagem"></param>
         private void AtualizarCameraRgb(BitmapSource imagem)
         {
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -218,6 +252,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }));
         }
 
+        /// <summary>
+        /// método responsável por validar as informações do espaço, como nome e limite de ocupação,
+        /// e salvar essas informações no sistema.
+        /// </summary>
         private void SalvarEspaco()
         {
             if (string.IsNullOrWhiteSpace(NomeEspaco))
@@ -250,6 +288,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             LoggerService.Info($"Espaço salvo: {NomeEspaco}");
         }
 
+        /// <summary>
+        /// método responsável por iniciar a conexão com o Kinect, configurar os eventos de atualização de frames,
+        /// e iniciar a medição automática.
+        /// </summary>
+        /// <returns></returns>
         private async Task LigarKinectAsync()
         {
             try
@@ -280,7 +323,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Erro("Erro ao iniciar Kinect pela MainViewModel.");
             }
         }
-
+        /// <summary>
+        /// método responsável por iniciar um timer que captura os frames de 
+        ///profundidade do Kinect a cada 100 milissegundos, atualizando a imagem de 
+        ///profundidade exibida na interface do usuário em tempo real.
+        /// </summary>
         private void IniciarTimerFrames()
         {
             _frameTimer?.Stop();
@@ -302,7 +349,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             _frameTimer.Start();
         }
-
+        /// <summary>
+        /// método responsável por iniciar um timer que realiza medições automáticas do volume a cada 15 segundos,
+        /// e enviar essas medições para o banco de dados e para o SignalR,
+        /// garantindo que as informações de ocupação estejam sempre atualizadas sem a necessidade de intervenção manual.
+        /// </summary>
         private void IniciarTimerVolume()
         {
             _volumeTimer?.Stop();
@@ -322,6 +373,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             LoggerService.Info("Timer único de medição automática iniciado.");
         }
 
+        /// <summary>
+        /// método responsável por desligar o Kinect, parar os timers de captura de frames e medições automáticas,
+        /// e liberar os recursos utilizados pelo Kinect.
+        /// </summary>
         private void DesligarKinect()
         {
             _frameTimer?.Stop();
@@ -341,7 +396,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             LoggerService.Info("Kinect desligado pela MainViewModel.");
         }
-
+        /// <summary>
+        /// método responsável por realizar a calibração do ambiente utilizando o Kinect,
+        /// ajustando os parâmetros necessários para medições precisas de volume.
+        /// </summary>
+        /// <returns></returns>
         private async Task ExecutarCalibracaoAsync()
         {
             try
@@ -381,7 +440,12 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 IsCalibrating = false;
             }
         }
-
+        /// <summary>
+        /// método responsável por realizar a medição do volume atual utilizando o Kinect,
+        /// ajustando os parâmetros necessários para medições precisas de volume e apos a medição, 
+        /// salva os resultados no banco de dados SQLite e envia as informações para o SignalR,
+        /// </summary>
+        /// <returns></returns>
         private async Task ExecutarMedicaoAsync()
         {
             await MedirSalvarEEnviarAsync("Medição manual");
@@ -459,7 +523,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 LoggerService.Erro("Erro na medição pela MainViewModel.");
             }
         }
-
+        /// <summary>
+        /// método responsável por atualizar os indicadores de volume exibidos na interface do usuário,
+        /// incluindo o volume atual, percentual de ocupação, espaço livre e status de alerta.
+        /// </summary>
+        /// <param name="volumeAtualCm3">O volume atual em centímetros cúbicos.</param>
         private void AtualizarIndicadoresVolume(double volumeAtualCm3)
         {
             VolumeTexto = FormatarVolumeM3(volumeAtualCm3);
@@ -492,12 +560,20 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
              : "Normal";
         }
 
+        /// <summary>
+        /// método responsável por carregar o histórico das últimas 100 medições de volume do banco de dados SQLite, 
+        /// atualizando a coleção de medições exibida na interface do usuário.
+        /// </summary>
         public void CarregarHistoricoMedicoes()
         {
             var medicoes = _repository.ObterMedicoesEmOrdemCrescente(100);
             HistoricoMedicoes = new ObservableCollection<MedicaoVolume>(medicoes);
         }
-
+        /// <summary>
+        /// método responsável por formatar o volume em centímetros cúbicos para uma string legível em metros cúbicos,
+        /// </summary>
+        /// <param name="volumeCm3"></param>
+        /// <returns></returns>
         private string FormatarVolumeM3(double volumeCm3)
         {
             double volumeM3 = volumeCm3 / 1000000.0;
