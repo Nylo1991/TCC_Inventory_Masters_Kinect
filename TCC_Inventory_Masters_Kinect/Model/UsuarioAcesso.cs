@@ -2,6 +2,9 @@
 
 namespace TCC_Inventory_Masters_Kinect.Model
 {
+    /// <summary>
+    /// Classe resposnável por representar os dados de acesso do usuário.
+    /// </summary>
     public class UsuarioAcesso
     {
         public int Id { get; set; }
