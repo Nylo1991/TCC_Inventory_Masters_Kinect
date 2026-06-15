@@ -8,6 +8,14 @@ using System.Threading.Tasks;
 
 namespace MVC_InventoryMasters.Controllers
 {
+    /// <summary>
+    /// Controlador responsável por gerenciar as ações relacionadas ao Dashboard do sistema
+    /// </summary>
+    /// <remarks>
+    /// O Dashboard exibe indicadores de desempenho, alertas e informações relevantes para os usuários do sistema.
+    /// </remarks>
+    /// <param name="DashboardController">Controlador do Dashboard</param>
+    /// <retorna>View do Dashboard</returns>
     public class DashboardController : Controller
     {
         private readonly MedicaoVolumeRepository _medicaoRepo;
@@ -17,6 +25,18 @@ namespace MVC_InventoryMasters.Controllers
         private readonly UsuariosRepository _usuariosRepo;
         private readonly ILogger<DashboardController> _logger;
 
+        /// <summary>
+        /// Construtor do DashboardController, responsável por injetar as dependências necessárias para o funcionamento do controlador.
+        /// </summary>
+        /// remarks> As dependências incluem repositórios para acesso a dados de medições, notificações, parceiros, 
+        /// parâmetros do sistema e usuários, além de um logger para registro de eventos e erros.</remarks>
+        /// <param name="medicaoRepo"></param>
+        /// <param name="notificacaoRepo"></param>
+        /// <param name="parceirosRepo"></param>
+        /// <param name="parametrosRepo"></param>
+        /// <param name="usuariosRepo"></param>
+        /// <param name="logger"></param>
+        /// <returns>Instância do DashboardController com as dependências injetadas</returns>
         public DashboardController(
             MedicaoVolumeRepository medicaoRepo,
             NotificacaoRepository notificacaoRepo,
@@ -34,9 +54,13 @@ namespace MVC_InventoryMasters.Controllers
         }
 
         /// <summary>
-        /// Exibe a página principal do Dashboard com os indicadores de sistema.
+        /// Ação responsável por carregar os dados necessários para exibir o Dashboard, 
+        /// incluindo medições, notificações, parceiros, usuários e parâmetros do sistema.
         /// </summary>
-        /// <returns>Retorna a view do Dashboard preenchida com os dados do modelo.</returns>
+        /// <remarks> A ação realiza o cálculo do percentual de ocupação com base na última medição 
+        /// e na capacidade máxima definida nos parâmetros do sistema.</remarks>
+        /// <param name="Index"></param>
+        /// <returns>View do Dashboard com os dados carregados</returns>
         public async Task<IActionResult> Index()
         {
             try

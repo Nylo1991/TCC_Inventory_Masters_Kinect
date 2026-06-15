@@ -181,14 +181,14 @@
         .withAutomaticReconnect()
         .build();
 
-        // Gráfico de Linha: Volume
+        // Gráfico de Linha
         var ctxVolume = document.getElementById('volumeChart').getContext('2d');
         var volumeChart = new Chart(ctxVolume, {
         type: 'line',
         data: {
         labels: [],
         datasets: [{
-        label: 'Volume (m3)',
+        label: 'Volume (m³)',
         data: [],
         borderColor: '#16a34a',
         backgroundColor: 'rgba(22,163,74,0.08)',
@@ -203,7 +203,8 @@
         scales: {
         y: {
         beginAtZero: true,
-        suggestedMax: capacidadeTotal
+        
+        grace: '10%'
         }
         }
         }
@@ -224,19 +225,17 @@
         options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-        legend: { position: 'bottom' }
-        }
+        plugins: { legend: { position: 'bottom' } }
         }
         });
 
-        // Nova Medição
+        // Nova Medição do Kinect
         connectionMed.on("NovaMedicao", function (m) {
-        var novoVolume = Number(m.volumeMedido || 0);
+        var novoVolume = parseFloat(m.volumeMedido || 0);
         var novoPercentual = Math.min((novoVolume / capacidadeTotal) * 100, 100);
 
         // Atualiza gráfico de ocupação
-        occupancyChart.data.datasets[0].data = [novoPercentual, 100 - novoPercentual];
+        occupancyChart.data.datasets[0].data = [novoPercentual.toFixed(1), (100 - novoPercentual).toFixed(1)];
         occupancyChart.data.datasets[0].backgroundColor = [obterCorOcupacao(novoPercentual), '#e5e7eb'];
         occupancyChart.update();
 
@@ -256,16 +255,9 @@
         }
         });
 
-        // Recarrega Tabela de Notificações
-        connectionNotif.on("RecarregarTabela", function () {
-        location.reload();
-        });
-        
-        connectionMed.start()
-        .catch(function (err) { console.error("MedicaoHub - Erro ao conectar: " + err); });
+        connectionNotif.on("RecarregarTabela", function () { location.reload(); });
 
-        connectionNotif.start()
-        .catch(function (err) { console.error("NotificacaoHub - Erro ao conectar: " + err); });
-
+        connectionMed.start().catch(function (err) { console.error("Erro Hub: " + err); });
+        connectionNotif.start().catch(function (err) { console.error("Erro Notif: " + err); });
     </script>
 }

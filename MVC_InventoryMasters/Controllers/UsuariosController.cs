@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 
 namespace MVC_InventoryMasters.Controllers
 {
+    /// <summary>
+    /// Controlador responsável por gerenciar as ações relacionadas aos usuários do sistema,
+    /// </summary>
+    /// <remarks>Este controlador permite listar, criar, editar, excluir e visualizar detalhes dos usuários cadastrados no sistema.</remarks>
+    /// <param></param>
+    /// <returns></returns>
     public class UsuariosController : Controller
     {
         private readonly UsuariosRepository _repository;
@@ -100,7 +106,11 @@ namespace MVC_InventoryMasters.Controllers
                 return RedirectToAction("Error", "Home");
             }
         }
-
+        /// <summary>
+        /// Exibe a tela de criação de um novo usuário, carregando os perfis disponíveis para seleção.
+        /// </summary>
+        /// <remarks
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Create()
         {

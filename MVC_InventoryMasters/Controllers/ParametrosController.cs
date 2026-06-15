@@ -7,8 +7,12 @@ using System;
 namespace MVC_InventoryMasters.Controllers
 {
     /// <summary>
-    /// Controller responsável pelas configurações gerais do sistema.
+    /// Controlador responsável por gerenciar as ações relacionadas aos parâmetros do sistema,
     /// </summary>
+    /// remarks>Este controlador permite exibir a tela de configurações, validar os dados de entrada e 
+    /// salvar as alterações realizadas pelo usuário.</remarks>
+    /// <param></param>
+    /// <retuns></retuns>
     public class ParametrosController : Controller
     {
         private readonly ParametrosSistemaRepository _repository;
@@ -41,8 +45,12 @@ namespace MVC_InventoryMasters.Controllers
         }
 
         /// <summary>
-        /// Salva as configurações do sistema.
+        /// Salva as alterações realizadas pelo usuário nos parâmetros do sistema, realizando validações e tratamento de erros.
         /// </summary>
+        /// <remarks> Antes de salvar, o método verifica se os dados são válidos e se houve alguma alteração 
+        /// em relação aos valores atuais.</remarks>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Salvar(ParametrosSistema model)
