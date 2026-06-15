@@ -69,7 +69,9 @@
                                 Foreground="#111111"
                                 FontWeight="SemiBold"
                                 BorderThickness="0"
-                                Click="AbaCadastro_Click"/>
+                                Click="AbaCadastro_Click"
+                                ToolTip="Primeiro Acesso."/>
+                        
                     </Grid>
 
                     <StackPanel x:Name="LoginPanel">
@@ -87,9 +89,20 @@
                                     BorderThickness="1"
                                    ToolTip="Digite seu usuario ou email cadastrado."/>
 
-                        <TextBlock Text="Senha" Foreground="#111111" FontSize="14" FontWeight="SemiBold" Margin="0,16,0,6"/>
-                        <PasswordBox x:Name="LoginSenhaPasswordBox" Height="42" FontSize="15" Padding="12,0" BorderBrush="#DADDE2" BorderThickness="1" 
+                        <TextBlock Text="Senha" 
+                                   Foreground="#111111" 
+                                   FontSize="14" 
+                                   FontWeight="SemiBold" 
+                                   Margin="0,16,0,6"/>
+                        
+                        <PasswordBox x:Name="LoginSenhaPasswordBox" 
+                                     Height="42" 
+                                     FontSize="15" 
+                                     Padding="12,0" 
+                                     BorderBrush="#DADDE2" 
+                                     BorderThickness="1" 
                                      ToolTip="Digite sua senha cadastrada."/>
+                        
                         <TextBlock Text="Minimo de 6 caracteres."
                           Foreground="#6B7280"
                           FontSize="12"
@@ -106,18 +119,64 @@
                                 Click="Entrar_Click"/>
                     </StackPanel>
 
-                    <StackPanel x:Name="CadastroPanel" Visibility="Collapsed">
-                        <TextBlock Text="Usuario" Foreground="#111111" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                        <TextBox x:Name="CadastroUsuarioTextBox" Height="42" FontSize="15" Padding="12,0" BorderBrush="#DADDE2" BorderThickness="1"/>
+                    <StackPanel x:Name="CadastroPanel"
+                                Visibility="Collapsed">
+                        <TextBlock Text="Usuario" 
+                                   Foreground="#111111" 
+                                   FontSize="14" 
+                                   FontWeight="SemiBold" 
+                                   Margin="0,0,0,6"/>
+                        
+                        <TextBox x:Name="CadastroUsuarioTextBox" 
+                                 Height="42" FontSize="15" 
+                                 Padding="12,0" 
+                                 BorderBrush="#DADDE2" 
+                                 BorderThickness="1"
+                                 ToolTip="Digite o nome de usuario."/>
 
-                        <TextBlock Text="Email" Foreground="#111111" FontSize="14" FontWeight="SemiBold" Margin="0,16,0,6"/>
-                        <TextBox x:Name="CadastroEmailTextBox" Height="42" FontSize="15" Padding="12,0" BorderBrush="#DADDE2" BorderThickness="1"/>
+                        <TextBlock Text="Email" 
+                                   Foreground="#111111" 
+                                   FontSize="14"
+                                   FontWeight="SemiBold" 
+                                   Margin="0,16,0,6"/>
 
-                        <TextBlock Text="Senha" Foreground="#111111" FontSize="14" FontWeight="SemiBold" Margin="0,16,0,6"/>
-                        <PasswordBox x:Name="CadastroSenhaPasswordBox" Height="42" FontSize="15" Padding="12,0" BorderBrush="#DADDE2" BorderThickness="1"/>
+                        <TextBox x:Name="CadastroEmailTextBox" 
+                                 Height="42" 
+                                 FontSize="15" 
+                                 Padding="12,0" 
+                                 BorderBrush="#DADDE2" 
+                                 BorderThickness="1"
+                                 ToolTip="Digite Aqui Seu Email."/>
 
-                        <TextBlock Text="Confirmar senha" Foreground="#111111" FontSize="14" FontWeight="SemiBold" Margin="0,16,0,6"/>
-                        <PasswordBox x:Name="CadastroConfirmarSenhaPasswordBox" Height="42" FontSize="15" Padding="12,0" BorderBrush="#DADDE2" BorderThickness="1"/>
+
+                        <TextBlock Text="Senha" 
+                                   Foreground="#111111" 
+                                   FontSize="14" 
+                                   FontWeight="SemiBold" 
+                                   Margin="0,16,0,6"/>
+                        
+                        <PasswordBox x:Name="CadastroSenhaPasswordBox" 
+                                     Height="42" 
+                                     FontSize="15" 
+                                     Padding="12,0" 
+                                     BorderBrush="#DADDE2" 
+                                     BorderThickness="1"
+                                     ToolTip="Digite Aqui a Sua Senha."/>
+
+
+                        <TextBlock Text="Confirmar senha" 
+                                   Foreground="#111111" 
+                                   FontSize="14" 
+                                   FontWeight="SemiBold" 
+                                   Margin="0,16,0,6"/>
+                        
+                        <PasswordBox x:Name="CadastroConfirmarSenhaPasswordBox" 
+                                     Height="42" 
+                                     FontSize="15" 
+                                     Padding="12,0" 
+                                     BorderBrush="#DADDE2" 
+                                     BorderThickness="1"
+                                     ToolTip="Confirme Aqui a Sua Senha."/>
 
                         <Button Content="Cadastrar e entrar"
                                 Height="44"
@@ -127,7 +186,9 @@
                                 FontSize="16"
                                 FontWeight="SemiBold"
                                 BorderThickness="0"
-                                Click="Cadastrar_Click"/>
+                                Click="Cadastrar_Click"
+                                ToolTip="Clicar para Finalizar o cadastro e ter acesso ao sistema"/>
+
                     </StackPanel>
 
                     <TextBlock x:Name="MensagemTextBlock"
