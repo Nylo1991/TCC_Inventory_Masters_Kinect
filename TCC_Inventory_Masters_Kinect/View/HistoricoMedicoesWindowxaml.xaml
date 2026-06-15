@@ -54,13 +54,14 @@
                     <TextBlock Text="Medicoes Salvas"
                                Foreground="#111111"
                                FontSize="20"
-                               FontWeight="Bold"/>
+                               FontWeight="Bold"
+                               ToolTip="Historico de medicoes em tempo real."/>
 
                     <TextBlock Text="Dados salvos em tempo real"
                                Foreground="#6B7280"
                                FontSize="13"
                                Margin="0,4,0,0"
-                               ToolTip="dados sendo enviados do banco de dados."/>
+                               ToolTip="Dados carregados automaticamente do banco SQLite."/>
                 </StackPanel>
 
                 <DataGrid Grid.Row="1"
@@ -82,7 +83,8 @@
                           RowHeight="34"
                           ColumnHeaderHeight="42"
                           SelectionMode="Single"
-                          SelectionUnit="FullRow">
+                          SelectionUnit="FullRow"
+                          ToolTip="Historico de medicoes em tempo real.">
                     <DataGrid.Resources>
                         <Style TargetType="ScrollBar">
                             <Setter Property="Width" Value="10"/>
@@ -114,10 +116,9 @@
                                             Binding="{Binding Id}"
                                             Width="70"/>
 
-                        <DataGridTextColumn Header="Volume (cm3)"
-                                            Binding="{Binding VolumeCm3, StringFormat={}{0:F0}}"
-                                            Width="160"
-                                            />
+                        <DataGridTextColumn Header="Volume (m3)"
+                                            Binding="{Binding VolumeM3, StringFormat={}{0:F3}}"
+                                            Width="160"/>
 
                         <DataGridTextColumn Header="Data/Hora"
                                             Binding="{Binding DataHora, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}"
