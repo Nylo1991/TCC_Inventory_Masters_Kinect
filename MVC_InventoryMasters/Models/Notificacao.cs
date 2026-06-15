@@ -50,6 +50,13 @@ namespace MVC_InventoryMasters.Models
         [FirestoreProperty]
         public string? Mensagem { get; set; }
 
+        [FirestoreProperty]
+        public string Tipo { get; set; } = "Alerta";
+
+        [FirestoreProperty]
+        public bool Automatica { get; set; } = true;
+
+
     }
 
 

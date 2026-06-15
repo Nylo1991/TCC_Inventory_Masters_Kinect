@@ -50,6 +50,7 @@ namespace MVC_InventoryMasters.Models
 
         // ==================================================
         // CONFIGURAÇÕES DE NOTIFICAÇÃO (FASE 2 DO PROJETO)
+        // A partir daqui e a configurações relacionadas a notificações automáticas e alertas visuais no Dashboard.
         // ==================================================
 
         /// <summary>

@@ -70,5 +70,40 @@ namespace MVC_InventoryMasters.Repositories
                 return false;
             }
         }
+
+        /// <summary>
+        /// Verifica se existe alguma notificação
+        /// pendente de atendimento.
+        ///
+        /// Utilizado para evitar a geração
+        /// de notificações duplicadas quando
+        /// o volume continua acima do limite.
+        /// </summary>
+        /// <returns>
+        /// True se existir uma notificação pendente.
+        /// False caso contrário.
+        /// </returns>
+        public async Task<bool> ExisteNotificacaoPendente()
+        {
+            try
+            {
+                QuerySnapshot snapshot = await _db
+                    .Collection(_colecao)
+                    .WhereEqualTo(
+                        "StatusEnvio",
+                        "Pendente")
+                    .GetSnapshotAsync();
+
+                return snapshot.Documents.Any();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Erro ao verificar notificações pendentes.");
+
+                return false;
+            }
+        }
     }
 }

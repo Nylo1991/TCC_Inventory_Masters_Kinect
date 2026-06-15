@@ -8,12 +8,39 @@ namespace MVC_InventoryMasters.Hubs
 {
     public class MedicaoHub : Hub
     {
+        /// <summary>
+        /// Repositório de medições.
+        /// </summary>
         private readonly MedicaoVolumeRepository _medicaoRepository;
 
-        // Construtor único para injeção de dependência
-        public MedicaoHub(MedicaoVolumeRepository medicaoRepository)
+        /// <summary>
+        /// Repositório de parâmetros do sistema.
+        /// </summary>
+        private readonly ParametrosSistemaRepository _parametrosRepository;
+
+        /// <summary>
+        /// Repositório de notificações.
+        /// </summary>
+        private readonly NotificacaoRepository _notificacaoRepository;
+
+
+        /// <summary>
+        /// Construtor responsável por receber
+        /// os serviços necessários para
+        /// processamento das medições.
+        ///
+        /// Fluxo:
+        /// Kinect → Medição → Configuração
+        /// → Notificação → Dashboard.
+        /// </summary>
+        public MedicaoHub(
+            MedicaoVolumeRepository medicaoRepository,
+            ParametrosSistemaRepository parametrosRepository,
+            NotificacaoRepository notificacaoRepository)
         {
             _medicaoRepository = medicaoRepository;
+            _parametrosRepository = parametrosRepository;
+            _notificacaoRepository = notificacaoRepository;
         }
 
         public async Task EnviarVolume(int quantidadePontos, double escalaEspacial, double fatorCorrecao)
