@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace TCC_Inventory_Masters_Kinect.Model
 {
+    /// <summary>
+    /// Representa um registro histórico de ocupação de um espaço monitorado pelo Kinect.
+    /// </summary>
     public class HistoricoOcupacao
     {
         public int Id { get; set; }
