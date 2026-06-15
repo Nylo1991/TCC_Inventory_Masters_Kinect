@@ -10,13 +10,19 @@ using System.Threading.Tasks;
 
 namespace MVC_InventoryMasters.Controllers
 {
+    /// <summary>
+    /// Controlador responsável por gerenciar as ações relacionadas às notificações do sistema,
+    /// </summary>
+    /// <remarks>Este controlador permite listar as notificações, processar a aceitação 
+    /// de solicitações de coleta por parceiros,</remarks>
+    /// <param></param>
+    /// <return></return>
     public class NotificacoesController : Controller
     {
         private readonly NotificacaoRepository _repo;
         private readonly IHubContext<NotificacaoHub> _hubContext;
         private readonly ILogger<NotificacoesController> _logger;
-
-        // O construtor injeta o Repositório, o Hub e o Logger
+        
         public NotificacoesController(NotificacaoRepository repo,
             IHubContext<NotificacaoHub> hubContext, ILogger<NotificacoesController> logger)
         {
@@ -26,8 +32,12 @@ namespace MVC_InventoryMasters.Controllers
         }
 
         /// <summary>
-        /// Carrega a lista de notificações para exibição na view.
+        /// Exibe a lista de notificações para o usuário.
         /// </summary>
+        /// <remarks>Este método busca todas as notificações do repositório e as exibe na view.
+        /// </remarks>
+        /// <param></param>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             try
@@ -46,6 +56,8 @@ namespace MVC_InventoryMasters.Controllers
         /// Processa a aceitação de uma solicitação de coleta por um parceiro, 
         /// atualiza o status no banco de dados e notifica os clientes conectados via SignalR.
         /// </summary>
+        /// <remarks>Este método é acionado quando um parceiro aceita uma solicitação de coleta. Ele atualiza o status da notificação 
+        /// para "Aceito" no banco de dados e envia uma notificação em tempo real para os clientes conectados usando SignalR.</remarks>
         /// <param name="id">O ID da notificação a ser aceita.</param>
         /// <returns>Retorna um resultado JSON indicando sucesso ou um status HTTP 500 em caso de erro.</returns>
         [HttpPost]
@@ -67,7 +79,6 @@ namespace MVC_InventoryMasters.Controllers
                     return StatusCode(500, "Erro ao atualizar o banco de dados.");
                 }
 
-                // Notifica clientes sobre a aceitação da coleta
                 await NotificarClientes("Uma nova coleta foi aceita!");
 
                 return Ok(new
@@ -83,7 +94,13 @@ namespace MVC_InventoryMasters.Controllers
             }
         }
 
-        // Método para notificar clientes conectados
+        /// <summary>
+        /// Envia uma notificação em tempo real para todos os clientes conectados usando SignalR.
+        /// </summary>
+        /// remarks>Este método é responsável por enviar uma mensagem de notificação para todos os clientes conectados ao hub de notificações.
+        /// Ele é chamado após a aceitação de uma coleta para informar os usuários sobre a atualização.</remarks>
+        /// <param name="mensagem"></param>
+        /// <returns></returns>
         private async Task NotificarClientes(string mensagem)
         {
             try
