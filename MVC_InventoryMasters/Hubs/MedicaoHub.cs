@@ -1,79 +1,95 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
-using System;
-using System.Threading.Tasks;
 
 namespace MVC_InventoryMasters.Hubs
 {
+    /// <summary>
+    /// Hub responsável por receber as medições enviadas
+    /// pelo Kinect, armazenar no Firestore e distribuir
+    /// as atualizações em tempo real para o Dashboard.
+    /// </summary>
     public class MedicaoHub : Hub
     {
-        /// <summary>
-        /// Repositório de medições.
-        /// </summary>
         private readonly MedicaoVolumeRepository _medicaoRepository;
 
         /// <summary>
-        /// Repositório de parâmetros do sistema.
+        /// Inicializa o Hub de medições.
         /// </summary>
-        private readonly ParametrosSistemaRepository _parametrosRepository;
-
-        /// <summary>
-        /// Repositório de notificações.
-        /// </summary>
-        private readonly NotificacaoRepository _notificacaoRepository;
-
-
-        /// <summary>
-        /// Construtor responsável por receber
-        /// os serviços necessários para
-        /// processamento das medições.
-        ///
-        /// Fluxo:
-        /// Kinect → Medição → Configuração
-        /// → Notificação → Dashboard.
-        /// </summary>
+        /// <param name="medicaoRepository">
+        /// Repositório responsável pelo armazenamento
+        /// das medições de volume.
+        /// </param>
         public MedicaoHub(
-            MedicaoVolumeRepository medicaoRepository,
-            ParametrosSistemaRepository parametrosRepository,
-            NotificacaoRepository notificacaoRepository)
+            MedicaoVolumeRepository medicaoRepository)
         {
             _medicaoRepository = medicaoRepository;
-            _parametrosRepository = parametrosRepository;
-            _notificacaoRepository = notificacaoRepository;
         }
 
-        public async Task EnviarVolume(int quantidadePontos, double escalaEspacial, double fatorCorrecao)
+        /// <summary>
+        /// Recebe o volume calculado pelo Kinect,
+        /// salva a medição e atualiza os clientes
+        /// conectados em tempo real.
+        /// </summary>
+        /// <param name="volumeCm3">
+        /// Volume calculado pelo Kinect em cm³.
+        /// </param>
+        public async Task EnviarVolume(double volumeCm3)
         {
             try
             {
-                double volumeCalculado = (quantidadePontos * fatorCorrecao) * escalaEspacial;
+
+                double volumeM3 = volumeCm3 / 1000000d;
 
                 var medicao = new MedicaoVolume
                 {
                     OrigemLeitura = "Kinect",
-                    Status = "normal",
-                    VolumeMedido = volumeCalculado,
+                    Status = "Normal",
+                    VolumeMedido = volumeM3,
                     DataHora = DateTime.UtcNow
                 };
 
                 await _medicaoRepository.Adicionar(medicao);
 
-                await Clients.All.SendAsync("NovaMedicao", new
-                {
-                    volumeMedido = volumeCalculado,
-                    pontos = quantidadePontos,
-                    dataHora = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
-                });
+                await Clients.All.SendAsync(
+                    "NovaMedicao",
+                        new
+                        {
+                            volumeMedido = volumeM3,
+                            dataHora = DateTime.UtcNow
+                            .ToLocalTime()
+                            .ToString("dd/MM/yyyy HH:mm:ss")
+                        });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERRO no Hub] {ex.Message}");
+                Console.WriteLine(
+                    $"[ERRO MedicaoHub] {ex}");
                 throw;
             }
         }
 
-        public override async Task OnConnectedAsync() => await base.OnConnectedAsync();
-        public override async Task OnDisconnectedAsync(Exception? exception) => await base.OnDisconnectedAsync(exception);
+        /// <summary>
+        /// Executado quando um cliente estabelece
+        /// conexão com o Hub.
+        /// </summary>
+        public override async Task OnConnectedAsync()
+        {
+            await base.OnConnectedAsync();
+        }
+
+        /// <summary>
+        /// Executado quando um cliente encerra
+        /// a conexão com o Hub.
+        /// </summary>
+        /// <param name="exception">
+        /// Exceção gerada durante a desconexão,
+        /// quando existir.
+        /// </param>
+        public override async Task OnDisconnectedAsync(
+            Exception? exception)
+        {
+            await base.OnDisconnectedAsync(exception);
+        }
     }
 }

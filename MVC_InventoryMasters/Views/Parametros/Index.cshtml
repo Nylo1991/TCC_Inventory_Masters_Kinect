@@ -39,87 +39,180 @@
         </div>
     }
 
-    <div class="card shadow-sm">
+    <form id="formConfiguracoes"
+          asp-controller="Parametros"
+          asp-action="Salvar"
+          method="post">
 
-        <div class="card-header">
-            <h4 class="mb-0">
-                <i class="bi bi-gear"></i>
-                Configurações do Sistema
-            </h4>
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger mb-3">
         </div>
 
-        <div class="card-body">
+        <div class="row">
 
-            <form id="formConfiguracoes"
-                  asp-controller="Parametros"
-                  asp-action="Salvar"
-                  method="post">
+            <!-- ========================= -->
+            <!-- CONFIGURAÇÕES DO SISTEMA -->
+            <!-- ========================= -->
 
-                @Html.AntiForgeryToken()
+            <div class="col-lg-6 mb-4">
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-header bg-primary text-white">
+
+                        <h5 class="mb-0">
+                            <i class="bi bi-sliders"></i>
+                            Configurações do Sistema
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-3">
+
+                            <label asp-for="CapacidadeMaxima"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <input asp-for="CapacidadeMaxima"
+                                   type="number"
+                                   min="1"
+                                   step="0.01"
+                                   class="form-control" />
+
+                            <span asp-validation-for="CapacidadeMaxima"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label asp-for="CapacidadeMinima"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <input asp-for="CapacidadeMinima"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="form-control" />
+
+                            <span asp-validation-for="CapacidadeMinima"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label asp-for="PercentualAlerta"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <input asp-for="PercentualAlerta"
+                                   type="number"
+                                   min="1"
+                                   max="100"
+                                   class="form-control" />
+
+                            <span asp-validation-for="PercentualAlerta"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="alert alert-light border">
+
+                            <strong>Objetivo:</strong>
+
+                            Define a capacidade total do estoque e o
+                            percentual que dispara alertas automáticos
+                            quando o volume armazenado atingir níveis críticos.
+
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <div class="row">
+            </div>
 
-                    <div class="col-md-4 mb-3">
+            <!-- ============================== -->
+            <!-- CONFIGURAÇÕES DE NOTIFICAÇÃO -->
+            <!-- ============================== -->
 
-                        <label asp-for="CapacidadeMaxima"
-                               class="form-label">
-                        </label>
+            <div class="col-lg-6 mb-4">
 
-                        <input asp-for="CapacidadeMaxima"
-                               type="number"
-                               min="1"
-                               step="0.01"
-                               class="form-control" />
+                <div class="card shadow-sm h-100">
 
-                        <span asp-validation-for="CapacidadeMaxima"
-                              class="text-danger">
-                        </span>
+                    <div class="card-header bg-warning">
 
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-
-                        <label asp-for="CapacidadeMinima"
-                               class="form-label">
-                        </label>
-
-                        <input asp-for="CapacidadeMinima"
-                               type="number"
-                               min="0"
-                               step="0.01"
-                               class="form-control" />
-
-                        <span asp-validation-for="CapacidadeMinima"
-                              class="text-danger">
-                        </span>
+                        <h5 class="mb-0">
+                            <i class="bi bi-bell"></i>
+                            Configurações de Notificação
+                        </h5>
 
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="card-body">
 
-                        <label asp-for="PercentualAlerta"
-                               class="form-label">
-                        </label>
+                        <div class="form-check form-switch mb-3">
 
-                        <input asp-for="PercentualAlerta"
-                               type="number"
-                               min="1"
-                               max="100"
-                               class="form-control" />
+                            <input asp-for="NotificacaoAutomatica"
+                                   class="form-check-input" />
 
-                        <span asp-validation-for="PercentualAlerta"
-                              class="text-danger">
-                        </span>
+                            <label asp-for="NotificacaoAutomatica"
+                                   class="form-check-label fw-semibold">
+                                Enviar notificações automáticas
+                            </label>
+
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+
+                            <input asp-for="ExibirAlertaDashboard"
+                                   class="form-check-input" />
+
+                            <label asp-for="ExibirAlertaDashboard"
+                                   class="form-check-label fw-semibold">
+                                Exibir alertas no Dashboard
+                            </label>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label asp-for="DiasSemColetaAlerta"
+                                   class="form-label fw-semibold">
+
+                                Dias sem coleta para gerar alerta
+
+                            </label>
+
+                            <input asp-for="DiasSemColetaAlerta"
+                                   type="number"
+                                   min="1"
+                                   class="form-control" />
+
+                        </div>
+
+                        
 
                     </div>
 
                 </div>
 
-                <hr />
+            </div>
+
+        </div>
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
 
                 <div class="d-flex gap-2">
 
@@ -144,11 +237,11 @@
 
                 </div>
 
-            </form>
+            </div>
 
         </div>
 
-    </div>
+    </form>
 
 </div>
 
@@ -162,13 +255,23 @@
             document.getElementById("formConfiguracoes");
 
         const btnSalvar =
-            document.getElementById("btnSalvar"); 
+            document.getElementById("btnSalvar");
 
         let alterado = false;
 
-        form.querySelectorAll("input").forEach(campo => {
+        form.querySelectorAll("input, select").forEach(campo => {
 
             campo.addEventListener("input", () => {
+
+                if (!alterado)
+                {
+                    alterado = true;
+                    btnSalvar.disabled = false;
+                }
+
+            });
+
+            campo.addEventListener("change", () => {
 
                 if (!alterado)
                 {

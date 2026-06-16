@@ -182,32 +182,58 @@
         .build();
 
         // Gráfico de Linha
+                // Gráfico de Linha
         var ctxVolume = document.getElementById('volumeChart').getContext('2d');
+
+        var labelsIniciais = [
+        @foreach (var medicao in Model.Medicoes?
+            .OrderByDescending(x => x.DataHora)
+            .Take(20)
+            .Reverse() ?? Enumerable.Empty<dynamic>())
+        {
+                <text>'@medicao.DataHora?.ToLocalTime().ToString("HH:mm:ss")',</text>
+        }
+        ];
+
+        var dadosIniciais = [
+        @foreach (var medicao in Model.Medicoes?
+            .OrderByDescending(x => x.DataHora)
+            .Take(20)
+            .Reverse() ?? Enumerable.Empty<dynamic>())
+        {
+                <text>@((medicao.VolumeMedido ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture)),</text>
+        }
+        ];
+
         var volumeChart = new Chart(ctxVolume, {
-        type: 'line',
-        data: {
-        labels: [],
-        datasets: [{
-        label: 'Volume (m³)',
-        data: [],
-        borderColor: '#16a34a',
-        backgroundColor: 'rgba(22,163,74,0.08)',
-        fill: true,
-        tension: 0.3,
-        pointRadius: 4
-        }]
-        },
-        options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-        y: {
-        beginAtZero: true,
-        
-        grace: '10%'
-        }
-        }
-        }
+            type: 'line',
+            data: {
+                labels: labelsIniciais,
+                datasets: [{
+                    label: 'Volume (m³)',
+                    data: dadosIniciais,
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22,163,74,0.08)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grace: '5%',
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(2) + ' m³';
+                            }
+                        }
+                    }
+                }
+            }
         });
 
         // Gráfico de Ocupação
@@ -230,29 +256,53 @@
         });
 
         // Nova Medição do Kinect
-        connectionMed.on("NovaMedicao", function (m) {
-        var novoVolume = parseFloat(m.volumeMedido || 0);
-        var novoPercentual = Math.min((novoVolume / capacidadeTotal) * 100, 100);
+                connectionMed.on("NovaMedicao", function (m) {
 
-        // Atualiza gráfico de ocupação
-        occupancyChart.data.datasets[0].data = [novoPercentual.toFixed(1), (100 - novoPercentual).toFixed(1)];
-        occupancyChart.data.datasets[0].backgroundColor = [obterCorOcupacao(novoPercentual), '#e5e7eb'];
-        occupancyChart.update();
+            var novoVolume =
+                parseFloat(m.volumeMedido || 0);
 
-        // Atualiza gráfico de linha de volume
-        if (volumeChart.data.labels.length >= 20) {
-        volumeChart.data.labels.shift();
-        volumeChart.data.datasets[0].data.shift();
-        }
-        volumeChart.data.labels.push(new Date().toLocaleTimeString());
-        volumeChart.data.datasets[0].data.push(novoVolume);
-        volumeChart.update();
+            var novoPercentual =
+                Math.min(
+                    (novoVolume / capacidadeTotal) * 100,
+                    100
+                );
 
-        // Incrementa contador de medições no card
-        var elMedicoes = document.getElementById('totalMedicoes');
-        if (elMedicoes) {
-        elMedicoes.innerText = parseInt(elMedicoes.innerText || '0') + 1;
-        }
+            occupancyChart.data.datasets[0].data = [
+                novoPercentual.toFixed(1),
+                (100 - novoPercentual).toFixed(1)
+            ];
+
+            occupancyChart.data.datasets[0].backgroundColor = [
+                obterCorOcupacao(novoPercentual),
+                '#e5e7eb'
+            ];
+
+            occupancyChart.update();
+
+            if (volumeChart.data.labels.length >= 20)
+            {
+                volumeChart.data.labels.shift();
+                volumeChart.data.datasets[0].data.shift();
+            }
+
+            volumeChart.data.labels.push(
+                new Date().toLocaleTimeString()
+            );
+
+            volumeChart.data.datasets[0].data.push(
+                Number(novoVolume.toFixed(3))
+            );
+
+            volumeChart.update();
+
+            var elMedicoes =
+                document.getElementById('totalMedicoes');
+
+            if (elMedicoes)
+            {
+                elMedicoes.innerText =
+                    parseInt(elMedicoes.innerText || '0') + 1;
+            }
         });
 
         connectionNotif.on("RecarregarTabela", function () { location.reload(); });
