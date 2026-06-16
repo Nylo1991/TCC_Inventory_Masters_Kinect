@@ -12,18 +12,20 @@ namespace MVC_InventoryMasters.Hubs
     public class MedicaoHub : Hub
     {
         private readonly MedicaoVolumeRepository _medicaoRepository;
+        private readonly ParametrosSistemaRepository _parametrosRepository;
+        private readonly NotificacaoRepository _notificacaoRepository;
 
         /// <summary>
         /// Inicializa o Hub de medições.
         /// </summary>
-        /// <param name="medicaoRepository">
-        /// Repositório responsável pelo armazenamento
-        /// das medições de volume.
-        /// </param>
         public MedicaoHub(
-            MedicaoVolumeRepository medicaoRepository)
+            MedicaoVolumeRepository medicaoRepository,
+            ParametrosSistemaRepository parametrosRepository,
+            NotificacaoRepository notificacaoRepository)
         {
             _medicaoRepository = medicaoRepository;
+            _parametrosRepository = parametrosRepository;
+            _notificacaoRepository = notificacaoRepository;
         }
 
         /// <summary>
@@ -32,13 +34,12 @@ namespace MVC_InventoryMasters.Hubs
         /// conectados em tempo real.
         /// </summary>
         /// <param name="volumeCm3">
-        /// Volume calculado pelo Kinect em cm³.
+        /// Volume recebido do Kinect em cm³.
         /// </param>
         public async Task EnviarVolume(double volumeCm3)
         {
             try
             {
-
                 double volumeM3 = volumeCm3 / 1000000d;
 
                 var medicao = new MedicaoVolume
@@ -51,21 +52,77 @@ namespace MVC_InventoryMasters.Hubs
 
                 await _medicaoRepository.Adicionar(medicao);
 
+                await VerificarAlertas(volumeM3);
+
                 await Clients.All.SendAsync(
                     "NovaMedicao",
-                        new
-                        {
-                            volumeMedido = volumeM3,
-                            dataHora = DateTime.UtcNow
+                    new
+                    {
+                        volumeMedido = volumeM3,
+                        dataHora = DateTime.UtcNow
                             .ToLocalTime()
                             .ToString("dd/MM/yyyy HH:mm:ss")
-                        });
+                    });
             }
             catch (Exception ex)
             {
                 Console.WriteLine(
                     $"[ERRO MedicaoHub] {ex}");
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Verifica se o volume atual atingiu
+        /// os limites configurados e gera
+        /// notificações automáticas.
+        /// </summary>
+        private async Task VerificarAlertas(
+            double volumeAtual)
+        {
+            try
+            {
+                var parametros =
+                    _parametrosRepository.Buscar();
+
+                if (parametros == null)
+                    return;
+
+                double percentual =
+                    (volumeAtual /
+                     parametros.CapacidadeMaxima) * 100;
+
+                if (percentual <
+                    parametros.PercentualAlerta)
+                {
+                    return;
+                }
+
+                bool existePendente =
+                    await _notificacaoRepository
+                        .ExisteNotificacaoPendente();
+
+                if (existePendente)
+                    return;
+
+                var notificacao =
+                    new Notificacao
+                    {
+                        VolumeMedido = volumeAtual,
+                        Tipo = "Capacidade",
+                        Automatica = true,
+                        StatusEnvio = "Pendente",
+                        Mensagem =
+                            $"O estoque atingiu {percentual:F1}% da capacidade máxima."
+                    };
+
+                await _notificacaoRepository
+                    .Adicionar(notificacao);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"[ERRO ALERTA] {ex.Message}");
             }
         }
 
@@ -82,10 +139,6 @@ namespace MVC_InventoryMasters.Hubs
         /// Executado quando um cliente encerra
         /// a conexão com o Hub.
         /// </summary>
-        /// <param name="exception">
-        /// Exceção gerada durante a desconexão,
-        /// quando existir.
-        /// </param>
         public override async Task OnDisconnectedAsync(
             Exception? exception)
         {

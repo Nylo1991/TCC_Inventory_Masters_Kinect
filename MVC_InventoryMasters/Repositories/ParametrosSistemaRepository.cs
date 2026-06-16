@@ -103,7 +103,6 @@ namespace MVC_InventoryMasters.Repositories
                 { "CapacidadeMaxima", parametros.CapacidadeMaxima },
                 { "CapacidadeMinima", parametros.CapacidadeMinima },
                 { "PercentualAlerta", parametros.PercentualAlerta },
-                //{ "UnidadeMedida", parametros.UnidadeMedida ?? "m³" },
                 { "DataAtualizacao", parametros.DataAtualizacao },
 
                 { "NotificacaoAutomatica", parametros.NotificacaoAutomatica },
@@ -117,6 +116,19 @@ namespace MVC_InventoryMasters.Repositories
                 .Document("configuracao")
                 .SetAsync(dados)
                 .Wait();
+        }
+
+        /// <summary>
+        /// Retorna o percentual de ocupação atual.
+        /// </summary>
+        public double CalcularPercentualOcupacao(
+            double volumeAtual,
+            double capacidadeMaxima)
+        {
+            if (capacidadeMaxima <= 0)
+                return 0;
+
+            return (volumeAtual / capacidadeMaxima) * 100;
         }
     }
 }
