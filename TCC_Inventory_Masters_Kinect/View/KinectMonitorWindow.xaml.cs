@@ -7,7 +7,6 @@ namespace TCC_Inventory_Masters_Kinect.View
 {
     public partial class KinectMonitorWindow : Window
     {
-
         /// <summary>
         /// Janela principal do monitoramento do Kinect, responsável por exibir a interface de calibração,
         /// exibir o vídeo de calibração e gerenciar a interação do usuário com o sistema.
@@ -18,6 +17,7 @@ namespace TCC_Inventory_Masters_Kinect.View
             : this("Administrador")
         {
         }
+
         /// <summary>
         /// Construtor da janela principal do monitoramento do Kinect, 
         /// que recebe o nome do usuário logado para personalizar a experiência.
@@ -26,14 +26,16 @@ namespace TCC_Inventory_Masters_Kinect.View
         public KinectMonitorWindow(string usuarioLogado)
         {
             InitializeComponent();
+
             /// separação da lógica de calibração e monitoramento em um ViewModel 
             /// dedicado a busca de dados dentro da mainviewmodel 
- 
+
             _viewModel = new MainViewModel(usuarioLogado);
             _viewModel.CalibracaoFinalizada += FinalizarVideoCalibracao;
 
             DataContext = _viewModel;
         }
+
         /// <summary>
         /// Evento de clique do botão "Calibrar", que inicia o processo de calibração do Kinect.
         /// </summary>
@@ -48,6 +50,7 @@ namespace TCC_Inventory_Masters_Kinect.View
             CalibrationVideoElement.Position = TimeSpan.Zero;
             CalibrationVideoElement.Play();
         }
+
         /// <summary>
         /// Evento que é acionado quando o vídeo de calibração chega ao fim, 
         /// reiniciando a reprodução para criar um loop contínuo.
@@ -59,6 +62,7 @@ namespace TCC_Inventory_Masters_Kinect.View
             CalibrationVideoElement.Position = TimeSpan.Zero;
             CalibrationVideoElement.Play();
         }
+
         /// <summary>
         /// Método que é chamado quando a calibração é finalizada,
         /// </summary>
@@ -73,6 +77,7 @@ namespace TCC_Inventory_Masters_Kinect.View
                 CalibrationSubtitleTextBlock.Text = "Salve o espaco para liberar as medicoes automaticas";
             });
         }
+
         /// <summary>
         /// Evento de clique do botão "Sair", que fecha a aplicação de forma segura, 
         /// garantindo que todos os recursos sejam liberados corretamente.
@@ -83,6 +88,11 @@ namespace TCC_Inventory_Masters_Kinect.View
         {
             Application.Current.Shutdown();
         }
+
+        private void AbrirMonitoramento_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
         /// <summary>
         /// Evento de fechamento da janela, que garante que os recursos do Kinect sejam liberados corretamente
         /// </summary>
@@ -95,6 +105,7 @@ namespace TCC_Inventory_Masters_Kinect.View
                 _viewModel.CalibracaoFinalizada -= FinalizarVideoCalibracao;
             }
         }
+
         /// <summary>
         /// Evento de clique do botão "Abrir Histórico", que verifica se os dados do espaço foram salvos
         /// </summary>
