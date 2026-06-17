@@ -417,7 +417,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 ---
 
-# Casos de Uso da Aplicação MVC
+## Casos de Uso da Aplicação MVC
 
 A tabela abaixo apresenta os casos de uso relacionados exclusivamente à aplicação web MVC, responsável pela administração, monitoramento, parametrização, notificações e gestão operacional da plataforma.
 
@@ -464,7 +464,7 @@ A tabela abaixo apresenta os casos de uso relacionados exclusivamente à aplica�
 | UC56 | Acessar Parâmetros | Admin | Acesso ao módulo de configuração. |
 
 ---
-# Casos de Uso do Módulo Kinect
+## Casos de Uso da Aplicação Kinect
 
 Os casos de uso abaixo representam as funcionalidades relacionadas ao monitoramento volumétrico, captura dos dados de profundidade e processamento realizado pelo Kinect.
 
@@ -513,9 +513,33 @@ Os casos abaixo são executados internamente pelos casos de uso principais apres
 | UCK12 - Processar Dados de Profundidade | Remover Ruídos |
 | UCK12 - Processar Dados de Profundidade | Normalizar Dados |
 | UCK13 - Calcular Volume Ocupado | Comparar com Referência Calibrada |
+| **UC15** | Integrar Perfil Repos. | Sistema | Conexão entre módulo de notificação e repositório. |
 | UCK19 - Enviar Medição para MVC | Converter cm³ para m³ |
+| **UC32** | Persistir Configurações | Sistema | Validação e salvamento de parâmetros no Firestore. |
+| **UC36** | Persistir Configs | Sistema | Validação e salvamento de parâmetros no Firestore. |
+| **UC41** | Normalização de Dados | Sistema | Padronização dos dados brutos para cálculo volumétrico. |
+| **UC42** | Tratamento de Ruído | Sistema | Remoção de interferências (ruído visual) na nuvem de pontos. |
+| **UC43** | Cálculo de Superfície | Sistema | Determinação da área de topo do estoque para cálculo do volume. |
+| **UC46** | Sincronização de Histórico | Sistema | Consistência entre medições locais e banco na nuvem. |
+| **UC49** | Backup de Logs | Sistema | Rotina de persistência secundária de logs de erro. |
 
-# Casos de Uso de Integração
+---
+
+## Casos de Uso Extendidos (<<extend>>)
+
+Casos que adicionam comportamento opcional ou condicional a um caso de uso principal.
+
+| ID(s) | Nome da Funcionalidade | Perfil | Descrição |
+| :--- | :--- | :--- | :--- |
+| **UC19** | Registrar Snapshot Espacial | Sistema | Extende o processo de captura para fins de auditoria quando necessário. |
+| **UC23, UC24** | Processamento e Geração de Malha | Sistema | Podem ser estendidos por condições de qualidade da nuvem. |
+| **UC29** | Verificação de Estabilidade de Malha | Sistema | Extende a geração da malha para validar a qualidade espacial. |
+| **UC30** | Validação de Regras de Limite | Sistema | Extende o cálculo de volume para disparar alertas condicionais. |
+| **UC38, UC40, UC44** | Logs, Validação e Auditoria | Sistema | Extendem o ciclo de vida da medição conforme eventos de sistema ocorrem. |
+
+---
+
+## Casos de Uso de Integração
 
 Os casos de uso abaixo representam os mecanismos responsáveis pela comunicação entre o Kinect e a aplicação MVC.
 
