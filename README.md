@@ -401,75 +401,105 @@ Os requisitos do sistema foram organizados por categoria, separando as funcional
 
 ## Diagrama de Caso de Uso
 
-### O diagrama de caso de uso descreve as funcionalidades da solução Inventory Masters, organizadas por módulos e responsabilidades, evidenciando a separação entre o Módulo Kinect, a Aplicação MVC e os mecanismos de integração responsáveis pela comunicação entre os componentes.
+O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory Masters, organizadas em três módulos principais:
 
-<p align="center">
+* **Módulo MVC:** Responsável pela gestão operacional, dashboards, parâmetros, parceiros, notificações e relatórios.
+* **Módulo Kinect:** Responsável pela captura, processamento e monitoramento volumétrico dos ambientes.
+* **Módulo de Integração:** Responsável pela comunicação em tempo real entre o Kinect e a aplicação MVC através do SignalR.
+
+
+  <p align="center">
+
   <img src="./Imagens/InventoryMastersUC_MVC.png" width="800" alt="Diagrama de Caso de Uso" />
+
 </p>
 
----
-
-# Tabela Consolidada de Casos de Uso
-
-## Casos de Uso do Módulo Kinect
-
-| ID | Caso de Uso | Perfil | Descrição |
-|------|------|------|------|
-| UC01 | Realizar Login Local | Operador | Permite o acesso ao módulo Kinect. |
-| UC02 | Realizar Logoff | Operador | Encerra a sessão atual do usuário. |
-| UC03 | Logoff por Inatividade | Sistema | Encerra automaticamente a sessão após período configurado. |
-| UC04 | Ligar Kinect | Operador | Inicializa o sensor Kinect. |
-| UC05 | Desligar Kinect | Operador | Finaliza a utilização do sensor. |
-| UC06 | Calibrar Espaço | Operador | Captura o ambiente vazio para geração da referência espacial. |
-| UC07 | Cadastrar Espaço Monitorado | Operador | Permite informar nome e parâmetros do espaço monitorado. |
-| UC08 | Capturar Dados de Profundidade | Sistema | Obtém os dados de profundidade do ambiente. |
-| UC09 | Capturar Imagem RGB | Sistema | Exibe a câmera RGB em tempo real. |
-| UC10 | Processar Dados de Profundidade | Sistema | Processa os dados recebidos do sensor. |
-| UC11 | Calcular Volume Ocupado | Sistema | Calcula o volume ocupado no ambiente. |
-| UC12 | Calcular Espaço Livre | Sistema | Determina a capacidade disponível. |
-| UC13 | Calcular Percentual de Ocupação | Sistema | Calcula a taxa de ocupação do espaço. |
-| UC14 | Salvar Medição | Sistema | Persiste a medição no SQLite. |
-| UC15 | Consultar Histórico Local | Operador | Exibe o histórico de medições armazenadas. |
-| UC16 | Registrar Logs Operacionais | Sistema | Registra eventos e falhas operacionais. |
-| UC17 | Diagnosticar Sensor | Sistema | Verifica a saúde e conectividade do Kinect. |
 
 ---
 
-## Casos de Uso do Módulo MVC
+# Casos de Uso da Aplicação MVC
 
-| ID | Caso de Uso | Perfil | Descrição |
-|------|------|------|------|
-| UC18 | Listar Usuários e Parceiros | Admin | Listagem paginada dos registros. |
-| UC19 | Filtrar Dados | Admin | Pesquisa avançada de informações. |
-| UC20 | Cadastrar Entidades | Admin | Cadastro de usuários e parceiros. |
-| UC21 | Buscar por Identificador | Admin | Localização de registros específicos. |
-| UC22 | Atualizar ou Excluir Registros | Admin | Manutenção cadastral. |
-| UC23 | Visualizar Detalhes | Admin | Consulta detalhada de registros. |
-| UC24 | Gerenciar Perfis e Permissões | Admin | Controle de acesso dos usuários. |
-| UC25 | Auditar Logs | Admin | Consulta de registros de auditoria. |
-| UC26 | Visualizar Dashboard | Admin | Monitoramento dos indicadores operacionais. |
-| UC27 | Configurar Parâmetros | Admin | Configuração dos limites operacionais. |
-| UC28 | Gerenciar Parceiros | Admin | Administração dos parceiros cadastrados. |
-| UC29 | Gerenciar Notificações | Admin | Consulta e acompanhamento dos alertas gerados. |
-| UC30 | Gerar Relatórios | Admin | Emissão de relatórios operacionais e históricos. |
-| UC31 | Monitorar Ocupação | Admin | Acompanhamento da ocupação dos espaços monitorados. |
-| UC32 | Gerenciar Coletas | Admin | Controle do ciclo de vida das coletas. |
-| UC33 | Consultar Histórico Consolidado | Admin | Consulta histórica das medições recebidas. |
-| UC34 | Gerenciar Alertas Visuais | Admin | Configuração dos alertas exibidos no dashboard. |
+A tabela abaixo apresenta os casos de uso relacionados exclusivamente à aplicação web MVC, responsável pela administração, monitoramento, parametrização, notificações e gestão operacional da plataforma.
+
+| ID | Nome da Funcionalidade | Perfil | Descrição |
+| :--- | :--- | :--- | :--- |
+| UC01 | Listar Registros (Pag) | Admin | Listagem paginada de usuários ou parceiros. |
+| UC02 | Filtrar Dados | Admin | Filtros avançados para busca de usuários ou parceiros. |
+| UC03 | Cadastro de Entidade | Admin | Inclusão de novos usuários/parceiros com validação. |
+| UC04 | Buscar por ID | Admin | Localização de registros específicos via identificador. |
+| UC05 | Atualizar/Excluir | Admin | Manutenção, edição e remoção de registros cadastrais. |
+| UC06 | Visualizar Detalhes | Admin | Exibição detalhada de um registro selecionado. |
+| UC07 | Atualizar Detalhes Parceiro | Admin | Edição de informações específicas de parceiros. |
+| UC08 | Inclusão de Perfil | Admin | Associação de níveis de acesso aos usuários. |
+| UC09 | Gestão de Acessos | Admin | Controle de permissões do sistema. |
+| UC10 | Auditoria de Logs | Admin | Rastreamento de alterações realizadas no sistema. |
+| UC11 | Visualizar Histórico | Admin | Exibição do histórico de notificações do sistema. |
+| UC12 | Filtrar Notificações | Admin | Segmentação de alertas por data ou status. |
+| UC13 | Aceitar Coleta | Admin | Registro de aceite de coleta via repositório. |
+| UC14 | Notificar Clientes | Sistema | Broadcast de alertas via SignalR. |
+| UC15 | Integrar Perfil Repositório | Sistema | Conexão entre módulo de notificação e repositório. |
+| UC16 | Verificar Pendências | Admin | Verificação de notificações e tarefas pendentes. |
+| UC17 | Gestão de Alertas Visuais | Admin | Configuração de gatilhos de alerta no Dashboard. |
+| UC25 | Histórico Medições | Admin | Consulta de medições recebidas pela plataforma. |
+| UC26 | Exportar Dados | Admin | Exportação de relatórios volumétricos e periódicos. |
+| UC27 | Relatório de Período | Admin | Geração de análise de volume por intervalo de tempo. |
+| UC30 | Validação de Regras de Limite | Sistema | Comparação das medições com parâmetros configurados. |
+| UC31 | Ajustar Parâmetros | Admin | Configuração de limites mínimos e máximos de estoque. |
+| UC32 | Persistir Configurações | Sistema | Validação e salvamento de parâmetros no Firestore. |
+| UC33 | Adicionar Parceiro | Admin | Inclusão de novo parceiro via módulo de parâmetros. |
+| UC34 | Ativar Alerta Dashboard | Admin | Ativação de alertas visuais no painel de controle. |
+| UC35 | Definir Parceiro Padrão | Admin | Definição de entidade padrão para fluxos operacionais. |
+| UC36 | Persistir Configurações | Sistema | Salvamento de parâmetros no Firestore. |
+| UC47 | Gerenciamento de Coletas | Admin | Controle do ciclo de vida das coletas realizadas. |
+| UC48 | Auditoria de Medições | Admin | Verificação de conformidade das medições. |
+| UC51 | Visualizar Consolidado | Admin | Visão geral da ocupação e dos volumes monitorados. |
+| UC52 | Monitorar Gráficos | Admin | Visualização de tendências e indicadores. |
+| UC54 | Lista de Notificações | Admin | Exibição das notificações geradas. |
+| UC55 | Configurar Alertas Visuais | Admin | Personalização dos alertas exibidos no Dashboard. |
+| UC56 | Acessar Parâmetros | Admin | Acesso ao módulo de configuração. |
 
 ---
 
-## Casos de Uso de Integração
+# Casos de Uso do Módulo Kinect
 
-| ID | Caso de Uso | Perfil | Descrição |
-|------|------|------|------|
-| UC35 | Enviar Medições via SignalR | Sistema | Envia dados do Kinect para o MVC. |
-| UC36 | Receber Medições | Sistema | Recebe medições processadas pelo Kinect. |
-| UC37 | Atualizar Dashboard em Tempo Real | Sistema | Atualiza os dashboards sem refresh manual. |
-| UC38 | Sincronizar Histórico | Sistema | Mantém consistência entre Kinect e MVC. |
-| UC39 | Operar Offline | Sistema | Mantém o funcionamento local em caso de indisponibilidade da aplicação web. |
-| UC40 | Gerenciar Conexões | Sistema | Controle do ciclo de vida das conexões SignalR. |
-| UC41 | Autenticar Comunicação | Sistema | Validação dos mecanismos de acesso à integração. |
+Os casos de uso abaixo representam as funcionalidades relacionadas ao monitoramento volumétrico, captura dos dados de profundidade e processamento realizado pelo Kinect.
+
+| ID | Nome da Funcionalidade | Perfil | Descrição |
+| :--- | :--- | :--- | :--- |
+| UCK01 | Realizar Login Local | Operador | Permite acesso ao módulo Kinect. |
+| UCK02 | Realizar Logoff | Operador | Encerra a sessão atual. |
+| UCK03 | Logoff por Inatividade | Sistema | Encerra automaticamente a sessão após período configurado. |
+| UCK04 | Ligar Kinect | Operador | Inicializa o sensor Kinect. |
+| UCK05 | Desligar Kinect | Operador | Finaliza a operação do sensor. |
+| UCK06 | Calibrar Espaço | Operador | Captura o ambiente vazio para referência. |
+| UCK07 | Cadastrar Espaço Monitorado | Operador | Cadastro do espaço e limites operacionais. |
+| UCK08 | Capturar Profundidade | Sistema | Captura dados de profundidade do ambiente. |
+| UCK09 | Capturar Imagem RGB | Sistema | Exibe a câmera RGB em tempo real. |
+| UCK10 | Processar Dados de Profundidade | Sistema | Processa os dados recebidos do sensor. |
+| UCK11 | Calcular Volume Ocupado | Sistema | Determina o volume ocupado no ambiente. |
+| UCK12 | Calcular Espaço Livre | Sistema | Calcula a capacidade disponível. |
+| UCK13 | Calcular Percentual de Ocupação | Sistema | Determina a ocupação do espaço monitorado. |
+| UCK14 | Salvar Medição Local | Sistema | Armazena medições no SQLite. |
+| UCK15 | Consultar Histórico Local | Operador | Exibe medições armazenadas localmente. |
+| UCK16 | Registrar Logs Operacionais | Sistema | Registra eventos e falhas do módulo Kinect. |
+| UCK17 | Verificar Calibração | Operador | Valida o estado atual da calibração. |
+| UCK18 | Diagnosticar Sensor | Sistema | Verifica a saúde e conectividade do Kinect. |
+
+---
+
+# Casos de Uso de Integração
+
+Os casos de uso abaixo representam os mecanismos responsáveis pela comunicação entre o Kinect e a aplicação MVC.
+
+| ID | Nome da Funcionalidade | Perfil | Descrição |
+| :--- | :--- | :--- | :--- |
+| UCI01 | Enviar Medições via SignalR | Sistema | Envia medições para a aplicação MVC. |
+| UCI02 | Receber Medições | Sistema | Recebe medições enviadas pelo Kinect. |
+| UCI03 | Atualizar Dashboard em Tempo Real | Sistema | Atualiza dashboards conectados. |
+| UCI04 | Sincronizar Histórico | Sistema | Mantém consistência entre os módulos. |
+| UCI05 | Operar Offline | Sistema | Mantém medições locais quando o MVC estiver indisponível. |
+| UCI06 | Gerenciar Conexões | Sistema | Controle do ciclo de vida das conexões SignalR. |
+| UCI07 | Autenticar Comunicação | Sistema | Validação de acesso aos serviços de integração. |
 
 ---
 
