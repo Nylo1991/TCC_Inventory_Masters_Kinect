@@ -217,6 +217,19 @@ Abaixo, elenco as regras de negócio agrupadas por domínio técnico-operacional
 * **RN15 - Tratamento de Erros:** Falhas físicas (ex: desconexão do cabo) devem ser registradas como logs de erro no Firestore para permitir o diagnóstico técnico remoto (`UC38`).
 * **RN16 - Auto-recuperação:** O sistema deve tentar o re-handshake automático com o hardware antes de notificar o erro ao operador (`UC50`).
 
+### Fluxo de Processamento de Negócio
+
+O sistema opera através de um **fluxo determinístico**, garantindo que apenas dados validados alcancem a interface de monitoramento. Caso ocorra uma falha em qualquer etapa, o processo é interrompido para evitar inconsistências nos dados de estoque.
+
+#### Etapas do Processo:
+1. **Verificação de Hardware:** Diagnóstico do sensor e plano de referência (`UC37`, `UC45`).
+2. **Captura e Filtro:** Coleta dos dados espaciais e remoção de ruídos (`UC23`, `UC42`).
+3. **Cálculo e Conversão:** Processamento da malha 3D e conversão de unidade ($cm^3 \rightarrow m^3$) (`UC24`, `UC61`).
+4. **Validação de Limites:** Comparação do volume obtido com as capacidades configuradas (`UC30`).
+5. **Persistência e Broadcast:** Salvamento no Firestore e atualização em tempo real dos Dashboards via SignalR (`UC32`, `UC62`).
+
+> **Nota de Integridade:** Qualquer falha detectada durante estas etapas interrompe imediatamente a propagação do dado, assegurando que o Dashboard exiba apenas informações íntegras, precisas e validadas.
+
 ---
 
 ## Diagrama de Fluxo 
