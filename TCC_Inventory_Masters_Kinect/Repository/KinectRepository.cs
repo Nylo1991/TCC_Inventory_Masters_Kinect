@@ -71,21 +71,23 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         /// <summary>
         /// Obtém as medições registradas no SQLite em ordem crescente de ID.
         /// </summary>
-        public List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade)
+        public List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade, string usuario, string empresa)
         {
             try
             {
                 using (var db = new AppDbContext(_empresa))
                 {
                     return db.MedicaoVolumes
-                        .OrderBy(x => x.Id)
+                        .Where(x => x.Usuario == usuario && x.Empresa == empresa)
+                        .OrderByDescending(x => x.Id)
                         .Take(quantidade)
+                        .OrderBy(x => x.Id)
                         .ToList();
                 }
             }
             catch
             {
-                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente.");
+                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente por usuario.");
                 return new List<MedicaoVolume>();
             }
         }

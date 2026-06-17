@@ -10,13 +10,13 @@ namespace TCC_Inventory_Masters_Kinect.Repository.Interface
     public interface IKinectRepository
     {
         /// <summary>
-        /// Salva uma nova medição volumétrica no banco de dados, incluindo informações como volume em cm³ e m³,
+        /// Salva uma nova medição volumétrica no banco de dados por usuario, incluindo informações como volume em cm³ e m³,
         /// data e hora da medição, status do Kinect e calibração.
         /// </summary>
         /// <param name="medicao"></param>
         void SalvarMedicao(MedicaoVolume medicao);
           List<MedicaoVolume> ObterUltimasMedicoes(int quantidade);
-          List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade);
+        List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade, string usuario, string empresa);
 
         /// <summary>
         /// salva um novo registro de histórico de ocupação no banco de dados, 

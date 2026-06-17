@@ -552,10 +552,13 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     DataHora = DateTime.Now,
                     KinectLigado = _kinectService.IsConnected,
                     Calibrado = true,
-                    Status = statusMedicao
+                    Status = statusMedicao,
+                    Usuario = _sessao.Usuario,
+                    Empresa = _sessao.Empresa
                 };
 
                 _repository.SalvarMedicao(medicao);
+
                 CarregarHistoricoMedicoes();
 
                 StatusSQLite = "SQLite: Medição salva";
@@ -571,7 +574,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                     MensagemEnvioAplicacao = "SignalR não está conectado.";
                 }
 
-                LoggerService.Info($"{statusMedicao}. Volume: {volumeAtualCm3:F0} cm3");
+                LoggerService.Info($"{statusMedicao}. Usuário: {_sessao.Usuario}. Empresa: {_sessao.Empresa}. Volume: {volumeAtualCm3:F0} cm3");
             }
             catch
             {
@@ -624,9 +627,15 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         /// </summary>
         public void CarregarHistoricoMedicoes()
         {
-            var medicoes = _repository.ObterMedicoesEmOrdemCrescente(100);
+            var medicoes = _repository.ObterMedicoesEmOrdemCrescente(
+                100,
+                _sessao.Usuario,
+                _sessao.Empresa
+            );
+
             HistoricoMedicoes = new ObservableCollection<MedicaoVolume>(medicoes);
         }
+
         /// <summary>
         /// método responsável por formatar o volume em centímetros cúbicos para uma string legível em metros cúbicos,
         /// </summary>
