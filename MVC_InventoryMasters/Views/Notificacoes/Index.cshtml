@@ -128,7 +128,9 @@
 
                                         @if (n.StatusEnvio == "Pendente")
                                         {
-                                            <button class="btn btn-sm btn-success">
+                                            <button class="btn btn-sm btn-success"
+                                                    style="width: 120px; height: 38px;"
+                                                    onclick="exibirFuncionalidadeEmDesenvolvimento('A funcionalidade de aceite de notificações ainda está em desenvolvimento e será disponibilizada em versões futuras do sistema.')">
                                                 <i class="bi bi-check-circle"></i>
                                                 Aceitar
                                             </button>
@@ -264,3 +266,21 @@
     </div>
 
 </div>
+<script>
+    function exibirFuncionalidadeEmDesenvolvimento(mensagem) {
+
+            const modalBody = document.querySelector(
+                "#modalEmDesenvolvimento .modal-body"
+            );
+
+            if (modalBody) {
+                modalBody.innerText = mensagem;
+            }
+
+            const modal = new bootstrap.Modal(
+                document.getElementById("modalEmDesenvolvimento")
+            );
+
+            modal.show();
+        }
+</script>
