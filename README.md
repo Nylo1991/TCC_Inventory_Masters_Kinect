@@ -1020,124 +1020,270 @@ A estrutura física é gerada automaticamente pelo Entity Framework através das
 
 ---
 
-## Viabilidade técnica
+# VIABILIDADE TÉCNICA
 
-### Introdução
-Nosso projeto, propõe o mapeamento volumétrico inteligente de estoques utilizando o sensor **Kinect (Xbox 360)** integrado a um sistema desenvolvido na plataforma **.NET 8**. A solução foca na identificação, monitoramento e classificação de excedentes produtivos, promovendo eficiência operacional e sustentabilidade com baixo custo de implementação.
+## Introdução
 
-### 2. Descrição da Solução
-A solução utiliza a tecnologia de luz estruturada e sensores infravermelhos do Kinect para a captura tridimensional (RGB-D) do espaço físico destinado ao armazenamento.
-* **Processamento:** Os dados de profundidade são processados em **C#**, onde algoritmos de geometria analítica convertem a "nuvem de pontos" (*point cloud*) em métricas de volume real ($m^3$).
-* **Interface:** Desenvolvida em **ASP.NET Core**, a interface permite o monitoramento em tempo real e acesso via navegador, facilitando a operação sem necessidade de infraestruturas complexas de software local.
+O projeto **Inventory Masters** propõe uma solução de monitoramento volumétrico inteligente utilizando o sensor **Kinect Xbox 360** integrado a um sistema desenvolvido em **C#**, com o objetivo de acompanhar a ocupação de espaços físicos destinados ao armazenamento de materiais e excedentes produtivos.
 
-### 3. Requisitos de Hardware
-Para a execução estável do sistema, definiu-se a seguinte configuração mínima:
-* **Estação de Trabalho:** Processador Intel Core i7, 16 GB de memória RAM, SSD de 500 GB;
-* **Sensor:** Kinect Xbox 360 com Adaptador USB e Fonte de Alimentação Própria;
-* **Infraestrutura:** Estrutura de suporte rígida para fixação zenital (superior) do sensor, garantindo um ângulo de visão constante e livre de obstruções.
+A solução combina captura de profundidade, processamento volumétrico, armazenamento local e sincronização com uma aplicação web, permitindo o acompanhamento contínuo da utilização dos espaços monitorados. Dessa forma, a plataforma contribui para o controle operacional, a redução de desperdícios e o apoio à tomada de decisão em ambientes logísticos e industriais.
 
-### 4. Organização Tecnológica
-A arquitetura de software foi planejada para garantir escalabilidade e performance:
-* **Plataforma:** .NET SDK 8 (Ambiente de desenvolvimento Rider/Visual Studio);
-* **Linguagem:** C#;
-* **Bibliotecas e APIs:** * *Microsoft Kinect SDK 1.8*: Para captura bruta de dados do sensor;
-    * *Math.NET Numerics*: Para cálculos matemáticos e estatísticos dos pontos capturados;
-    * *Interoperabilidade*: Camada de compatibilidade para comunicação entre o SDK legado (32-bit) e o ambiente moderno .NET 8 (64-bit).
-* **Banco de Dados:** SQLite para persistência do histórico de medições e parâmetros de sistema.
-
-### 5. Metodologia de Implementação
-O processo de implementação segue etapas rigorosas para garantir a precisão:
-1.  **Calibração de Campo:** Instalação física e definição do plano de referência (chão do estoque).
-2.  **Desenvolvimento Web:** Criação das *Razor Pages* para visualização de dados e indicadores operacionais.
-3.  **Algoritmo de Volume:** Integração matemática para traduzir a ocupação do espaço em dados numéricos.
-4.  **Definição de Gatilhos:** Programação de alertas automáticos baseados em limites volumétricos pré-configurados.
-5.  **Testes de Precisão:** Validação da detecção digital comparando com medições físicas reais para ajuste de sensibilidade.
-6.  **Deploy:** Disponibilização do sistema em rede interna para acesso corporativo.
-
-### 6. Benefícios Técnicos
-* **Precisão Automatizada:** Redução drástica do erro humano comum em inventários manuais;
-* **Custo-Benefício:** Uso de hardware acessível em substituição a sensores LiDAR industriais de alto custo;
-* **Escalabilidade:** Possibilidade de replicar a solução em diferentes pontos de armazenamento com o mesmo núcleo de processamento;
-* **Integração Digital:** Facilidade de exportação de relatórios e conexão com outros sistemas de gestão (ERP).
-  
 ---
 
-## Viabilidade econômica
+## Descrição da Solução
 
-### 1. Custos Estimados de Implantação
-O projeto **Inventory Masters** foi concebido como uma solução tecnológica de baixo custo, utilizando hardware acessível e desenvolvimento próprio. Esta abordagem reduz drasticamente o investimento inicial quando comparado a sistemas industriais de mapeamento volumétrico baseados em sensores LiDAR de alta gama.
+A solução utiliza os sensores de profundidade e imagem RGB do Kinect para capturar informações tridimensionais do ambiente monitorado.
 
-#### Investimento em Hardware
+O processo inicia-se com a calibração do espaço vazio, criando um mapa de referência utilizado como base para as medições futuras. Durante a operação, o sistema compara a leitura atual do ambiente com a referência calibrada, permitindo calcular automaticamente:
+
+- Volume ocupado;
+- Espaço livre;
+- Percentual de ocupação;
+- Evolução da ocupação ao longo do tempo.
+
+A arquitetura foi dividida em três módulos principais:
+
+### Módulo Kinect
+
+Responsável pela captura, processamento e armazenamento local das medições volumétricas.
+
+### Módulo MVC
+
+Responsável pela visualização dos dados através de dashboards, gerenciamento de parâmetros, parceiros, notificações e relatórios.
+
+### Integração
+
+Responsável pela comunicação em tempo real entre o Kinect e a aplicação MVC por meio do SignalR.
+
+---
+
+## Requisitos de Hardware
+
+Para a execução estável do sistema foi definida a seguinte configuração mínima:
+
+### Estação de Trabalho
+
+- Processador Intel Core i3 ou superior;
+- 8 GB de memória RAM;
+- SSD de 240 GB ou superior;
+- Sistema Operacional Windows compatível com Kinect SDK 1.8.
+
+### Sensor
+
+- Kinect Xbox 360;
+- Adaptador USB com fonte de alimentação própria.
+
+### Infraestrutura
+
+- Estrutura de suporte para posicionamento adequado do sensor;
+- Área monitorada livre de obstruções permanentes;
+- Distância compatível com o campo de visão do Kinect.
+
+---
+
+## Organização Tecnológica
+
+### Tecnologias do Módulo Kinect
+
+- Linguagem: C#
+- Plataforma: .NET Framework
+- Interface: WPF
+- Sensor: Kinect Xbox 360
+- SDK: Kinect for Windows SDK 1.8
+- Banco de Dados: SQLite
+- Arquitetura: MVVM
+- Comunicação: SignalR Client
+
+### Tecnologias da Aplicação MVC
+
+- ASP.NET MVC
+- Razor Pages
+- Bootstrap
+- SignalR
+- Firebase Firestore
+
+### Tecnologias de Integração
+
+- SignalR
+- JSON
+- WebSockets
+
+---
+
+## Metodologia de Implementação
+
+O desenvolvimento da solução foi dividido em duas etapas principais.
+
+### Etapa 1 – Desenvolvimento do Módulo Kinect
+
+1. Integração do Kinect Xbox 360 ao ambiente de desenvolvimento.
+2. Captura dos dados de profundidade e imagem RGB.
+3. Implementação da calibração do ambiente.
+4. Desenvolvimento do algoritmo de cálculo volumétrico.
+5. Implementação dos indicadores de ocupação.
+6. Persistência local das medições em SQLite.
+7. Implementação do histórico de medições.
+8. Desenvolvimento dos mecanismos de diagnóstico e monitoramento do sensor.
+
+### Etapa 2 – Integração com a Aplicação MVC
+
+1. Implementação da comunicação via SignalR.
+2. Desenvolvimento dos dashboards de monitoramento.
+3. Configuração dos parâmetros operacionais.
+4. Implementação do sistema de notificações.
+5. Desenvolvimento dos relatórios operacionais.
+6. Sincronização dos dados entre os módulos.
+
+---
+
+## Benefícios Técnicos
+
+A solução apresenta diversos benefícios técnicos:
+
+- Automatização das medições volumétricas;
+- Redução da dependência de inventários manuais;
+- Monitoramento contínuo da ocupação dos espaços;
+- Armazenamento histórico das medições;
+- Comunicação em tempo real entre os módulos;
+- Operação local independente da aplicação web;
+- Persistência dos dados em SQLite;
+- Baixo custo de implantação;
+- Facilidade de manutenção e expansão;
+- Separação de responsabilidades entre Kinect, MVC e Integração.
+
+---
+
+## Pontos de Viabilidade
+
+1. O Kinect Xbox 360 possui suporte por meio do Kinect SDK 1.8.
+2. A câmera RGB e o sensor de profundidade podem ser acessados pela aplicação desktop.
+3. O cálculo volumétrico pode ser realizado comparando o ambiente calibrado com a leitura atual.
+4. O WPF permite integração direta com hardware local.
+5. O SQLite possibilita armazenamento local sem necessidade de servidor dedicado.
+6. O SignalR permite sincronização em tempo real com a aplicação MVC.
+7. A arquitetura MVVM facilita a manutenção do código.
+8. O sistema pode operar mesmo sem conexão com a aplicação web.
+9. A separação entre módulos facilita futuras expansões.
+10. A solução pode ser executada em computadores convencionais compatíveis com o Kinect SDK.
+
+---
+
+## Limitações Técnicas
+
+Apesar da viabilidade da solução, algumas limitações devem ser consideradas:
+
+1. O Kinect possui limite de alcance e campo de visão.
+2. A precisão das medições depende da correta calibração do ambiente.
+3. Objetos fora da área monitorada não são considerados nos cálculos.
+4. Obstáculos podem interferir na captura dos dados.
+5. O Kinect SDK possui dependência do ambiente Windows.
+6. O cálculo volumétrico representa uma estimativa baseada na profundidade capturada.
+7. A comunicação com a aplicação MVC depende da disponibilidade da rede.
+8. O Kinect Xbox 360 é um equipamento descontinuado, exigindo cuidados adicionais de manutenção.
+
+---
+
+## Conclusão da Viabilidade Técnica
+
+Com base nas tecnologias utilizadas, nos testes realizados e na integração entre hardware e software, conclui-se que a solução proposta é tecnicamente viável.
+
+A utilização do Kinect Xbox 360 permitiu implementar um sistema de monitoramento volumétrico capaz de acompanhar a ocupação dos espaços de armazenamento de forma automatizada, utilizando recursos acessíveis e tecnologias amplamente consolidadas.
+
+A combinação entre Kinect, SQLite, SignalR e ASP.NET MVC demonstrou ser adequada para o desenvolvimento de uma plataforma capaz de fornecer informações operacionais em tempo real, mantendo histórico das medições e apoiando processos relacionados à gestão de excedentes produtivos e utilização eficiente dos espaços de armazenamento.
+
+---
+
+# VIABILIDADE ECONÔMICA
+
+## Custos Estimados de Implantação
+
+O projeto Inventory Masters foi concebido como uma solução tecnológica de baixo custo, utilizando hardware acessível e desenvolvimento próprio. Essa abordagem reduz significativamente o investimento inicial quando comparada a sistemas industriais de monitoramento volumétrico.
+
+### Investimento em Hardware
+
 | Item | Quantidade | Valor Unitário | Total |
 | :--- | :---: | :---: | :---: |
 | Kinect Xbox 360 | 1 | R$ 30,00 | R$ 30,00 |
-| Cabo/adaptador USB com fonte | 1 | R$ 80,00 | R$ 80,00 |
-| CPU Core i3 | 1 | R$ 800,00 | R$ 800,00 |
+| Adaptador USB com Fonte | 1 | R$ 80,00 | R$ 80,00 |
+| Computador Core i3 | 1 | R$ 800,00 | R$ 800,00 |
 | **Subtotal Hardware** | | | **R$ 910,00** |
 
 ---
 
-### 2. Custo de Desenvolvimento (Mão de Obra)
-O desenvolvimento do sistema foi realizado pela equipe técnica, com uma dedicação total de 30 horas produtivas. Para fins de cálculo de viabilidade, considerou-se um valor de mercado base para desenvolvedores juniores/estagiários.
+## Custo de Desenvolvimento
 
-* **Horas totais:** 30 horas (3 integrantes × 10 horas)
-* **Valor/Hora estimado:** R$ 15,00
-* **Total Mão de Obra:** **R$ 450,00**
+Para fins de análise econômica, considerou-se o esforço de desenvolvimento realizado pela equipe do projeto.
+
+- Horas totais: 30 horas
+- Valor estimado por hora: R$ 15,00
+
+**Total estimado de mão de obra:** R$ 450,00
 
 ---
 
-### 3. Custo Total do Projeto
+## Custo Total do Projeto
+
 | Categoria | Valor |
 | :--- | :---: |
 | Hardware | R$ 910,00 |
 | Mão de Obra | R$ 450,00 |
 | **Total Geral** | **R$ 1.360,00** |
 
-O valor total demonstra a alta atratividade financeira da solução, especialmente frente a sistemas comerciais de automação que podem custar até dez vezes mais.
+---
+
+## Benefícios Econômicos
+
+A implementação da plataforma proporciona diversos benefícios:
+
+- Redução do tempo gasto em medições manuais;
+- Melhor utilização dos espaços disponíveis;
+- Identificação antecipada de excedentes produtivos;
+- Apoio à tomada de decisão operacional;
+- Redução de desperdícios;
+- Melhor controle dos estoques;
+- Possibilidade de reaproveitamento de materiais;
+- Redução de custos operacionais.
 
 ---
 
-### 4. Análise da Estrutura de Investimento
-A análise percentual do investimento revela que:
-* **CPU (Equipamento Principal):** Representa aproximadamente **48,7%** do custo.
-* **Mão de Obra:** Representa **27,4%**.
-* **Sensores e Acessórios:** Representam os **23,9%** restantes.
+## Conclusão da Viabilidade Econômica
 
-Esta estrutura evidencia que, em empresas que já possuam infraestrutura computacional disponível, o custo de implementação pode ser reduzido para menos de **R$ 600,00**, aumentando ainda mais a competitividade do projeto.
+O investimento total estimado em **R$ 1.360,00** demonstra que a solução apresenta excelente relação custo-benefício quando comparada a alternativas industriais de monitoramento volumétrico.
+
+Além do baixo investimento inicial, a plataforma oferece ganhos operacionais relacionados ao controle dos espaços de armazenamento, rastreabilidade das medições e apoio à gestão dos excedentes produtivos, tornando-se uma alternativa economicamente viável para organizações de diferentes portes.
 
 ---
 
-### 5. Benefícios Econômicos e Operacionais
-A implementação da plataforma gera ganhos diretos e indiretos para a organização:
-* **Redução de Perdas:** Identificação precoce de matéria-prima excedente antes da depreciação ou perda de validade.
-* **Economia Circular:** Geração de receita através da venda ou redistribuição de excedentes para parceiros estratégicos.
-* **Otimização de Processos:** Redução do tempo gasto em inventários manuais, permitindo que a mão de obra foque em atividades de maior valor agregado.
-* **Dados para Decisão:** Apoio à tomada de decisão baseada em volumetria real, evitando compras desnecessárias de insumos.
+# RESULTADOS E CONCLUSÃO
+
+## Resultados Alcançados
+
+Durante o desenvolvimento do projeto foi possível validar a utilização do Kinect Xbox 360 como ferramenta de monitoramento volumétrico aplicada à gestão de espaços de armazenamento.
+
+Os principais resultados obtidos foram:
+
+- Automatização do processo de medição volumétrica;
+- Monitoramento contínuo da ocupação dos espaços;
+- Cálculo automático de volume ocupado, espaço livre e percentual de ocupação;
+- Registro histórico das medições realizadas;
+- Integração entre módulo Kinect e aplicação MVC;
+- Disponibilização das informações em tempo real por meio de dashboards;
+- Persistência local das medições através do SQLite;
+- Funcionamento mesmo em situações de indisponibilidade temporária da aplicação web.
 
 ---
 
-### 6. Conclusão da Viabilidade Financeira
-O investimento inicial de **R$ 1.360,00** é consideravelmente inferior ao custo de manutenção de um inventário manual. 
+## Conclusão
 
-Considerando o salário mínimo projetado para 2025 de **R$ 1.518,00**, somado aos encargos trabalhistas (estimados em 70%), o custo mensal de um único funcionário pode ultrapassar **R$ 2.580,00**. 
+Conclui-se que a **Inventory Masters** demonstrou a viabilidade da utilização do Kinect Xbox 360 como ferramenta de monitoramento volumétrico aplicada ao controle de ocupação de espaços de armazenamento.
 
-Portanto, o sistema Inventory Masters apresenta um **Payback (retorno do investimento)** estimado em **menos de um mês**, consolidando-se como uma alternativa economicamente viável, escalável e de alto impacto para a sustentabilidade empresarial.
+A integração entre captura de profundidade, processamento local, armazenamento em SQLite e sincronização com a aplicação MVC permitiu construir uma solução capaz de fornecer informações atualizadas e rastreáveis para apoio à gestão operacional.
 
----
-## Resultados e conclusão
+Além dos benefícios relacionados ao controle dos estoques e à identificação de excedentes produtivos, a solução contribui para a otimização dos espaços de armazenamento e para a adoção de práticas alinhadas à economia circular.
 
-A implementação do projeto **Inventory Masters** demonstrou que a convergência entre hardware acessível e software moderno é uma solução eficaz para os desafios da logística reversa e economia circular. 
+Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cenários logísticos e industriais, consolidando-se como uma solução de baixo custo, escalável e tecnicamente adequada para o monitoramento inteligente de ambientes de armazenamento.
 
-**Resultados Alcançados:**
-* **Precisão Volumétrica:** O uso do sensor Kinect permitiu uma leitura tridimensional com margem de erro mínima, eliminando as inconsistências das medições manuais.
-* **Agilidade na Destinação:** O sistema de gatilhos reduziu o tempo de permanência de excedentes no estoque, conectando-os rapidamente a parceiros de reaproveitamento.
-* **Impacto Econômico:** Validou-se um modelo de baixíssimo custo (R$ 1.360,00), com retorno sobre o investimento (ROI) inferior a 30 dias.
-
-**Conclusão:**
-Conclui-se que a Inventory Masters não é apenas uma ferramenta de medição, mas um elo estratégico para a sustentabilidade industrial. Ao transformar desperdício em dados e ativos, a plataforma cumpre seu papel de promover eficiência operacional e responsabilidade socioambiental, provando ser uma solução escalável e tecnicamente robusta para o mercado atual.
-
----
-
+---------------------------------------
 ## ANEXOS
 
 ### BMG CANVAS (Business Model Canvas)
