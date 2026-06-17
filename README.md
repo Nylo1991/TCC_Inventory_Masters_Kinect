@@ -106,37 +106,84 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 ---
 # MODELAGEM DO SISTEMA
 ---
-## Diagrama de Caso de Uso
+## Diagrama de Caso de Uso projeto Inventory Masters MVC
+
+### O diagrama de caso de uso, descreve as funcionalidades do sistema, segregadas por módulos e níveis de responsabilidade, conforme definido na arquitetura.
 
 <p align="center">
-  <img src="./Imagens/InventoryMastersUC_MVC.png" width="600" alt="Diagrama de Caso de Uso" />
+  <img src="./Imagens/InventoryMastersUC_MVC.png" width="800" alt="Diagrama de Caso de Uso" />
 </p>
 
-### Especificação dos Casos de Uso por ordem de comportamento
+### Tabela Consolidada de Casos de Uso - Inventory Masters (Completa)
 
 | **ID** | **Nome da Funcionalidade** | **Perfil** | **Descrição** |
 | :--- | :--- | :--- | :--- |
-| **UC01** | Efetuar Login | Admin / Operador | Autenticação inicial no sistema. |
-| **UC02** | Configurar Parâmetros | Administrador | Definição de limites de alerta (Pré-operacional). |
-| **UC03** | Manter Parceiros | Administrador | Gestão de cadastros de terceiros (Pré-operacional). |
-| **UC04** | Gerar Status do Hardware | Operador | Diagnóstico da conexão do Kinect (Pré-operacional). |
-| **UC05** | Calibrar Sensor | Operador | Rotina de definição do plano de referência (Setup). |
-| **UC06** | Registrar Medição | Sistema / Operador | Captura (Kinect) ou inserção manual (Operacional). |
-| **UC07** | Sincronizar Dados (Real-time) | Sistema | Consistência entre WPF e Web via SignalR (Operacional). |
-| **UC08** | Notificar Parceiros | Sistema | Disparo automático de alertas pós-medição (Operacional). |
-| **UC09** | Monitorar Dashboard | Operador | Visualização em tempo real do status (Operacional). |
-| **UC10** | Gerar Relatório | Administrador | Análise histórica e eficiência (Gestão). |
-| **UC11** | Auditar Registros | Administrador | Verificação de integridade dos dados (Gestão). |
-| **UC12** | Backup de Dados | Administrador | Salvamento de segurança do banco (Manutenção). |
-| **UC13** | Efetuar Log Out | Admin / Operador | Encerramento da sessão. |
-| **UC14** | Validar Captura Espacial | Sistema | Verifica a consistência e qualidade da nuvem de pontos capturada pelo Kinect antes do processamento. |
-| **UC15** | Processar Nuvem de Pontos | Sistema | Converte os dados de profundidade capturados pelo Kinect em informações espaciais utilizáveis para cálculo volumétrico. |
-| **UC16** | Calcular Volume Ocupado | Sistema | Realiza os cálculos geométricos necessários para determinar o volume ocupado na área monitorada. |
-| **UC17** | Monitorar Ocupação do Espaço | Operador | Permite acompanhar a evolução da ocupação do ambiente monitorado em tempo real. |
-| **UC18** | Consultar Histórico de Ocupação | Administrador / Operador | Permite visualizar a evolução das medições e da utilização do espaço ao longo do tempo. |
-| **UC19** | Registrar Snapshot Espacial | Sistema | Armazena informações da captura realizada para fins de rastreabilidade e auditoria. |
+| **UC01** | Listar Registros (Pag) | Admin | Listagem paginada de usuários ou parceiros. |
+| **UC02** | Filtrar Dados | Admin | Filtros avançados para busca de usuários ou parceiros. |
+| **UC03** | Cadastro de Entidade | Admin | Inclusão de novos usuários/parceiros (com validação). |
+| **UC04** | Buscar por ID | Admin | Localização de registros específicos via identificador. |
+| **UC05** | Atualizar/Excluir | Admin | Manutenção, edição e remoção de registros cadastrais. |
+| **UC06** | Visualizar Detalhes | Admin | Exibição detalhada de um registro selecionado. |
+| **UC07** | Atualizar Detalhes Parceiro | Admin | Edição de informações específicas de parceiros. |
+| **UC08** | Inclusão de Perfil | Admin | Associação de níveis de acesso aos usuários. |
+| **UC09** | Gestão de Acessos | Admin | Controle de permissões do sistema. |
+| **UC10** | Auditoria de Logs | Admin | Rastreamento de alterações realizadas no sistema. |
+| **UC11** | Visualizar Histórico | Admin | Exibição do histórico de notificações do sistema. |
+| **UC12** | Filtrar Notificações | Admin | Segmentação de alertas por data ou status. |
+| **UC13** | Aceitar Coleta | Admin | Registro de aceite de coleta via repositório. |
+| **UC14** | Notificar Clientes | Sistema | Broadcast de alertas via SignalR (NotificacaoHub). |
+| **UC15** | Integrar Perfil Repos. | Sistema | Conexão entre módulo de notificação e repositório. |
+| **UC16** | Verificar Pendências | Admin | Verificação de notificações e tarefas pendentes. |
+| **UC17** | Gestão de Alertas Visuais | Admin | Configuração de gatilhos de alerta no Dashboard. |
+| **UC18** | Monitorar Ocupação | Operador | Acompanhamento em tempo real da ocupação do espaço. |
+| **UC19** | Registrar Snapshot Espacial | Sistema | Armazenamento de estado da captura para auditoria. |
+| **UC20** | Validação de Conexões | Sistema | Monitoramento de handshake entre cliente e servidor. |
+| **UC21** | Iniciar Medição | Operador | Ativação da captura de dados pelo sensor Kinect. |
+| **UC22** | Visualizar Fluxo Profund. | Operador | Monitoramento visual do fluxo de profundidade. |
+| **UC23** | Processar Nuvem Pontos | Sistema | Validação e filtro de dados espaciais brutos. |
+| **UC24** | Gerar Malha 3D | Sistema | Processamento geométrico para cálculo de volume. |
+| **UC25** | Histórico Medições | Admin | Consulta de logs e medições passadas. |
+| **UC26** | Exportar Dados | Admin | Exportação de relatórios volumétricos e periódicos. |
+| **UC27** | Relatório de Período | Admin | Geração de análise de volume por intervalo de tempo. |
+| **UC28** | Calibração de Sensor | Operador | Rotina de ajuste e definição do plano de referência. |
+| **UC29** | Verificação de Estabilidade de Malha | Sistema | Confirma que a malha gerada possui densidade suficiente para um cálculo preciso, evitando erros de leitura por oclusão. |
+| **UC30** | Validação de Regras de Limite | Sistema | Compara o volume calculado com os parâmetros de "capacidade máxima" definidos pelo Admin antes de disparar alertas. |
+| **UC31** | Ajustar Parâmetros | Admin | Configuração de limites mínimos e máximos de estoque. |
+| **UC32** | Persistir Configurações | Sistema | Validação e salvamento de parâmetros no Firestore. |
+| **UC33** | Adicionar Parceiro | Admin | Inclusão de novo parceiro via módulo de parâmetros. |
+| **UC34** | Ativar Alerta Dash | Admin | Ativação de alertas visuais no painel de controle. |
+| **UC35** | Definir Parceiro Padrão | Admin | Definição de entidade padrão para fluxos operacionais. |
+| **UC36** | Persistir Configs | Sistema | Validação e salvamento de parâmetros no Firestore. |
+| **UC37** | Diagnóstico de Conectividade | Sistema | Verifica em tempo real se a comunicação entre o Kinect e o módulo MVC está ativa. |
+| **UC38** | Log de Erros de Hardware | Sistema | Registra falhas de hardware (ex: desconexão física do Kinect) no Firestore para análise do suporte. |
+| **UC39** | Redefinição de Buffer de Dados | Sistema | Limpa o buffer de memória após medições concluídas para evitar vazamentos de memória (Memory Leak). |
+| **UC40** | Validação de Snapshot | Sistema | Validação da integridade do snapshot capturado pelo Kinect. |
+| **UC41** | Normalização de Dados | Sistema | Padronização dos dados brutos para cálculo volumétrico. |
+| **UC42** | Tratamento de Ruído | Sistema | Remoção de interferências (ruído visual) na nuvem de pontos. |
+| **UC43** | Cálculo de Superfície | Sistema | Determinação da área de topo do estoque para cálculo do volume. |
+| **UC44** | Rastreamento de Auditoria | Sistema | Registro de logs de transações espaciais para rastreabilidade. |
+| **UC45** | Verificação de Calibração | Operador | Check-up preventivo do estado de calibração do sensor. |
+| **UC46** | Sincronização de Histórico | Sistema | Consistência entre medições locais e banco na nuvem. |
+| **UC47** | Gerenciamento de Coletas | Admin | Controle de ciclo de vida de coletas realizadas por parceiros. |
+| **UC48** | Auditoria de Medições | Admin | Verificação de conformidade das medições vs. capacidade. |
+| **UC49** | Backup de Logs | Sistema | Rotina de persistência secundária de logs de erro. |
+| **UC50** | Estabilização de Conexão | Sistema | Tratamento de re-handshake automático para o Kinect. |
+| **UC51** | Visualizar Consolidado | Admin | Visão geral do volume e ocupação do estoque. |
+| **UC52** | Monitorar Gráficos | Admin | Visualização de tendências e ocupação em tempo real. |
+| **UC53** | Receber Atualizações | Sistema | Integração assíncrona (Hub) para o Dashboard. |
+| **UC54** | Lista de Notificações | Admin | Exibição da lista de últimas notificações filtradas. |
+| **UC55** | Configurar Alertas Visuais | Admin | Personalização de cores e gatilhos de alerta no Dashboard. |
+| **UC56** | Acessar Parâmetros | Admin | Acesso rápido ao módulo de configuração. |
+| **UC57** | Autenticação de Hub | Sistema | Validação de tokens de segurança JWT para acesso aos Hubs SignalR. |
+| **UC58** | Cache de Estado Local | Sistema | Armazenamento temporário de medições no cliente para evitar perda de dados em micro-quedas de rede. |
+| **UC59** | Criptografia de Payload | Sistema | Garantia de que os dados volumétricos estejam protegidos durante a transmissão via rede. |
+| **UC60** | Log de Eventos de Segurança | Sistema | Registro de tentativas de acesso não autorizadas aos Hubs de integração. |
+| **UC61** | Processar Medição Hub | Sistema | Conversão $cm^3 \rightarrow m^3$ e broadcast. |
+| **UC62** | Broadcast Clientes | Sistema | Envio de nova medição para todos os Dashboards. |
+| **UC63** | Injeção de Dependência | Sistema | Inicialização automática e resolução de instâncias de repositórios (Firestore/MVC) necessária para o ciclo de vida do SignalR Hub. |
+| **UC64** | Gerenciar Conexões | Sistema | Controle de ciclo de vida das sessões (SignalR). |
 
----
+--- 
 
 ## Diagrama de Fluxo 
 
