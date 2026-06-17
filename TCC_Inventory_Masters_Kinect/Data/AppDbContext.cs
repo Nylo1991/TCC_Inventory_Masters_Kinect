@@ -130,16 +130,17 @@ namespace TCC_Inventory_Masters_Kinect.Data
                     );
 
                     CREATE TABLE IF NOT EXISTS HistoricosOcupacao (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        EspacoMapeadoId INTEGER NOT NULL,
-                        VolumeAtualCm3 REAL NOT NULL,
-                        VolumeMaximoCm3 REAL NOT NULL,
-                        EspacoLivreCm3 REAL NOT NULL,
-                        PercentualOcupacao REAL NOT NULL,
-                        LimiteUltrapassado INTEGER NOT NULL,
-                        NivelOcupacao TEXT,
-                        Status TEXT,
-                        DataHora TEXT NOT NULL
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    EspacoMapeadoId INTEGER NOT NULL,
+                    VolumeAtualCm3 REAL NOT NULL,
+                    VolumeMaximoCm3 REAL NOT NULL,
+                    EspacoLivreCm3 REAL NOT NULL,
+                    PercentualOcupacao REAL NOT NULL,
+                    LimiteUltrapassado INTEGER NOT NULL,
+                    NivelOcupacao TEXT,
+                    Status TEXT,
+                    DataHora TEXT NOT NULL,
+                    Empresa TEXT
                     );
 
                     CREATE TABLE IF NOT EXISTS Logs (
@@ -174,6 +175,12 @@ namespace TCC_Inventory_Masters_Kinect.Data
 
                 GarantirColuna(conn, "MedicaoVolumes", "Empresa", "TEXT");
                 GarantirColuna(conn, "MedicaoVolumes", "Usuario", "TEXT");
+
+                /// <summary>
+                /// Garante a existência da coluna Empresa na tabela de históricos de ocupação,
+                /// permitindo o isolamento dos dados entre diferentes empresas.
+                /// </summary>
+                GarantirColuna(conn, "HistoricosOcupacao", "Empresa", "TEXT");
             }
         }
 

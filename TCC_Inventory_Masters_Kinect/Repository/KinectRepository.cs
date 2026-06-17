@@ -14,10 +14,10 @@ namespace TCC_Inventory_Masters_Kinect.Repository
     public class KinectRepository : IKinectRepository
     {
         private readonly string _empresa;
-
         public KinectRepository()
             : this(null)
         {
+             
         }
 
         public KinectRepository(string empresa)
@@ -26,12 +26,18 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         }
 
         /// <summary>
-        /// Salva uma medição volumétrica realizada pelo Kinect no banco SQLite.
+        /// Salva uma medição volumétrica associada à empresa autenticada,
+        /// garantindo o isolamento dos dados entre diferentes empresas.
         /// </summary>
         public void SalvarMedicao(MedicaoVolume medicao)
         {
             try
             {
+                if (!string.IsNullOrWhiteSpace(_empresa))
+                {
+                    medicao.Empresa = _empresa;
+                }
+
                 using (var db = new AppDbContext(_empresa))
                 {
                     db.MedicaoVolumes.Add(medicao);
@@ -47,7 +53,9 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         }
 
         /// <summary>
-        /// Obtém as últimas medições registradas no SQLite, ordenadas da mais recente para a mais antiga.
+        /// Obtém as últimas medições registradas da empresa autenticada,
+        /// ordenadas da mais recente para a mais antiga, impedindo o acesso
+        /// a dados pertencentes a outras empresas.
         /// </summary>
         public List<MedicaoVolume> ObterUltimasMedicoes(int quantidade)
         {
@@ -55,7 +63,14 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             {
                 using (var db = new AppDbContext(_empresa))
                 {
-                    return db.MedicaoVolumes
+                    var consulta = db.MedicaoVolumes.AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(_empresa))
+                    {
+                        consulta = consulta.Where(x => x.Empresa == _empresa);
+                    }
+
+                    return consulta
                         .OrderByDescending(x => x.Id)
                         .Take(quantidade)
                         .ToList();
@@ -69,7 +84,9 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         }
 
         /// <summary>
-        /// Obtém as medições registradas no SQLite em ordem crescente de ID.
+        /// Obtém as medições em ordem crescente de identificação,
+        /// aplicando filtro por usuário e empresa para garantir que
+        /// apenas registros autorizados sejam retornados.
         /// </summary>
         public List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade, string usuario, string empresa)
         {
@@ -93,12 +110,19 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         }
 
         /// <summary>
-        /// Salva um registro de histórico de ocupação do espaço monitorado.
+        /// Salva um registro de histórico de ocupação vinculado à empresa autenticada,
+        /// garantindo o isolamento dos dados entre diferentes empresas.
         /// </summary>
         public void SalvarHistorico(HistoricoOcupacao historico)
         {
             try
             {
+               
+                if (!string.IsNullOrWhiteSpace(_empresa))
+                {
+                    historico.Empresa = _empresa;
+                }
+
                 using (var db = new AppDbContext(_empresa))
                 {
                     db.HistoricosOcupacao.Add(historico);
@@ -114,7 +138,9 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         }
 
         /// <summary>
-        /// Obtém o histórico de ocupação de um espaço específico.
+        /// Obtém o histórico de ocupação de um espaço específico,
+        /// aplicando filtro de segurança por empresa para impedir
+        /// o acesso a registros pertencentes a outras Empresas.
         /// </summary>
         public List<HistoricoOcupacao> ObterHistoricoPorEspaco(int espacoId)
         {
@@ -122,8 +148,16 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             {
                 using (var db = new AppDbContext(_empresa))
                 {
-                    return db.HistoricosOcupacao
-                        .Where(x => x.EspacoMapeadoId == espacoId)
+                    var consulta = db.HistoricosOcupacao
+                        .Where(x => x.EspacoMapeadoId == espacoId);
+
+                   
+                    if (!string.IsNullOrWhiteSpace(_empresa))
+                    {
+                        consulta = consulta.Where(x => x.Empresa == _empresa);
+                    }
+
+                    return consulta
                         .OrderByDescending(x => x.Id)
                         .ToList();
                 }
@@ -144,7 +178,18 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             {
                 using (var db = new AppDbContext(_empresa))
                 {
-                    return db.HistoricosOcupacao
+                    var consulta = db.HistoricosOcupacao.AsQueryable();
+
+                    /// <summary>
+                    /// Aplica filtro de segurança por empresa na consulta,
+                    /// impedindo o retorno de históricos pertencentes a outras empresas.
+                    /// </summary>
+                    if (!string.IsNullOrWhiteSpace(_empresa))
+                    {
+                        consulta = consulta.Where(x => x.Empresa == _empresa);
+                    }
+
+                    return consulta
                         .OrderByDescending(x => x.Id)
                         .Take(quantidade)
                         .ToList();
