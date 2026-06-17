@@ -1,29 +1,26 @@
 ﻿using Google.Cloud.Firestore;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Services;
+using Microsoft.Extensions.Logging;
 
 namespace MVC_InventoryMasters.Repositories
 {
     /// <summary>
-    /// Responsável por realizar todas as operações
-    /// na coleção "Usuarios" do Firebase Firestore.
-    ///
-    /// Este repositório centraliza o CRUD de usuários,
-    /// garantindo comunicação entre o MVC e o banco de dados.
-    ///
-    /// Operações disponíveis:
-    /// - Listar usuários
-    /// - Buscar por ID
-    /// - Criar usuário
-    /// - Atualizar usuário
-    /// - Excluir usuário
+    /// Repositório responsável pelo gerenciamento dos usuários cadastrados
+    /// no sistema, realizando operações de consulta, cadastro,
+    /// atualização e exclusão de registros armazenados no Firebase Firestore.
     /// </summary>
+    /// <remarks>
+    /// Esta classe centraliza o acesso à coleção de usuários,
+    /// abstraindo as operações de persistência e recuperação de dados.
+    /// </remarks>
     public class UsuariosRepository
     {
         /// <summary>
         /// Nome da coleção no Firestore.
         /// </summary>
         private readonly string _colecao = "Usuarios";
+        private readonly ILogger<UsuariosRepository> _logger;
 
         /// <summary>
         /// Instância do Firestore usada para comunicação com o banco.
@@ -39,11 +36,16 @@ namespace MVC_InventoryMasters.Repositories
         /// <param name="firebaseService">
         /// Serviço responsável pela configuração do Firebase.
         /// </param>
-        public UsuariosRepository(FirebaseService firebaseService)
+        /// <param name="logger">
+        /// Serviço responsável pelo registro de logs da aplicação.
+        /// </param>
+        public UsuariosRepository(
+            FirebaseService firebaseService,
+            ILogger<UsuariosRepository> logger)
         {
             _db = firebaseService.Firestore;
+            _logger = logger;
         }
-
         /// <summary>
         /// Retorna todos os usuários cadastrados
         /// na coleção "Usuarios".
@@ -53,21 +55,32 @@ namespace MVC_InventoryMasters.Repositories
         /// </returns>
         public async Task<List<Usuario>> ListarTodos()
         {
-            List<Usuario> lista = new();
-
-            QuerySnapshot snapshot = await _db
-                .Collection(_colecao)
-                .GetSnapshotAsync();
-
-            foreach (DocumentSnapshot doc in snapshot.Documents)
+            try
             {
-                Usuario usuario = doc.ConvertTo<Usuario>();
-                usuario.Id = doc.Id;
+                List<Usuario> lista = new();
 
-                lista.Add(usuario);
+                QuerySnapshot snapshot = await _db
+                    .Collection(_colecao)
+                    .GetSnapshotAsync();
+
+                foreach (DocumentSnapshot doc in snapshot.Documents)
+                {
+                    Usuario usuario = doc.ConvertTo<Usuario>();
+                    usuario.Id = doc.Id;
+
+                    lista.Add(usuario);
+                }
+
+                return lista;
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Erro ao listar usuários.");
 
-            return lista;
+                return new List<Usuario>();
+            }
         }
 
         /// <summary>
@@ -81,18 +94,30 @@ namespace MVC_InventoryMasters.Repositories
         /// </returns>
         public async Task<Usuario?> BuscarPorId(string id)
         {
-            DocumentSnapshot doc = await _db
-                .Collection(_colecao)
-                .Document(id)
-                .GetSnapshotAsync();
+            try
+            {
+                DocumentSnapshot doc = await _db
+                    .Collection(_colecao)
+                    .Document(id)
+                    .GetSnapshotAsync();
 
-            if (!doc.Exists)
+                if (!doc.Exists)
+                    return null;
+
+                Usuario usuario = doc.ConvertTo<Usuario>();
+                usuario.Id = doc.Id;
+
+                return usuario;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Erro ao buscar usuário {Id}.",
+                    id);
+
                 return null;
-
-            Usuario usuario = doc.ConvertTo<Usuario>();
-            usuario.Id = doc.Id;
-
-            return usuario;
+            }
         }
 
         /// <summary>
@@ -103,19 +128,35 @@ namespace MVC_InventoryMasters.Repositories
         /// </param>
         public async Task Adicionar(Usuario usuario)
         {
-            var dados = new Dictionary<string, object>
+            try
             {
-                { "Nome", usuario.Nome ?? "" },
-                { "Email", usuario.Email ?? "" },
-                { "Perfil", usuario.Perfil ?? "" },
-                { "Senha", usuario.Senha ?? "" },
-                { "Data_Cadastro", DateTime.UtcNow },
-                { "Ativo", usuario.Ativo }
-            };
+                var dados = new Dictionary<string, object>
+        {
+            { "Nome", usuario.Nome ?? "" },
+            { "Email", usuario.Email ?? "" },
+            { "Perfil", usuario.Perfil ?? "" },
+            { "Senha", usuario.Senha ?? "" },
+            { "Data_Cadastro", DateTime.UtcNow },
+            { "Ativo", usuario.Ativo }
+        };
 
-            await _db
-                .Collection(_colecao)
-                .AddAsync(dados);
+                await _db
+                    .Collection(_colecao)
+                    .AddAsync(dados);
+
+                _logger.LogInformation(
+                    "Usuário {Email} cadastrado com sucesso.",
+                    usuario.Email);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Erro ao cadastrar usuário.");
+
+                throw new Exception(
+                    "Não foi possível cadastrar o usuário.");
+            }
         }
 
         /// <summary>
@@ -126,18 +167,34 @@ namespace MVC_InventoryMasters.Repositories
         /// </param>
         public async Task Atualizar(Usuario usuario)
         {
+            try
+            {
+                await _db
+                    .Collection(_colecao)
+                    .Document(usuario.Id)
+                    .UpdateAsync(new Dictionary<string, object>
+                    {
+                { "Nome", usuario.Nome ?? "" },
+                { "Email", usuario.Email ?? "" },
+                { "Perfil", usuario.Perfil ?? "" },
+                { "Senha", usuario.Senha ?? "" },
+                { "Ativo", usuario.Ativo }
+                    });
 
-            await _db
-                .Collection(_colecao)
-                .Document(usuario.Id)
-                .UpdateAsync(new Dictionary<string, object>
-                {
-                    { "Nome", usuario.Nome ?? "" },
-                    { "Email", usuario.Email ?? "" },
-                    { "Perfil", usuario.Perfil ?? "" },
-                    { "Senha", usuario.Senha ?? "" },
-                    { "Ativo", usuario.Ativo }
-                });
+                _logger.LogInformation(
+                    "Usuário {Id} atualizado com sucesso.",
+                    usuario.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Erro ao atualizar usuário {Id}.",
+                    usuario.Id);
+
+                throw new Exception(
+                    "Não foi possível atualizar o usuário.");
+            }
         }
 
         /// <summary>
@@ -148,10 +205,27 @@ namespace MVC_InventoryMasters.Repositories
         /// </param>
         public async Task Excluir(string id)
         {
-            await _db
-                .Collection(_colecao)
-                .Document(id)
-                .DeleteAsync();
+            try
+            {
+                await _db
+                    .Collection(_colecao)
+                    .Document(id)
+                    .DeleteAsync();
+
+                _logger.LogInformation(
+                    "Usuário {Id} removido com sucesso.",
+                    id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Erro ao excluir usuário {Id}.",
+                    id);
+
+                throw new Exception(
+                    "Não foi possível excluir o usuário.");
+            }
         }
     }
 }

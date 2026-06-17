@@ -91,9 +91,13 @@ namespace MVC_InventoryMasters.Controllers
                 return View(model);
             }
             catch (Exception ex)
-            {               
-                _logger.LogError(ex, "Erro crítico ao carregar os dados do Dashboard.");
-                
+            {
+                _logger.LogError(
+                    ex,
+                    "Erro ao executar {Controller}.{Action}",
+                    nameof(DashboardController),
+                    nameof(Index));
+
                 return RedirectToAction("Error", "Home");
             }
         }

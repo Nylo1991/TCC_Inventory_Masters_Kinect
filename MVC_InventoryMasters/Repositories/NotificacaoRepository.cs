@@ -5,6 +5,15 @@ using MVC_InventoryMasters.Services;
 
 namespace MVC_InventoryMasters.Repositories
 {
+    /// <summary>
+    /// Repositório responsável pelo gerenciamento das notificações do sistema,
+    /// incluindo cadastro, consulta, atualização de status e validação
+    /// de notificações pendentes armazenadas no Firebase Firestore.
+    /// </summary>
+    /// <remarks>
+    /// Esta classe centraliza o acesso à coleção de notificações,
+    /// abstraindo as operações de persistência e consulta de dados.
+    /// </remarks>
     public class NotificacaoRepository
     {
         private readonly FirestoreDb _db;
@@ -17,6 +26,15 @@ namespace MVC_InventoryMasters.Repositories
             _logger = logger;
         }
 
+        /// <summary>
+        /// Adiciona uma nova notificação na base de dados.
+        /// </summary>
+        /// <param name="notif">
+        /// Objeto contendo os dados da notificação a ser armazenada.
+        /// </param>
+        /// <returns>
+        /// Tarefa assíncrona responsável pela persistência da notificação.
+        /// </returns>
         public async Task Adicionar(Notificacao notif)
         {
             try
@@ -27,11 +45,25 @@ namespace MVC_InventoryMasters.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Falha crítica ao tentar adicionar notificação no Firestore.");
-                throw;
+                _logger.LogError(
+                    ex,
+                    "Falha crítica ao tentar adicionar notificação no Firestore.");
+
+                throw new Exception(
+                    "Ocorreu um erro ao registrar a notificação.");
             }
         }
 
+        /// <summary>
+        /// Recupera todas as notificações cadastradas no sistema.
+        /// </summary>
+        /// <remarks>
+        /// As notificações são retornadas ordenadas pela data de criação,
+        /// da mais recente para a mais antiga.
+        /// </remarks>
+        /// <returns>
+        /// Lista contendo todas as notificações encontradas.
+        /// </returns>
         public async Task<List<Notificacao>> ListarTodos()
         {
             try
@@ -53,6 +85,20 @@ namespace MVC_InventoryMasters.Repositories
                 return new List<Notificacao>();
             }
         }
+
+        /// <summary>
+        /// Atualiza o status de uma notificação existente.
+        /// </summary>
+        /// <param name="id">
+        /// Identificador único da notificação.
+        /// </param>
+        /// <param name="novoStatus">
+        /// Novo status que será atribuído à notificação.
+        /// </param>
+        /// <returns>
+        /// True quando a atualização for realizada com sucesso.
+        /// False caso ocorra alguma falha durante o processo.
+        /// </returns>
 
         public async Task<bool> AtualizarStatus(string id, string novoStatus)
         {

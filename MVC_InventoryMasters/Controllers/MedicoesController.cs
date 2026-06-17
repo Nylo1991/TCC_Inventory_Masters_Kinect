@@ -45,7 +45,6 @@ namespace MVC_InventoryMasters.Controllers
                 int totalRegistros = listaOrdenada.Count;
                 int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)itensPorPagina);
 
-                // Tratamento de paginação
                 pagina = Math.Clamp(pagina, 1, Math.Max(1, totalPaginas));
 
                 var medicoesPaginadas = listaOrdenada

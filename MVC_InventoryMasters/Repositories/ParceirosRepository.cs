@@ -1,19 +1,49 @@
 ﻿using Google.Cloud.Firestore;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Services;
+using Microsoft.Extensions.Logging;
 
 namespace MVC_InventoryMasters.Repositories
 {
+    /// <summary>
+    /// Repositório responsável pelo gerenciamento dos parceiros cadastrados,
+    /// realizando operações de consulta, pesquisa, cadastro, atualização
+    /// e exclusão de registros armazenados no Firebase Firestore.
+    /// </summary>
+    /// <remarks>
+    /// Centraliza o acesso à coleção de parceiros, abstraindo as operações
+    /// de persistência e recuperação de dados.
+    /// </remarks>
     public class ParceirosRepository
     {
         private readonly string _colecao = "Parceiros";
         private readonly FirestoreDb _db;
+        private readonly ILogger<ParceirosRepository> _logger;
 
-        public ParceirosRepository(FirebaseService firebaseService)
+        /// <summary>
+        /// Inicializa uma nova instância do repositório de parceiros.
+        /// </summary>
+        /// <param name="firebaseService">
+        /// Serviço responsável por fornecer a conexão com o Firebase Firestore.
+        /// </param>
+        /// <param name="logger">
+        /// Serviço responsável pelo registro de logs da aplicação.
+        /// </param>
+        public ParceirosRepository(
+            FirebaseService firebaseService,
+            ILogger<ParceirosRepository> logger)
         {
             _db = firebaseService.Firestore;
+            _logger = logger;
         }
 
+
+        /// <summary>
+        /// Recupera todos os parceiros cadastrados no sistema.
+        /// </summary>
+        /// <returns>
+        /// Lista contendo todos os parceiros encontrados.
+        /// </returns>
         public async Task<List<Parceiro>> ListarTodos()
         {
             List<Parceiro> lista = new();
@@ -27,6 +57,15 @@ namespace MVC_InventoryMasters.Repositories
             return lista;
         }
 
+        /// <summary>
+        /// Busca um parceiro utilizando seu identificador único.
+        /// </summary>
+        /// <param name="id">
+        /// Identificador do parceiro.
+        /// </param>
+        /// <returns>
+        /// Objeto do parceiro encontrado ou nulo caso não exista.
+        /// </returns>
         public async Task<Parceiro?> BuscarPorId(string id)
         {
             DocumentSnapshot documento = await _db.Collection(_colecao).Document(id).GetSnapshotAsync();
@@ -50,7 +89,25 @@ namespace MVC_InventoryMasters.Repositories
             .ToList();
         }
 
-        // --- NOVO MÉTODO DE FILTROS AVANÇADOS ---
+        /// <summary>
+        /// Realiza uma pesquisa avançada de parceiros utilizando
+        /// filtros de texto, período de cadastro e status.
+        /// </summary>
+        /// <param name="termo">
+        /// Texto utilizado para pesquisa geral.
+        /// </param>
+        /// <param name="dataInicio">
+        /// Data inicial do período de cadastro.
+        /// </param>
+        /// <param name="dataFim">
+        /// Data final do período de cadastro.
+        /// </param>
+        /// <param name="ativo">
+        /// Status do parceiro.
+        /// </param>
+        /// <returns>
+        /// Lista contendo os parceiros que atendem aos filtros informados.
+        /// </returns>
         public async Task<List<Parceiro>> FiltrarAvancado(string termo, DateTime? dataInicio, DateTime? dataFim, bool? ativo)
         {
             var lista = await ListarTodos();
@@ -83,6 +140,15 @@ namespace MVC_InventoryMasters.Repositories
             return lista;
         }
 
+        /// <summary>
+        /// Adiciona um novo parceiro na base de dados.
+        /// </summary>
+        /// <param name="parceiro">
+        /// Objeto contendo os dados do parceiro.
+        /// </param>
+        /// <returns>
+        /// Tarefa assíncrona responsável pela persistência do parceiro.
+        /// </returns>
         public async Task Adicionar(Parceiro parceiro)
         {
             var dados = new Dictionary<string, object>
@@ -98,6 +164,15 @@ namespace MVC_InventoryMasters.Repositories
             await _db.Collection(_colecao).AddAsync(dados);
         }
 
+        /// <summary>
+        /// Atualiza os dados de um parceiro existente.
+        /// </summary>
+        /// <param name="parceiro">
+        /// Objeto contendo os dados atualizados do parceiro.
+        /// </param>
+        /// <returns>
+        /// Tarefa assíncrona responsável pela atualização do registro.
+        /// </returns>
         public async Task Atualizar(Parceiro parceiro)
         {
             await _db.Collection(_colecao).Document(parceiro.Id).UpdateAsync(new Dictionary<string, object>
@@ -111,9 +186,37 @@ namespace MVC_InventoryMasters.Repositories
             });
         }
 
+        /// <summary>
+        /// Remove um parceiro da base de dados.
+        /// </summary>
+        /// <param name="id">
+        /// Identificador do parceiro a ser removido.
+        /// </param>
+        /// <returns>
+        /// Tarefa assíncrona responsável pela exclusão do registro.
+        /// </returns>
         public async Task Excluir(string id)
         {
-            await _db.Collection(_colecao).Document(id).DeleteAsync();
+            try
+            {
+                await _db.Collection(_colecao)
+                         .Document(id)
+                         .DeleteAsync();
+
+                _logger.LogInformation(
+                    "Parceiro {Id} removido com sucesso.",
+                    id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Erro ao excluir parceiro {Id}.",
+                    id);
+
+                throw new Exception(
+                    "Não foi possível excluir o parceiro.");
+            }
         }
     }
 }
