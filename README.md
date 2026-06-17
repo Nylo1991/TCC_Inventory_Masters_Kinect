@@ -339,7 +339,6 @@ O sistema opera por meio de um fluxo determinístico, garantindo que apenas dado
 
 Os requisitos do sistema foram organizados por categoria, separando as funcionalidades relacionadas à gestão web, ao módulo Kinect, ao monitoramento, à integração e aos aspectos não funcionais da solução.
 
----
 
 ## 1. Requisitos Funcionais — MVC
 
@@ -575,7 +574,7 @@ Os casos de uso abaixo representam os mecanismos responsáveis pela comunicaçã
 ## Diagrama de Fluxo
 
 <p align="center">
-  <img src="./Imagens/Diagrama_de_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
+  <img src="./Imagens/Diagrama_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
 </p>
 
 ### Detalhamento do Diagrama de Fluxo de Dados
