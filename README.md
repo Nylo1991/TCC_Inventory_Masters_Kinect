@@ -566,6 +566,8 @@ Os casos de uso abaixo representam os mecanismos responsáveis pela comunicaçã
 | **UC63** | Injeção de Dependência | Sistema | Inicialização automática e resolução de instâncias de repositórios (Firestore/MVC) necessária para o ciclo de vida do SignalR Hub. |
 | **UC64** | Gerenciar Conexões | Sistema | Controle de ciclo de vida das sessões (SignalR). |
 
+> **Nota:** Os casos de uso identificados em negrito referem-se às funcionalidades nativas do projeto de aplicação MVC.
+
 ---
 
 ## Diagrama de Fluxo
