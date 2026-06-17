@@ -109,7 +109,7 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 ## Diagrama de Caso de Uso
 
 <p align="center">
-  <img src="./Imagens/Diagrama de Caso de Uso.png" width="600" alt="Diagrama de Caso de Uso" />
+  <img src="./Imagens/InventoryMastersUC_MVC.png" width="600" alt="Diagrama de Caso de Uso" />
 </p>
 
 ### Especificação dos Casos de Uso por ordem de comportamento
