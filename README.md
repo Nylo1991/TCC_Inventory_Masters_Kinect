@@ -148,8 +148,35 @@ O sistema opera através de um **fluxo determinístico**, garantindo que apenas 
 5. **Persistência e Broadcast:** Salvamento no Firestore e atualização em tempo real dos Dashboards via SignalR (`UC32`, `UC62`).
 
 > **Nota de Integridade:** Qualquer falha detectada durante estas etapas interrompe imediatamente a propagação do dado, assegurando que o Dashboard exiba apenas informações íntegras, precisas e validadas.
-
 ---
+## Requisitos do Sistema
+
+#### 1. Requisitos Funcionais (RF)
+
+| Categoria | ID | Requisito Funcional | Casos de Uso |
+| :--- | :--- | :--- | :--- |
+| **Gestão** | RF01 | Cadastro, edição, exclusão e listagem de usuários/parceiros. | UC01-UC07 |
+| | RF02 | Gestão de permissões e perfis de acesso. | UC08, UC09 |
+| | RF03 | Auditoria de alterações via logs. | UC10, UC44, UC49 |
+| **Medição** | RF04 | Captura volumétrica via Kinect e processamento de nuvem de pontos. | UC21, UC23, UC24 |
+| | RF05 | Calibração de sensor e verificação de estabilidade da malha 3D. | UC28, UC29, UC45 |
+| | RF06 | Conversão de medições brutas ($cm^3$) para ($m^3$). | UC61 |
+| **Monitoramento**| RF07 | Painel em tempo real de ocupação e volume. | UC51, UC52 |
+| | RF08 | Disparo de alertas baseados em regras de limite. | UC14, UC17, UC30, UC34, UC55 |
+| **Integração** | RF09 | Comunicação assíncrona via SignalR (Hubs). | UC53, UC62, UC64 |
+| | RF10 | Persistência de dados no Firestore. | UC32, UC36, UC46 |
+
+#### 2. Requisitos Não Funcionais (RNF)
+
+| ID | Tipo | Requisito Não Funcional | Casos de Uso |
+| :--- | :--- | :--- | :--- |
+| **RNF01** | Desempenho | Processamento de malha 3D e atualização em tempo real (baixa latência). | - |
+| **RNF02** | Resiliência | Auto-recuperação (re-handshake) e cache local para evitar perda de dados. | UC50, UC58 |
+| **RNF03** | Segurança | Autenticação JWT e criptografia de payloads. | UC57, UC59 |
+| **RNF04** | Confiabilidade | Diagnóstico contínuo de hardware e gestão de memória. | UC37, UC39 |
+| **RNF05** | Manutenibilidade| Uso de Injeção de Dependência para desacoplamento. | UC63 |
+
+ ---
 # MODELAGEM DO SISTEMA
 
 ## Diagrama de Caso de Uso
