@@ -513,16 +513,17 @@ Os casos abaixo são executados internamente pelos casos de uso principais apres
 | UCK12 - Processar Dados de Profundidade | Remover Ruídos |
 | UCK12 - Processar Dados de Profundidade | Normalizar Dados |
 | UCK13 - Calcular Volume Ocupado | Comparar com Referência Calibrada |
-| **UC15** | Integrar Perfil Repos. | Sistema | Conexão entre módulo de notificação e repositório. |
+| **UC15** - Notificar Clientes | Integrar Perfil Repos. |
 | UCK19 - Enviar Medição para MVC | Converter cm³ para m³ |
-| **UC32** | Persistir Configurações | Sistema | Validação e salvamento de parâmetros no Firestore. |
-| **UC36** | Persistir Configs | Sistema | Validação e salvamento de parâmetros no Firestore. |
-| **UC41** | Normalização de Dados | Sistema | Padronização dos dados brutos para cálculo volumétrico. |
-| **UC42** | Tratamento de Ruído | Sistema | Remoção de interferências (ruído visual) na nuvem de pontos. |
-| **UC43** | Cálculo de Superfície | Sistema | Determinação da área de topo do estoque para cálculo do volume. |
-| **UC46** | Sincronização de Histórico | Sistema | Consistência entre medições locais e banco na nuvem. |
-| **UC49** | Backup de Logs | Sistema | Rotina de persistência secundária de logs de erro. |
+| **UC32** - Validação de Parâmetros | Persistir Configurações |
+| **UC36** - Validação de Parâmetros | Persistir Configs |
+| **UC41** - Processamento Espacial | Normalização de Dados |
+| **UC42** - Processamento Espacial | Tratamento de Ruído |
+| **UC43** - Cálculo Volumétrico | Cálculo de Superfície |
+| **UC46** - Gestão de Dados | Sincronização de Histórico |
+| **UC49** - Gestão de Logs | Backup de Logs |
 
+> **Nota:** Os casos de uso identificados em negrito referem-se às funcionalidades nativas do projeto de aplicação MVC.
 ---
 
 ## Casos de Uso Extendidos (<<extend>>)
@@ -537,6 +538,7 @@ Casos que adicionam comportamento opcional ou condicional a um caso de uso princ
 | **UC30** | Validação de Regras de Limite | Sistema | Extende o cálculo de volume para disparar alertas condicionais. |
 | **UC38, UC40, UC44** | Logs, Validação e Auditoria | Sistema | Extendem o ciclo de vida da medição conforme eventos de sistema ocorrem. |
 
+> **Nota:** Os casos de uso identificados em negrito referem-se às funcionalidades nativas do projeto de aplicação MVC.
 ---
 
 ## Casos de Uso de Integração
