@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Logs;
@@ -14,57 +13,117 @@ namespace TCC_Inventory_Masters_Kinect.Repository
     /// </summary>
     public class KinectRepository : IKinectRepository
     {
+        private readonly string _empresa;
+        public KinectRepository()
+            : this(null)
+        {
+             
+        }
+
+        public KinectRepository(string empresa)
+        {
+            _empresa = empresa;
+        }
+
         /// <summary>
-        /// Salva uma medição volumétrica realizada pelo Kinect no banco SQLite.
+        /// Salva uma medição volumétrica associada à empresa autenticada,
+        /// garantindo o isolamento dos dados entre diferentes empresas.
         /// </summary>
         public void SalvarMedicao(MedicaoVolume medicao)
         {
             try
             {
-                using (var db = new AppDbContext())
+                if (!string.IsNullOrWhiteSpace(_empresa))
+                {
+                    medicao.Empresa = _empresa;
+                }
+
+                using (var db = new AppDbContext(_empresa))
                 {
                     db.MedicaoVolumes.Add(medicao);
                     db.SaveChanges();
                 }
 
-                LoggerService.Info($"Medicao salva no SQLite. Volume: {medicao.VolumeCm3:F0} cm³");
+                LoggerService.Info($"Medicao salva no SQLite. Volume: {medicao.VolumeCm3:F0} cm3");
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao salvar medicao no SQLite.", ex);
+                LoggerService.Erro("Erro ao salvar medicao no SQLite.");
             }
         }
 
         /// <summary>
-        /// Obtém as últimas medições registradas no SQLite, ordenadas da mais recente para a mais antiga.
+        /// Obtém as últimas medições registradas da empresa autenticada,
+        /// ordenadas da mais recente para a mais antiga, impedindo o acesso
+        /// a dados pertencentes a outras empresas.
         /// </summary>
         public List<MedicaoVolume> ObterUltimasMedicoes(int quantidade)
         {
             try
             {
-                using (var db = new AppDbContext())
+                using (var db = new AppDbContext(_empresa))
                 {
-                    return db.MedicaoVolumes
+                    var consulta = db.MedicaoVolumes.AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(_empresa))
+                    {
+                        consulta = consulta.Where(x => x.Empresa == _empresa);
+                    }
+
+                    return consulta
                         .OrderByDescending(x => x.Id)
                         .Take(quantidade)
                         .ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao buscar historico de medicoes no SQLite.", ex);
+                LoggerService.Erro("Erro ao buscar historico de medicoes no SQLite.");
                 return new List<MedicaoVolume>();
             }
         }
 
         /// <summary>
-        /// Salva um registro de histórico de ocupação do espaço monitorado.
+        /// Obtém as medições em ordem crescente de identificação,
+        /// aplicando filtro por usuário e empresa para garantir que
+        /// apenas registros autorizados sejam retornados.
+        /// </summary>
+        public List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade, string usuario, string empresa)
+        {
+            try
+            {
+                using (var db = new AppDbContext(_empresa))
+                {
+                    return db.MedicaoVolumes
+                        .Where(x => x.Usuario == usuario && x.Empresa == empresa)
+                        .OrderByDescending(x => x.Id)
+                        .Take(quantidade)
+                        .OrderBy(x => x.Id)
+                        .ToList();
+                }
+            }
+            catch
+            {
+                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente por usuario.");
+                return new List<MedicaoVolume>();
+            }
+        }
+
+        /// <summary>
+        /// Salva um registro de histórico de ocupação vinculado à empresa autenticada,
+        /// garantindo o isolamento dos dados entre diferentes empresas.
         /// </summary>
         public void SalvarHistorico(HistoricoOcupacao historico)
         {
             try
             {
-                using (var db = new AppDbContext())
+               
+                if (!string.IsNullOrWhiteSpace(_empresa))
+                {
+                    historico.Empresa = _empresa;
+                }
+
+                using (var db = new AppDbContext(_empresa))
                 {
                     db.HistoricosOcupacao.Add(historico);
                     db.SaveChanges();
@@ -72,77 +131,74 @@ namespace TCC_Inventory_Masters_Kinect.Repository
 
                 LoggerService.Info("Historico de ocupacao salvo no SQLite.");
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao salvar historico de ocupacao no SQLite.", ex);
+                LoggerService.Erro("Erro ao salvar historico de ocupacao no SQLite.");
             }
         }
 
         /// <summary>
-        /// Obtém o histórico de ocupação de um espaço específico.
+        /// Obtém o histórico de ocupação de um espaço específico,
+        /// aplicando filtro de segurança por empresa para impedir
+        /// o acesso a registros pertencentes a outras Empresas.
         /// </summary>
         public List<HistoricoOcupacao> ObterHistoricoPorEspaco(int espacoId)
         {
             try
             {
-                using (var db = new AppDbContext())
+                using (var db = new AppDbContext(_empresa))
                 {
-                    return db.HistoricosOcupacao
-                        .Where(x => x.EspacoMapeadoId == espacoId)
+                    var consulta = db.HistoricosOcupacao
+                        .Where(x => x.EspacoMapeadoId == espacoId);
+
+                   
+                    if (!string.IsNullOrWhiteSpace(_empresa))
+                    {
+                        consulta = consulta.Where(x => x.Empresa == _empresa);
+                    }
+
+                    return consulta
                         .OrderByDescending(x => x.Id)
                         .ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao buscar historico por espaco.", ex);
+                LoggerService.Erro("Erro ao buscar historico por espaco.");
                 return new List<HistoricoOcupacao>();
             }
         }
 
         /// <summary>
-        /// Obtém os últimos históricos de ocupação registrados no sistema.
+        /// Obtém os últimos registros de histórico de ocupação.
         /// </summary>
         public List<HistoricoOcupacao> ObterUltimosHistoricos(int quantidade)
         {
             try
             {
-                using (var db = new AppDbContext())
+                using (var db = new AppDbContext(_empresa))
                 {
-                    return db.HistoricosOcupacao
-                        .OrderByDescending(x => x.Id)
-                        .Take(quantidade)
-                        .ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerService.Erro("Erro ao buscar ultimos historicos.", ex);
-                return new List<HistoricoOcupacao>();
-            }
-        }
+                    var consulta = db.HistoricosOcupacao.AsQueryable();
 
-        /// <summary>
-        /// Obtém as últimas medições registradas e as retorna em ordem crescente,
-        /// permitindo exibição cronológica correta em gráficos ou tabelas.
-        /// </summary>
-        public List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade)
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    return db.MedicaoVolumes
+                    /// <summary>
+                    /// Aplica filtro de segurança por empresa na consulta,
+                    /// impedindo o retorno de históricos pertencentes a outras empresas.
+                    /// </summary>
+                    if (!string.IsNullOrWhiteSpace(_empresa))
+                    {
+                        consulta = consulta.Where(x => x.Empresa == _empresa);
+                    }
+
+                    return consulta
                         .OrderByDescending(x => x.Id)
                         .Take(quantidade)
-                        .OrderBy(x => x.Id)
                         .ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente.", ex);
-                return new List<MedicaoVolume>();
+                LoggerService.Erro("Erro ao buscar ultimos historicos.");
+                return new List<HistoricoOcupacao>();
             }
         }
     }

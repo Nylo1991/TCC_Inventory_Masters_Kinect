@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using TCC_Inventory_Masters_Kinect.Model;
 using TCC_Inventory_Masters_Kinect.ViewModel;
 
 namespace TCC_Inventory_Masters_Kinect.View
@@ -14,23 +15,29 @@ namespace TCC_Inventory_Masters_Kinect.View
         private MainViewModel _viewModel;
 
         public KinectMonitorWindow()
-            : this("Administrador")
+            : this(new SessaoUsuario
+            {
+                Usuario = "Administrador",
+                Empresa = "Empresa Teste",
+                Email = "teste@inventorymasters.com",
+                Token = "DEV"
+            })
         {
         }
 
         /// <summary>
-        /// Construtor da janela principal do monitoramento do Kinect, 
-        /// que recebe o nome do usuário logado para personalizar a experiência.
+        /// Construtor da janela principal do monitoramento do Kinect,
+        /// que recebe a sessão do usuário validada pelo MVC ou pelo modo de desenvolvimento.
         /// </summary>
-        /// <param name="usuarioLogado"></param>
-        public KinectMonitorWindow(string usuarioLogado)
+        /// <param name="sessao"></param>
+        public KinectMonitorWindow(SessaoUsuario sessao)
         {
             InitializeComponent();
 
-            /// separação da lógica de calibração e monitoramento em um ViewModel 
-            /// dedicado a busca de dados dentro da mainviewmodel 
+            /// separação da lógica de calibração e monitoramento em um ViewModel
+            /// dedicado a busca de dados dentro da mainviewmodel
 
-            _viewModel = new MainViewModel(usuarioLogado);
+            _viewModel = new MainViewModel(sessao);
             _viewModel.CalibracaoFinalizada += FinalizarVideoCalibracao;
 
             DataContext = _viewModel;
@@ -46,13 +53,15 @@ namespace TCC_Inventory_Masters_Kinect.View
             CalibrationTitleTextBlock.Text = "Calibracao em andamento";
             CalibrationSubtitleTextBlock.Text = "Aguarde enquanto o Kinect calibra o espaco vazio";
 
+            PainelCalibracao.Visibility = Visibility.Visible;
+
             CalibrationVideoElement.Visibility = Visibility.Visible;
             CalibrationVideoElement.Position = TimeSpan.Zero;
             CalibrationVideoElement.Play();
         }
 
         /// <summary>
-        /// Evento que é acionado quando o vídeo de calibração chega ao fim, 
+        /// Evento que é acionado quando o vídeo de calibração chega ao fim,
         /// reiniciando a reprodução para criar um loop contínuo.
         /// </summary>
         /// <param name="sender"></param>
@@ -64,7 +73,7 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Método que é chamado quando a calibração é finalizada,
+        /// Método que é chamado quando a calibração é finalizada.
         /// </summary>
         private void FinalizarVideoCalibracao()
         {
@@ -72,6 +81,7 @@ namespace TCC_Inventory_Masters_Kinect.View
             {
                 CalibrationVideoElement.Stop();
                 CalibrationVideoElement.Visibility = Visibility.Hidden;
+                PainelCalibracao.Visibility = Visibility.Collapsed;
 
                 CalibrationTitleTextBlock.Text = "Calibracao concluida";
                 CalibrationSubtitleTextBlock.Text = "Salve o espaco para liberar as medicoes automaticas";
@@ -79,7 +89,7 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Evento de clique do botão "Sair", que fecha a aplicação de forma segura, 
+        /// Evento de clique do botão "Sair", que fecha a aplicação de forma segura,
         /// garantindo que todos os recursos sejam liberados corretamente.
         /// </summary>
         /// <param name="sender"></param>
@@ -117,12 +127,7 @@ namespace TCC_Inventory_Masters_Kinect.View
 
             if (viewModel == null || !viewModel.EspacoSalvo)
             {
-                MessageBox.Show(
-                    "Salve os dados do espaco antes de abrir o historico.",
-                    "Historico indisponivel",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-
+                ExibirAvisoHistoricoIndisponivel();
                 return;
             }
 
@@ -132,6 +137,90 @@ namespace TCC_Inventory_Masters_Kinect.View
             };
 
             janela.ShowDialog();
+        }
+
+        /// <summary>
+        /// Metado de mostra que antes de abrir o hstorico e necessario registra o espaço antes 
+        /// </summary>
+        private void ExibirAvisoHistoricoIndisponivel()
+        {
+            var aviso = new Window
+            {
+                Title = "Historico indisponivel",
+                Width = 460,
+                Height = 250,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                ResizeMode = ResizeMode.NoResize,
+                Background = System.Windows.Media.Brushes.White
+            };
+
+            var painel = new System.Windows.Controls.Grid
+            {
+                Margin = new Thickness(24)
+            };
+
+            painel.RowDefinitions.Add(new System.Windows.Controls.RowDefinition
+            {
+                Height = GridLength.Auto
+            });
+
+            painel.RowDefinitions.Add(new System.Windows.Controls.RowDefinition
+            {
+                Height = new GridLength(1, GridUnitType.Star)
+            });
+
+            painel.RowDefinitions.Add(new System.Windows.Controls.RowDefinition
+            {
+                Height = GridLength.Auto
+            });
+
+            var titulo = new System.Windows.Controls.TextBlock
+            {
+                Text = "Historico indisponivel",
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(17, 17, 17)),
+                FontSize = 24,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 0, 0, 14)
+            };
+
+            var mensagem = new System.Windows.Controls.TextBlock
+            {
+                Text = "Salve os dados do espaco antes de abrir o historico de medicoes.",
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(75, 85, 99)),
+                FontSize = 16,
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var botao = new System.Windows.Controls.Button
+            {
+                Content = "Entendi",
+                Width = 110,
+                Height = 38,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Background = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(16, 138, 59)),
+                Foreground = System.Windows.Media.Brushes.White,
+                FontWeight = FontWeights.Bold,
+                BorderThickness = new Thickness(0),
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            botao.Click += (s, e) => aviso.Close();
+
+            System.Windows.Controls.Grid.SetRow(titulo, 0);
+            System.Windows.Controls.Grid.SetRow(mensagem, 1);
+            System.Windows.Controls.Grid.SetRow(botao, 2);
+
+            painel.Children.Add(titulo);
+            painel.Children.Add(mensagem);
+            painel.Children.Add(botao);
+
+            aviso.Content = painel;
+            aviso.ShowDialog();
         }
     }
 }

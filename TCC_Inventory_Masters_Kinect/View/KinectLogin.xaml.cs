@@ -7,22 +7,14 @@ using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Model;
 
-
 namespace TCC_Inventory_Masters_Kinect.View
 {
     /// <summary>
-    /// Janela de logim e cadastro de usuarios para acesso ao monitoramento volumétrico do Kinect.
-    /// todas as responsabilidades de validação, autenticação e persistência de usuarios estão centralizadas nesta classe.
+    /// Janela de login e cadastro de usuarios para acesso ao monitoramento volumétrico do Kinect.
+    /// Todas as responsabilidades de validação, autenticação e persistência de usuarios estão centralizadas nesta classe.
     /// </summary>
     public partial class KinectLogin : Window
     {
-
-        /// <summary>
-        /// Construtor da janela de login. Verifica se existem usuarios cadastrados no banco SQLite.
-        /// Se existirem, exibe a tela de login. Caso contrário, exibe a tela de cadastro para criar o primeiro usuario. 
-        /// Qualquer erro na verificação do banco resultará na exibição da tela de cadastro, 
-        /// assumindo que o banco pode estar vazio ou inacessível.
-        /// </summary>
         public KinectLogin()
         {
             InitializeComponent();
@@ -30,10 +22,6 @@ namespace TCC_Inventory_Masters_Kinect.View
             DefinirTelaInicial();
         }
 
-        /// <summary>
-        /// Responsavel por definir qual tela exibir inicialmente, login ou cadastro, 
-        /// com base na existencia de usuarios cadastrados no banco de dados.
-        /// </summary>
         private void DefinirTelaInicial()
         {
             try
@@ -67,10 +55,7 @@ namespace TCC_Inventory_Masters_Kinect.View
         {
             MostrarCadastro();
         }
-        /// <summary>
-        /// responsavel por configurar a interface para exibir a tela de login, ocultando o painel de cadastro e 
-        /// ajustando os textos e estilos dos botões para refletir a seleção atual.
-        /// </summary>
+
         private void MostrarLogin()
         {
             MensagemTextBlock.Text = string.Empty;
@@ -83,10 +68,7 @@ namespace TCC_Inventory_Masters_Kinect.View
             AbaCadastroButton.Background = System.Windows.Media.Brushes.LightGray;
             AbaCadastroButton.Foreground = System.Windows.Media.Brushes.Black;
         }
-        /// <summary>
-        /// responsavel por configurar a interface para exibir a tela de cadastro, ocultando o painel de login e
-        /// ajustando os textos e estilos dos botões para refletir a seleção atual.
-        /// </summary>
+
         private void MostrarCadastro()
         {
             MensagemTextBlock.Text = string.Empty;
@@ -99,11 +81,7 @@ namespace TCC_Inventory_Masters_Kinect.View
             AbaCadastroButton.Background = System.Windows.Media.Brushes.ForestGreen;
             AbaCadastroButton.Foreground = System.Windows.Media.Brushes.White;
         }
-        /// <summary>
-        /// Responsavel por autenticar o usuario com base no identificador (usuario ou email) e senha fornecidos.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         private void Entrar_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -132,8 +110,18 @@ namespace TCC_Inventory_Masters_Kinect.View
                         return;
                     }
 
+                    var sessao = new SessaoUsuario
+                    {
+                        Usuario = usuarioAcesso.Usuario,
+                        Empresa = string.IsNullOrWhiteSpace(usuarioAcesso.Empresa)
+                            ? "Empresa Teste"
+                            : usuarioAcesso.Empresa,
+                        Email = usuarioAcesso.Email,
+                        Token = "DEV"
+                    };
+
                     LoggerService.Info("Login realizado com sucesso.");
-                    AbrirMonitor(usuarioAcesso.Usuario);
+                    AbrirMonitor(sessao);
                 }
             }
             catch
@@ -143,15 +131,6 @@ namespace TCC_Inventory_Masters_Kinect.View
             }
         }
 
-        /// <summary>
-        /// Responsavel por validar os dados de cadastro e criar um novo usuario no banco de dados .
-        /// isso garante que apenas usuarios com dados validos sejam criados,
-        /// e que o processo de cadastro seja robusto contra erros comuns, como campos vazios, senhas fracas ou emails invalidos.
-        /// Mais so tem um porem ainda não manda email para o usuario cadastrado, isso pode ser implementado em uma versão futura para 
-        /// melhorar a experiencia do usuario e a segurança do sistema.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Cadastrar_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -159,6 +138,7 @@ namespace TCC_Inventory_Masters_Kinect.View
                 MensagemTextBlock.Text = string.Empty;
 
                 string usuario = CadastroUsuarioTextBox.Text?.Trim();
+                string empresa = CadastroEmpresaTextBox.Text?.Trim();
                 string email = CadastroEmailTextBox.Text?.Trim().ToLower();
                 string senha = CadastroSenhaPasswordBox.Password?.Trim();
                 string confirmarSenha = CadastroConfirmarSenhaPasswordBox.Password?.Trim();
@@ -166,6 +146,12 @@ namespace TCC_Inventory_Masters_Kinect.View
                 if (string.IsNullOrWhiteSpace(usuario))
                 {
                     MensagemTextBlock.Text = "Informe o usuario.";
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(empresa))
+                {
+                    MensagemTextBlock.Text = "Informe o nome da empresa.";
                     return;
                 }
 
@@ -240,6 +226,7 @@ namespace TCC_Inventory_Masters_Kinect.View
                     var novoUsuario = new UsuarioAcesso
                     {
                         Usuario = usuario,
+                        Empresa = empresa,
                         Email = email,
                         Senha = senha,
                         Perfil = "Usuario",
@@ -251,8 +238,16 @@ namespace TCC_Inventory_Masters_Kinect.View
                     db.SaveChanges();
                 }
 
+                var sessao = new SessaoUsuario
+                {
+                    Usuario = usuario,
+                    Empresa = empresa,
+                    Email = email,
+                    Token = "DEV"
+                };
+
                 LoggerService.Info("Usuario cadastrado com sucesso.");
-                AbrirMonitor(usuario);
+                AbrirMonitor(sessao);
             }
             catch
             {
@@ -260,14 +255,7 @@ namespace TCC_Inventory_Masters_Kinect.View
                 LoggerService.Erro("Erro ao cadastrar usuario.");
             }
         }
-        /// <summary>
-        /// Responsavel por validar se o email fornecido no cadastro é valido, utilizando uma combinação de
-        /// verificações manuais e expressões regulares para garantir que o formato do email seja correto e 
-        /// que ele possa ser utilizado para comunicação futura, 
-        /// caso seja necessário implementar funcionalidades como recuperação de senha ou notificações por email.
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
+
         private bool EmailValido(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
@@ -304,14 +292,10 @@ namespace TCC_Inventory_Masters_Kinect.View
                 return false;
             }
         }
-        /// <summary>
-        /// Responsavel por abrir a janela de monitoramento volumétrico do Kinect, 
-        /// passando o nome do usuario autenticado para personalizar a experiencia e registrar o acesso nos logs.
-        /// </summary>
-        /// <param name="usuario">Nome do usuario autenticado</param>
-        private void AbrirMonitor(string usuario)
+
+        private void AbrirMonitor(SessaoUsuario sessao)
         {
-            var janela = new KinectMonitorWindow(usuario);
+            var janela = new KinectMonitorWindow(sessao);
             janela.Show();
             Close();
         }
