@@ -440,9 +440,13 @@ A tabela abaixo apresenta os casos de uso relacionados exclusivamente à aplica�
 | UC15 | Integrar Perfil Repositório | Sistema | Conexão entre módulo de notificação e repositório. |
 | UC16 | Verificar Pendências | Admin | Verificação de notificações e tarefas pendentes. |
 | UC17 | Gestão de Alertas Visuais | Admin | Configuração de gatilhos de alerta no Dashboard. |
+| UC18 | Monitorar Ocupação | Operador | Acompanhamento em tempo real da ocupação do espaço. |
+| UC21 | Iniciar Medição | Operador | Ativação da captura de dados pelo sensor Kinect. |
+| UC22 | Visualizar Fluxo Profund. | Operador | Monitoramento visual do fluxo de profundidade. |
 | UC25 | Histórico Medições | Admin | Consulta de medições recebidas pela plataforma. |
 | UC26 | Exportar Dados | Admin | Exportação de relatórios volumétricos e periódicos. |
 | UC27 | Relatório de Período | Admin | Geração de análise de volume por intervalo de tempo. |
+| UC28 | Calibração de Sensor | Operador | Rotina de ajuste e definição do plano de referência. |
 | UC30 | Validação de Regras de Limite | Sistema | Comparação das medições com parâmetros configurados. |
 | UC31 | Ajustar Parâmetros | Admin | Configuração de limites mínimos e máximos de estoque. |
 | UC32 | Persistir Configurações | Sistema | Validação e salvamento de parâmetros no Firestore. |
@@ -450,6 +454,7 @@ A tabela abaixo apresenta os casos de uso relacionados exclusivamente à aplica�
 | UC34 | Ativar Alerta Dashboard | Admin | Ativação de alertas visuais no painel de controle. |
 | UC35 | Definir Parceiro Padrão | Admin | Definição de entidade padrão para fluxos operacionais. |
 | UC36 | Persistir Configurações | Sistema | Salvamento de parâmetros no Firestore. |
+| UC45 | Verificação de Calibração | Operador | Check-up preventivo do estado de calibração do sensor. |
 | UC47 | Gerenciamento de Coletas | Admin | Controle do ciclo de vida das coletas realizadas. |
 | UC48 | Auditoria de Medições | Admin | Verificação de conformidade das medições. |
 | UC51 | Visualizar Consolidado | Admin | Visão geral da ocupação e dos volumes monitorados. |
@@ -523,6 +528,19 @@ Os casos de uso abaixo representam os mecanismos responsáveis pela comunicaçã
 | UCI05 | Operar Offline | Sistema | Mantém medições locais quando o MVC estiver indisponível. |
 | UCI06 | Gerenciar Conexões | Sistema | Controle do ciclo de vida das conexões SignalR. |
 | UCI07 | Autenticar Comunicação | Sistema | Validação de acesso aos serviços de integração. |
+| **UC14** | Notificar Clientes | Sistema | Broadcast de alertas via SignalR (NotificacaoHub). |
+| **UC20** | Validação de Conexões | Sistema | Monitoramento de handshake entre cliente e servidor. |
+| **UC37** | Diagnóstico de Conectividade | Sistema | Verifica em tempo real se a comunicação entre o Kinect e o módulo MVC está ativa. |
+| **UC50** | Estabilização de Conexão | Sistema | Tratamento de re-handshake automático para o Kinect. |
+| **UC57** | Autenticação de Hub | Sistema | Validação de tokens de segurança JWT para acesso aos Hubs SignalR. |
+| **UC53** | Receber Atualizações | Sistema | Integração assíncrona (Hub) para o Dashboard. |
+| **UC58** | Cache de Estado Local | Sistema | Armazenamento temporário de medições no cliente para evitar perda de dados em micro-quedas de rede. |
+| **UC59** | Criptografia de Payload | Sistema | Garantia de que os dados volumétricos estejam protegidos durante a transmissão via rede. |
+| **UC60** | Log de Eventos de Segurança | Sistema | Registro de tentativas de acesso não autorizadas aos Hubs de integração. |
+| **UC61** | Processar Medição Hub | Sistema | Conversão $cm^3 \rightarrow m^3$ e broadcast. |
+| **UC62** | Broadcast Clientes | Sistema | Envio de nova medição para todos os Dashboards. |
+| **UC63** | Injeção de Dependência | Sistema | Inicialização automática e resolução de instâncias de repositórios (Firestore/MVC) necessária para o ciclo de vida do SignalR Hub. |
+| **UC64** | Gerenciar Conexões | Sistema | Controle de ciclo de vida das sessões (SignalR). |
 
 ---
 
