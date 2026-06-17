@@ -53,6 +53,8 @@ namespace TCC_Inventory_Masters_Kinect.View
             CalibrationTitleTextBlock.Text = "Calibracao em andamento";
             CalibrationSubtitleTextBlock.Text = "Aguarde enquanto o Kinect calibra o espaco vazio";
 
+            PainelCalibracao.Visibility = Visibility.Visible;
+
             CalibrationVideoElement.Visibility = Visibility.Visible;
             CalibrationVideoElement.Position = TimeSpan.Zero;
             CalibrationVideoElement.Play();
@@ -79,6 +81,7 @@ namespace TCC_Inventory_Masters_Kinect.View
             {
                 CalibrationVideoElement.Stop();
                 CalibrationVideoElement.Visibility = Visibility.Hidden;
+                PainelCalibracao.Visibility = Visibility.Collapsed;
 
                 CalibrationTitleTextBlock.Text = "Calibracao concluida";
                 CalibrationSubtitleTextBlock.Text = "Salve o espaco para liberar as medicoes automaticas";

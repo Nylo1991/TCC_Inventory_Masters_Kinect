@@ -273,22 +273,38 @@
                                   MediaEnded="CalibrationVideoElement_MediaEnded"
                                   Panel.ZIndex="1"
                                   ToolTip="Video de orientacao exibido durante a calibracao."/>
-
                     <Border x:Name="PainelCalibracao"
-                            Background="#AA000000"
-                            Height="70"
-                            VerticalAlignment="Top"
-                            Visibility="Collapsed"
-                            Panel.ZIndex="2">
-                        <StackPanel Margin="15,8">
+                       Background="#CC0B3323"
+                          CornerRadius="8"
+                        Padding="18"
+                         Width="420"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                           Visibility="Collapsed"
+                          Panel.ZIndex="2">
+                        <StackPanel>
+                            <TextBlock Text="Calibracao em andamento"
+                               Foreground="White"
+                                     FontSize="22"
+                               FontWeight="Bold"
+                              HorizontalAlignment="Center"
+                                Margin="0,0,0,8"/>
+
                             <TextBlock Text="{Binding StatusMessage}"
-                                       Foreground="White"
-                                       FontSize="16"
-                                       FontWeight="Bold"/>
+                                 Foreground="#D1FAE5"
+                               FontSize="15"
+                               FontWeight="SemiBold"
+                                 HorizontalAlignment="Center"
+                                TextAlignment="Center"
+                                 TextWrapping="Wrap"
+                                    Margin="0,0,0,6"/>
 
                             <TextBlock Text="{Binding StatusCalibracao}"
-                                       Foreground="#FFD966"
-                                       FontSize="12"/>
+                                   Foreground="#FFD966"
+                                     FontSize="14"
+                                   HorizontalAlignment="Center"
+                                  TextAlignment="Center"
+                                TextWrapping="Wrap"/>
                         </StackPanel>
                     </Border>
                 </Grid>
