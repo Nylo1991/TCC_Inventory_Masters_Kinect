@@ -13,24 +13,44 @@
 
 </div>
 
+# INVENTORY MASTERS - SOLUÇÕES INTELIGENTES EM MAPEAMENTO DE ESTOQUE
+---
+**Unidade SENAI:** Nova Lima  
+**Instrutor:** Frederico Martins Aguiar
+
+<div align="center">
+
+## INTEGRANTES DO GRUPO
+
+<p align="center">
+  <img src="./Imagens/Equipe.jpeg" width="600" alt="Equipe Inventory Masters" />
+</p>
+
+</div>
+
 | Nome | Curso| Especialidade no Projeto |
 | :--- | :--- | :--- |
 | **Danilo Silva Santos** | Programação de Sistemas | Desenvolvimento e Integração do Sensor Kinect|
 | **Marilene da Silva Araujo** | Programação de Sistemas | Desenvolvimento, e Modelagem de Banco de Dados |
 | **Miguel Cassio Braga Duarte** |Programação de Sistemas | Desenvolvimento e Lógica do negócio |
-| **Diulie Mileide Batista Correia** |Programação de Sistemas | Desenvolvimento e Documentação |
+| **Diulie Mileide Batista Correia** |Programação de Sistemas | Desenvolvimento , Integração do Sensor Kinect e Documentação  |
 
 </div>
 
 ---
 
-##  Quem somos!
+## Quem Somos
 
-A Inventory Masters é uma plataforma tecnológica dedicada à gestão inteligente de excedentes produtivos.
-Atuamos conectando empresas a soluções estratégicas de reaproveitamento de materiais.
-Transformamos desperdícios em ativos com potencial de geração de valor econômico.
-Promovemos redução de custos, eficiência operacional e responsabilidade ambiental.
-Somos inovação aplicada à gestão sustentável e competitiva.
+A Inventory Masters é uma plataforma tecnológica voltada para o monitoramento inteligente de espaços de armazenamento e a gestão estratégica de excedentes produtivos.
+
+A solução utiliza tecnologias de visão computacional e mapeamento volumétrico para identificar, medir e acompanhar a ocupação de ambientes destinados ao armazenamento de materiais, permitindo maior controle sobre estoques, excedentes e capacidade disponível.
+
+Por meio da integração entre o sensor Kinect, processamento de dados e dashboards gerenciais, a plataforma transforma informações operacionais em indicadores que auxiliam a tomada de decisão, promovendo maior eficiência logística e redução de desperdícios.
+
+Além de otimizar a utilização dos espaços monitorados, a Inventory Masters contribui para a economia circular ao conectar materiais excedentes a oportunidades de reaproveitamento, transformando recursos subutilizados em ativos com potencial de geração de valor econômico.
+
+Nossa proposta combina inovação tecnológica, sustentabilidade e inteligência operacional para apoiar empresas na construção de processos mais eficientes, competitivos e ambientalmente responsáveis.
+
 
 <p align="center">
   <img src="./Imagens/logo.png" width="600" alt="Logo Inventory Masters" />
@@ -40,68 +60,167 @@ Somos inovação aplicada à gestão sustentável e competitiva.
 
 ## PROBLEMA 
 
-O cenário empresarial atual é caracterizado por elevados níveis de produção e, consequentemente, pela criação contínua de excedentes produtivos. Esses excedentes englobam sobras de matéria-prima, materiais que não atendem aos padrões comerciais, resíduos operacionais e insumos não aproveitados integralmente durante o processo produtivo. Na maioria das organizações, tais materiais não são monitorados de maneira estratégica, sendo erroneamente classificados apenas como resíduos ou custos inevitáveis.
+O cenário empresarial atual é caracterizado por elevados níveis de produção e, consequentemente, pela geração contínua de excedentes produtivos. Esses excedentes incluem sobras de matéria-prima, materiais fora dos padrões comerciais, resíduos operacionais e insumos não aproveitados integralmente durante os processos produtivos. Em muitas organizações, esses materiais não são monitorados de forma estratégica, sendo frequentemente tratados apenas como resíduos ou custos inevitáveis.
 
-A ausência de sistemas organizados de rastreabilidade e gerenciamento desses excedentes gera impactos consideráveis:
+Além da dificuldade de gerenciar os excedentes, muitas empresas enfrentam desafios relacionados ao controle e monitoramento da ocupação dos espaços de armazenamento. A ausência de mecanismos automatizados para medir a utilização dos ambientes dificulta a identificação da capacidade disponível, o acompanhamento do crescimento dos estoques e a tomada de decisões relacionadas ao reaproveitamento, movimentação ou destinação de materiais.
 
-* **Sob a ótica econômica:** as empresas enfrentam prejuízos financeiros decorrentes do desperdício de recursos, da gestão ineficiente de estoques e da destinação imprópria de materiais reutilizáveis.
-* **No âmbito ambiental:** o descarte inadequado acelera o acúmulo de resíduos sólidos, sobrecarrega os aterros sanitários e exerce maior pressão sobre os recursos naturais.
+A falta de rastreabilidade, monitoramento e visibilidade dos espaços físicos gera impactos significativos:
 
-Além disso, observa-se que muitas organizações enfrentam dificuldades para integrar práticas sustentáveis às suas rotinas operacionais de maneira eficiente e mensurável. Embora a economia circular seja amplamente discutida como modelo estratégico para o desenvolvimento sustentável, sua aplicação prática ainda é limitada pela escassez de ferramentas tecnológicas acessíveis e integradas à gestão empresarial.
+* **Sob a ótica econômica** *: aumento dos custos operacionais, desperdício de recursos, utilização inadequada dos espaços disponíveis e baixa eficiência na gestão de estoques.
+* **Sob a ótica operacional** *: dificuldade de acompanhar a ocupação dos ambientes em tempo real, reduzindo a capacidade de planejamento, controle logístico e gestão dos excedentes.
+* **Sob a ótica ambiental:** * descarte inadequado de materiais reutilizáveis, aumento da geração de resíduos e maior pressão sobre os recursos naturais.
 
-Diante desse contexto, surge a necessidade de soluções inovadoras que permitam transformar excedentes produtivos em ativos econômicos, promovendo a redução de custos, a geração de novas receitas e o fortalecimento da responsabilidade socioambiental corporativa.
+Embora a economia circular seja amplamente reconhecida como uma estratégia importante para o desenvolvimento sustentável, sua implementação ainda encontra barreiras devido à escassez de ferramentas tecnológicas acessíveis que permitam monitorar, medir e gerenciar excedentes de forma eficiente e baseada em dados.
 
-É nesse cenário que se insere a proposta da **Inventory Masters**: uma plataforma tecnológica voltada para a gestão inteligente, rastreabilidade e direcionamento estratégico de excedentes produtivos em múltiplos setores da economia. A solução busca estruturar um modelo operacional capaz de conectar empresas geradoras de excedentes a oportunidades de reaproveitamento, criando um ecossistema de valorização de materiais antes subutilizados ou descartados.
+Diante desse cenário, surge a necessidade de uma solução capaz de automatizar o monitoramento dos espaços de armazenamento, medir a ocupação dos ambientes, identificar excedentes produtivos e disponibilizar informações confiáveis para apoiar a tomada de decisão.
 
-Assim, o presente estudo se justifica pela necessidade de desenvolver mecanismos práticos que integrem eficiência operacional, inovação tecnológica e sustentabilidade, contribuindo para a consolidação de modelos empresariais mais competitivos e alinhados às demandas ambientais contemporâneas.
+É nesse contexto que se insere a proposta da **Inventory Masters**, uma plataforma tecnológica que utiliza mapeamento volumétrico, visão computacional e monitoramento inteligente para acompanhar a ocupação de espaços físicos, rastrear excedentes produtivos e apoiar estratégias de reaproveitamento de materiais. A solução busca transformar dados operacionais em informações gerenciais, permitindo maior controle dos recursos, melhor utilização da capacidade disponível e redução de desperdícios.
+
+Assim, o presente estudo busca integrar inovação tecnológica, eficiência operacional e sustentabilidade, contribuindo para uma gestão mais inteligente dos recursos, redução de desperdícios e fortalecimento das práticas de economia circular.
 
 ---
 
 ## SOLUÇÃO
 
-A **Inventory Masters** é uma plataforma tecnológica desenvolvida para a gestão estratégica e inteligente de excedentes produtivos em diferentes setores da economia. Seu propósito é oferecer às organizações um sistema estruturado de rastreabilidade, controle e direcionamento de materiais que, tradicionalmente, seriam tratados apenas como descarte operacional.
+A **Inventory Masters** é uma plataforma tecnológica desenvolvida para apoiar a gestão inteligente de excedentes produtivos por meio do monitoramento volumétrico de espaços de armazenamento e da rastreabilidade de materiais com potencial de reaproveitamento.
 
-Por meio de monitoramento sistematizado, organização de dados e análise de fluxos produtivos, a plataforma identifica resíduos e sobras operacionais com potencial de reaproveitamento, promovendo sua reinserção estratégica na cadeia produtiva. Dessa forma, materiais antes considerados perdas passam a ser reconhecidos como **ativos capazes de gerar valor econômico**, otimizar processos e reduzir desperdícios.
+A solução utiliza tecnologias de visão computacional e mapeamento volumétrico para acompanhar a ocupação dos ambientes monitorados, permitindo identificar a capacidade utilizada, o espaço disponível e possíveis situações de excedente operacional. Por meio da integração entre o sensor Kinect, processamento de dados e dashboards gerenciais, o sistema transforma medições físicas em informações estratégicas para apoio à tomada de decisão.
 
-A plataforma atua como um elo integrador entre empresas geradoras de excedentes e parceiros aptos a reutilizá-los, estruturando um ecossistema colaborativo orientado à eficiência operacional e à sustentabilidade empresarial. Ao conectar a oferta e a demanda de materiais reaproveitáveis, a solução contribui simultaneamente para:
+O módulo Kinect é responsável por capturar dados de profundidade do ambiente, realizar a calibração do espaço monitorado e calcular automaticamente o volume ocupado. Essas informações são processadas e disponibilizadas em tempo real para a plataforma, permitindo o acompanhamento contínuo da ocupação dos estoques.
+
+Com base nas medições realizadas, a plataforma calcula indicadores operacionais como:
+
+* Volume ocupado;
+* Espaço livre disponível;
+* Percentual de ocupação;
+* Histórico de medições;
+* Situação dos limites configurados;
+* Indicadores para apoio à tomada de decisão.
+
+Além do monitoramento dos espaços, a plataforma atua como um elo integrador entre empresas geradoras de excedentes e parceiros aptos a reutilizá-los, estruturando um ecossistema colaborativo voltado para eficiência operacional, redução de desperdícios e sustentabilidade empresarial.
+
+Ao conectar monitoramento inteligente, rastreabilidade e reaproveitamento de materiais, a solução contribui para:
 
 * **Redução de custos** operacionais e de descarte;
-* **Melhoria da performance** organizacional;
-* **Mitigação de impactos ambientais** negativos.
+* **Melhor aproveitamento dos espaços de armazenamento**;
+* **Maior controle sobre excedentes produtivos**;
+* **Melhoria da eficiência logística e operacional**;
+* **Mitigação dos impactos ambientais** relacionados ao descarte inadequado de materiais.
 
-Mais do que uma iniciativa sustentável, a proposta configura-se como um modelo escalável de inovação aplicada à gestão empresarial, alinhado às tendências contemporâneas de responsabilidade socioambiental, competitividade de mercado e transformação digital.
+Mais do que uma iniciativa sustentável, a Inventory Masters configura-se como uma solução de inovação aplicada à gestão de estoques, monitoramento volumétrico e economia circular, alinhada às tendências de transformação digital, responsabilidade socioambiental e competitividade empresarial.
 
 ---
 
 ### ÁREA TECNOLÓGICA DA SOLUÇÃO
-A solução Inventory Masters está inserida no ecossistema da **Indústria 4.0**, convergindo tecnologias de hardware e software para a automação de processos. As principais áreas abrangidas são:
-* **Visão Computacional:** Utilização do sensor infravermelho e câmera de profundidade (RGB-D) para o mapeamento volumétrico de objetos e espaços.
-* **Internet das Coisas (IoT):** Integração de sensores físicos com uma interface digital para monitoramento em tempo real.
-* **Sistemas de Informação:** Processamento de dados via plataforma **.NET 8** e armazenamento estruturado em **SQLite**, permitindo a rastreabilidade completa dos excedentes.
+
+A solução Inventory Masters está inserida no contexto da **Indústria 4.0**, integrando tecnologias de visão computacional, monitoramento volumétrico, processamento de dados e comunicação em tempo real para apoiar a gestão inteligente de excedentes produtivos e ocupação de espaços de armazenamento.
+
+As principais áreas tecnológicas envolvidas são:
+
+* **Visão Computacional:** Utilização do sensor Kinect Xbox 360, câmera RGB e sensor de profundidade (RGB-D) para captura de dados espaciais e realização do mapeamento volumétrico dos ambientes monitorados.
+
+* **Monitoramento Volumétrico:** Processamento dos dados capturados para cálculo do volume ocupado, espaço livre disponível e percentual de ocupação dos ambientes de armazenamento.
+
+* **Internet das Coisas (IoT):** Integração entre hardware e software para coleta automática de dados e monitoramento contínuo dos espaços físicos.
+
+* **Sistemas de Informação:** Processamento, armazenamento e disponibilização das informações por meio de aplicações desenvolvidas em C#, WPF, ASP.NET Core, SQLite e Firebase Firestore.
+
+* **Comunicação em Tempo Real:** Utilização do SignalR para sincronização das medições realizadas pelo módulo Kinect com os dashboards da aplicação web.
+
+A combinação dessas tecnologias permite que a solução transforme medições físicas em informações estratégicas para apoio à tomada de decisão, rastreabilidade de excedentes e otimização dos espaços de armazenamento.
 
 ### JUSTIFICATIVA
-A implementação deste projeto justifica-se pela ineficiência dos métodos tradicionais de inventário manual, que são lentos, propensos a erros humanos e caros. No cenário de sustentabilidade atual, empresas que não monitoram seus excedentes perdem duas vezes: financeiramente (pelo valor do material parado) e ambientalmente (pelo descarte inadequado). 
-A Inventory Masters oferece uma alternativa de **baixo custo** ao utilizar hardware legado (Kinect), democratizando o acesso à tecnologia de ponta para pequenas e médias empresas que buscam se adequar à economia circular e reduzir perdas operacionais.
+
+A implementação deste projeto justifica-se pelas limitações dos métodos tradicionais de controle de estoque e monitoramento de espaços de armazenamento, que normalmente dependem de medições manuais, inspeções periódicas e registros sujeitos a falhas humanas.
+
+A ausência de informações precisas sobre a ocupação dos ambientes dificulta o planejamento logístico, reduz a eficiência operacional e pode resultar em desperdícios, utilização inadequada dos espaços disponíveis e acúmulo de excedentes produtivos.
+
+Nesse contexto, a Inventory Masters propõe uma alternativa tecnológica de baixo custo baseada no sensor Kinect Xbox 360, permitindo automatizar o monitoramento volumétrico dos ambientes e disponibilizar informações em tempo real sobre ocupação, capacidade disponível e situação dos estoques.
+
+Além dos benefícios operacionais, a solução contribui para práticas de economia circular, rastreabilidade de materiais e redução de impactos ambientais, tornando a gestão dos excedentes mais eficiente, sustentável e orientada por dados.
 
 ### OBJETIVOS
 
-**Objetivo Geral:**
-Desenvolver e implementar uma plataforma automatizada de mapeamento volumétrico para a gestão inteligente e direcionamento estratégico de excedentes produtivos.
+#### Objetivo Geral
 
-**Objetivos Específicos:**
-* Configurar a integração entre o hardware Kinect Xbox 360 e o ambiente de desenvolvimento C# (.NET).
-* Criar um algoritmo capaz de converter os dados de profundidade do sensor em métricas de volume (m³).
-* Desenvolver um sistema de alertas automáticos para notificação de parceiros quando o estoque atingir níveis críticos.
-* Reduzir o tempo de resposta na destinação de materiais, conectando a oferta (excedente) à demanda (parceiros) de forma ágil.
+Desenvolver e implementar uma plataforma tecnológica capaz de realizar o monitoramento volumétrico de espaços de armazenamento e apoiar a gestão inteligente de excedentes produtivos por meio da captura, processamento e disponibilização de informações em tempo real.
+
+#### Objetivos Específicos
+
+##### Módulo Kinect
+
+* Integrar o sensor Kinect Xbox 360 ao ambiente de desenvolvimento C# para captura de dados de profundidade e imagens do ambiente monitorado.
+* Desenvolver mecanismos de calibração do espaço físico para obtenção de medições confiáveis.
+* Criar algoritmos capazes de converter os dados de profundidade em métricas volumétricas.
+* Calcular automaticamente o volume ocupado, espaço livre disponível e percentual de ocupação.
+* Armazenar localmente as medições realizadas para consulta histórica e rastreabilidade.
+* Disponibilizar as informações coletadas para integração com a aplicação web.
+
+##### Módulo MVC
+
+* Desenvolver dashboards para visualização das informações recebidas do módulo Kinect.
+* Permitir o gerenciamento de parceiros e materiais com potencial de reaproveitamento.
+* Disponibilizar configurações de parâmetros operacionais e limites de ocupação.
+* Implementar mecanismos de notificação e acompanhamento dos excedentes produtivos.
+* Apoiar a tomada de decisão por meio de indicadores operacionais e históricos de ocupação.
+
+##### Integração Entre os Módulos
+
+* Sincronizar as medições realizadas pelo Kinect com a aplicação web utilizando SignalR.
+* Garantir atualização das informações em tempo real.
+* Permitir operação local do módulo Kinect mesmo em situações de indisponibilidade da aplicação web.
+* Apoiar a identificação, controle e direcionamento estratégico dos excedentes produtivos.
+
+---
 
 ### DESENVOLVIMENTO
-O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a precisão técnica e a usabilidade do sistema:
 
-1.  **Levantamento de Requisitos e Modelagem:** Nesta etapa, foram definidos os diagramas de Caso de Uso e Fluxo de Dados para entender como a medição se transforma em notificação.
-2.  **Arquitetura de Dados:** Criação do modelo relacional no banco de dados para garantir que cada medição de volume esteja vinculada a uma origem e que cada notificação seja registrada para auditoria.
-3.  **Integração do Sensor:** Utilização do *Microsoft Kinect SDK 1.8* para extrair a "nuvem de pontos" (point cloud) do ambiente, permitindo ao sistema "enxergar" o volume ocupado no estoque.
-4.  **Desenvolvimento da Interface Web:** Construção do Dashboard utilizando ASP.NET Core Razor Pages, onde o operador visualiza o status do estoque e configura os parâmetros de alerta.
-5.  **Testes e Calibração:** Ajuste da sensibilidade do sensor para diferentes tipos de materiais e validação do envio de e-mails/alertas automáticos.
+O desenvolvimento do projeto foi estruturado em etapas progressivas, permitindo a construção independente dos módulos Kinect e MVC, bem como sua integração para formação da solução completa.
+
+#### 1. Levantamento de Requisitos e Modelagem
+
+Foram definidos os requisitos funcionais, regras de negócio, fluxos operacionais e diagramas necessários para representar o funcionamento da solução.
+
+#### 2. Desenvolvimento do Módulo Kinect
+
+Nesta etapa foi realizada a integração com o sensor Kinect Xbox 360 utilizando o Microsoft Kinect SDK 1.8.
+
+Foram implementados os recursos responsáveis por:
+
+* Captura da câmera RGB;
+* Captura dos dados de profundidade;
+* Calibração do espaço monitorado;
+* Processamento das medições volumétricas;
+* Cálculo do volume ocupado;
+* Cálculo do espaço livre disponível;
+* Cálculo do percentual de ocupação;
+* Armazenamento local das medições em SQLite.
+
+#### 3. Desenvolvimento do Módulo MVC
+
+Foi desenvolvida a aplicação web responsável pelo gerenciamento operacional da solução.
+
+Nesta etapa foram implementados:
+
+* Dashboard de acompanhamento;
+* Gerenciamento de parceiros;
+* Configuração de parâmetros;
+* Sistema de notificações;
+* Relatórios e consultas históricas;
+* Integração com Firebase Firestore.
+
+#### 4. Integração Entre os Módulos
+
+Foi implementada a comunicação em tempo real utilizando SignalR, permitindo que as medições realizadas pelo módulo Kinect fossem disponibilizadas automaticamente na aplicação web.
+
+#### 5. Testes e Validação
+
+Foram realizados testes de calibração, precisão das medições, persistência dos dados, sincronização entre os módulos e atualização das informações em tempo real.
+
+#### 6. Consolidação da Solução
+
+Após a integração dos componentes, a plataforma passou a disponibilizar informações sobre ocupação dos espaços, capacidade disponível, histórico de medições e indicadores operacionais, apoiando a gestão dos excedentes produtivos e a tomada de decisão.
+
 ---
 # REGRA DE NEGOCIO
 
