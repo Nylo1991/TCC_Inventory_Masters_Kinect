@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Logs;
@@ -14,6 +13,18 @@ namespace TCC_Inventory_Masters_Kinect.Repository
     /// </summary>
     public class KinectRepository : IKinectRepository
     {
+        private readonly string _empresa;
+
+        public KinectRepository()
+            : this(null)
+        {
+        }
+
+        public KinectRepository(string empresa)
+        {
+            _empresa = empresa;
+        }
+
         /// <summary>
         /// Salva uma medição volumétrica realizada pelo Kinect no banco SQLite.
         /// </summary>
@@ -21,17 +32,17 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         {
             try
             {
-                using (var db = new AppDbContext())
+                using (var db = new AppDbContext(_empresa))
                 {
                     db.MedicaoVolumes.Add(medicao);
                     db.SaveChanges();
                 }
 
-                LoggerService.Info($"Medicao salva no SQLite. Volume: {medicao.VolumeCm3:F0} cm³");
+                LoggerService.Info($"Medicao salva no SQLite. Volume: {medicao.VolumeCm3:F0} cm3");
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao salvar medicao no SQLite.", ex);
+                LoggerService.Erro("Erro ao salvar medicao no SQLite.");
             }
         }
 
@@ -42,7 +53,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         {
             try
             {
-                using (var db = new AppDbContext())
+                using (var db = new AppDbContext(_empresa))
                 {
                     return db.MedicaoVolumes
                         .OrderByDescending(x => x.Id)
@@ -50,9 +61,31 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                         .ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao buscar historico de medicoes no SQLite.", ex);
+                LoggerService.Erro("Erro ao buscar historico de medicoes no SQLite.");
+                return new List<MedicaoVolume>();
+            }
+        }
+
+        /// <summary>
+        /// Obtém as medições registradas no SQLite em ordem crescente de ID.
+        /// </summary>
+        public List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade)
+        {
+            try
+            {
+                using (var db = new AppDbContext(_empresa))
+                {
+                    return db.MedicaoVolumes
+                        .OrderBy(x => x.Id)
+                        .Take(quantidade)
+                        .ToList();
+                }
+            }
+            catch
+            {
+                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente.");
                 return new List<MedicaoVolume>();
             }
         }
@@ -64,7 +97,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         {
             try
             {
-                using (var db = new AppDbContext())
+                using (var db = new AppDbContext(_empresa))
                 {
                     db.HistoricosOcupacao.Add(historico);
                     db.SaveChanges();
@@ -72,9 +105,9 @@ namespace TCC_Inventory_Masters_Kinect.Repository
 
                 LoggerService.Info("Historico de ocupacao salvo no SQLite.");
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao salvar historico de ocupacao no SQLite.", ex);
+                LoggerService.Erro("Erro ao salvar historico de ocupacao no SQLite.");
             }
         }
 
@@ -85,7 +118,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         {
             try
             {
-                using (var db = new AppDbContext())
+                using (var db = new AppDbContext(_empresa))
                 {
                     return db.HistoricosOcupacao
                         .Where(x => x.EspacoMapeadoId == espacoId)
@@ -93,21 +126,21 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                         .ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao buscar historico por espaco.", ex);
+                LoggerService.Erro("Erro ao buscar historico por espaco.");
                 return new List<HistoricoOcupacao>();
             }
         }
 
         /// <summary>
-        /// Obtém os últimos históricos de ocupação registrados no sistema.
+        /// Obtém os últimos registros de histórico de ocupação.
         /// </summary>
         public List<HistoricoOcupacao> ObterUltimosHistoricos(int quantidade)
         {
             try
             {
-                using (var db = new AppDbContext())
+                using (var db = new AppDbContext(_empresa))
                 {
                     return db.HistoricosOcupacao
                         .OrderByDescending(x => x.Id)
@@ -115,34 +148,10 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                         .ToList();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LoggerService.Erro("Erro ao buscar ultimos historicos.", ex);
+                LoggerService.Erro("Erro ao buscar ultimos historicos.");
                 return new List<HistoricoOcupacao>();
-            }
-        }
-
-        /// <summary>
-        /// Obtém as últimas medições registradas e as retorna em ordem crescente,
-        /// permitindo exibição cronológica correta em gráficos ou tabelas.
-        /// </summary>
-        public List<MedicaoVolume> ObterMedicoesEmOrdemCrescente(int quantidade)
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    return db.MedicaoVolumes
-                        .OrderByDescending(x => x.Id)
-                        .Take(quantidade)
-                        .OrderBy(x => x.Id)
-                        .ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente.", ex);
-                return new List<MedicaoVolume>();
             }
         }
     }
