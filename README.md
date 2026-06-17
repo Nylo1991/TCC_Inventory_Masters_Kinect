@@ -459,7 +459,6 @@ A tabela abaixo apresenta os casos de uso relacionados exclusivamente à aplica�
 | UC56 | Acessar Parâmetros | Admin | Acesso ao módulo de configuração. |
 
 ---
-
 # Casos de Uso do Módulo Kinect
 
 Os casos de uso abaixo representam as funcionalidades relacionadas ao monitoramento volumétrico, captura dos dados de profundidade e processamento realizado pelo Kinect.
@@ -471,21 +470,45 @@ Os casos de uso abaixo representam as funcionalidades relacionadas ao monitorame
 | UCK03 | Logoff por Inatividade | Sistema | Encerra automaticamente a sessão após período configurado. |
 | UCK04 | Ligar Kinect | Operador | Inicializa o sensor Kinect. |
 | UCK05 | Desligar Kinect | Operador | Finaliza a operação do sensor. |
-| UCK06 | Calibrar Espaço | Operador | Captura o ambiente vazio para referência. |
-| UCK07 | Cadastrar Espaço Monitorado | Operador | Cadastro do espaço e limites operacionais. |
-| UCK08 | Capturar Profundidade | Sistema | Captura dados de profundidade do ambiente. |
-| UCK09 | Capturar Imagem RGB | Sistema | Exibe a câmera RGB em tempo real. |
-| UCK10 | Processar Dados de Profundidade | Sistema | Processa os dados recebidos do sensor. |
-| UCK11 | Calcular Volume Ocupado | Sistema | Determina o volume ocupado no ambiente. |
-| UCK12 | Calcular Espaço Livre | Sistema | Calcula a capacidade disponível. |
-| UCK13 | Calcular Percentual de Ocupação | Sistema | Determina a ocupação do espaço monitorado. |
-| UCK14 | Salvar Medição Local | Sistema | Armazena medições no SQLite. |
-| UCK15 | Consultar Histórico Local | Operador | Exibe medições armazenadas localmente. |
-| UCK16 | Registrar Logs Operacionais | Sistema | Registra eventos e falhas do módulo Kinect. |
-| UCK17 | Verificar Calibração | Operador | Valida o estado atual da calibração. |
-| UCK18 | Diagnosticar Sensor | Sistema | Verifica a saúde e conectividade do Kinect. |
+| UCK06 | Verificar Conectividade do Sensor | Sistema | Verifica se o Kinect está conectado e operacional. |
+| UCK07 | Diagnosticar Hardware | Sistema | Realiza diagnóstico do estado do sensor Kinect. |
+| UCK08 | Calibrar Espaço Vazio | Operador | Captura o ambiente vazio para geração da referência espacial. |
+| UCK09 | Verificar Estado da Calibração | Operador | Valida o estado atual da calibração realizada. |
+| UCK10 | Capturar Dados de Profundidade | Sistema | Obtém os dados de profundidade do ambiente monitorado. |
+| UCK11 | Capturar Imagem RGB | Sistema | Exibe a câmera RGB em tempo real. |
+| UCK12 | Processar Dados de Profundidade | Sistema | Processa os dados recebidos do sensor Kinect. |
+| UCK13 | Calcular Volume Ocupado | Sistema | Determina o volume ocupado no ambiente monitorado. |
+| UCK14 | Calcular Espaço Livre | Sistema | Calcula a capacidade disponível no espaço monitorado. |
+| UCK15 | Calcular Percentual de Ocupação | Sistema | Determina a taxa de ocupação do ambiente. |
+| UCK16 | Salvar Medição Local | Sistema | Armazena medições realizadas no SQLite. |
+| UCK17 | Consultar Histórico | Operador | Exibe o histórico das medições realizadas. |
+| UCK18 | Registrar Logs Operacionais | Sistema | Registra eventos e falhas operacionais do módulo Kinect. |
+| UCK19 | Enviar Medição para MVC | Sistema | Envia medições processadas para a aplicação MVC. |
+| UCK20 | Sincronizar Dados via SignalR | Sistema | Realiza sincronização das medições em tempo real. |
+| UCK21 | Operar Offline | Sistema | Mantém funcionamento local quando o MVC estiver indisponível. |
+| UCK22 | Exibir Volume Atual | Operador | Visualiza o volume ocupado calculado pelo sistema. |
+| UCK23 | Exibir Espaço Livre | Operador | Visualiza o espaço livre disponível. |
+| UCK24 | Exibir Percentual de Ocupação | Operador | Visualiza o percentual de ocupação calculado. |
+| UCK25 | Exibir Status do Kinect | Operador | Exibe o status atual do sensor Kinect. |
+| UCK26 | Exibir Status do SQLite | Operador | Exibe o status do banco de dados local. |
+| UCK27 | Exibir Status do SignalR | Operador | Exibe o status da comunicação com a aplicação MVC. |
 
 ---
+
+## Casos de Uso Incluídos (<<include>>)
+
+Os casos abaixo são executados internamente pelos casos de uso principais apresentados no diagrama.
+
+| Caso Principal | Caso Incluído |
+| :--- | :--- |
+| UCK08 - Calibrar Espaço Vazio | Capturar Profundidade |
+| UCK08 - Calibrar Espaço Vazio | Validar Calibração |
+| UCK08 - Calibrar Espaço Vazio | Criar Mapa de Referência |
+| UCK12 - Processar Dados de Profundidade | Aplicar Filtros |
+| UCK12 - Processar Dados de Profundidade | Remover Ruídos |
+| UCK12 - Processar Dados de Profundidade | Normalizar Dados |
+| UCK13 - Calcular Volume Ocupado | Comparar com Referência Calibrada |
+| UCK19 - Enviar Medição para MVC | Converter cm³ para m³ |
 
 # Casos de Uso de Integração
 
