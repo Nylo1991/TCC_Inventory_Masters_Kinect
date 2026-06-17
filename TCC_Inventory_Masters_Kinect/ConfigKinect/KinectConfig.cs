@@ -35,6 +35,12 @@
             "http://inventorymasters.runasp.net/medicaoHub";
 
         /// <summary>
+        ///  conexão com MVC para validação do token 
+        /// </summary>
+        public const string UrlValidarTokenMvc =
+       "http://inventorymasters.runasp.net/api/kinect/validar-token";
+
+        /// <summary>
         /// Intervalo, em segundos, para envio periódico do volume ao sistema web.
         /// </summary>
         public const int IntervaloEnvioSignalRSegundos = 15;

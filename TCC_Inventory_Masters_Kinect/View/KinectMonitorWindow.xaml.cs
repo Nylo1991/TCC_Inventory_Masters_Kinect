@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using TCC_Inventory_Masters_Kinect.Model;
 using TCC_Inventory_Masters_Kinect.ViewModel;
 
 namespace TCC_Inventory_Masters_Kinect.View
@@ -14,23 +15,29 @@ namespace TCC_Inventory_Masters_Kinect.View
         private MainViewModel _viewModel;
 
         public KinectMonitorWindow()
-            : this("Administrador")
+            : this(new SessaoUsuario
+            {
+                Usuario = "Administrador",
+                Empresa = "Empresa Teste",
+                Email = "teste@inventorymasters.com",
+                Token = "DEV"
+            })
         {
         }
 
         /// <summary>
-        /// Construtor da janela principal do monitoramento do Kinect, 
-        /// que recebe o nome do usuário logado para personalizar a experiência.
+        /// Construtor da janela principal do monitoramento do Kinect,
+        /// que recebe a sessão do usuário validada pelo MVC ou pelo modo de desenvolvimento.
         /// </summary>
-        /// <param name="usuarioLogado"></param>
-        public KinectMonitorWindow(string usuarioLogado)
+        /// <param name="sessao"></param>
+        public KinectMonitorWindow(SessaoUsuario sessao)
         {
             InitializeComponent();
 
-            /// separação da lógica de calibração e monitoramento em um ViewModel 
-            /// dedicado a busca de dados dentro da mainviewmodel 
+            /// separação da lógica de calibração e monitoramento em um ViewModel
+            /// dedicado a busca de dados dentro da mainviewmodel
 
-            _viewModel = new MainViewModel(usuarioLogado);
+            _viewModel = new MainViewModel(sessao);
             _viewModel.CalibracaoFinalizada += FinalizarVideoCalibracao;
 
             DataContext = _viewModel;
@@ -52,7 +59,7 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Evento que é acionado quando o vídeo de calibração chega ao fim, 
+        /// Evento que é acionado quando o vídeo de calibração chega ao fim,
         /// reiniciando a reprodução para criar um loop contínuo.
         /// </summary>
         /// <param name="sender"></param>
@@ -64,7 +71,7 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Método que é chamado quando a calibração é finalizada,
+        /// Método que é chamado quando a calibração é finalizada.
         /// </summary>
         private void FinalizarVideoCalibracao()
         {
@@ -79,7 +86,7 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Evento de clique do botão "Sair", que fecha a aplicação de forma segura, 
+        /// Evento de clique do botão "Sair", que fecha a aplicação de forma segura,
         /// garantindo que todos os recursos sejam liberados corretamente.
         /// </summary>
         /// <param name="sender"></param>

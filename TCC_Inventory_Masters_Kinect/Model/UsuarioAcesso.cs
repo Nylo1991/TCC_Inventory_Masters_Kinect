@@ -14,5 +14,6 @@ namespace TCC_Inventory_Masters_Kinect.Model
         public string Perfil { get; set; }
         public DateTime CriadoEm { get; set; }
         public bool Ativo { get; set; }
+        public string Empresa { get; set; }
     }
 }

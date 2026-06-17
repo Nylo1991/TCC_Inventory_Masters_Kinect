@@ -12,6 +12,7 @@ using TCC_Inventory_Masters_Kinect.Model;
 using TCC_Inventory_Masters_Kinect.Repository;
 using TCC_Inventory_Masters_Kinect.Service;
 
+
 namespace TCC_Inventory_Masters_Kinect.ViewModel
 {
     /// <summary>
@@ -28,6 +29,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         private readonly KinectService _kinectService;
         private readonly SignalRService _signalRService;
         private readonly KinectRepository _repository;
+        private readonly SessaoUsuario _sessao;
+
 
         private DispatcherTimer _frameTimer;
         private DispatcherTimer _volumeTimer;
@@ -61,6 +64,13 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         {
             get => _usuarioLogado;
             set => SetProperty(ref _usuarioLogado, value);
+        }
+
+        private string _empresaLogada;
+        public string EmpresaLogada
+        {
+            get => _empresaLogada;
+            set => SetProperty(ref _empresaLogada, value);
         }
 
         private string _statusMessage;
@@ -195,24 +205,44 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         public ICommand SalvarEspacoCommand { get; }
 
         public MainViewModel()
-            : this("Administrador")
+     : this(new SessaoUsuario
+     {
+         Usuario = "Administrador",
+         Empresa = "Empresa Teste",
+         Email = "teste@inventorymasters.com",
+         Token = "DEV"
+     })
         {
         }
 
         public MainViewModel(string usuarioLogado)
+            : this(new SessaoUsuario
+            {
+                Usuario = usuarioLogado,
+                Empresa = "Empresa Teste",
+                Email = "teste@inventorymasters.com",
+                Token = "DEV"
+            })
         {
+        }
+
+        public MainViewModel(SessaoUsuario sessao)
+        {
+            _sessao = sessao;
 
             /// instancia dos serviços pilares do sistema - KinectService para gerenciar o Kinect,
-            /// SignalRService para comunicação em tempo real, 
+            /// SignalRService para comunicação em tempo real,
             /// e KinectRepository para acesso ao banco de dados SQLite.
-            UsuarioLogado = usuarioLogado;
+            UsuarioLogado = sessao.Usuario;
+            EmpresaLogada = sessao.Empresa;
+
             _kinectService = new KinectService();
             _signalRService = new SignalRService();
-            _repository = new KinectRepository();
+            _repository = new KinectRepository(sessao.Empresa);
 
             /// conexão  direta entre os eventos do KinectService e SignalRService com as propriedades do ViewModel,
             /// para exibir mudança no status de conexão , atualizações de frames e resultados de calibração e medições.
-            /// 
+            ///
             _signalRService.StatusSignalRAtualizado += status => StatusSignalR = status;
 
             LigarKinectCommand = new RelayCommand(LigarKinectAsync);
@@ -220,7 +250,6 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             CalibrarCommand = new RelayCommand(ExecutarCalibracaoAsync);
             MedirCommand = new RelayCommand(ExecutarMedicaoAsync);
             SalvarEspacoCommand = new RelayCommand(SalvarEspaco);
-
 
             // inicialização dos estados iniciais das propriedades,
             // garantindo que a interface do usuário comece com informações claras e consistentes.
@@ -258,10 +287,26 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         /// </summary>
         private void SalvarEspaco()
         {
-            if (string.IsNullOrWhiteSpace(NomeEspaco))
+            if (string.IsNullOrWhiteSpace(PercentualAlerta))
             {
-                MensagemEspaco = "Informe o nome do espaço.";
-                LoggerService.LogWarning("Tentativa de salvar espaço sem nome.");
+                MensagemEspaco = "Informe o limite de ocupação.";
+                LoggerService.LogWarning("Tentativa de salvar espaço sem limite de ocupação.");
+                return;
+            }
+
+            double limiteOcupacao;
+
+            if (!double.TryParse(PercentualAlerta, out limiteOcupacao))
+            {
+                MensagemEspaco = "Informe um limite de ocupação válido.";
+                LoggerService.LogWarning("Tentativa de salvar espaço com limite inválido.");
+                return;
+            }
+
+            if (limiteOcupacao <= 0 || limiteOcupacao > 100)
+            {
+                MensagemEspaco = "O limite de ocupação deve estar entre 1% e 100%.";
+                LoggerService.LogWarning("Tentativa de salvar espaço com limite fora do permitido.");
                 return;
             }
 
@@ -534,8 +579,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             if (_volumeMaximoCm3 <= 0)
             {
-                PercentualOcupacaoTexto = "Ocupação: 0%";
+                PercentualOcupacaoTexto = "0%";
                 EspacoLivreTexto = "0.000 m3";
+                StatusAlertaTexto = "Normal";
                 return;
             }
 
@@ -556,8 +602,8 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
 
             StatusAlertaTexto = limite > 0 && percentual >= limite
-             ? "Limite"
-             : "Normal";
+                ? "Limite"
+                : "Normal";
         }
 
         /// <summary>

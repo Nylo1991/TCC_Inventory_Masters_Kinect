@@ -80,19 +80,49 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="0"
-                Grid.Column="1"
-                Grid.ColumnSpan="2"
-                Background="#108A3B"
-                Padding="22,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="260"/>
-                    <ColumnDefinition Width="90"/>
-                </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="90"/>
+            </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0"
+            <TextBlock Grid.Column="0"
+               Text="Monitoramento Kinect"
+               Foreground="White"
+               FontSize="22"
+               FontWeight="Bold"
+               VerticalAlignment="Center"/>
+
+            <StackPanel Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Margin="0,0,16,0">
+                <TextBlock Text="{Binding UsuarioLogado}"
+                   Foreground="White"
+                   FontSize="15"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Right"/>
+
+                <TextBlock Text="{Binding EmpresaLogada}"
+                   Foreground="#D1FAE5"
+                   FontSize="12"
+                   HorizontalAlignment="Right"/>
+            </StackPanel>
+
+            <Button Grid.Column="2"
+            Content="Sair"
+            Width="72"
+            Height="40"
+            Background="#DC2626"
+            Foreground="White"
+            FontWeight="Bold"
+            BorderThickness="0"
+            Cursor="Hand"
+            Click="SairButton_Click"/>
+        </Grid>
+
+        <TextBlock Grid.Column="0"
                            Text="Monitoramento Kinect"
                            Foreground="White"
                            FontSize="22"
@@ -101,15 +131,22 @@
                            TextTrimming="CharacterEllipsis"
                            ToolTip="Captura em tempo real e medicao volumetrica pelo Kinect 360."/>
 
-                <TextBlock Grid.Column="1"
-                           Text="{Binding UsuarioLogado}"
-                           Foreground="White"
-                           FontSize="16"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center"
-                           TextTrimming="CharacterEllipsis"
-                           ToolTip="{Binding UsuarioLogado}"/>
+                <StackPanel HorizontalAlignment="Right"
+            VerticalAlignment="Center">
+                    <TextBlock Text="{Binding UsuarioLogado}"
+               Foreground="White"
+               FontSize="15"
+               FontWeight="Bold"
+               HorizontalAlignment="Right"
+               ToolTip="Usuario autenticado no sistema."/>
 
+                    <TextBlock Text="{Binding EmpresaLogada}"
+               Foreground="#D1FAE5"
+               FontSize="12"
+               HorizontalAlignment="Right"
+               ToolTip="Empresa vinculada ao acesso atual."/>
+                </StackPanel>
+                
                 <Button Grid.Column="2"
                         Content="Sair"
                         Width="70"
