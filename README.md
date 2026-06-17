@@ -209,78 +209,192 @@ Foram realizados testes de calibração, precisão das medições, persistência
 Após a integração dos componentes, a plataforma passou a disponibilizar informações sobre ocupação dos espaços, capacidade disponível, histórico de medições e indicadores operacionais, apoiando a gestão dos excedentes produtivos e a tomada de decisão.
 
 ---
-# REGRA DE NEGOCIO
+# REGRA DE NEGÓCIO
 
-As regras de negócio definem o comportamento esperado para garantir a precisão logística, a integridade do hardware e a reatividade do sistema.
-Abaixo, elenco as regras de negócio agrupadas por domínio técnico-operacional:
+As regras de negócio definem o comportamento esperado do sistema, garantindo a precisão das medições, a integridade dos dados, a operação correta do hardware Kinect, a comunicação em tempo real com a aplicação MVC e o apoio à tomada de decisão logística.
 
-#### 1. Regras de Gestão de Estoque e Parâmetros
-* **RN01 - Validação de Limites:** Toda medição deve ser comparada com os limites de capacidade (Mínima/Máxima) configurados pelo administrador (`UC30`, `UC31`).
+As regras foram organizadas por domínio para separar claramente as responsabilidades do **Módulo Kinect**, do **Módulo MVC** e da **Integração entre os módulos**.
+
+---
+
+## 1. Regras de Gestão de Estoque e Parâmetros — MVC
+
+* **RN01 - Validação de Limites:** Toda medição deve ser comparada com os limites de capacidade mínima e máxima configurados pelo administrador (`UC30`, `UC31`).
+
 * **RN02 - Persistência Segura:** Configurações de parâmetros não podem ser salvas sem validação prévia de consistência de dados no Firestore (`UC32`, `UC36`).
+
 * **RN03 - Vinculação de Entidade:** O sistema deve garantir que toda operação esteja vinculada a um parceiro. Caso não haja um parceiro ativo na sessão, o sistema deve utilizar o "Parceiro Padrão" configurado (`UC35`).
 
-#### 2. Regras de Processamento de Visão Computacional (Kinect)
-* **RN04 - Critério de Aceitação da Malha:** Uma medição só pode ser considerada válida se a densidade da nuvem de pontos for suficiente, eliminando medições com oclusões (`UC29`).
-* **RN05 - Padronização de Unidade:** O sistema deve converter obrigatoriamente os dados brutos de $cm^3$ para $m^3$ antes de qualquer cálculo volumétrico ou broadcast para dashboards (`UC61`).
-* **RN06 - Rastreabilidade Espacial:** Toda medição válida deve gerar um *snapshot* do estado do sensor no momento da captura para fins de auditoria (`UC19`).
-* **RN07 - Limpeza de Memória:** O sistema deve executar rotinas de limpeza de *buffer* pós-processamento para evitar *memory leaks* decorrentes da alta demanda de processamento 3D (`UC39`).
+---
 
-#### 3. Regras de Integração Reativa (SignalR)
-* **RN08 - Broadcast Obrigatório:** Sempre que uma nova medição for validada e processada, o sistema deve atualizar todos os clientes conectados (Dashboards) em tempo real, sem necessidade de *refresh* manual (`UC62`).
-* **RN09 - Resiliência e Cache:** Em caso de perda de conectividade com o servidor, os clientes devem manter os dados em cache local até que a conexão seja reestabelecida (`UC58`).
-* **RN10 - Ciclo de Vida da Conexão:** O sistema deve gerenciar ativamente as conexões do SignalR, identificando eventos de `OnConnected` e `OnDisconnected` para garantir que apenas clientes ativos recebam atualizações (`UC64`).
+## 2. Regras de Processamento de Visão Computacional — Kinect
 
-#### 4. Regras de Segurança e Acesso
+* **RN04 - Critério de Aceitação da Leitura:** Uma medição só pode ser considerada válida se houver dados suficientes de profundidade para representar o espaço monitorado, evitando leituras inconsistentes causadas por falhas, ruídos ou oclusões (`UC29`).
+
+* **RN05 - Padronização de Unidade:** O sistema deve converter obrigatoriamente os dados brutos de `cm³` para `m³` antes da exibição ao usuário ou envio para dashboards (`UC61`).
+
+* **RN06 - Rastreabilidade Espacial:** Toda medição válida deve permitir o registro do estado do ambiente monitorado no momento da captura, possibilitando auditoria e acompanhamento histórico (`UC19`).
+
+* **RN07 - Limpeza de Memória:** O sistema deve executar rotinas de limpeza de buffer após o processamento das medições para evitar sobrecarga de memória durante a captura contínua dos dados (`UC39`).
+
+---
+
+## 3. Regras de Integração Reativa — SignalR
+
+* **RN08 - Broadcast Obrigatório:** Sempre que uma nova medição for validada e processada, o sistema deve atualizar todos os clientes conectados aos dashboards em tempo real, sem necessidade de atualização manual da página (`UC62`).
+
+* **RN09 - Resiliência e Cache:** Em caso de perda de conectividade com o servidor, os dados devem permanecer armazenados localmente até que a conexão seja restabelecida (`UC58`).
+
+* **RN10 - Ciclo de Vida da Conexão:** O sistema deve gerenciar as conexões do SignalR, identificando eventos de conexão e desconexão para garantir que apenas clientes ativos recebam atualizações (`UC64`).
+
+---
+
+## 4. Regras de Segurança e Acesso — MVC
+
 * **RN11 - Segregação de Perfis:**
-    * **Admin:** Acesso a relatórios históricos e alteração de parâmetros (`UC10`, `UC26`, `UC31`).
-    * **Operador:** Operação de hardware e monitoramento em tempo real (`UC18`, `UC21`, `UC28`).
-* **RN12 - Autenticação no Hub:** A conexão com os Hubs de integração (SignalR) exige validação de token JWT para evitar acesso não autorizado a dados industriais (`UC57`).
+  * **Admin:** Acesso a relatórios históricos, auditoria, gerenciamento de parâmetros, usuários e parceiros (`UC10`, `UC26`, `UC31`).
+  * **Operador:** Operação do hardware, calibração, medição volumétrica e monitoramento em tempo real (`UC18`, `UC21`, `UC28`).
+
+* **RN12 - Autenticação no Hub:** A conexão com os Hubs de integração SignalR exige validação de token para evitar acesso não autorizado a dados do sistema (`UC57`).
+
 * **RN13 - Log de Segurança:** Qualquer tentativa de acesso não autorizado aos serviços de integração deve ser registrada em logs de auditoria de segurança (`UC60`).
 
-#### 5. Regras de Manutenção de Hardware
-* **RN14 - Monitoramento de Saúde:** O sistema deve verificar a saúde do Kinect (diagnóstico de conectividade) em cada ciclo de medição (`UC37`).
-* **RN15 - Tratamento de Erros:** Falhas físicas (ex: desconexão do cabo) devem ser registradas como logs de erro no Firestore para permitir o diagnóstico técnico remoto (`UC38`).
-* **RN16 - Auto-recuperação:** O sistema deve tentar o re-handshake automático com o hardware antes de notificar o erro ao operador (`UC50`).
-
-### Fluxo de Processamento de Negócio
-
-O sistema opera através de um **fluxo determinístico**, garantindo que apenas dados validados alcancem a interface de monitoramento. Caso ocorra uma falha em qualquer etapa, o processo é interrompido para evitar inconsistências nos dados de estoque.
-
-#### Etapas do Processo:
-1. **Verificação de Hardware:** Diagnóstico do sensor e plano de referência (`UC37`, `UC45`).
-2. **Captura e Filtro:** Coleta dos dados espaciais e remoção de ruídos (`UC23`, `UC42`).
-3. **Cálculo e Conversão:** Processamento da malha 3D e conversão de unidade ($cm^3 \rightarrow m^3$) (`UC24`, `UC61`).
-4. **Validação de Limites:** Comparação do volume obtido com as capacidades configuradas (`UC30`).
-5. **Persistência e Broadcast:** Salvamento no Firestore e atualização em tempo real dos Dashboards via SignalR (`UC32`, `UC62`).
-
-> **Nota de Integridade:** Qualquer falha detectada durante estas etapas interrompe imediatamente a propagação do dado, assegurando que o Dashboard exiba apenas informações íntegras, precisas e validadas.
 ---
-## Requisitos do Sistema
 
-#### 1. Requisitos Funcionais (RF)
+## 5. Regras de Manutenção de Hardware — Kinect
+
+* **RN14 - Monitoramento de Saúde:** O sistema deve verificar a conectividade e o estado operacional do Kinect antes dos processos de calibração e medição (`UC37`).
+
+* **RN15 - Tratamento de Erros:** Falhas físicas, como desconexão do cabo ou indisponibilidade do sensor, devem ser registradas em logs operacionais para permitir diagnóstico técnico (`UC38`).
+
+* **RN16 - Auto-recuperação:** O sistema deve tentar restabelecer a comunicação com o Kinect antes de notificar o erro ao operador (`UC50`).
+
+---
+
+## 6. Regras de Negócio do Módulo Kinect
+
+* **RN17 - Inicialização do Sensor:** O Kinect deve estar conectado e operacional antes do início de qualquer processo de calibração ou medição volumétrica.
+
+* **RN18 - Calibração Obrigatória:** Nenhuma medição poderá ser considerada válida sem que o ambiente tenha sido previamente calibrado em estado vazio.
+
+* **RN19 - Referência Espacial:** A calibração deve gerar um mapa de profundidade de referência que será utilizado como base para comparação das medições futuras.
+
+* **RN20 - Validação do Espaço Monitorado:** O usuário deverá cadastrar e salvar o espaço monitorado antes de liberar medições automáticas ou consultas históricas.
+
+* **RN21 - Cálculo Volumétrico:** O volume ocupado deve ser calculado por meio da comparação entre o mapa calibrado e a leitura atual de profundidade obtida pelo Kinect.
+
+* **RN22 - Conversão de Unidade:** Os cálculos internos poderão ser realizados em centímetros cúbicos (`cm³`), porém todas as informações exibidas ao usuário deverão ser apresentadas em metros cúbicos (`m³`).
+
+* **RN23 - Cálculo de Ocupação:** O sistema deverá calcular automaticamente o percentual de ocupação com base no volume ocupado e na capacidade máxima cadastrada para o espaço monitorado.
+
+* **RN24 - Cálculo do Espaço Livre:** O sistema deverá calcular automaticamente o espaço livre disponível com base na diferença entre a capacidade máxima e o volume atualmente ocupado.
+
+* **RN25 - Histórico de Medições:** Toda medição válida deverá ser armazenada localmente para permitir rastreabilidade e acompanhamento da evolução da ocupação do espaço monitorado.
+
+* **RN26 - Operação Offline:** O módulo Kinect deverá continuar operando normalmente mesmo que a aplicação MVC esteja temporariamente indisponível.
+
+* **RN27 - Logoff por Inatividade:** Caso o usuário permaneça sem interação por período superior ao limite configurado, a sessão deverá ser encerrada automaticamente, exigindo novo acesso ao sistema.
+
+---
+
+## 7. Integração entre Kinect e MVC
+
+* **RN28 - Envio de Medições:** Após o processamento de uma medição válida, o módulo Kinect deverá disponibilizar as informações para a aplicação MVC por meio do SignalR.
+
+* **RN29 - Continuidade Operacional:** Em caso de falha de comunicação com a aplicação MVC, as medições deverão permanecer armazenadas localmente até que a comunicação seja restabelecida.
+
+* **RN30 - Atualização em Tempo Real:** Sempre que uma nova medição for processada, os dashboards conectados deverão receber as informações atualizadas sem necessidade de atualização manual da página.
+
+---
+
+## Fluxo de Processamento de Negócio
+
+O sistema opera por meio de um fluxo determinístico, garantindo que apenas dados validados alcancem a interface de monitoramento. Caso ocorra uma falha em qualquer etapa, o processo é interrompido para evitar inconsistências nos dados de estoque.
+
+### Etapas do Processo
+
+1. **Verificação de Hardware:** Diagnóstico do sensor Kinect e validação do estado de conexão (`UC37`, `UC45`).
+
+2. **Calibração do Espaço:** Captura do ambiente vazio para criação do mapa de profundidade de referência.
+
+3. **Captura e Filtro:** Coleta dos dados espaciais e remoção de ruídos da leitura (`UC23`, `UC42`).
+
+4. **Cálculo e Conversão:** Processamento dos dados de profundidade, cálculo do volume ocupado e conversão de unidade de `cm³` para `m³` (`UC24`, `UC61`).
+
+5. **Validação de Limites:** Comparação do volume obtido com os limites configurados pelo administrador (`UC30`).
+
+6. **Persistência Local:** Salvamento das medições no SQLite para garantir histórico e rastreabilidade local.
+
+7. **Sincronização com MVC:** Envio das medições para a aplicação MVC via SignalR (`UC62`).
+
+8. **Atualização dos Dashboards:** Exibição das informações em tempo real nos painéis de acompanhamento.
+
+9. **Notificações e Acompanhamento:** Caso os limites sejam atingidos, o MVC executa os processos de alerta, histórico e comunicação com parceiros.
+
+> **Nota de Integridade:** Qualquer falha detectada durante as etapas de validação interrompe a propagação do dado, assegurando que o dashboard exiba apenas informações íntegras, coerentes e validadas.
+
+---
+
+# REQUISITOS DO SISTEMA
+
+Os requisitos do sistema foram organizados por categoria, separando as funcionalidades relacionadas à gestão web, ao módulo Kinect, ao monitoramento, à integração e aos aspectos não funcionais da solução.
+
+---
+
+## 1. Requisitos Funcionais — MVC
 
 | Categoria | ID | Requisito Funcional | Casos de Uso |
 | :--- | :--- | :--- | :--- |
 | **Gestão** | RF01 | Cadastro, edição, exclusão e listagem de usuários/parceiros. | UC01-UC07 |
 | | RF02 | Gestão de permissões e perfis de acesso. | UC08, UC09 |
 | | RF03 | Auditoria de alterações via logs. | UC10, UC44, UC49 |
-| **Medição** | RF04 | Captura volumétrica via Kinect e processamento de nuvem de pontos. | UC21, UC23, UC24 |
-| | RF05 | Calibração de sensor e verificação de estabilidade da malha 3D. | UC28, UC29, UC45 |
-| | RF06 | Conversão de medições brutas ($cm^3$) para ($m^3$). | UC61 |
-| **Monitoramento**| RF07 | Painel em tempo real de ocupação e volume. | UC51, UC52 |
+| **Monitoramento** | RF07 | Painel em tempo real de ocupação e volume. | UC51, UC52 |
 | | RF08 | Disparo de alertas baseados em regras de limite. | UC14, UC17, UC30, UC34, UC55 |
-| **Integração** | RF09 | Comunicação assíncrona via SignalR (Hubs). | UC53, UC62, UC64 |
+| **Integração** | RF09 | Comunicação assíncrona via SignalR Hubs. | UC53, UC62, UC64 |
 | | RF10 | Persistência de dados no Firestore. | UC32, UC36, UC46 |
 
-#### 2. Requisitos Não Funcionais (RNF)
+---
+
+## 2. Requisitos Funcionais — Kinect
+
+| Categoria | ID | Requisito Funcional | Casos de Uso |
+| :--- | :--- | :--- | :--- |
+| **Medição** | RF04 | Captura volumétrica via Kinect e processamento dos dados de profundidade. | UC21, UC23, UC24 |
+| | RF05 | Calibração do sensor e verificação da estabilidade da leitura. | UC28, UC29, UC45 |
+| | RF06 | Conversão de medições brutas de `cm³` para `m³`. | UC61 |
+| **Kinect** | RF11 | Permitir ligar e desligar o sensor Kinect. | UC18 |
+| | RF12 | Realizar calibração do espaço monitorado vazio. | UC28 |
+| | RF13 | Capturar dados de profundidade e imagem RGB. | UC21, UC23 |
+| | RF14 | Calcular automaticamente o volume ocupado. | UC24 |
+| | RF15 | Calcular espaço livre e percentual de ocupação. | UC24 |
+| | RF16 | Armazenar medições localmente em SQLite. | UC32 |
+| | RF17 | Exibir histórico de medições. | UC26 |
+| | RF18 | Permitir logoff automático por inatividade. | UC65 |
+
+---
+
+## 3. Requisitos Funcionais — Integração Kinect e MVC
+
+| Categoria | ID | Requisito Funcional | Casos de Uso |
+| :--- | :--- | :--- | :--- |
+| **Integração** | RF19 | Enviar medições para a aplicação MVC via SignalR. | UC62 |
+| | RF20 | Sincronizar dados em tempo real entre Kinect e Dashboard. | UC62, UC64 |
+| | RF21 | Manter as medições salvas localmente quando a aplicação MVC estiver temporariamente indisponível. | UC58 |
+
+---
+
+## 4. Requisitos Não Funcionais
 
 | ID | Tipo | Requisito Não Funcional | Casos de Uso |
 | :--- | :--- | :--- | :--- |
-| **RNF01** | Desempenho | Processamento de malha 3D e atualização em tempo real (baixa latência). | - |
-| **RNF02** | Resiliência | Auto-recuperação (re-handshake) e cache local para evitar perda de dados. | UC50, UC58 |
-| **RNF03** | Segurança | Autenticação JWT e criptografia de payloads. | UC57, UC59 |
+| **RNF01** | Desempenho | Processamento volumétrico e atualização em tempo real com baixa latência. | - |
+| **RNF02** | Resiliência | Auto-recuperação e cache local para evitar perda de dados. | UC50, UC58 |
+| **RNF03** | Segurança | Autenticação, validação de acesso e proteção das informações transmitidas. | UC57, UC59 |
 | **RNF04** | Confiabilidade | Diagnóstico contínuo de hardware e gestão de memória. | UC37, UC39 |
-| **RNF05** | Manutenibilidade| Uso de Injeção de Dependência para desacoplamento. | UC63 |
+| **RNF05** | Manutenibilidade | Uso de injeção de dependência e separação de responsabilidades para desacoplamento. | UC63 |
+| **RNF06** | Usabilidade | Interface clara para exibir volume ocupado, espaço livre, percentual de ocupação e status operacional. | - |
+| **RNF07** | Disponibilidade Local | O módulo Kinect deve operar localmente mesmo quando a aplicação MVC estiver indisponível. | UC58 |
+| **RNF08** | Rastreabilidade | As medições devem ser registradas para permitir consulta histórica e auditoria operacional. | UC19, UC26 |
 
  ---
 # MODELAGEM DO SISTEMA
