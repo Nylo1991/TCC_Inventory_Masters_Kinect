@@ -182,6 +182,18 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             set => SetProperty(ref _statusAlertaTexto, value);
         }
 
+        private string _statusCalibracao;
+
+        public string StatusCalibracao
+        {
+            get => _statusCalibracao;
+            set
+            {
+                _statusCalibracao = value;
+                OnPropertyChanged(nameof(StatusCalibracao));
+            }
+        }
+
         /// <summary>
         /// eventos responsáveis por acionar as ações de ligar/desligar o Kinect,
         /// calibrar o ambiente, realizar medições e salvar o espaço.
