@@ -401,140 +401,184 @@ Os requisitos do sistema foram organizados por categoria, separando as funcional
 
 ## Diagrama de Caso de Uso
 
-### O diagrama de caso de uso, descreve as funcionalidades do sistema, segregadas por módulos e níveis de responsabilidade, conforme definido na arquitetura.
+### O diagrama de caso de uso descreve as funcionalidades da solução Inventory Masters, organizadas por módulos e responsabilidades, evidenciando a separação entre o Módulo Kinect, a Aplicação MVC e os mecanismos de integração responsáveis pela comunicação entre os componentes.
 
 <p align="center">
   <img src="./Imagens/InventoryMastersUC_MVC.png" width="800" alt="Diagrama de Caso de Uso" />
 </p>
 
-### Tabela Consolidada de Casos de Uso
+---
 
-| **ID** | **Nome da Funcionalidade** | **Perfil** | **Descrição** |
-| :--- | :--- | :--- | :--- |
-| **UC01** | Listar Registros (Pag) | Admin | Listagem paginada de usuários ou parceiros. |
-| **UC02** | Filtrar Dados | Admin | Filtros avançados para busca de usuários ou parceiros. |
-| **UC03** | Cadastro de Entidade | Admin | Inclusão de novos usuários/parceiros (com validação). |
-| **UC04** | Buscar por ID | Admin | Localização de registros específicos via identificador. |
-| **UC05** | Atualizar/Excluir | Admin | Manutenção, edição e remoção de registros cadastrais. |
-| **UC06** | Visualizar Detalhes | Admin | Exibição detalhada de um registro selecionado. |
-| **UC07** | Atualizar Detalhes Parceiro | Admin | Edição de informações específicas de parceiros. |
-| **UC08** | Inclusão de Perfil | Admin | Associação de níveis de acesso aos usuários. |
-| **UC09** | Gestão de Acessos | Admin | Controle de permissões do sistema. |
-| **UC10** | Auditoria de Logs | Admin | Rastreamento de alterações realizadas no sistema. |
-| **UC11** | Visualizar Histórico | Admin | Exibição do histórico de notificações do sistema. |
-| **UC12** | Filtrar Notificações | Admin | Segmentação de alertas por data ou status. |
-| **UC13** | Aceitar Coleta | Admin | Registro de aceite de coleta via repositório. |
-| **UC14** | Notificar Clientes | Sistema | Broadcast de alertas via SignalR (NotificacaoHub). |
-| **UC15** | Integrar Perfil Repos. | Sistema | Conexão entre módulo de notificação e repositório. |
-| **UC16** | Verificar Pendências | Admin | Verificação de notificações e tarefas pendentes. |
-| **UC17** | Gestão de Alertas Visuais | Admin | Configuração de gatilhos de alerta no Dashboard. |
-| **UC18** | Monitorar Ocupação | Operador | Acompanhamento em tempo real da ocupação do espaço. |
-| **UC19** | Registrar Snapshot Espacial | Sistema | Armazenamento de estado da captura para auditoria. |
-| **UC20** | Validação de Conexões | Sistema | Monitoramento de handshake entre cliente e servidor. |
-| **UC21** | Iniciar Medição | Operador | Ativação da captura de dados pelo sensor Kinect. |
-| **UC22** | Visualizar Fluxo Profund. | Operador | Monitoramento visual do fluxo de profundidade. |
-| **UC23** | Processar Nuvem Pontos | Sistema | Validação e filtro de dados espaciais brutos. |
-| **UC24** | Gerar Malha 3D | Sistema | Processamento geométrico para cálculo de volume. |
-| **UC25** | Histórico Medições | Admin | Consulta de logs e medições passadas. |
-| **UC26** | Exportar Dados | Admin | Exportação de relatórios volumétricos e periódicos. |
-| **UC27** | Relatório de Período | Admin | Geração de análise de volume por intervalo de tempo. |
-| **UC28** | Calibração de Sensor | Operador | Rotina de ajuste e definição do plano de referência. |
-| **UC29** | Verificação de Estabilidade de Malha | Sistema | Confirma que a malha gerada possui densidade suficiente para um cálculo preciso, evitando erros de leitura por oclusão. |
-| **UC30** | Validação de Regras de Limite | Sistema | Compara o volume calculado com os parâmetros de "capacidade máxima" definidos pelo Admin antes de disparar alertas. |
-| **UC31** | Ajustar Parâmetros | Admin | Configuração de limites mínimos e máximos de estoque. |
-| **UC32** | Persistir Configurações | Sistema | Validação e salvamento de parâmetros no Firestore. |
-| **UC33** | Adicionar Parceiro | Admin | Inclusão de novo parceiro via módulo de parâmetros. |
-| **UC34** | Ativar Alerta Dash | Admin | Ativação de alertas visuais no painel de controle. |
-| **UC35** | Definir Parceiro Padrão | Admin | Definição de entidade padrão para fluxos operacionais. |
-| **UC36** | Persistir Configs | Sistema | Validação e salvamento de parâmetros no Firestore. |
-| **UC37** | Diagnóstico de Conectividade | Sistema | Verifica em tempo real se a comunicação entre o Kinect e o módulo MVC está ativa. |
-| **UC38** | Log de Erros de Hardware | Sistema | Registra falhas de hardware (ex: desconexão física do Kinect) no Firestore para análise do suporte. |
-| **UC39** | Redefinição de Buffer de Dados | Sistema | Limpa o buffer de memória após medições concluídas para evitar vazamentos de memória (Memory Leak). |
-| **UC40** | Validação de Snapshot | Sistema | Validação da integridade do snapshot capturado pelo Kinect. |
-| **UC41** | Normalização de Dados | Sistema | Padronização dos dados brutos para cálculo volumétrico. |
-| **UC42** | Tratamento de Ruído | Sistema | Remoção de interferências (ruído visual) na nuvem de pontos. |
-| **UC43** | Cálculo de Superfície | Sistema | Determinação da área de topo do estoque para cálculo do volume. |
-| **UC44** | Rastreamento de Auditoria | Sistema | Registro de logs de transações espaciais para rastreabilidade. |
-| **UC45** | Verificação de Calibração | Operador | Check-up preventivo do estado de calibração do sensor. |
-| **UC46** | Sincronização de Histórico | Sistema | Consistência entre medições locais e banco na nuvem. |
-| **UC47** | Gerenciamento de Coletas | Admin | Controle de ciclo de vida de coletas realizadas por parceiros. |
-| **UC48** | Auditoria de Medições | Admin | Verificação de conformidade das medições vs. capacidade. |
-| **UC49** | Backup de Logs | Sistema | Rotina de persistência secundária de logs de erro. |
-| **UC50** | Estabilização de Conexão | Sistema | Tratamento de re-handshake automático para o Kinect. |
-| **UC51** | Visualizar Consolidado | Admin | Visão geral do volume e ocupação do estoque. |
-| **UC52** | Monitorar Gráficos | Admin | Visualização de tendências e ocupação em tempo real. |
-| **UC53** | Receber Atualizações | Sistema | Integração assíncrona (Hub) para o Dashboard. |
-| **UC54** | Lista de Notificações | Admin | Exibição da lista de últimas notificações filtradas. |
-| **UC55** | Configurar Alertas Visuais | Admin | Personalização de cores e gatilhos de alerta no Dashboard. |
-| **UC56** | Acessar Parâmetros | Admin | Acesso rápido ao módulo de configuração. |
-| **UC57** | Autenticação de Hub | Sistema | Validação de tokens de segurança JWT para acesso aos Hubs SignalR. |
-| **UC58** | Cache de Estado Local | Sistema | Armazenamento temporário de medições no cliente para evitar perda de dados em micro-quedas de rede. |
-| **UC59** | Criptografia de Payload | Sistema | Garantia de que os dados volumétricos estejam protegidos durante a transmissão via rede. |
-| **UC60** | Log de Eventos de Segurança | Sistema | Registro de tentativas de acesso não autorizadas aos Hubs de integração. |
-| **UC61** | Processar Medição Hub | Sistema | Conversão $cm^3 \rightarrow m^3$ e broadcast. |
-| **UC62** | Broadcast Clientes | Sistema | Envio de nova medição para todos os Dashboards. |
-| **UC63** | Injeção de Dependência | Sistema | Inicialização automática e resolução de instâncias de repositórios (Firestore/MVC) necessária para o ciclo de vida do SignalR Hub. |
-| **UC64** | Gerenciar Conexões | Sistema | Controle de ciclo de vida das sessões (SignalR). |
+# Tabela Consolidada de Casos de Uso
 
---- 
+## Casos de Uso do Módulo Kinect
 
-## Diagrama de Fluxo 
+| ID | Caso de Uso | Perfil | Descrição |
+|------|------|------|------|
+| UC01 | Realizar Login Local | Operador | Permite o acesso ao módulo Kinect. |
+| UC02 | Realizar Logoff | Operador | Encerra a sessão atual do usuário. |
+| UC03 | Logoff por Inatividade | Sistema | Encerra automaticamente a sessão após período configurado. |
+| UC04 | Ligar Kinect | Operador | Inicializa o sensor Kinect. |
+| UC05 | Desligar Kinect | Operador | Finaliza a utilização do sensor. |
+| UC06 | Calibrar Espaço | Operador | Captura o ambiente vazio para geração da referência espacial. |
+| UC07 | Cadastrar Espaço Monitorado | Operador | Permite informar nome e parâmetros do espaço monitorado. |
+| UC08 | Capturar Dados de Profundidade | Sistema | Obtém os dados de profundidade do ambiente. |
+| UC09 | Capturar Imagem RGB | Sistema | Exibe a câmera RGB em tempo real. |
+| UC10 | Processar Dados de Profundidade | Sistema | Processa os dados recebidos do sensor. |
+| UC11 | Calcular Volume Ocupado | Sistema | Calcula o volume ocupado no ambiente. |
+| UC12 | Calcular Espaço Livre | Sistema | Determina a capacidade disponível. |
+| UC13 | Calcular Percentual de Ocupação | Sistema | Calcula a taxa de ocupação do espaço. |
+| UC14 | Salvar Medição | Sistema | Persiste a medição no SQLite. |
+| UC15 | Consultar Histórico Local | Operador | Exibe o histórico de medições armazenadas. |
+| UC16 | Registrar Logs Operacionais | Sistema | Registra eventos e falhas operacionais. |
+| UC17 | Diagnosticar Sensor | Sistema | Verifica a saúde e conectividade do Kinect. |
+
+---
+
+## Casos de Uso do Módulo MVC
+
+| ID | Caso de Uso | Perfil | Descrição |
+|------|------|------|------|
+| UC18 | Listar Usuários e Parceiros | Admin | Listagem paginada dos registros. |
+| UC19 | Filtrar Dados | Admin | Pesquisa avançada de informações. |
+| UC20 | Cadastrar Entidades | Admin | Cadastro de usuários e parceiros. |
+| UC21 | Buscar por Identificador | Admin | Localização de registros específicos. |
+| UC22 | Atualizar ou Excluir Registros | Admin | Manutenção cadastral. |
+| UC23 | Visualizar Detalhes | Admin | Consulta detalhada de registros. |
+| UC24 | Gerenciar Perfis e Permissões | Admin | Controle de acesso dos usuários. |
+| UC25 | Auditar Logs | Admin | Consulta de registros de auditoria. |
+| UC26 | Visualizar Dashboard | Admin | Monitoramento dos indicadores operacionais. |
+| UC27 | Configurar Parâmetros | Admin | Configuração dos limites operacionais. |
+| UC28 | Gerenciar Parceiros | Admin | Administração dos parceiros cadastrados. |
+| UC29 | Gerenciar Notificações | Admin | Consulta e acompanhamento dos alertas gerados. |
+| UC30 | Gerar Relatórios | Admin | Emissão de relatórios operacionais e históricos. |
+| UC31 | Monitorar Ocupação | Admin | Acompanhamento da ocupação dos espaços monitorados. |
+| UC32 | Gerenciar Coletas | Admin | Controle do ciclo de vida das coletas. |
+| UC33 | Consultar Histórico Consolidado | Admin | Consulta histórica das medições recebidas. |
+| UC34 | Gerenciar Alertas Visuais | Admin | Configuração dos alertas exibidos no dashboard. |
+
+---
+
+## Casos de Uso de Integração
+
+| ID | Caso de Uso | Perfil | Descrição |
+|------|------|------|------|
+| UC35 | Enviar Medições via SignalR | Sistema | Envia dados do Kinect para o MVC. |
+| UC36 | Receber Medições | Sistema | Recebe medições processadas pelo Kinect. |
+| UC37 | Atualizar Dashboard em Tempo Real | Sistema | Atualiza os dashboards sem refresh manual. |
+| UC38 | Sincronizar Histórico | Sistema | Mantém consistência entre Kinect e MVC. |
+| UC39 | Operar Offline | Sistema | Mantém o funcionamento local em caso de indisponibilidade da aplicação web. |
+| UC40 | Gerenciar Conexões | Sistema | Controle do ciclo de vida das conexões SignalR. |
+| UC41 | Autenticar Comunicação | Sistema | Validação dos mecanismos de acesso à integração. |
+
+---
+
+## Diagrama de Fluxo
 
 <p align="center">
   <img src="./Imagens/Diagrama_de_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
 </p>
 
-### Detalhamento do Diagrama de Fluxo de Dados (1º Nível) 
+### Detalhamento do Diagrama de Fluxo de Dados
 
-#### Entidades Externas
-* **Câmera / Visão Computacional:** Origem dos dados de volume (sensor).
-* **Usuário (Adm/Op):** Define configurações de parâmetros e consome relatórios.
-* **Parceiro:** Entidade externa que recebe alertas automáticos de excedentes.
+O Diagrama de Fluxo representa o caminho percorrido pelas informações dentro da solução Inventory Masters, evidenciando a interação entre o Módulo Kinect, a Aplicação MVC e os serviços de integração responsáveis pela comunicação em tempo real.
 
-#### Processos Principais
+---
 
-* **P1: Capturar e Processar Dados Kinect:** Recebe os frames de profundidade, gera a Point Cloud 3D, realiza o pré-processamento dos dados e calcula o Volume Medido.
-* **P2: Calibrar e Mapear Espaço:** Executa a calibração do chão, identifica os limites do ambiente e calcula o Volume Total do Espaço.
-* **P3: Calcular Ocupação e Validar Limites:** Calcula o volume ocupado pelos objetos presentes no ambiente, espaço livre, percentual de ocupação e verifica se o Volume Medido ultrapassa o Volume Máximo Permitido.
-* **P4: Gerar Snapshot Espacial:** Cria registros periódicos contendo o estado atual do ambiente mapeado.
-* **P5: Persistir Medições:** Armazena medições, snapshots e histórico de ocupação no banco SQLite.
-* **P6: Gerenciar Notificações:** Responsável por identificar situações de excedente, consultar parceiros ativos e registrar os alertas gerados.
-* **P7: Sincronizar Dados com MVC:** Envia volume atual, percentual de ocupação e status do sistema para a aplicação web através do SignalR.
+### Entidades Externas
 
+* **Usuário:** Responsável por operar o sistema, realizar calibração, acompanhar medições e consultar informações operacionais.
 
+* **Sensor Kinect:** Responsável pela captura das imagens RGB e dos dados de profundidade utilizados no monitoramento volumétrico.
 
-#### Depósitos de Dados (Datastores)
+* **Sistema MVC:** Responsável pela gestão operacional, dashboards, parâmetros, parceiros, notificações e relatórios.
 
-* **D1: MedicoesVolume:** Histórico de medições calculadas pelo Kinect.
-* **D2: EspacosMapeados:** Informações dos ambientes cadastrados, limites físicos e parâmetros operacionais.
-* **D3: HistoricoOcupacao:** Registro histórico da evolução da ocupação do espaço.
-* **D4: SnapshotsEspaciais:** Armazena capturas periódicas do estado do ambiente.
-* **D5: Parceiros:** Cadastro de contatos responsáveis pelo recebimento de alertas.
-* **D6: Notificacoes:** Log histórico de alertas e eventos gerados pelo sistema.
+* **Parceiro:** Responsável pelo recebimento de alertas relacionados aos excedentes produtivos.
 
+---
 
-#### Detalhamento do Fluxo de Execução
+### Processos do Módulo Kinect
 
-1. **Cadastro do Espaço:** O usuário informa o nome do espaço e define o percentual de alerta desejado.
-2. **Inicialização do Kinect:** O sistema ativa o sensor e inicia a captura dos dados de profundidade.
-3. **Calibração do Ambiente:** O Kinect identifica o plano do chão e realiza o mapeamento estrutural do espaço.
-4. **Geração da Point Cloud:** Os pontos tridimensionais são capturados e transformados em uma representação 3D do ambiente.
-5. **Mapeamento do Volume Total:** O sistema calcula automaticamente o Volume Total do Espaço disponível.
-6. **Definição do Limite Operacional:** O Volume Máximo Permitido é calculado com base no percentual de alerta definido pelo usuário.
-7. **Captura e Persistência da Medição:** O Kinect calcula o Volume Medido e registra a leitura em **D1**.
-8. **Cálculo da Ocupação:** O sistema calcula:
-   * Volume Ocupado
-   * Espaço Livre
-   * Percentual de Ocupação
-9. **Tomada de Decisão:** O sistema verifica:
-   * **Volume Medido > Volume Máximo Permitido?**
-   * **Se NÃO:** O fluxo continua normalmente, mantendo os registros históricos.
-   * **Se SIM:** O sistema direciona o fluxo para o processo de notificações.
-10. **Geração de Snapshot:** Um Snapshot Espacial é criado contendo o estado atual do ambiente.
-11. **Persistência dos Dados:** As informações calculadas são armazenadas nos depósitos **D1**, **D3** e **D4**.
-12. **Gerenciamento de Alertas:** Em situações de excedente, o sistema consulta os contatos cadastrados em **D5**, gera a notificação e registra a operação em **D6**.
-13. **Sincronização Web:** O volume calculado e o status operacional são enviados para o sistema MVC via SignalR.
-14. **Monitoramento Contínuo:** O processo permanece executando enquanto o Kinect estiver ativo, atualizando os cálculos, snapshots e verificações em tempo real.
+* **P1: Inicializar Kinect:** Ativa o sensor e valida sua conectividade.
+
+* **P2: Capturar Dados de Profundidade:** Recebe continuamente as leituras do ambiente monitorado.
+
+* **P3: Calibrar Espaço Vazio:** Cria o mapa de profundidade de referência.
+
+* **P4: Processar Dados Capturados:** Aplica filtros, validações e tratamento de ruídos.
+
+* **P5: Calcular Volume Ocupado:** Compara a leitura atual com a referência calibrada.
+
+* **P6: Calcular Indicadores Operacionais:** Calcula volume ocupado, espaço livre e percentual de ocupação.
+
+* **P7: Persistir Medições:** Armazena os dados localmente em SQLite.
+
+* **P8: Atualizar Histórico Local:** Mantém o histórico das medições realizadas.
+
+---
+
+### Processos da Aplicação MVC
+
+* **P9: Receber Medições:** Recebe dados enviados pelo módulo Kinect.
+
+* **P10: Atualizar Dashboard:** Atualiza indicadores e gráficos operacionais.
+
+* **P11: Validar Limites Operacionais:** Compara medições com parâmetros configurados.
+
+* **P12: Gerenciar Notificações:** Gera alertas quando os limites são atingidos.
+
+* **P13: Consultar Parceiros:** Localiza parceiros aptos a receber notificações.
+
+* **P14: Gerar Relatórios:** Disponibiliza relatórios e análises históricas.
+
+---
+
+### Processos de Integração
+
+* **P15: Sincronizar Dados via SignalR:** Realiza a comunicação entre Kinect e MVC.
+
+* **P16: Manter Operação Local:** Garante funcionamento mesmo sem conexão com o MVC.
+
+* **P17: Atualizar Clientes Conectados:** Atualiza dashboards em tempo real.
+
+---
+
+### Depósitos de Dados
+
+#### Módulo Kinect
+
+* **D1: MedicaoVolumes:** Histórico das medições realizadas.
+* **D2: HistoricoOcupacao:** Evolução da ocupação do espaço monitorado.
+* **D3: UsuariosAcesso:** Controle de acesso local.
+* **D4: LogsLocais:** Registro de eventos e falhas operacionais.
+
+#### Aplicação MVC
+
+* **D5: Usuarios:** Usuários cadastrados no sistema.
+* **D6: Parceiros:** Parceiros aptos a receber notificações.
+* **D7: ParametrosSistema:** Limites operacionais e configurações.
+* **D8: Notificacoes:** Histórico de alertas gerados.
+* **D9: Medicoes:** Medições recebidas do Kinect.
+* **D10: Relatorios:** Informações consolidadas para análise.
+
+---
+
+### Detalhamento do Fluxo de Execução
+
+1. O usuário acessa o sistema.
+2. O Kinect é inicializado e validado.
+3. O ambiente é calibrado em estado vazio.
+4. O espaço monitorado é cadastrado.
+5. O Kinect captura uma nova leitura de profundidade.
+6. O sistema compara a leitura atual com a referência calibrada.
+7. O volume ocupado é calculado automaticamente.
+8. O sistema calcula espaço livre e percentual de ocupação.
+9. A medição é armazenada localmente em SQLite.
+10. Os dados são enviados para a aplicação MVC via SignalR.
+11. O dashboard é atualizado em tempo real.
+12. O MVC valida os limites configurados.
+13. Caso necessário, são gerados alertas e notificações.
+14. O monitoramento permanece ativo enquanto o Kinect estiver em operação.
 
 ---
 
@@ -546,34 +590,59 @@ Os requisitos do sistema foram organizados por categoria, separando as funcional
 
 ### Detalhamento do Fluxo de Sequência
 
-O fluxo inicia-se quando o sensor Kinect realiza uma nova captura do ambiente monitorado, seguindo uma sequência de processamento, persistência e sincronização em tempo real entre o módulo Kinect e a plataforma Web.
+O fluxo inicia-se quando o Kinect realiza uma nova leitura do ambiente monitorado, seguindo uma sequência de captura, processamento, armazenamento e sincronização dos dados.
 
-#### 1. Captura, Processamento e Persistência (Passos 2 e 3)
+---
 
-* O sensor **Kinect** captura os dados de profundidade (*Depth Frame*) do ambiente monitorado.
-* O módulo de processamento converte os dados capturados em uma **nuvem de pontos tridimensional (Point Cloud)**, representando digitalmente o espaço ocupado pelos materiais.
-* A partir da nuvem de pontos, o sistema realiza os cálculos geométricos necessários para determinar o **VolumeMedido** do estoque.
-* Após a validação da leitura, os dados são armazenados localmente no banco **SQLite**, garantindo persistência e funcionamento mesmo em situações de indisponibilidade da rede.
-* Em seguida, a medição é sincronizada com a aplicação Web por meio do **SignalR**, permitindo atualização imediata dos dados operacionais.
+### 1. Operação no Módulo Kinect
 
-#### 2. Processamento das Regras de Negócio (Passos 4 e 5)
+* O usuário acessa o sistema.
+* O Kinect é inicializado.
+* O ambiente é calibrado.
+* O espaço monitorado é cadastrado.
+* O sistema libera a medição volumétrica.
 
-* Ao receber a medição, a aplicação consulta a coleção **parametrosSistema** para obter os limites volumétricos configurados.
-* O sistema executa a lógica de negócio comparando o **VolumeMedido** com os parâmetros estabelecidos.
-* Caso os valores estejam dentro da faixa operacional, a medição é registrada apenas para fins de histórico e monitoramento.
+---
 
-#### 3. Gestão de Exceções e Notificações (Passos 6, 7 e 8)
+### 2. Captura, Processamento e Persistência
 
-* Quando o volume registrado ultrapassa os limites definidos, o sistema identifica a ocorrência como um possível excedente produtivo.
-* A aplicação consulta a coleção **parceiros** para localizar os contatos aptos a receber notificações.
-* O evento é registrado na coleção **notificacoes**, garantindo rastreabilidade e auditoria do processo.
-* Em seguida, os alertas são enviados automaticamente aos parceiros e operadores por meio dos canais configurados pela plataforma.
+* O Kinect captura os dados de profundidade do ambiente.
+* O sistema aplica filtros e validações nas leituras recebidas.
+* A leitura atual é comparada ao mapa calibrado.
+* A diferença entre as leituras é utilizada para calcular o volume ocupado.
+* O sistema calcula:
+  * Volume ocupado;
+  * Espaço livre;
+  * Percentual de ocupação;
+  * Situação operacional.
+* Os dados são armazenados localmente em SQLite.
 
-#### 4. Atualização Operacional e Inteligência de Dados (Passos 9, 10 e 11)
+---
 
-* Independentemente da ocorrência de excedentes, o status operacional é atualizado em tempo real para os usuários conectados através do **SignalR**.
-* As informações recebidas alimentam o histórico de medições e os indicadores operacionais da plataforma.
-* Os dados consolidados são processados para geração de relatórios, acompanhamento da ocupação do estoque e suporte à tomada de decisão, mantendo o Dashboard sempre atualizado com a situação atual do ambiente monitorado.
+### 3. Integração com o MVC
+
+* Após salvar a medição, o módulo Kinect envia os dados para a aplicação MVC utilizando SignalR.
+* Caso a conexão esteja indisponível, a medição permanece salva localmente.
+* Quando a comunicação estiver disponível, as informações são sincronizadas automaticamente.
+
+---
+
+### 4. Processamento no MVC
+
+* O MVC recebe as medições.
+* O sistema consulta os parâmetros configurados.
+* Os valores são comparados aos limites operacionais.
+* Caso necessário, são gerados alertas e notificações.
+* As informações são disponibilizadas nos dashboards.
+
+---
+
+### 5. Apoio à Tomada de Decisão
+
+* As medições alimentam os indicadores operacionais.
+* O histórico permite acompanhar a evolução da ocupação.
+* Os dashboards apresentam informações em tempo real.
+* Os dados consolidados apoiam a gestão dos excedentes produtivos, a utilização dos espaços de armazenamento e a tomada de decisão logística.
 ---
 
 ## MODELAGEM DO BANCO DE DADOS
