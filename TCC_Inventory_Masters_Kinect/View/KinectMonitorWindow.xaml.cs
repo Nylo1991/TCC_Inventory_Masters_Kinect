@@ -127,12 +127,7 @@ namespace TCC_Inventory_Masters_Kinect.View
 
             if (viewModel == null || !viewModel.EspacoSalvo)
             {
-                MessageBox.Show(
-                    "Salve os dados do espaco antes de abrir o historico.",
-                    "Historico indisponivel",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-
+                ExibirAvisoHistoricoIndisponivel();
                 return;
             }
 
@@ -142,6 +137,90 @@ namespace TCC_Inventory_Masters_Kinect.View
             };
 
             janela.ShowDialog();
+        }
+
+        /// <summary>
+        /// Metado de mostra que antes de abrir o hstorico e necessario registra o espaço antes 
+        /// </summary>
+        private void ExibirAvisoHistoricoIndisponivel()
+        {
+            var aviso = new Window
+            {
+                Title = "Historico indisponivel",
+                Width = 460,
+                Height = 250,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                ResizeMode = ResizeMode.NoResize,
+                Background = System.Windows.Media.Brushes.White
+            };
+
+            var painel = new System.Windows.Controls.Grid
+            {
+                Margin = new Thickness(24)
+            };
+
+            painel.RowDefinitions.Add(new System.Windows.Controls.RowDefinition
+            {
+                Height = GridLength.Auto
+            });
+
+            painel.RowDefinitions.Add(new System.Windows.Controls.RowDefinition
+            {
+                Height = new GridLength(1, GridUnitType.Star)
+            });
+
+            painel.RowDefinitions.Add(new System.Windows.Controls.RowDefinition
+            {
+                Height = GridLength.Auto
+            });
+
+            var titulo = new System.Windows.Controls.TextBlock
+            {
+                Text = "Historico indisponivel",
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(17, 17, 17)),
+                FontSize = 24,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 0, 0, 14)
+            };
+
+            var mensagem = new System.Windows.Controls.TextBlock
+            {
+                Text = "Salve os dados do espaco antes de abrir o historico de medicoes.",
+                Foreground = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(75, 85, 99)),
+                FontSize = 16,
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var botao = new System.Windows.Controls.Button
+            {
+                Content = "Entendi",
+                Width = 110,
+                Height = 38,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Background = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(16, 138, 59)),
+                Foreground = System.Windows.Media.Brushes.White,
+                FontWeight = FontWeights.Bold,
+                BorderThickness = new Thickness(0),
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            botao.Click += (s, e) => aviso.Close();
+
+            System.Windows.Controls.Grid.SetRow(titulo, 0);
+            System.Windows.Controls.Grid.SetRow(mensagem, 1);
+            System.Windows.Controls.Grid.SetRow(botao, 2);
+
+            painel.Children.Add(titulo);
+            painel.Children.Add(mensagem);
+            painel.Children.Add(botao);
+
+            aviso.Content = painel;
+            aviso.ShowDialog();
         }
     }
 }

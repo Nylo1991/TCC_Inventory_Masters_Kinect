@@ -50,20 +50,87 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Margin="0,0,0,14">
-                    <TextBlock Text="Medicoes Salvas"
-                               Foreground="#111111"
-                               FontSize="20"
-                               FontWeight="Bold"
-                               ToolTip="Historico de medicoes em tempo real."/>
+                <Grid Margin="0,0,0,16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <TextBlock Text="Dados salvos em tempo real"
-                               Foreground="#6B7280"
-                               FontSize="13"
-                               Margin="0,4,0,0"
-                               ToolTip="Dados carregados automaticamente do banco SQLite."/>
-                </StackPanel>
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="Medicoes Salvas"
+                   Foreground="#111111"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   ToolTip="Historico de medicoes em tempo real."/>
 
+                        <TextBlock Text="Dados salvos em tempo real"
+                   Foreground="#6B7280"
+                   FontSize="13"
+                   Margin="0,4,0,0"
+                   ToolTip="Dados carregados automaticamente do banco SQLite."/>
+                    </StackPanel>
+
+                    <UniformGrid Grid.Row="1"
+                 Columns="3"
+                 Margin="0,14,0,0">
+                        <Border BorderBrush="#16A34A"
+                BorderThickness="2"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Empresa"
+                           Foreground="#16A34A"
+                           FontSize="12"
+                           FontWeight="SemiBold"/>
+
+                                <TextBlock Text="{Binding EmpresaLogada}"
+                           Foreground="#111111"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border BorderBrush="#2563EB"
+                BorderThickness="2"
+                CornerRadius="8"
+                Padding="12"
+                Margin="4,0,4,0">
+                            <StackPanel>
+                                <TextBlock Text="Espaco"
+                           Foreground="#2563EB"
+                           FontSize="12"
+                           FontWeight="SemiBold"/>
+
+                                <TextBlock Text="{Binding NomeEspaco}"
+                           Foreground="#111111"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border BorderBrush="#D97706"
+                                BorderThickness="2"
+                                       CornerRadius="8"
+                                     Padding="12"
+                                     Margin="8,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Limite"
+                                    Foreground="#D97706"
+                                    FontSize="12"
+                                       FontWeight="SemiBold"/>
+
+                                <TextBlock Text="{Binding PercentualAlerta, StringFormat={}{0}%}"
+                                         Foreground="#111111"
+                                     FontSize="18"
+                                     FontWeight="Bold"
+                                         TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+                </Grid>
                 <DataGrid Grid.Row="1"
                           ItemsSource="{Binding HistoricoMedicoes}"
                           AutoGenerateColumns="False"
