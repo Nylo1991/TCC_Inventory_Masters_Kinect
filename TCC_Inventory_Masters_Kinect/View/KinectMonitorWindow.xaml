@@ -266,45 +266,31 @@
                                   Source="Videos/calibracao.mp4"
                                   LoadedBehavior="Manual"
                                   UnloadedBehavior="Stop"
-                                  Stretch="Uniform"
+                                  Stretch="UniformToFill"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Visibility="Hidden"
                                   MediaEnded="CalibrationVideoElement_MediaEnded"
                                   Panel.ZIndex="1"
                                   ToolTip="Video de orientacao exibido durante a calibracao."/>
-                    <Border x:Name="PainelCalibracao"
-                       Background="#CC0B3323"
-                          CornerRadius="8"
-                        Padding="18"
-                         Width="420"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                           Visibility="Collapsed"
-                          Panel.ZIndex="2">
-                        <StackPanel>
-                            <TextBlock Text="Calibracao em andamento"
-                               Foreground="White"
-                                     FontSize="22"
-                               FontWeight="Bold"
-                              HorizontalAlignment="Center"
-                                Margin="0,0,0,8"/>
 
+                    <Border x:Name="PainelCalibracao"
+                            Background="#AA000000"
+                            CornerRadius="0,0,8,8"
+                            Height="70"
+                            VerticalAlignment="Top"
+                            Visibility="Collapsed"
+                            Panel.ZIndex="2">
+
+                        <StackPanel Margin="15,8">
                             <TextBlock Text="{Binding StatusMessage}"
-                                 Foreground="#D1FAE5"
-                               FontSize="15"
-                               FontWeight="SemiBold"
-                                 HorizontalAlignment="Center"
-                                TextAlignment="Center"
-                                 TextWrapping="Wrap"
-                                    Margin="0,0,0,6"/>
+                                       Foreground="White"
+                                       FontSize="16"
+                                       FontWeight="Bold"/>
 
                             <TextBlock Text="{Binding StatusCalibracao}"
-                                   Foreground="#FFD966"
-                                     FontSize="14"
-                                   HorizontalAlignment="Center"
-                                  TextAlignment="Center"
-                                TextWrapping="Wrap"/>
+                                       Foreground="#FFD966"
+                                       FontSize="12"/>
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -316,17 +302,23 @@
                       VerticalScrollBarVisibility="Auto"
                       Margin="0,22,22,22">
             <StackPanel>
-                <Border Style="{StaticResource PanelBorderStyle}">
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,12"
+                        BorderBrush="#DADDE2"
+                        BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Status"
+                        <TextBlock Text="Status do Sistema"
                                    Foreground="#111111"
                                    FontWeight="Bold"
-                                   FontSize="17"
-                                   Margin="0,0,0,12"/>
+                                   FontSize="16"
+                                   Margin="0,0,0,12"
+                                   ToolTip="Mostra o estado atual do Kinect, SQLite e SignalR."/>
 
                         <Border BorderBrush="#16A34A"
-                                BorderThickness="1.5"
-                                CornerRadius="6"
+                                BorderThickness="2"
+                                CornerRadius="8"
                                 Padding="10"
                                 Margin="0,0,0,8">
                             <TextBlock Text="{Binding StatusKinect}"
@@ -337,8 +329,8 @@
                         </Border>
 
                         <Border BorderBrush="#2563EB"
-                                BorderThickness="1.5"
-                                CornerRadius="6"
+                                BorderThickness="2"
+                                CornerRadius="8"
                                 Padding="10"
                                 Margin="0,0,0,8">
                             <TextBlock Text="{Binding StatusSQLite}"
@@ -349,8 +341,8 @@
                         </Border>
 
                         <Border BorderBrush="#D97706"
-                                BorderThickness="1.5"
-                                CornerRadius="6"
+                                BorderThickness="2"
+                                CornerRadius="8"
                                 Padding="10">
                             <TextBlock Text="{Binding StatusSignalR}"
                                        Foreground="#D97706"
@@ -361,13 +353,19 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PanelBorderStyle}">
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,12"
+                        BorderBrush="#DADDE2"
+                        BorderThickness="1">
                     <StackPanel>
                         <TextBlock Text="Medicao de Volume"
                                    Foreground="#111111"
                                    FontWeight="Bold"
-                                   FontSize="17"
-                                   Margin="0,0,0,12"/>
+                                   FontSize="16"
+                                   Margin="0,0,0,12"
+                                   ToolTip="Resumo da ocupacao volumetrica calculada pelo Kinect."/>
 
                         <Border BorderBrush="#2563EB"
                                 BorderThickness="2"
@@ -379,7 +377,8 @@
                                            Foreground="#2563EB"
                                            FontSize="13"
                                            FontWeight="SemiBold"
-                                           HorizontalAlignment="Center"/>
+                                           HorizontalAlignment="Center"
+                                           ToolTip="Volume atualmente ocupado no espaco monitorado."/>
 
                                 <TextBlock Text="{Binding VolumeTexto}"
                                            Foreground="#111111"
@@ -404,7 +403,8 @@
                                                Foreground="#D97706"
                                                FontSize="12"
                                                FontWeight="SemiBold"
-                                               HorizontalAlignment="Center"/>
+                                               HorizontalAlignment="Center"
+                                               ToolTip="Percentual ocupado em relacao ao volume maximo calibrado."/>
 
                                     <TextBlock Text="{Binding PercentualOcupacaoTexto}"
                                                Foreground="#111111"
@@ -425,7 +425,8 @@
                                                Foreground="#16A34A"
                                                FontSize="12"
                                                FontWeight="SemiBold"
-                                               HorizontalAlignment="Center"/>
+                                               HorizontalAlignment="Center"
+                                               ToolTip="Volume livre estimado no espaco calibrado."/>
 
                                     <TextBlock Text="{Binding EspacoLivreTexto}"
                                                Foreground="#111111"
@@ -446,7 +447,8 @@
                                                Foreground="#2563EB"
                                                FontSize="12"
                                                FontWeight="SemiBold"
-                                               HorizontalAlignment="Center"/>
+                                               HorizontalAlignment="Center"
+                                               ToolTip="Quantidade de pontos de profundidade usados na calibracao."/>
 
                                     <TextBlock Text="{Binding QuantidadePontosDepth}"
                                                Foreground="#111111"
@@ -463,11 +465,12 @@
                                     Padding="10"
                                     Margin="6,6,0,0">
                                 <StackPanel>
-                                    <TextBlock Text="Situacao"
+                                    <TextBlock Text="Alerta"
                                                Foreground="#DC2626"
                                                FontSize="12"
                                                FontWeight="SemiBold"
-                                               HorizontalAlignment="Center"/>
+                                               HorizontalAlignment="Center"
+                                               ToolTip="Indica se a ocupacao atingiu o limite informado no cadastro do espaco."/>
 
                                     <TextBlock Text="{Binding StatusAlertaTexto}"
                                                Foreground="#111111"
@@ -481,110 +484,184 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PanelBorderStyle}">
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,12"
+                        BorderBrush="#DADDE2"
+                        BorderThickness="1">
                     <StackPanel>
                         <TextBlock Text="Cadastro do Espaco"
                                    Foreground="#111111"
                                    FontWeight="Bold"
-                                   FontSize="17"
-                                   Margin="0,0,0,12"/>
+                                   FontSize="16"
+                                   Margin="0,0,0,12"
+                                   ToolTip="Identificacao do local usada no historico de medicoes."/>
 
                         <TextBlock Text="Nome do Espaco"
-                                   Style="{StaticResource LabelTextStyle}"/>
+                                   Foreground="#6B7280"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,4"
+                                   ToolTip="Nome usado para identificar o local monitorado."/>
 
                         <TextBox Text="{Binding NomeEspaco, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource InputTextBoxStyle}"/>
+                                 Background="White"
+                                 Foreground="#111111"
+                                 BorderBrush="#DADDE2"
+                                 BorderThickness="1"
+                                 Padding="10,6"
+                                 Margin="0,0,0,12"/>
 
                         <TextBlock Text="Limite de Ocupacao (%)"
-                                   Style="{StaticResource LabelTextStyle}"/>
+                                   Foreground="#6B7280"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,4"
+                                   ToolTip="Percentual usado para alerta de ocupacao."/>
 
                         <TextBox Text="{Binding PercentualAlerta, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource InputTextBoxStyle}"/>
+                                 Background="White"
+                                 Foreground="#111111"
+                                 BorderBrush="#DADDE2"
+                                 BorderThickness="1"
+                                 Padding="10,6"
+                                 Margin="0,0,0,12"/>
 
                         <TextBlock Text="Volume Maximo (m3)"
-                                   Style="{StaticResource LabelTextStyle}"/>
+                                   Foreground="#6B7280"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,4"
+                                   ToolTip="Volume de referencia criado na calibracao."/>
 
                         <TextBox Text="{Binding VolumeMaximo, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource InputTextBoxStyle}"
                                  Background="#F4F6F8"
-                                 IsReadOnly="True"/>
+                                 Foreground="#111111"
+                                 BorderBrush="#DADDE2"
+                                 BorderThickness="1"
+                                 Padding="10,6"
+                                 IsReadOnly="True"
+                                 ToolTip="Volume maximo calculado na calibracao do espaco."/>
 
                         <TextBlock Text="{Binding MensagemEspaco}"
                                    Foreground="#16A34A"
                                    FontSize="12"
-                                   Margin="0,0,0,0"
+                                   Margin="0,8,0,0"
                                    TextWrapping="Wrap"/>
 
                         <Button Content="Salvar Espaco"
                                 Command="{Binding SalvarEspacoCommand}"
-                                Style="{StaticResource ActionButtonStyle}"
                                 Background="#16A34A"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                Padding="10,8"
                                 Margin="0,12,0,0"
+                                BorderThickness="0"
+                                Cursor="Hand"
                                 ToolTip="Salva os dados do espaco e libera o historico de medicoes."/>
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PanelBorderStyle}">
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,12"
+                        BorderBrush="#DADDE2"
+                        BorderThickness="1">
                     <StackPanel>
                         <TextBlock Text="Controles"
                                    Foreground="#111111"
                                    FontWeight="Bold"
-                                   FontSize="17"
+                                   FontSize="16"
                                    Margin="0,0,0,12"/>
 
                         <Button Content="Ligar Kinect"
                                 Command="{Binding LigarKinectCommand}"
-                                Style="{StaticResource ActionButtonStyle}"
                                 Background="#16A34A"
-                                Margin="0,0,0,8"/>
+                                Foreground="White"
+                                FontWeight="Bold"
+                                Padding="10,8"
+                                Margin="0,0,0,8"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                ToolTip="Inicia a camera RGB, profundidade e conexao com o MVC."/>
 
                         <Button Content="Calibrar Espaco"
                                 Command="{Binding CalibrarCommand}"
                                 Click="CalibrarButton_Click"
-                                Style="{StaticResource ActionButtonStyle}"
                                 Background="#D97706"
-                                Margin="0,0,0,8"/>
+                                Foreground="White"
+                                FontWeight="Bold"
+                                Padding="10,8"
+                                Margin="0,0,0,8"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                ToolTip="Captura o espaco vazio como referencia do volume maximo."/>
 
                         <Button Content="Enviar Volume Atual"
                                 Command="{Binding MedirCommand}"
-                                Style="{StaticResource ActionButtonStyle}"
                                 Background="#2563EB"
-                                Margin="0,0,0,8"/>
+                                Foreground="White"
+                                FontWeight="Bold"
+                                Padding="10,8"
+                                Margin="0,0,0,8"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                ToolTip="Calcula o volume atual usando o mapa de profundidade calibrado."/>
 
                         <Button Content="Desligar Kinect"
                                 Command="{Binding DesligarKinectCommand}"
-                                Style="{StaticResource ActionButtonStyle}"
-                                Background="#DC2626"/>
+                                Background="#DC2626"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                Padding="10,8"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                ToolTip="Encerra a captura do Kinect e para os timers."/>
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PanelBorderStyle}">
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,12"
+                        BorderBrush="#DADDE2"
+                        BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Envio em Tempo Real"
+                        <TextBlock Text="Envio de Dados em Tempo Real"
                                    Foreground="#111111"
                                    FontWeight="Bold"
-                                   FontSize="17"
-                                   Margin="0,0,0,12"/>
+                                   FontSize="16"
+                                   Margin="0,0,0,12"
+                                   ToolTip="Mostra se o volume foi enviado ao MVC."/>
 
                         <TextBlock Text="{Binding MensagemEnvioAplicacao}"
                                    Foreground="#6B7280"
                                    FontSize="13"
-                                   TextWrapping="Wrap"/>
+                                   TextWrapping="Wrap"
+                                   ToolTip="Resultado da ultima tentativa de envio via SignalR."/>
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PanelBorderStyle}">
+                <Border Background="White"
+                        CornerRadius="8"
+                        Padding="16"
+                        BorderBrush="#DADDE2"
+                        BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Status Geral"
+                        <TextBlock Text="Status Geral do Sistema"
                                    Foreground="#111111"
                                    FontWeight="Bold"
-                                   FontSize="17"
-                                   Margin="0,0,0,12"/>
+                                   FontSize="16"
+                                   Margin="0,0,0,12"
+                                   ToolTip="Resumo da ultima acao executada."/>
 
                         <TextBlock Text="{Binding StatusMessage}"
                                    Foreground="#6B7280"
                                    FontSize="13"
-                                   TextWrapping="Wrap"/>
+                                   TextWrapping="Wrap"
+                                   ToolTip="Mensagem atual do sistema."/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -599,7 +676,8 @@
                        Foreground="#B7D6C8"
                        FontSize="12"
                        VerticalAlignment="Center"
-                       TextTrimming="CharacterEllipsis"/>
+                       TextTrimming="CharacterEllipsis"
+                       ToolTip="Status atual do monitoramento Kinect."/>
         </Border>
     </Grid>
 </Window>
