@@ -410,7 +410,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
   <p align="center">
 
-  <img src="./Imagens/InventoryMastersUC_MVC.png" width="800" alt="Diagrama de Caso de Uso" />
+  <img src="./Imagens/UC_Diagrama.png" width="800" alt="Diagrama de Caso de Uso" />
 
 </p>
 
