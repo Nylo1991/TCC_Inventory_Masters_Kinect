@@ -102,11 +102,57 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 3.  **Integração do Sensor:** Utilização do *Microsoft Kinect SDK 1.8* para extrair a "nuvem de pontos" (point cloud) do ambiente, permitindo ao sistema "enxergar" o volume ocupado no estoque.
 4.  **Desenvolvimento da Interface Web:** Construção do Dashboard utilizando ASP.NET Core Razor Pages, onde o operador visualiza o status do estoque e configura os parâmetros de alerta.
 5.  **Testes e Calibração:** Ajuste da sensibilidade do sensor para diferentes tipos de materiais e validação do envio de e-mails/alertas automáticos.
+---
+# REGRA DE NEGOCIO
+
+As regras de negócio definem o comportamento esperado para garantir a precisão logística, a integridade do hardware e a reatividade do sistema.
+Abaixo, elenco as regras de negócio agrupadas por domínio técnico-operacional:
+
+#### 1. Regras de Gestão de Estoque e Parâmetros
+* **RN01 - Validação de Limites:** Toda medição deve ser comparada com os limites de capacidade (Mínima/Máxima) configurados pelo administrador (`UC30`, `UC31`).
+* **RN02 - Persistência Segura:** Configurações de parâmetros não podem ser salvas sem validação prévia de consistência de dados no Firestore (`UC32`, `UC36`).
+* **RN03 - Vinculação de Entidade:** O sistema deve garantir que toda operação esteja vinculada a um parceiro. Caso não haja um parceiro ativo na sessão, o sistema deve utilizar o "Parceiro Padrão" configurado (`UC35`).
+
+#### 2. Regras de Processamento de Visão Computacional (Kinect)
+* **RN04 - Critério de Aceitação da Malha:** Uma medição só pode ser considerada válida se a densidade da nuvem de pontos for suficiente, eliminando medições com oclusões (`UC29`).
+* **RN05 - Padronização de Unidade:** O sistema deve converter obrigatoriamente os dados brutos de $cm^3$ para $m^3$ antes de qualquer cálculo volumétrico ou broadcast para dashboards (`UC61`).
+* **RN06 - Rastreabilidade Espacial:** Toda medição válida deve gerar um *snapshot* do estado do sensor no momento da captura para fins de auditoria (`UC19`).
+* **RN07 - Limpeza de Memória:** O sistema deve executar rotinas de limpeza de *buffer* pós-processamento para evitar *memory leaks* decorrentes da alta demanda de processamento 3D (`UC39`).
+
+#### 3. Regras de Integração Reativa (SignalR)
+* **RN08 - Broadcast Obrigatório:** Sempre que uma nova medição for validada e processada, o sistema deve atualizar todos os clientes conectados (Dashboards) em tempo real, sem necessidade de *refresh* manual (`UC62`).
+* **RN09 - Resiliência e Cache:** Em caso de perda de conectividade com o servidor, os clientes devem manter os dados em cache local até que a conexão seja reestabelecida (`UC58`).
+* **RN10 - Ciclo de Vida da Conexão:** O sistema deve gerenciar ativamente as conexões do SignalR, identificando eventos de `OnConnected` e `OnDisconnected` para garantir que apenas clientes ativos recebam atualizações (`UC64`).
+
+#### 4. Regras de Segurança e Acesso
+* **RN11 - Segregação de Perfis:**
+    * **Admin:** Acesso a relatórios históricos e alteração de parâmetros (`UC10`, `UC26`, `UC31`).
+    * **Operador:** Operação de hardware e monitoramento em tempo real (`UC18`, `UC21`, `UC28`).
+* **RN12 - Autenticação no Hub:** A conexão com os Hubs de integração (SignalR) exige validação de token JWT para evitar acesso não autorizado a dados industriais (`UC57`).
+* **RN13 - Log de Segurança:** Qualquer tentativa de acesso não autorizado aos serviços de integração deve ser registrada em logs de auditoria de segurança (`UC60`).
+
+#### 5. Regras de Manutenção de Hardware
+* **RN14 - Monitoramento de Saúde:** O sistema deve verificar a saúde do Kinect (diagnóstico de conectividade) em cada ciclo de medição (`UC37`).
+* **RN15 - Tratamento de Erros:** Falhas físicas (ex: desconexão do cabo) devem ser registradas como logs de erro no Firestore para permitir o diagnóstico técnico remoto (`UC38`).
+* **RN16 - Auto-recuperação:** O sistema deve tentar o re-handshake automático com o hardware antes de notificar o erro ao operador (`UC50`).
+
+### Fluxo de Processamento de Negócio
+
+O sistema opera através de um **fluxo determinístico**, garantindo que apenas dados validados alcancem a interface de monitoramento. Caso ocorra uma falha em qualquer etapa, o processo é interrompido para evitar inconsistências nos dados de estoque.
+
+#### Etapas do Processo:
+1. **Verificação de Hardware:** Diagnóstico do sensor e plano de referência (`UC37`, `UC45`).
+2. **Captura e Filtro:** Coleta dos dados espaciais e remoção de ruídos (`UC23`, `UC42`).
+3. **Cálculo e Conversão:** Processamento da malha 3D e conversão de unidade ($cm^3 \rightarrow m^3$) (`UC24`, `UC61`).
+4. **Validação de Limites:** Comparação do volume obtido com as capacidades configuradas (`UC30`).
+5. **Persistência e Broadcast:** Salvamento no Firestore e atualização em tempo real dos Dashboards via SignalR (`UC32`, `UC62`).
+
+> **Nota de Integridade:** Qualquer falha detectada durante estas etapas interrompe imediatamente a propagação do dado, assegurando que o Dashboard exiba apenas informações íntegras, precisas e validadas.
 
 ---
 # MODELAGEM DO SISTEMA
----
-## Diagrama de Caso de Uso projeto Inventory Masters MVC
+
+## Diagrama de Caso de Uso
 
 ### O diagrama de caso de uso, descreve as funcionalidades do sistema, segregadas por módulos e níveis de responsabilidade, conforme definido na arquitetura.
 
@@ -184,53 +230,6 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
 | **UC64** | Gerenciar Conexões | Sistema | Controle de ciclo de vida das sessões (SignalR). |
 
 --- 
-
-## Regras de Negócio
-As regras de negócio definem o comportamento esperado para garantir a precisão logística, a integridade do hardware e a reatividade do sistema.
-Abaixo, elenco as regras de negócio agrupadas por domínio técnico-operacional:
-
-#### 1. Regras de Gestão de Estoque e Parâmetros
-* **RN01 - Validação de Limites:** Toda medição deve ser comparada com os limites de capacidade (Mínima/Máxima) configurados pelo administrador (`UC30`, `UC31`).
-* **RN02 - Persistência Segura:** Configurações de parâmetros não podem ser salvas sem validação prévia de consistência de dados no Firestore (`UC32`, `UC36`).
-* **RN03 - Vinculação de Entidade:** O sistema deve garantir que toda operação esteja vinculada a um parceiro. Caso não haja um parceiro ativo na sessão, o sistema deve utilizar o "Parceiro Padrão" configurado (`UC35`).
-
-#### 2. Regras de Processamento de Visão Computacional (Kinect)
-* **RN04 - Critério de Aceitação da Malha:** Uma medição só pode ser considerada válida se a densidade da nuvem de pontos for suficiente, eliminando medições com oclusões (`UC29`).
-* **RN05 - Padronização de Unidade:** O sistema deve converter obrigatoriamente os dados brutos de $cm^3$ para $m^3$ antes de qualquer cálculo volumétrico ou broadcast para dashboards (`UC61`).
-* **RN06 - Rastreabilidade Espacial:** Toda medição válida deve gerar um *snapshot* do estado do sensor no momento da captura para fins de auditoria (`UC19`).
-* **RN07 - Limpeza de Memória:** O sistema deve executar rotinas de limpeza de *buffer* pós-processamento para evitar *memory leaks* decorrentes da alta demanda de processamento 3D (`UC39`).
-
-#### 3. Regras de Integração Reativa (SignalR)
-* **RN08 - Broadcast Obrigatório:** Sempre que uma nova medição for validada e processada, o sistema deve atualizar todos os clientes conectados (Dashboards) em tempo real, sem necessidade de *refresh* manual (`UC62`).
-* **RN09 - Resiliência e Cache:** Em caso de perda de conectividade com o servidor, os clientes devem manter os dados em cache local até que a conexão seja reestabelecida (`UC58`).
-* **RN10 - Ciclo de Vida da Conexão:** O sistema deve gerenciar ativamente as conexões do SignalR, identificando eventos de `OnConnected` e `OnDisconnected` para garantir que apenas clientes ativos recebam atualizações (`UC64`).
-
-#### 4. Regras de Segurança e Acesso
-* **RN11 - Segregação de Perfis:**
-    * **Admin:** Acesso a relatórios históricos e alteração de parâmetros (`UC10`, `UC26`, `UC31`).
-    * **Operador:** Operação de hardware e monitoramento em tempo real (`UC18`, `UC21`, `UC28`).
-* **RN12 - Autenticação no Hub:** A conexão com os Hubs de integração (SignalR) exige validação de token JWT para evitar acesso não autorizado a dados industriais (`UC57`).
-* **RN13 - Log de Segurança:** Qualquer tentativa de acesso não autorizado aos serviços de integração deve ser registrada em logs de auditoria de segurança (`UC60`).
-
-#### 5. Regras de Manutenção de Hardware
-* **RN14 - Monitoramento de Saúde:** O sistema deve verificar a saúde do Kinect (diagnóstico de conectividade) em cada ciclo de medição (`UC37`).
-* **RN15 - Tratamento de Erros:** Falhas físicas (ex: desconexão do cabo) devem ser registradas como logs de erro no Firestore para permitir o diagnóstico técnico remoto (`UC38`).
-* **RN16 - Auto-recuperação:** O sistema deve tentar o re-handshake automático com o hardware antes de notificar o erro ao operador (`UC50`).
-
-### Fluxo de Processamento de Negócio
-
-O sistema opera através de um **fluxo determinístico**, garantindo que apenas dados validados alcancem a interface de monitoramento. Caso ocorra uma falha em qualquer etapa, o processo é interrompido para evitar inconsistências nos dados de estoque.
-
-#### Etapas do Processo:
-1. **Verificação de Hardware:** Diagnóstico do sensor e plano de referência (`UC37`, `UC45`).
-2. **Captura e Filtro:** Coleta dos dados espaciais e remoção de ruídos (`UC23`, `UC42`).
-3. **Cálculo e Conversão:** Processamento da malha 3D e conversão de unidade ($cm^3 \rightarrow m^3$) (`UC24`, `UC61`).
-4. **Validação de Limites:** Comparação do volume obtido com as capacidades configuradas (`UC30`).
-5. **Persistência e Broadcast:** Salvamento no Firestore e atualização em tempo real dos Dashboards via SignalR (`UC32`, `UC62`).
-
-> **Nota de Integridade:** Qualquer falha detectada durante estas etapas interrompe imediatamente a propagação do dado, assegurando que o Dashboard exiba apenas informações íntegras, precisas e validadas.
-
----
 
 ## Diagrama de Fluxo 
 
