@@ -114,7 +114,7 @@ O desenvolvimento do projeto foi estruturado em fases cíclicas para garantir a 
   <img src="./Imagens/InventoryMastersUC_MVC.png" width="800" alt="Diagrama de Caso de Uso" />
 </p>
 
-### Tabela Consolidada de Casos de Uso - Inventory Masters (Completa)
+### Tabela Consolidada de Casos de Uso
 
 | **ID** | **Nome da Funcionalidade** | **Perfil** | **Descrição** |
 | :--- | :--- | :--- | :--- |
