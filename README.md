@@ -600,15 +600,21 @@ O diagrama de fluxo descreve o ciclo de vida de uma medição, garantindo a inte
 * **Escrita em `D1` (SQLite):** A medição (ID, Timestamp, Volume, SequenceID) é gravada via `UCK16` (Salvar Medição Local).
 * **Estado do Dado:** O registro é marcado como `PENDING`. Este banco atua como *Buffer* de Resiliência, garantindo que o `UCK21` (Operar Offline) funcione perfeitamente sem degradação de dados.
 
-#### Etapa 4: Camada de Integração e Sincronização
-* **Envio (`UCI01`, `UCK10`):** O `SyncService` monitora o `UCI05` (Gerenciar Conexões). Ao detectar rede, ele executa o `UCK20` (Sincronizar SignalR) enviando o *payload*.
-* **Controle de Consistência (`SequenceID`):** O `MedicaoHub` (MVC) recebe o pacote. O sistema verifica o `SequenceID`. Se o ID já existir no `D9` (Medições), o MVC descarta o pacote (prevenção de *Replay Attacks*). Se novo, persiste no Firestore.
+## Etapa 4: Camada de Integração e Sincronização (Hub)
 
- #### 5ª Etapa: Gestão, Alerta e Broadcast (MVC)
+* **Monitoramento e Roteamento (`UCI05`, `UCI01`, `UCK10`):** O `SyncService` opera em regime de monitoramento constante do `UCI05` (Gerenciar Conexões).
+    * **Fluxo Condicional:** Caso o serviço detecte que a rede está indisponível, o sistema mantém o fluxo no estado de espera local, preservando a integridade do *buffer* (`D1`) e impedindo tentativas de transmissão inócuas.
+    * **Sincronização:** Assim que a conectividade é restabelecida, o sistema retoma o fluxo, executando o `UCK20` (Sincronizar SignalR) para processar o envio do *payload* acumulado.
+
+* **Controle de Consistência e Proteção (`SequenceID`):** O `MedicaoHub` (MVC) atua como o ponto de entrada seguro. Ao receber o pacote, o sistema valida o `SequenceID` para garantir a idempotência das transações:
+    * **Prevenção de *Replay Attacks*:** Se o `SequenceID` já existir no banco de dados (`D9`), o sistema descarta o pacote automaticamente, evitando duplicidade de medições.
+    * **Persistência em Nuvem:** Se o `SequenceID` for inédito, o MVC prossegue com a validação do token JWT (`UC57`), aplica a criptografia de transporte (`UC59`) e persiste a informação no Firestore.
+
+## 5ª Etapa: Gestão, Alerta e Broadcast (MVC)
 
 Nesta etapa, o sistema realiza o processamento lógico da medição em nuvem, garantindo a governança, a notificação proativa e a auditabilidade das ocorrências críticas.
 
-##### 5.1. Pipeline de Validação de Regras de Negócio (UC30, UC34)
+#### 5.1. Pipeline de Validação de Regras de Negócio (UC30, UC34)
 Assim que a medição é persistida no Firestore, o serviço de mensageria (`BusinessRuleEngine`) inicia o fluxo de validação:
 
 * **Recuperação de Contexto:** O sistema recupera a `CapacidadeMaxima` e o `ParametroAlerta` (percentual) associados ao `SpaceID` da medição vigente (processos `P11`, `P12`).
@@ -618,15 +624,19 @@ Assim que a medição é persistida no Firestore, o serviço de mensageria (`Bus
     * **Nível Vermelho (Crítico):** Volume $\ge$ `ParametroAlerta` (ou 100% da capacidade).
 * **Persistência de Alerta:** Em estados **Vermelhos**, o sistema registra a ocorrência na coleção `D8 (Notificacoes)` com o status `PENDING_ACK` (Aguardando Confirmação).
 
-##### 5.2. Processamento Dinâmico de Threshold e Broadcast
-O motor de regras aplica a seguinte lógica booleana para disparo de eventos:
+#### 5.2. Tomada de Decisão, Threshold e Broadcast
+Nesta fase, o `BusinessRuleEngine` atua como um **Gateway de Controle**, executando a lógica de tomada de decisão baseada nos dados persistidos:
 
-$$\text{IsAlertState} = \left( \frac{\text{VolumeAtual}}{\text{CapacidadeMaxima}} \right) \times 100 > \text{ParametroAlerta}$$
+* **Ponto de Decisão (Gatekeeper):** O sistema avalia a condição booleana de criticidade:
+    $$\text{IsAlertState} = \left( \frac{\text{VolumeAtual}}{\text{CapacidadeMaxima}} \right) \times 100 > \text{ParametroAlerta}$$
 
-* **Broadcast Inteligente:** O `NotificacaoHub` (SignalR) realiza o envio de um *payload* estruturado (contendo `AlertID`, `Timestamp`, `Message` e `SeverityLevel`) para todos os *dashboards* conectados (`UC14`).
-* **Filtragem:** O sistema consulta a coleção `D6 (Parceiros)` associados ao espaço monitorado, garantindo que a notificação alcance apenas os *stakeholders* autorizados.
+* **Fluxo de Bifurcação:**
+    * **Se `Falso`:** O sistema encerra o *pipeline* de alerta, registrando apenas a métrica no histórico (Status: `NORMAL`).
+    * **Se `Verdadeiro`:** O motor de regras dispara o gatilho de criticidade, acionando o fluxo de notificação em tempo real.
 
-##### 5.3. UX Crítica: Protocolo de Confirmação Ativa (UC13, UC14)
+* **Broadcast Inteligente:** Uma vez confirmada a decisão de alerta, o `NotificacaoHub` (SignalR) realiza o envio de um *payload* estruturado (contendo `AlertID`, `Timestamp`, `Message` e `SeverityLevel`) apenas para os *dashboards* autorizados (`UC14`).
+
+#### 5.3. UX Crítica: Protocolo de Confirmação Ativa (UC13, UC14)
 Para garantir a governança do processo, implementamos o **Protocolo de Confirmação Ativa**:
 
 * **Bloqueio de Interação (Modal Overlay):** Ao receber o evento `CRITICAL_ALERT`, o *dashboard* dispara um *Modal* de sobreposição que bloqueia a interação do usuário até que a anomalia seja reconhecida.
@@ -634,7 +644,7 @@ Para garantir a governança do processo, implementamos o **Protocolo de Confirma
 * **Registro de Auditoria:** Ao confirmar, o sistema realiza um *update* no Firestore, alterando o status da notificação para `ACKNOWLEDGED` (Confirmado), registrando o `UserID` do operador e o `Timestamp` exato.
 * **Objetivo:** Este ciclo garante a rastreabilidade total, permitindo que, em auditorias operacionais, seja possível comprovar que toda anomalia foi detectada, notificada e tratada por um responsável.
 
-### Tabela de Rastreabilidade: Fluxo de Execução Técnica
+#### Tabela de Rastreabilidade: Fluxo de Execução Técnica
 
 Esta tabela relaciona as etapas do ciclo de vida da medição com os Casos de Uso (UCs) e a infraestrutura responsável.
 
