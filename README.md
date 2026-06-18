@@ -653,8 +653,7 @@ Esta tabela relaciona as etapas do ciclo de vida da medição com os Casos de Us
 
 ---
 
-> **Nota:** A rastreabilidade apresentada assegura que cada transição de estado seja auditável, permitindo a verificação de *logs* em caso de falha de comunicação entre o *Edge* e a Nuvem.
-  
+> **Nota:** A rastreabilidade apresentada assegura que cada transição de estado seja auditável, permitindo a verificação de *logs* em caso de falha de comunicação entre o HTTP e a Nuvem.  
 
 ---
 
@@ -666,59 +665,33 @@ Esta tabela relaciona as etapas do ciclo de vida da medição com os Casos de Us
 
 ### Detalhamento do Fluxo de Sequência
 
-O fluxo inicia-se quando o Kinect realiza uma nova leitura do ambiente monitorado, seguindo uma sequência de captura, processamento, armazenamento e sincronização dos dados.
+Este diagrama detalha o ciclo de vida transacional de uma medição, garantindo a integridade dos dados desde a captura Http até a persistência em nuvem e a interação proativa no *Dashboard*.
 
----
+#### Etapa 1: Inicialização e Setup de Hardware (Edge)
+* **Ação:** O operador executa o `UCK04` (Ligar Kinect) e `UCK06` (Verificar Conectividade).
+* **Diagnóstico (`UCK07`):** O sistema realiza um *Self-Test* do hardware. Se houver falha, o fluxo é abortado via exceção, bloqueando preventivamente o acesso ao *dashboard* local para evitar leituras corrompidas.
+* **Calibração de Referência (`UCK08`):** O sistema executa o *include* de `[Validar Calibração]` e `[Criar Mapa Referência]`. A `BaselineMatrix` gerada é persistida em `D1/D2` (SQLite), garantindo que, após reinicializações, o sistema retenha a referência volumétrica de estado "zero" sem necessidade de reconfiguração manual.
 
-### 1. Operação no Módulo Kinect
+#### Etapa 2: Pipeline de Visão e Cálculo Volumétrico (Edge)
+* **Captura e Pré-processamento (`UCK11`, `UCK12`):** O Kinect envia o *stream* de dados. O sistema aplica o *include* de `[Aplicar Filtros / Remover Ruídos]` (conforme `UCK15`), assegurando que o dado tratado possua a qualidade exigida para cálculos volumétricos.
+* **Motor de Cálculo (`UCK13`, `UCK14`):** O sistema realiza a operação matricial (*Delta*) entre o *Frame* Atual e a `BaselineMatrix`.
+* **Conversão e Normalização:** O volume é convertido de $cm^3$ para $m^3$ com precisão de 3 casas decimais, filtrando ruídos abaixo de uma margem mínima estipulada pelo `UCC31` (Ajustar Regras).
 
-* O usuário acessa o sistema.
-* O Kinect é inicializado.
-* O ambiente é calibrado.
-* O espaço monitorado é cadastrado.
-* O sistema libera a medição volumétrica.
+#### Etapa 3: Persistência de Integridade (Resiliência Local)
+* **Escrita no Buffer (`UCK16`):** A medição (ID, Timestamp, Volume, SequenceID) é persistida no `SQLite` (`D1`) com o status `PENDING`.
+* **Buffer de Resiliência:** Esta etapa atende ao `UCK21` (Operar Offline). Ao persistir localmente antes de qualquer tentativa de transmissão, o sistema garante que nenhum dado seja perdido durante falhas de rede, isolando a falha de comunicação da operação de medição.
 
----
+#### Etapa 4: Camada de Integração e Sincronização (Hub)
+* **Envio Assíncrono (`UCI01`, `UCK10`):** O `SyncService` monitora o `UCI05` (Gerenciar Conexões). Ao restaurar o link, ele executa o `UCK20` (Sincronizar SignalR), enviando o *payload*.
+* **Controle de Consistência (`SequenceID`):** O `MedicaoHub` (MVC) recebe o pacote e verifica o `SequenceID`.
+    * **Prevenção de Replay:** Se o ID já existir em `D9`, o MVC descarta o pacote automaticamente.
+    * **Persistência Cloud:** Se novo, o MVC valida o JWT (`UC57`), criptografa (`UC59`) e persiste no `Firestore`.
 
-### 2. Captura, Processamento e Persistência
+#### Etapa 5: Gestão, Alerta e Broadcast (MVC)
+* **Validação de Negócio (`P11`, `P12`, `UC30`, `UC34`):** O `BusinessRuleEngine` compara o volume recebido contra os limites definidos em `D7` (ParametrosSistema).
+* **Lógica de Threshold:** $$\left( \frac{\text{VolumeAtual}}{\text{CapacidadeMaxima}} \right) \times 100 > \text{ParametroAlerta}$$
 
-* O Kinect captura os dados de profundidade do ambiente.
-* O sistema aplica filtros e validações nas leituras recebidas.
-* A leitura atual é comparada ao mapa calibrado.
-* A diferença entre as leituras é utilizada para calcular o volume ocupado.
-* O sistema calcula:
-  * Volume ocupado;
-  * Espaço livre;
-  * Percentual de ocupação;
-  * Situação operacional.
-* Os dados são armazenados localmente em SQLite.
-
----
-
-### 3. Integração com o MVC
-
-* Após salvar a medição, o módulo Kinect envia os dados para a aplicação MVC utilizando SignalR.
-* Caso a conexão esteja indisponível, a medição permanece salva localmente.
-* Quando a comunicação estiver disponível, as informações são sincronizadas automaticamente.
-
----
-
-### 4. Processamento no MVC
-
-* O MVC recebe as medições.
-* O sistema consulta os parâmetros configurados.
-* Os valores são comparados aos limites operacionais.
-* Caso necessário, são gerados alertas e notificações.
-* As informações são disponibilizadas nos dashboards.
-
----
-
-### 5. Apoio à Tomada de Decisão
-
-* As medições alimentam os indicadores operacionais.
-* O histórico permite acompanhar a evolução da ocupação.
-* Os dashboards apresentam informações em tempo real.
-* Os dados consolidados apoiam a gestão dos excedentes produtivos, a utilização dos espaços de armazenamento e a tomada de decisão logística.
+* **Broadcast e UX:** Se exceder o limite, o `NotificacaoHub` dispara um evento via SignalR (`UC14`). O *dashboard* força a exibição de um *Modal Overlay*. O operador deve realizar o `UC13` (Aceitar Coleta). O sistema registra a confirmação no Firestore, alterando o status da notificação para `ACKNOWLEDGED` (Confirmado), vinculado ao `UserID` e `Timestamp`.
 ---
 
 ## MODELAGEM DO BANCO DE DADOS
