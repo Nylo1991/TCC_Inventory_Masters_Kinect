@@ -209,129 +209,103 @@ Foram realizados testes de calibração, precisão das medições, persistência
 Após a integração dos componentes, a plataforma passou a disponibilizar informações sobre ocupação dos espaços, capacidade disponível, histórico de medições e indicadores operacionais, apoiando a gestão dos excedentes produtivos e a tomada de decisão.
 
 ---
-# REGRA DE NEGÓCIO
+## REGRA DE NEGÓCIO
 
 As regras de negócio definem o comportamento esperado do sistema, garantindo a precisão das medições, a integridade dos dados, a operação correta do hardware Kinect, a comunicação em tempo real com a aplicação MVC e o apoio à tomada de decisão logística.
 
 As regras foram organizadas por domínio para separar claramente as responsabilidades do **Módulo Kinect**, do **Módulo MVC** e da **Integração entre os módulos**.
 
+## 1. Regras de Domínio e Processamento (Visão Computacional)
+* **RN01 - Cálculo de Percentual de Ocupação:** Derivado da fórmula: $$Ocupacao = \left( \frac{VolumeMedido}{CapacidadeMaxima} \right) \times 100$$
+    * *Validação:* Recalculado a cada nova medição válida.
+* **RN02 - Cálculo Volumétrico:** Diferença absoluta entre o mapa de profundidade calibrado (vazio) e a leitura atual do Kinect. Valor negativo é tratado como erro ou 0.
+* **RN03 - Cálculo do Espaço Livre:** Diferença matemática entre `CapacidadeMaxima` e `VolumeOcupado` ($EspacoLivre \ge 0$).
+* **RN04 - Padronização de Unidades:** Cálculos internos em $cm^3$, exibição obrigatória em $m^3$ (fator $1.000.000$).
+* **RN05 - Limite de Teto:** O sistema ignora ou limita valores que excedam 100% da capacidade configurada.
+* **RN06 - Critério de Aceitação da Leitura:** Medição válida apenas se houver dados de profundidade consistentes, sem ruídos ou oclusões.
+* **RN07 - Rastreabilidade Espacial:** Toda medição registra o estado (timestamp e mapa) para auditoria.
+
+## 2. Regras de Hardware e Calibração (Kinect)
+* **RN08 - Inicialização do Sensor:** O Kinect deve estar operacional antes de qualquer processo.
+* **RN09 - Calibração Obrigatória:** Nenhuma medição é válida sem calibração prévia do ambiente vazio.
+* **RN10 - Referência Espacial:** A calibração gera o mapa base para comparações futuras.
+* **RN11 - Cadastro de Espaço:** O ambiente deve ser salvo antes de liberar medições.
+* **RN12 - Monitoramento de Saúde:** Verificação operacional do hardware antes de cada captura.
+* **RN13 - Tratamento de Erros:** Falhas físicas registradas em logs operacionais.
+* **RN14 - Auto-recuperação:** Tentativa automática de reconexão antes de notificar o erro.
+* **RN15 - Operação Offline:** Armazenamento local caso o front-end MVC esteja indisponível.
+* **RN16 - Limpeza de Memória:** Rotina de limpeza de buffer pós-processamento para evitar *memory leaks*.
+
+## 3. Regras de Integração (SignalR)
+* **RN17 - Broadcast de Medição:** Evento `NovaMedicao` disparado imediatamente após validação.
+* **RN18 - Resiliência e Cache:** Cache local se houver queda de conexão.
+* **RN19 - Ciclo de Vida da Conexão:** Gerenciamento ativo de estados `Connect/Disconnect`.
+* **RN20 - Conectividade Estável:** Uso obrigatório de `withAutomaticReconnect`.
+* **RN21 - Proteção contra Replay Attacks:** Validação de `SequenceID` para evitar reprocessamento de mensagens antigas.
+
+## 4. Regras de Segurança, Persistência e Acesso (Módulo MVC)
+* **RN22 - Singleton de Instância:** `FirebaseApp` instanciado uma única vez.
+* **RN23 - Rastreabilidade:** Notificações registram o `VolumeMedido` no momento do disparo.
+* **RN24 - Segregação de Perfis:** Admin (gestão total) vs. Operador (operação/monitoramento).
+* **RN25 - Segurança em Hubs:** Conexão exige validação de token/sessão (JWT).
+* **RN26 - Auditoria de Acesso:** Logs de segurança para tentativas não autorizadas.
+* **RN27 - Sessão e Inatividade:** Logoff automático por ociosidade.
+* **RN28 - Auditoria CRUD:** Coleção `AuditLogs` registrando quem alterou, quando e o que (de/para).
+* **RN29 - Validação de Parâmetros:** Bloqueio de injeção de valores fora dos limites (0.1m³ a 10.000m³).
+* **RN30 - Lock de Recurso de Hardware:** Flag `IsLocked` para impedir medições simultâneas durante calibração.
+* **RN51 - Limite de Usuários Simultâneos (Throttling):** Limitação de conexões de escrita no Firebase para prevenir custos excessivos por bugs de loop.
+* **RN52 - Validação de Formato de Senha:** Complexidade mínima obrigatória (8 caracteres, 1 especial, 1 maiúscula) para perfis administrativos.
+* **RN53 - Bloqueio de Login por Tentativas:** Bloqueio temporário (15 min) da conta após 5 tentativas falhas de login.
+* **RN54 - Validação de Origin (CORS):** Hubs SignalR e Endpoints MVC configurados para aceitar requisições apenas de domínios homologados.
+
+## 5. Regras de Interface e UX
+* **RN31 - Validação de Formulários:** Bloqueio via *Data Annotations* (Client-Side).
+* **RN32 - Máscara de Dados:** Telefone padrão `(00) 0 0000-0000`.
+* **RN33 - Preservação de Estado:** Filtros persistidos na URL durante paginação.
+* **RN34 - Segurança de Requisição:** `AntiForgeryToken` obrigatório em POST/PUT/DELETE.
+* **RN35 - Rolling Buffer:** Histórico gráfico limitado a 20 entradas.
+* **RN36 - Alerta Visual:** Hierarquia de cores baseada no `PercentualAlerta`.
+* **RN37 - Feedback de Calibração:** *Progress Bar* (0-100%) com botão desabilitado.
+* **RN38 - Notificação de Alerta Pendente:** Modal "Vermelho" persistente que exige interação ("Ciente").
+* **RN39 - Indicador de Conexão:** Status visual (Verde/Amarelo/Vermelho) em tempo real.
+
+## 6. Regras Adicionais de Robustez
+* **RN40 - Idempotência:** Garantia de que leituras via rede instável não criem duplicidade.
+* **RN41 - Validação de Latência:** Log de `Warning` se processamento sensor-dashboard exceder 2 segundos.
+* **RN42 - Fallback de Sensores:** Bloqueio e solicitação de recalibração caso o sensor detecte ruído anômalo.
+* **RN43 - Níveis de Log:** Classificação em `Information`, `Warning`, `Critical` com notificação ao Admin.
+* **RN44 - Retenção de Dados:** Migração de dados > 90 dias para *Cold Storage*.
+* **RN45 - Responsividade:** Layout adaptativo (Cards para mobile, Tabelas para desktop).
+* **RN46 - Tratamento de Nulidade:** Inicialização de listas (`= new()`) para evitar `NullReferenceException`.
+* **RN47 - Integridade de Exclusão:** Bloqueio de exclusão de registros com dependências ativas.
+* **RN48 - Ordem Cronológica:** Listagens ordenadas por `Data_Cadastro` (mais recentes no topo).
+* **RN49 - Escopo Global de Parâmetros:** Configurações carregadas em Cache na inicialização para evitar gargalos de consulta.
+* **RN50 - Validação de Calibração Ativa:** Verificação da data da última calibração; se exceder o tempo limite de deriva, força recalibração.
+---
+## Fluxo de Processamento de Negócio 
+
+O processamento do *Inventory Masters* segue um pipeline de **validação contínua**, projetado para garantir que dados inconsistentes nunca alcancem o *dashboard*. O fluxo é segmentado entre a camada de borda (Kinect) e a camada de gestão (MVC).
+
+### 1. Camada de Borda (Kinect & Processamento Local)
+* **Monitoramento de Saúde:** Diagnóstico contínuo do sensor (`RN12`, `RN14`). Se falhar, o sistema entra em estado de *Auto-recuperação*.
+* **Calibração de Referência:** Mapeamento do ambiente vazio para gerar a base de cálculo de profundidade (`RN09`, `RN10`).
+* **Captura de Dados:** Leitura de profundidade bruta com filtragem ativa de ruído e oclusões (`RN06`, `RN16`).
+* **Processamento e Conversão:** Cálculo volumétrico (diferença absoluta) e conversão de unidade ($cm^3 \rightarrow m^3$) (`RN02`, `RN04`).
+* **Persistência em Cache (Resiliência):** Escrita local em *SQLite* para garantir que nenhuma medição seja perdida durante instabilidades de rede (`RN15`, `RN18`).
+
+### 2. Camada de Integração (Barramento SignalR)
+* **Transmissão Segura:** Envio dos dados via *SignalR* com `SequenceID` para evitar *Replay Attacks* e duplicidade (`RN21`, `RN40`).
+* **Sincronização:** Verificação da latência. Se a conexão cair, o sistema entra em modo de fila (*buffer*) até a reconexão automática (`RN20`, `RN39`).
+
+### 3. Camada de Gestão e Interface (MVC & Firestore)
+* **Validação de Integridade (Controller):** O MVC valida o token de acesso e os dados recebidos antes da persistência no *Firestore* (`RN24`, `RN45`).
+* **Persistência e Auditoria:** Escrita no banco de dados com registro automático em `AuditLogs` (`RN46`).
+* **Broadcast em Tempo Real:** Atualização automática do DOM do cliente via *SignalR* (`RN17`).
+* **Alerta e UX:** Processamento de regras de exibição (Cores/Alertas) e exigência de "Ciente" pelo operador em casos de zona vermelha (`RN32`, `RN50`).
+
 ---
 
-## 1. Regras de Gestão de Estoque e Parâmetros — MVC
-
-* **RN01 - Validação de Limites:** Toda medição deve ser comparada com os limites de capacidade mínima e máxima configurados pelo administrador (`UC30`, `UC31`).
-
-* **RN02 - Persistência Segura:** Configurações de parâmetros não podem ser salvas sem validação prévia de consistência de dados no Firestore (`UC32`, `UC36`).
-
-* **RN03 - Vinculação de Entidade:** O sistema deve garantir que toda operação esteja vinculada a um parceiro. Caso não haja um parceiro ativo na sessão, o sistema deve utilizar o "Parceiro Padrão" configurado (`UC35`).
-
----
-
-## 2. Regras de Processamento de Visão Computacional — Kinect
-
-* **RN04 - Critério de Aceitação da Leitura:** Uma medição só pode ser considerada válida se houver dados suficientes de profundidade para representar o espaço monitorado, evitando leituras inconsistentes causadas por falhas, ruídos ou oclusões (`UC29`).
-
-* **RN05 - Padronização de Unidade:** O sistema deve converter obrigatoriamente os dados brutos de `cm³` para `m³` antes da exibição ao usuário ou envio para dashboards (`UC61`).
-
-* **RN06 - Rastreabilidade Espacial:** Toda medição válida deve permitir o registro do estado do ambiente monitorado no momento da captura, possibilitando auditoria e acompanhamento histórico (`UC19`).
-
-* **RN07 - Limpeza de Memória:** O sistema deve executar rotinas de limpeza de buffer após o processamento das medições para evitar sobrecarga de memória durante a captura contínua dos dados (`UC39`).
-
----
-
-## 3. Regras de Integração Reativa — SignalR
-
-* **RN08 - Broadcast Obrigatório:** Sempre que uma nova medição for validada e processada, o sistema deve atualizar todos os clientes conectados aos dashboards em tempo real, sem necessidade de atualização manual da página (`UC62`).
-
-* **RN09 - Resiliência e Cache:** Em caso de perda de conectividade com o servidor, os dados devem permanecer armazenados localmente até que a conexão seja restabelecida (`UC58`).
-
-* **RN10 - Ciclo de Vida da Conexão:** O sistema deve gerenciar as conexões do SignalR, identificando eventos de conexão e desconexão para garantir que apenas clientes ativos recebam atualizações (`UC64`).
-
----
-
-## 4. Regras de Segurança e Acesso — MVC
-
-* **RN11 - Segregação de Perfis:**
-  * **Admin:** Acesso a relatórios históricos, auditoria, gerenciamento de parâmetros, usuários e parceiros (`UC10`, `UC26`, `UC31`).
-  * **Operador:** Operação do hardware, calibração, medição volumétrica e monitoramento em tempo real (`UC18`, `UC21`, `UC28`).
-
-* **RN12 - Autenticação no Hub:** A conexão com os Hubs de integração SignalR exige validação de token para evitar acesso não autorizado a dados do sistema (`UC57`).
-
-* **RN13 - Log de Segurança:** Qualquer tentativa de acesso não autorizado aos serviços de integração deve ser registrada em logs de auditoria de segurança (`UC60`).
-
----
-
-## 5. Regras de Manutenção de Hardware — Kinect
-
-* **RN14 - Monitoramento de Saúde:** O sistema deve verificar a conectividade e o estado operacional do Kinect antes dos processos de calibração e medição (`UC37`).
-
-* **RN15 - Tratamento de Erros:** Falhas físicas, como desconexão do cabo ou indisponibilidade do sensor, devem ser registradas em logs operacionais para permitir diagnóstico técnico (`UC38`).
-
-* **RN16 - Auto-recuperação:** O sistema deve tentar restabelecer a comunicação com o Kinect antes de notificar o erro ao operador (`UC50`).
-
----
-
-## 6. Regras de Negócio do Módulo Kinect
-
-* **RN17 - Inicialização do Sensor:** O Kinect deve estar conectado e operacional antes do início de qualquer processo de calibração ou medição volumétrica.
-
-* **RN18 - Calibração Obrigatória:** Nenhuma medição poderá ser considerada válida sem que o ambiente tenha sido previamente calibrado em estado vazio.
-
-* **RN19 - Referência Espacial:** A calibração deve gerar um mapa de profundidade de referência que será utilizado como base para comparação das medições futuras.
-
-* **RN20 - Validação do Espaço Monitorado:** O usuário deverá cadastrar e salvar o espaço monitorado antes de liberar medições automáticas ou consultas históricas.
-
-* **RN21 - Cálculo Volumétrico:** O volume ocupado deve ser calculado por meio da comparação entre o mapa calibrado e a leitura atual de profundidade obtida pelo Kinect.
-
-* **RN22 - Conversão de Unidade:** Os cálculos internos poderão ser realizados em centímetros cúbicos (`cm³`), porém todas as informações exibidas ao usuário deverão ser apresentadas em metros cúbicos (`m³`).
-
-* **RN23 - Cálculo de Ocupação:** O sistema deverá calcular automaticamente o percentual de ocupação com base no volume ocupado e na capacidade máxima cadastrada para o espaço monitorado.
-
-* **RN24 - Cálculo do Espaço Livre:** O sistema deverá calcular automaticamente o espaço livre disponível com base na diferença entre a capacidade máxima e o volume atualmente ocupado.
-
-* **RN25 - Histórico de Medições:** Toda medição válida deverá ser armazenada localmente para permitir rastreabilidade e acompanhamento da evolução da ocupação do espaço monitorado.
-
-* **RN26 - Operação Offline:** O módulo Kinect deverá continuar operando normalmente mesmo que a aplicação MVC esteja temporariamente indisponível.
-
-* **RN27 - Logoff por Inatividade:** Caso o usuário permaneça sem interação por período superior ao limite configurado, a sessão deverá ser encerrada automaticamente, exigindo novo acesso ao sistema.
-
----
-
-## 7. Integração entre Kinect e MVC
-
-* **RN28 - Envio de Medições:** Após o processamento de uma medição válida, o módulo Kinect deverá disponibilizar as informações para a aplicação MVC por meio do SignalR.
-
-* **RN29 - Continuidade Operacional:** Em caso de falha de comunicação com a aplicação MVC, as medições deverão permanecer armazenadas localmente até que a comunicação seja restabelecida.
-
-* **RN30 - Atualização em Tempo Real:** Sempre que uma nova medição for processada, os dashboards conectados deverão receber as informações atualizadas sem necessidade de atualização manual da página.
-
----
-
-## Fluxo de Processamento de Negócio
-
-O sistema opera por meio de um fluxo determinístico, garantindo que apenas dados validados alcancem a interface de monitoramento. Caso ocorra uma falha em qualquer etapa, o processo é interrompido para evitar inconsistências nos dados de estoque.
-
-### Etapas do Processo
-
-1. **Verificação de Hardware:** Diagnóstico do sensor Kinect e validação do estado de conexão (`UC37`, `UC45`).
-
-2. **Calibração do Espaço:** Captura do ambiente vazio para criação do mapa de profundidade de referência.
-
-3. **Captura e Filtro:** Coleta dos dados espaciais e remoção de ruídos da leitura (`UC23`, `UC42`).
-
-4. **Cálculo e Conversão:** Processamento dos dados de profundidade, cálculo do volume ocupado e conversão de unidade de `cm³` para `m³` (`UC24`, `UC61`).
-
-5. **Validação de Limites:** Comparação do volume obtido com os limites configurados pelo administrador (`UC30`).
-
-6. **Persistência Local:** Salvamento das medições no SQLite para garantir histórico e rastreabilidade local.
-
-7. **Sincronização com MVC:** Envio das medições para a aplicação MVC via SignalR (`UC62`).
-
-8. **Atualização dos Dashboards:** Exibição das informações em tempo real nos painéis de acompanhamento.
-
-9. **Notificações e Acompanhamento:** Caso os limites sejam atingidos, o MVC executa os processos de alerta, histórico e comunicação com parceiros.
-
-> **Nota de Integridade:** Qualquer falha detectada durante as etapas de validação interrompe a propagação do dado, assegurando que o dashboard exiba apenas informações íntegras, coerentes e validadas.
+> **Nota de Integridade:** O fluxo possui uma barreira de segurança em cada transição. Se a **validação de limites** falhar ou o **hash de integridade** do *frame* de profundidade for inconsistente, o pipeline é interrompido imediatamente para evitar a propagação de "falsos positivos" de ocupação para o *dashboard*.
 
 ---
 
