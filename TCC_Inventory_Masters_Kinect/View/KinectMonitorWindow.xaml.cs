@@ -3,6 +3,11 @@ using System.ComponentModel;
 using System.Windows;
 using TCC_Inventory_Masters_Kinect.Model;
 using TCC_Inventory_Masters_Kinect.ViewModel;
+using System.Linq;
+using System.Windows.Input;
+using System.Windows.Threading;
+using TCC_Inventory_Masters_Kinect.Data;
+using TCC_Inventory_Masters_Kinect.Logs;
 
 namespace TCC_Inventory_Masters_Kinect.View
 {
@@ -13,6 +18,10 @@ namespace TCC_Inventory_Masters_Kinect.View
         /// exibir o vídeo de calibração e gerenciar a interação do usuário com o sistema.
         /// </summary>
         private MainViewModel _viewModel;
+
+        private readonly DispatcherTimer _inatividadeTimer;
+        private readonly TimeSpan _tempoLimiteInatividade = TimeSpan.FromMinutes(20);
+        private bool _sessaoBloqueada;
 
         public KinectMonitorWindow()
             : this(new SessaoUsuario
@@ -41,6 +50,129 @@ namespace TCC_Inventory_Masters_Kinect.View
             _viewModel.CalibracaoFinalizada += FinalizarVideoCalibracao;
 
             DataContext = _viewModel;
+
+            ///Metado de bloqueio automatico da tela apos 15 minutos de inatividade, 
+            ///para evitar o uso indevido do sistema em caso de esquecimento ou abandono da estação de trabalho
+
+            _inatividadeTimer = new DispatcherTimer
+            {
+                Interval = _tempoLimiteInatividade
+            };
+
+            _inatividadeTimer.Tick += InatividadeTimer_Tick;
+            _inatividadeTimer.Start();
+
+            PreviewMouseMove += RegistrarAtividadeUsuario;
+            PreviewMouseDown += RegistrarAtividadeUsuario;
+            PreviewKeyDown += RegistrarAtividadeUsuario;
+
+        }
+
+        /// <summary>
+        /// Evento que é acionado sempre que o usuário interage com a interface, seja movendo o mouse, clicando ou pressionando uma tecla,
+        /// para registrar a atividade do usuário e reiniciar o timer de inatividade, 
+        /// garantindo que a sessão permaneça ativa enquanto o usuário estiver presente.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RegistrarAtividadeUsuario(object sender, EventArgs e)
+        {
+            if (_sessaoBloqueada)
+            {
+                return;
+            }
+
+            ReiniciarTimerInatividade();
+        }
+
+        private void ReiniciarTimerInatividade()
+        {
+            _inatividadeTimer.Stop();
+            _inatividadeTimer.Start();
+        }
+
+        private void InatividadeTimer_Tick(object sender, EventArgs e)
+        {
+            _inatividadeTimer.Stop();
+            BloquearSessaoPorInatividade();
+        }
+
+        private void BloquearSessaoPorInatividade()
+        {
+            if (_sessaoBloqueada)
+            {
+                return;
+            }
+
+            _sessaoBloqueada = true;
+
+            TelaBloqueioInatividade.Visibility = Visibility.Visible;
+            SenhaDesbloqueioPasswordBox.Password = string.Empty;
+            MensagemBloqueioTextBlock.Text = string.Empty;
+            SenhaDesbloqueioPasswordBox.Focus();
+
+            LoggerService.LogWarning("Sessao bloqueada por inatividade. Monitoramento Kinect continua ativo.");
+        }
+
+        private void DesbloquearSessao_Click(object sender, RoutedEventArgs e)
+        {
+            DesbloquearSessao();
+        }
+
+        private void SenhaDesbloqueioPasswordBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                DesbloquearSessao();
+            }
+        }
+        /// <summary>
+        /// metado que realiza o processo de desbloqueio da sessão quando o usuário informa a senha correta,
+        /// e volta a tela apos o bloqueio por inatividade , garantindo que apenas usuários autorizados possam 
+        /// acessar a interface após um período de inatividade,
+        /// </summary>
+        private void DesbloquearSessao()
+        {
+            try
+            {
+                string senha = SenhaDesbloqueioPasswordBox.Password?.Trim();
+
+                if (string.IsNullOrWhiteSpace(senha))
+                {
+                    MensagemBloqueioTextBlock.Text = "Informe a senha para desbloquear.";
+                    return;
+                }
+
+                using (var db = new AppDbContext())
+                {
+                    var usuario = db.UsuariosAcesso.FirstOrDefault(x =>
+                        x.Usuario == _viewModel.UsuarioLogado &&
+                        x.Senha == senha &&
+                        x.Ativo);
+
+                    if (usuario == null)
+                    {
+                        MensagemBloqueioTextBlock.Text = "Senha invalida.";
+                        LoggerService.LogWarning("Tentativa invalida de desbloqueio por inatividade.");
+                        return;
+                    }
+                }
+
+                _sessaoBloqueada = false;
+
+                TelaBloqueioInatividade.Visibility = Visibility.Collapsed;
+                SenhaDesbloqueioPasswordBox.Password = string.Empty;
+                MensagemBloqueioTextBlock.Text = string.Empty;
+
+                ReiniciarTimerInatividade();
+
+                LoggerService.Info("Sessao desbloqueada apos inatividade.");
+            }
+            catch
+            {
+                MensagemBloqueioTextBlock.Text = "Erro ao desbloquear sessao.";
+                LoggerService.Erro("Erro ao desbloquear sessao por inatividade.");
+            }
         }
 
         /// <summary>
@@ -104,7 +236,9 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Evento de fechamento da janela, que garante que os recursos do Kinect sejam liberados corretamente
+        /// Evento de fechamento da janela, que garante que os recursos do Kinect sejam liberados corretamente e 
+        /// que os eventos sejam desvinculados para evitar vazamentos de memória,e aciona a tela novamente apos o usuario fechar a janela de monitoramento, 
+        /// para permitir que o usuário possa realizar novas calibrações ou acessar o histórico de medições sem precisar reiniciar a aplicação.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -114,6 +248,16 @@ namespace TCC_Inventory_Masters_Kinect.View
             {
                 _viewModel.CalibracaoFinalizada -= FinalizarVideoCalibracao;
             }
+
+            if (_inatividadeTimer != null)
+            {
+                _inatividadeTimer.Stop();
+                _inatividadeTimer.Tick -= InatividadeTimer_Tick;
+            }
+
+            PreviewMouseMove -= RegistrarAtividadeUsuario;
+            PreviewMouseDown -= RegistrarAtividadeUsuario;
+            PreviewKeyDown -= RegistrarAtividadeUsuario;
         }
 
         /// <summary>
