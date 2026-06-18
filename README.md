@@ -218,15 +218,15 @@ Após a integração dos componentes, a plataforma passou a disponibilizar infor
 
 O **Inventory Masters** é um sistema de monitoramento logístico inteligente projetado para o controle preciso de estoques em armazéns e centros de distribuição. O problema central que o sistema resolve é a divergência entre o estoque físico e o estoque registrado no sistema de gestão, causada principalmente por processos manuais de contagem, falhas na identificação de carga e falta de visibilidade em tempo real sobre a ocupação volumétrica dos espaços de armazenamento.
 
-## O Cenário Operacional
+#### O Cenário Operacional
 O sistema atua em um ambiente industrial onde o monitoramento é realizado por sensores de profundidade (**Microsoft Kinect**). Cada área de armazenamento (ou "Espaço Monitorado") possui um sensor dedicado que realiza leituras constantes do ambiente. O processo inicia-se com a **Calibração**, onde o sistema mapeia o "ambiente vazio" (estado de referência), permitindo que qualquer objeto introduzido no campo de visão seja detectado e calculado matematicamente.
 
-## A Jornada do Dado
+#### A Jornada do Dado
 As leituras brutas são processadas localmente para filtrar ruídos e oclusões, garantindo que apenas dados íntegros sejam convertidos para volumes volumétricos ($m^3$). Devido à natureza instável de redes industriais, o módulo de borda opera com **resiliência (Modo Offline)**, utilizando cache local (**SQLite**) para garantir a continuidade da medição mesmo em casos de queda de conexão.
 
 A integração com o módulo central (web) ocorre via **SignalR**, permitindo que o *Dashboard* receba atualizações em tempo real. O sistema MVC atua como o cérebro da operação, onde os administradores configuram os limites de capacidade e os alertas de ocupação. Toda alteração de parâmetros ou ocorrência crítica (como uma zona de ocupação vermelha) gera um log de auditoria imutável, garantindo a conformidade e a rastreabilidade necessárias para processos de qualidade.
 
-## A Experiência do Operador
+#### A Experiência do Operador
 O operador do sistema interage com um *dashboard* responsivo e intuitivo, que oferece uma visão holística dos armazéns. Através de indicadores visuais (gráficos *Doughnut* com código de cores), ele identifica rapidamente se o armazém está operando dentro dos parâmetros de segurança. Quando um limite crítico é atingido, o sistema dispara notificações que exigem uma resposta ativa ("Ciente"), garantindo que nenhuma anomalia seja ignorada, transformando o monitoramento passivo em uma ferramenta ativa de suporte à tomada de decisão logística.
 
 ---
@@ -374,41 +374,41 @@ Os requisitos do sistema foram organizados por categoria, separando as funcional
 
 ---
 
-## Requisitos Não Funcionais (RNF)
+### Requisitos Não Funcionais (RNF)
 
-### 1. Desempenho e Performance
+#### 1. Desempenho e Performance
 * **RNF01 - Latência de Processamento:** O tempo total entre a captura da imagem pelo Kinect e a atualização do *Dashboard* não deve exceder 2.5 segundos em condições ideais de rede.
 * **RNF02 - Taxa de Atualização (Frame Rate):** O módulo de visão computacional deve processar, no mínimo, 10 frames por segundo (FPS) para garantir a fluidez na detecção de mudanças volumétricas.
 * **RNF03 - Consumo de Memória:** A aplicação local (Módulo Kinect) não deve exceder 500MB de RAM em operação contínua, devendo disparar rotinas de coleta de lixo (*Garbage Collection*) caso atinja este limiar.
 * **RNF04 - Tempo de Resposta do Banco:** Consultas de leitura no *Firestore* não devem exceder 500ms para carregamento de listagens de histórico.
 * **RNF05 - Precisão Métrica:** A margem de erro na medição volumétrica não deve exceder ± 2% do volume real, garantindo a acurácia necessária para o controle de estoque.
 
-### 2. Confiabilidade e Disponibilidade
+#### 2. Confiabilidade e Disponibilidade
 * **RNF06 - Disponibilidade do Sistema:** O sistema deve manter uma disponibilidade de 99.5%, permitindo janelas de manutenção programada fora do horário comercial (00:00 - 06:00).
 * **RNF07 - Resiliência (Modo Offline):** O sistema deve ser capaz de operar de forma autônoma (armazenamento em cache local/SQLite) por até 48 horas em caso de falha total de comunicação com o servidor em nuvem.
 * **RNF08 - Recuperação de Falhas (Failover):** Em caso de queda do serviço de *backend*, o módulo de captura deve restabelecer a conexão automaticamente sem intervenção humana após a normalização do link de dados.
 
-### 3. Segurança e Governança
+#### 3. Segurança e Governança
 * **RNF09 - Autenticação:** O acesso ao sistema deve exigir autenticação via protocolo HTTPS/TLS 1.2+, garantindo a criptografia dos dados em trânsito.
 * **RNF10 - Integridade de Dados:** O sistema deve garantir a imutabilidade dos logs de auditoria; uma vez gravado, o `AuditLog` não pode ser editado nem mesmo pelo perfil Administrador.
 * **RNF11 - Proteção contra Acessos:** Implementação de políticas de proteção contra ataques de força bruta, com bloqueio automático de IP após sucessivas falhas de autenticação.
 * **RNF12 - Controle de Acesso (RBAC):** O sistema deve seguir o princípio do privilégio mínimo, onde cada perfil possui acesso estritamente necessário para suas funções.
 
-### 4. Usabilidade e Acessibilidade
+#### 4. Usabilidade e Acessibilidade
 * **RNF13 - Tempo de Aprendizado:** O sistema deve possuir uma interface intuitiva que permita a um operador treinado realizar uma calibração em menos de 3 minutos.
 * **RNF14 - Responsividade:** O *dashboard* deve ser compatível com resoluções de 1024x768 até 1920x1080 (Full HD), garantindo legibilidade em telas industriais e dispositivos móveis.
 * **RNF15 - Feedback do Usuário:** Toda ação crítica (ex: exclusão de parceiro ou calibração) deve exigir confirmação explícita via *modal* de diálogo.
 
-### 5. Manutenibilidade e Portabilidade
+#### 5. Manutenibilidade e Portabilidade
 * **RNF16 - Modularidade:** O sistema deve ser desenvolvido seguindo uma arquitetura desacoplada, permitindo a substituição do sensor Kinect ou do banco de dados sem a necessidade de reescrita total do código.
 * **RNF17 - Documentação de Código:** Todo novo componente deve seguir o padrão de documentação técnica (JSDoc ou XML Comments) para facilitar a manutenção de terceiros.
 * **RNF18 - Portabilidade do Backend:** A aplicação MVC deve ser compatível com ambientes de hospedagem baseados em containers (ex: Docker) para facilitar a escalabilidade.
 * **RNF19 - Versionamento e Evolução:** O sistema deve seguir o padrão de versionamento semântico (*Semantic Versioning*), permitindo atualizações incrementais do *firmware* do Kinect sem impacto na API do MVC.
   
  ---
-# MODELAGEM DO SISTEMA
+## MODELAGEM DO SISTEMA
 
-## Diagrama de Caso de Uso
+### Diagrama de Caso de Uso
 
 O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory Masters, organizadas em três módulos principais:
 
@@ -423,9 +423,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 </p>
 
----
-
-## Casos de Uso da Aplicação MVC
+#### Casos de Uso da Aplicação MVC
 
 A tabela abaixo apresenta os casos de uso relacionados exclusivamente à aplicação web MVC, responsável pela administração, monitoramento, parametrização, notificações e gestão operacional da plataforma.
 
@@ -472,7 +470,7 @@ A tabela abaixo apresenta os casos de uso relacionados exclusivamente à aplica�
 | UC56 | Acessar Parâmetros | Admin | Acesso ao módulo de configuração. |
 
 ---
-## Casos de Uso da Aplicação Kinect
+#### Casos de Uso da Aplicação Kinect
 
 Os casos de uso abaixo representam as funcionalidades relacionadas ao monitoramento volumétrico, captura dos dados de profundidade e processamento realizado pelo Kinect.
 
@@ -508,7 +506,7 @@ Os casos de uso abaixo representam as funcionalidades relacionadas ao monitorame
 
 ---
 
-## Casos de Uso Incluídos (<<include>>)
+#### Casos de Uso Incluídos (<<include>>)
 
 Os casos abaixo são executados internamente pelos casos de uso principais apresentados no diagrama.
 
@@ -534,7 +532,7 @@ Os casos abaixo são executados internamente pelos casos de uso principais apres
 > **Nota:** Os casos de uso identificados em negrito referem-se às funcionalidades nativas do projeto de aplicação MVC.
 ---
 
-## Casos de Uso Extendidos (<<extend>>)
+#### Casos de Uso Extendidos (<<extend>>)
 
 Casos que adicionam comportamento opcional ou condicional a um caso de uso principal.
 
@@ -549,7 +547,7 @@ Casos que adicionam comportamento opcional ou condicional a um caso de uso princ
 > **Nota:** Os casos de uso identificados em negrito referem-se às funcionalidades nativas do projeto de aplicação MVC.
 ---
 
-## Casos de Uso de Integração
+#### Casos de Uso de Integração
 
 Os casos de uso abaixo representam os mecanismos responsáveis pela comunicação entre o Kinect e a aplicação MVC.
 
