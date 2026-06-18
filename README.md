@@ -667,12 +667,12 @@ Esta tabela relaciona as etapas do ciclo de vida da medição com os Casos de Us
 
 Este diagrama detalha o ciclo de vida transacional de uma medição, garantindo a integridade dos dados desde a captura Http até a persistência em nuvem e a interação proativa no *Dashboard*.
 
-#### Etapa 1: Inicialização e Setup de Hardware (Edge)
+#### Etapa 1: Inicialização e Setup de Hardware
 * **Ação:** O operador executa o `UCK04` (Ligar Kinect) e `UCK06` (Verificar Conectividade).
 * **Diagnóstico (`UCK07`):** O sistema realiza um *Self-Test* do hardware. Se houver falha, o fluxo é abortado via exceção, bloqueando preventivamente o acesso ao *dashboard* local para evitar leituras corrompidas.
 * **Calibração de Referência (`UCK08`):** O sistema executa o *include* de `[Validar Calibração]` e `[Criar Mapa Referência]`. A `BaselineMatrix` gerada é persistida em `D1/D2` (SQLite), garantindo que, após reinicializações, o sistema retenha a referência volumétrica de estado "zero" sem necessidade de reconfiguração manual.
 
-#### Etapa 2: Pipeline de Visão e Cálculo Volumétrico (Edge)
+#### Etapa 2: Pipeline de Visão e Cálculo Volumétrico 
 * **Captura e Pré-processamento (`UCK11`, `UCK12`):** O Kinect envia o *stream* de dados. O sistema aplica o *include* de `[Aplicar Filtros / Remover Ruídos]` (conforme `UCK15`), assegurando que o dado tratado possua a qualidade exigida para cálculos volumétricos.
 * **Motor de Cálculo (`UCK13`, `UCK14`):** O sistema realiza a operação matricial (*Delta*) entre o *Frame* Atual e a `BaselineMatrix`.
 * **Conversão e Normalização:** O volume é convertido de $cm^3$ para $m^3$ com precisão de 3 casas decimais, filtrando ruídos abaixo de uma margem mínima estipulada pelo `UCC31` (Ajustar Regras).
