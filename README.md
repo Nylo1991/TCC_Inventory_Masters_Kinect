@@ -309,50 +309,46 @@ O processamento do *Inventory Masters* segue um pipeline de **validação contí
 
 ---
 
-# REQUISITOS DO SISTEMA
+## REQUISITOS DO SISTEMA
 
 Os requisitos do sistema foram organizados por categoria, separando as funcionalidades relacionadas à gestão web, ao módulo Kinect, ao monitoramento, à integração e aos aspectos não funcionais da solução.
 
+### Requisitos Funcionais
 
-## 1. Requisitos Funcionais — MVC
+#### 1. Módulo de Aquisição de Dados (Hardware e Visão Computacional)
+* **RF01 - Captura Espacial:** O sistema deve iniciar a leitura de profundidade via sensor Kinect, convertendo o fluxo de frames em um mapa de profundidade tridimensional em tempo real.
+* **RF02 - Calibração de Referência:** O sistema deve permitir que o operador execute uma rotina de calibração para capturar o "estado zero" (ambiente vazio), armazenando essa matriz de profundidade como *baseline*.
+* **RF03 - Cálculo Volumétrico:** O sistema deve processar a diferença absoluta entre o mapa atual e o mapa de referência, aplicando algoritmos de integração volumétrica para determinar o volume ocupado.
+* **RF04 - Conversão Dinâmica de Unidades:** O sistema deve possuir uma camada de tradução que converte o resultado do processamento de $cm^3$ para $m^3$, garantindo a precisão de até 3 casas decimais.
+* **RF05 - Filtro de Integridade (Noise Filtering):** O sistema deve aplicar filtros de suavização para eliminar ruídos brancos (pixels espúrios) e desconsiderar oclusões físicas momentâneas no sensor.
+* **RF06 - Auto-Diagnóstico:** O sistema deve verificar a conectividade do hardware e a integridade do driver do Kinect antes de cada ciclo de medição.
+* **RF07 - Operação Offline:** O módulo local deve persistir medições em um banco SQLite caso a conexão com a internet seja interrompida, sincronizando o lote assim que a rede for restabelecida.
 
-| Categoria | ID | Requisito Funcional | Casos de Uso |
-| :--- | :--- | :--- | :--- |
-| **Gestão** | RF01 | Cadastro, edição, exclusão e listagem de usuários/parceiros. | UC01-UC07 |
-| | RF02 | Gestão de permissões e perfis de acesso. | UC08, UC09 |
-| | RF03 | Auditoria de alterações via logs. | UC10, UC44, UC49 |
-| **Monitoramento** | RF07 | Painel em tempo real de ocupação e volume. | UC51, UC52 |
-| | RF08 | Disparo de alertas baseados em regras de limite. | UC14, UC17, UC30, UC34, UC55 |
-| **Integração** | RF09 | Comunicação assíncrona via SignalR Hubs. | UC53, UC62, UC64 |
-| | RF10 | Persistência de dados no Firestore. | UC32, UC36, UC46 |
+#### 2. Módulo de Integração (Barramento SignalR)
+* **RF08 - Broadcast de Medições:** O sistema deve emitir eventos de *push* via SignalR contendo o objeto de medição validado para todos os clientes conectados.
+* **RF09 - Gerenciamento de Reconexão:** O sistema deve implementar protocolos de *Exponential Backoff* para reconexão automática ao servidor MVC.
+* **RF10 - Controle de Consistência (SequenceID):** Cada pacote transmitido deve conter um identificador sequencial único para garantir que o cliente não processe dados fora de ordem ou duplicados.
+* **RF11 - Cache Local de Transmissão:** O sistema deve enfileirar as medições não enviadas durante a desconexão, garantindo a integridade do histórico.
 
----
+#### 3. Módulo MVC (Persistência e Gestão)
+* **RF12 - Gestão de Contas:** O sistema deve permitir que o Administrador realize o CRUD (Create, Read, Update, Delete) de usuários, atribuindo perfis de acesso (Admin/Operador).
+* **RF13 - Parametrização de Espaços:** O sistema deve permitir que o Admin defina a `CapacidadeMaxima` (em $m^3$) e o `PercentualAlerta` (em %) para cada unidade monitorada.
+* **RF14 - Persistência em Nuvem:** O sistema deve gravar todas as medições validadas no Firestore, indexando-as por `ID_Espaço` e `Timestamp`.
+* **RF15 - Auditoria de Dados:** O sistema deve manter um log imutável de todas as alterações CRUD, registrando o `ID_Usuário`, `Ação`, `Timestamp` e o `Valor_Original/Novo`.
+* **RF16 - Gestão de Sessões:** O sistema deve encerrar sessões após 30 minutos de inatividade do usuário.
+* **RF17 - Segurança de Acesso:** O sistema deve validar hashes de senha antes da persistência e implementar bloqueio temporário (15 min) após 5 falhas de login.
 
-## 2. Requisitos Funcionais — Kinect
+#### 4. Módulo de Interface e UX
+* **RF19 - Visualização Dinâmica:** O sistema deve renderizar um gráfico (Doughnut Chart) que reflete em tempo real o estado de ocupação do espaço.
+* **RF20 - Sistema de Alertas Visuais:** A interface deve alterar a cor dos indicadores (Verde/Amarelo/Vermelho) automaticamente com base no *Threshold* configurado.
+* **RF21 - Notificação Persistente:** O sistema deve apresentar um modal de alerta que bloqueia a interação do usuário até que o mesmo confirme ("Ciente") a leitura de uma ocorrência crítica.
+* **RF22 - Status de Saúde (Conectividade):** O dashboard deve exibir um ícone de status (LED Virtual) que reflete a saúde da comunicação entre o sensor, o MVC e o cliente.
 
-| Categoria | ID | Requisito Funcional | Casos de Uso |
-| :--- | :--- | :--- | :--- |
-| **Medição** | RF04 | Captura volumétrica via Kinect e processamento dos dados de profundidade. | UC21, UC23, UC24 |
-| | RF05 | Calibração do sensor e verificação da estabilidade da leitura. | UC28, UC29, UC45 |
-| | RF06 | Conversão de medições brutas de `cm³` para `m³`. | UC61 |
-| **Kinect** | RF11 | Permitir ligar e desligar o sensor Kinect. | UC18 |
-| | RF12 | Realizar calibração do espaço monitorado vazio. | UC28 |
-| | RF13 | Capturar dados de profundidade e imagem RGB. | UC21, UC23 |
-| | RF14 | Calcular automaticamente o volume ocupado. | UC24 |
-| | RF15 | Calcular espaço livre e percentual de ocupação. | UC24 |
-| | RF16 | Armazenar medições localmente em SQLite. | UC32 |
-| | RF17 | Exibir histórico de medições. | UC26 |
-| | RF18 | Permitir logoff automático por inatividade. | UC65 |
-
----
-
-## 3. Requisitos Funcionais — Integração Kinect e MVC
-
-| Categoria | ID | Requisito Funcional | Casos de Uso |
-| :--- | :--- | :--- | :--- |
-| **Integração** | RF19 | Enviar medições para a aplicação MVC via SignalR. | UC62 |
-| | RF20 | Sincronizar dados em tempo real entre Kinect e Dashboard. | UC62, UC64 |
-| | RF21 | Manter as medições salvas localmente quando a aplicação MVC estiver temporariamente indisponível. | UC58 |
+#### 5. Módulo de Governança e Performance
+* **RF26 - Hierarquia de Logs:** O sistema deve gerar registros de erro detalhados, categorizados por severidade (`Information`, `Warning`, `Critical`), facilitando a manutenção corretiva.
+* **RF27 - Gestão de Ciclo de Vida (Cold Storage):** O sistema deve mover automaticamente medições com data superior a 90 dias para arquivos de backup, liberando recursos do banco operacional.
+* **RF28 - Throttling de Escrita:** O sistema deve limitar a quantidade de requisições de escrita por segundo para proteger a cota de uso do banco de dados (Cloud Firestore).
+* **RF29 - Integridade Referencial:** O sistema deve validar bloqueios de exclusão: é proibido excluir um Parceiro que possua medições históricas associadas.
 
 ---
 
