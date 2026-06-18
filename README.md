@@ -683,7 +683,7 @@ O Diagrama de Fluxo representa o caminho percorrido pelas informações dentro d
 ## Diagrama de Sequência
 
 <p align="center">
-  <img src="./Imagens/Diagrama_de_Sequencia.png" width="600" alt="Diagrama de Sequência" />
+  <img src="./Imagens/DiagramaSequencia.png" width="600" alt="Diagrama de Sequência" />
 </p>
 
 ### Detalhamento do Fluxo de Sequência
