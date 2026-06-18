@@ -26,7 +26,7 @@
 
 ---
 
-## Quem Somos
+## QUEM SOMOS
 
 A Inventory Masters é uma plataforma tecnológica voltada para o monitoramento inteligente de espaços de armazenamento e a gestão estratégica de excedentes produtivos.
 
