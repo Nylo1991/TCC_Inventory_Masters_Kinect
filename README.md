@@ -214,7 +214,7 @@ Após a integração dos componentes, a plataforma passou a disponibilizar infor
 
 ---
 
-## Minimundo
+## MINIMUNDO
 
 O **Inventory Masters** é um sistema de monitoramento logístico inteligente projetado para o controle preciso de estoques em armazéns e centros de distribuição. O problema central que o sistema resolve é a divergência entre o estoque físico e o estoque registrado no sistema de gestão, causada principalmente por processos manuais de contagem, falhas na identificação de carga e falta de visibilidade em tempo real sobre a ocupação volumétrica dos espaços de armazenamento.
 
@@ -304,22 +304,22 @@ As regras foram organizadas por domínio para separar claramente as responsabili
 * **RN49 - Escopo Global de Parâmetros:** Configurações carregadas em Cache na inicialização para evitar gargalos de consulta.
 * **RN50 - Validação de Calibração Ativa:** Verificação da data da última calibração; se exceder o tempo limite de deriva, força recalibração.
 ---
-## Fluxo de Processamento de Negócio 
+## FlUXO DE PROCESSAMENTO DE NEGÓCIO 
 
 O processamento do *Inventory Masters* segue um pipeline de **validação contínua**, projetado para garantir que dados inconsistentes nunca alcancem o *dashboard*. O fluxo é segmentado entre a camada de borda (Kinect) e a camada de gestão (MVC).
 
-### 1. Camada de Borda (Kinect & Processamento Local)
+#### 1. Camada de Borda (Kinect & Processamento Local)
 * **Monitoramento de Saúde:** Diagnóstico contínuo do sensor (`RN12`, `RN14`). Se falhar, o sistema entra em estado de *Auto-recuperação*.
 * **Calibração de Referência:** Mapeamento do ambiente vazio para gerar a base de cálculo de profundidade (`RN09`, `RN10`).
 * **Captura de Dados:** Leitura de profundidade bruta com filtragem ativa de ruído e oclusões (`RN06`, `RN16`).
 * **Processamento e Conversão:** Cálculo volumétrico (diferença absoluta) e conversão de unidade ($cm^3 \rightarrow m^3$) (`RN02`, `RN04`).
 * **Persistência em Cache (Resiliência):** Escrita local em *SQLite* para garantir que nenhuma medição seja perdida durante instabilidades de rede (`RN15`, `RN18`).
 
-### 2. Camada de Integração (Barramento SignalR)
+#### 2. Camada de Integração (Barramento SignalR)
 * **Transmissão Segura:** Envio dos dados via *SignalR* com `SequenceID` para evitar *Replay Attacks* e duplicidade (`RN21`, `RN40`).
 * **Sincronização:** Verificação da latência. Se a conexão cair, o sistema entra em modo de fila (*buffer*) até a reconexão automática (`RN20`, `RN39`).
 
-### 3. Camada de Gestão e Interface (MVC & Firestore)
+#### 3. Camada de Gestão e Interface (MVC & Firestore)
 * **Validação de Integridade (Controller):** O MVC valida o token de acesso e os dados recebidos antes da persistência no *Firestore* (`RN24`, `RN45`).
 * **Persistência e Auditoria:** Escrita no banco de dados com registro automático em `AuditLogs` (`RN46`).
 * **Broadcast em Tempo Real:** Atualização automática do DOM do cliente via *SignalR* (`RN17`).
@@ -584,106 +584,77 @@ Os casos de uso abaixo representam os mecanismos responsáveis pela comunicaçã
   <img src="./Imagens/Diagrama_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
 </p>
 
-### Detalhamento do Diagrama de Fluxo de Dados
+O diagrama de fluxo descreve o ciclo de vida de uma medição, garantindo a integridade dos dados desde a captura no *Edge* até a persistência em nuvem e a interação no *Dashboard*.
 
-O Diagrama de Fluxo representa o caminho percorrido pelas informações dentro da solução Inventory Masters, evidenciando a interação entre o Módulo Kinect, a Aplicação MVC e os serviços de integração responsáveis pela comunicação em tempo real.
+#### Etapa 1: Inicialização e Setup de Hardware
+* **Ação:** O operador inicia o `UCK04` (Ligar Kinect) e `UCK06` (Verificar Conectividade).
+* **Tratamento de Exceção:** Caso `UCK07` (Diagnóstico Hardware) retorne erro, o sistema bloqueia o `UCK10` e `UCK11`, disparando uma notificação de falha no *dashboard* local.
+* **Calibração (`UCK08`):** O sistema executa o *include* de `[Validar Calibração]` e `[Criar Mapa Referência]`. Esta matriz (`BaselineMatrix`) é persistida em `D1/D2` para garantir que, em caso de reinicialização, o sistema não perca a referência volumétrica.
 
----
+#### Etapa 2: Pipeline de Visão e Cálculo Volumétrico 
+* **Captura e Pré-processamento (`UCK11`, `UCK12`):** O Kinect captura o *stream*. O sistema aplica o *include* `[Aplicar Filtros/Remover Ruídos]` conforme o `UCK15`.
+* **Cálculo (`UCK13`, `UCK14`):** O processamento de Cálculo de Volume Ocupado e Espaço Livre ocorre via comparação matricial (*Delta*).
+* **Conversão de Unidade:** O valor final é convertido de $cm^3$ para $m^3$ com precisão de 3 casas decimais.
 
-### Entidades Externas
+#### Etapa 3: Persistência de Integridade (Local)
+* **Escrita em `D1` (SQLite):** A medição (ID, Timestamp, Volume, SequenceID) é gravada via `UCK16` (Salvar Medição Local).
+* **Estado do Dado:** O registro é marcado como `PENDING`. Este banco atua como *Buffer* de Resiliência, garantindo que o `UCK21` (Operar Offline) funcione perfeitamente sem degradação de dados.
 
-* **Usuário:** Responsável por operar o sistema, realizar calibração, acompanhar medições e consultar informações operacionais.
+#### Etapa 4: Camada de Integração e Sincronização
+* **Envio (`UCI01`, `UCK10`):** O `SyncService` monitora o `UCI05` (Gerenciar Conexões). Ao detectar rede, ele executa o `UCK20` (Sincronizar SignalR) enviando o *payload*.
+* **Controle de Consistência (`SequenceID`):** O `MedicaoHub` (MVC) recebe o pacote. O sistema verifica o `SequenceID`. Se o ID já existir no `D9` (Medições), o MVC descarta o pacote (prevenção de *Replay Attacks*). Se novo, persiste no Firestore.
 
-* **Sensor Kinect:** Responsável pela captura das imagens RGB e dos dados de profundidade utilizados no monitoramento volumétrico.
+ #### 5ª Etapa: Gestão, Alerta e Broadcast (MVC)
 
-* **Sistema MVC:** Responsável pela gestão operacional, dashboards, parâmetros, parceiros, notificações e relatórios.
+Nesta etapa, o sistema realiza o processamento lógico da medição em nuvem, garantindo a governança, a notificação proativa e a auditabilidade das ocorrências críticas.
 
-* **Parceiro:** Responsável pelo recebimento de alertas relacionados aos excedentes produtivos.
+##### 5.1. Pipeline de Validação de Regras de Negócio (UC30, UC34)
+Assim que a medição é persistida no Firestore, o serviço de mensageria (`BusinessRuleEngine`) inicia o fluxo de validação:
 
----
+* **Recuperação de Contexto:** O sistema recupera a `CapacidadeMaxima` e o `ParametroAlerta` (percentual) associados ao `SpaceID` da medição vigente (processos `P11`, `P12`).
+* **Categorização de Severidade:** O sistema classifica o status operacional conforme o volume detectado:
+    * **Nível Verde (Normal):** Volume abaixo do limite de alerta.
+    * **Nível Amarelo (Atenção):** Volume entre 80% e 99% da capacidade.
+    * **Nível Vermelho (Crítico):** Volume $\ge$ `ParametroAlerta` (ou 100% da capacidade).
+* **Persistência de Alerta:** Em estados **Vermelhos**, o sistema registra a ocorrência na coleção `D8 (Notificacoes)` com o status `PENDING_ACK` (Aguardando Confirmação).
 
-### Processos do Módulo Kinect
+##### 5.2. Processamento Dinâmico de Threshold e Broadcast
+O motor de regras aplica a seguinte lógica booleana para disparo de eventos:
 
-* **P1: Inicializar Kinect:** Ativa o sensor e valida sua conectividade.
+$$\text{IsAlertState} = \left( \frac{\text{VolumeAtual}}{\text{CapacidadeMaxima}} \right) \times 100 > \text{ParametroAlerta}$$
 
-* **P2: Capturar Dados de Profundidade:** Recebe continuamente as leituras do ambiente monitorado.
+* **Broadcast Inteligente:** O `NotificacaoHub` (SignalR) realiza o envio de um *payload* estruturado (contendo `AlertID`, `Timestamp`, `Message` e `SeverityLevel`) para todos os *dashboards* conectados (`UC14`).
+* **Filtragem:** O sistema consulta a coleção `D6 (Parceiros)` associados ao espaço monitorado, garantindo que a notificação alcance apenas os *stakeholders* autorizados.
 
-* **P3: Calibrar Espaço Vazio:** Cria o mapa de profundidade de referência.
+##### 5.3. UX Crítica: Protocolo de Confirmação Ativa (UC13, UC14)
+Para garantir a governança do processo, implementamos o **Protocolo de Confirmação Ativa**:
 
-* **P4: Processar Dados Capturados:** Aplica filtros, validações e tratamento de ruídos.
+* **Bloqueio de Interação (Modal Overlay):** Ao receber o evento `CRITICAL_ALERT`, o *dashboard* dispara um *Modal* de sobreposição que bloqueia a interação do usuário até que a anomalia seja reconhecida.
+* **Ação de Ciência:** O operador deve executar o `UC13` (Aceitar Coleta).
+* **Registro de Auditoria:** Ao confirmar, o sistema realiza um *update* no Firestore, alterando o status da notificação para `ACKNOWLEDGED` (Confirmado), registrando o `UserID` do operador e o `Timestamp` exato.
+* **Objetivo:** Este ciclo garante a rastreabilidade total, permitindo que, em auditorias operacionais, seja possível comprovar que toda anomalia foi detectada, notificada e tratada por um responsável.
 
-* **P5: Calcular Volume Ocupado:** Compara a leitura atual com a referência calibrada.
+### Tabela de Rastreabilidade: Fluxo de Execução Técnica
 
-* **P6: Calcular Indicadores Operacionais:** Calcula volume ocupado, espaço livre e percentual de ocupação.
+Esta tabela relaciona as etapas do ciclo de vida da medição com os Casos de Uso (UCs) e a infraestrutura responsável.
 
-* **P7: Persistir Medições:** Armazena os dados localmente em SQLite.
-
-* **P8: Atualizar Histórico Local:** Mantém o histórico das medições realizadas.
-
----
-
-### Processos da Aplicação MVC
-
-* **P9: Receber Medições:** Recebe dados enviados pelo módulo Kinect.
-
-* **P10: Atualizar Dashboard:** Atualiza indicadores e gráficos operacionais.
-
-* **P11: Validar Limites Operacionais:** Compara medições com parâmetros configurados.
-
-* **P12: Gerenciar Notificações:** Gera alertas quando os limites são atingidos.
-
-* **P13: Consultar Parceiros:** Localiza parceiros aptos a receber notificações.
-
-* **P14: Gerar Relatórios:** Disponibiliza relatórios e análises históricas.
-
----
-
-### Processos de Integração
-
-* **P15: Sincronizar Dados via SignalR:** Realiza a comunicação entre Kinect e MVC.
-
-* **P16: Manter Operação Local:** Garante funcionamento mesmo sem conexão com o MVC.
-
-* **P17: Atualizar Clientes Conectados:** Atualiza dashboards em tempo real.
-
----
-
-### Depósitos de Dados
-
-#### Módulo Kinect
-
-* **D1: MedicaoVolumes:** Histórico das medições realizadas.
-* **D2: HistoricoOcupacao:** Evolução da ocupação do espaço monitorado.
-* **D3: UsuariosAcesso:** Controle de acesso local.
-* **D4: LogsLocais:** Registro de eventos e falhas operacionais.
-
-#### Aplicação MVC
-
-* **D5: Usuarios:** Usuários cadastrados no sistema.
-* **D6: Parceiros:** Parceiros aptos a receber notificações.
-* **D7: ParametrosSistema:** Limites operacionais e configurações.
-* **D8: Notificacoes:** Histórico de alertas gerados.
-* **D9: Medicoes:** Medições recebidas do Kinect.
-* **D10: Relatorios:** Informações consolidadas para análise.
+| Fase | Etapa do Fluxo | Agente Responsável | Caso de Uso (UC) | Estado do Dado |
+| :--- | :--- | :--- | :--- | :--- |
+| **01** | Handshake e Diagnóstico | Módulo Kinect | UCK04, UCK07 | `READY` |
+| **02** | Calibração (Baseline) | Módulo Kinect | UCK08 | `BASELINE_STORED` |
+| **03** | Captura e Filtros | Módulo Kinect | UCK11, UCK15 | `PROCESSING` |
+| **04** | Cálculo Volumétrico | Módulo Kinect | UCK13, UCK14 | `VALUATED` |
+| **05** | Persistência Local | SQLite (D1) | UCK16 | `SYNC_PENDING` |
+| **06** | Sincronização (SignalR) | Barramento Integr. | UCK20, UCI01 | `IN_TRANSIT` |
+| **07** | Validação de Consistência | MVC Controller | UCI07 | `VALIDATED` |
+| **08** | Persistência em Nuvem | Firestore (D9) | UC32 | `STORED` |
+| **09** | Broadcast de Alerta | NotificacaoHub | UC14, UC34 | `BROADCASTED` |
+| **10** | Confirmação (ACK) | Operador (UI) | UC13 | `ACKNOWLEDGED` |
 
 ---
 
-### Detalhamento do Fluxo de Execução
-
-1. O usuário acessa o sistema.
-2. O Kinect é inicializado e validado.
-3. O ambiente é calibrado em estado vazio.
-4. O espaço monitorado é cadastrado.
-5. O Kinect captura uma nova leitura de profundidade.
-6. O sistema compara a leitura atual com a referência calibrada.
-7. O volume ocupado é calculado automaticamente.
-8. O sistema calcula espaço livre e percentual de ocupação.
-9. A medição é armazenada localmente em SQLite.
-10. Os dados são enviados para a aplicação MVC via SignalR.
-11. O dashboard é atualizado em tempo real.
-12. O MVC valida os limites configurados.
-13. Caso necessário, são gerados alertas e notificações.
-14. O monitoramento permanece ativo enquanto o Kinect estiver em operação.
+> **Nota:** A rastreabilidade apresentada assegura que cada transição de estado seja auditável, permitindo a verificação de *logs* em caso de falha de comunicação entre o *Edge* e a Nuvem.
+  
 
 ---
 
