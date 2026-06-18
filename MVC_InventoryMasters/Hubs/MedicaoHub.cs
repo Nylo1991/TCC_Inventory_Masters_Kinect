@@ -222,6 +222,7 @@ namespace MVC_InventoryMasters.Hubs
             }
 
             await base.OnDisconnectedAsync(exception);
+
         }
     }
 }
