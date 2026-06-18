@@ -793,183 +793,251 @@ Essa abordagem elimina a necessidade de relacionamentos complexos e operações 
 
 ---
 
-## Estrutura das Coleções Firestore
+# Estrutura das Coleções Firestore
 
-| Coleção | Finalidade |
-|---|---|
-| **usuarios** | Armazena os usuários cadastrados no sistema |
-| **parceiros** | Mantém os parceiros responsáveis pelo reaproveitamento dos excedentes |
-| **medicoes** | Registra todas as medições volumétricas enviadas pelo Kinect |
-| **notificacoes** | Controla os alertas automáticos disparados pelo sistema |
-| **mensagens** | Gerencia a comunicação entre usuários |
-| **parametrosSistema** | Armazena as regras de negócio e limites volumétricos |
-
----
-
-## Descrição das Coleções
-
-### Coleção: usuarios
-
-Responsável pelo armazenamento das informações de autenticação e controle de acesso da plataforma.
-
-| Campo | Tipo |
-|---|---|
-| usuarioId | String |
-| nome | String |
-| email | String |
-| perfil | String |
-| ativo | Boolean |
-| dataCadastro | Timestamp |
+| Coleção               | Finalidade                                                         |
+| --------------------- | ------------------------------------------------------------------ |
+| **Usuarios**          | Armazena os usuários cadastrados no sistema                        |
+| **Parceiros**         | Armazena os parceiros responsáveis pelo recolhimento dos materiais |
+| **Medicoes**          | Registra as medições volumétricas recebidas pelo Kinect            |
+| **Notificacoes**      | Armazena os alertas gerados automaticamente pelo sistema           |
+| **parametrosSistema** | Armazena as configurações globais e regras operacionais do sistema |
+| **Perfis**            | Define os perfis de acesso disponíveis para os usuários            |
 
 ---
 
-### Coleção: parceiros
+# Descrição das Coleções
 
-Armazena as empresas parceiras aptas a receber excedentes produtivos.
+## Coleção: Usuarios
 
-| Campo | Tipo |
-|---|---|
-| parceiroId | String |
-| nome | String |
-| empresa | String |
-| email | String |
-| telefone | String |
-| endereco | Map |
-| ativo | Boolean |
+Responsável pelo armazenamento dos usuários cadastrados na plataforma.
 
----
+| Campo         | Tipo      |
+| ------------- | --------- |
+| Id            | String    |
+| Nome          | String    |
+| Email         | String    |
+| Perfil        | String    |
+| Senha         | String    |
+| Data_Cadastro | Timestamp |
+| Ativo         | Boolean   |
 
-### Coleção: medicoes
+### Exemplo
 
-Responsável pelo armazenamento das medições volumétricas capturadas pelo Kinect ou inseridas manualmente.
-
-### Coleção: medicoes
-
-
-| Campo | Tipo |
-|---|---|
-| medicaoId | String |
-| dataHora | Timestamp |
-| volumeMedido | Number |
-| volumeTotalEspaco | Number |
-| volumeLivre | Number |
-| percentualOcupacao | Number |
-| quantidadePontos3D | Number |
-| confiabilidadeLeitura | Number |
-| origemLeitura | String |
-| status | String |
-| espacoId | Reference |
-
+```json
+{
+  "Nome": "Administrador",
+  "Email": "admin@inventorymasters.com",
+  "Perfil": "Administrador",
+  "Senha": "******",
+  "Data_Cadastro": "2026-06-08T14:30:00",
+  "Ativo": true
+}
+```
 
 ---
 
-### Coleção: notificacoes
+## Coleção: Parceiros
 
-Registra os alertas automáticos enviados pelo sistema aos parceiros e operadores.
+Armazena as empresas parceiras aptas a receber materiais excedentes.
 
-| Campo | Tipo |
-|---|---|
-| notificacaoId | String |
-| mensagem | String |
-| dataEnvio | Timestamp |
-| statusEnvio | String |
-| volumeMomento | Number |
-| percentualOcupacao | Number |
-| usuarioId | Reference |
-| parceiroId | Reference |
+| Campo         | Tipo      |
+| ------------- | --------- |
+| Id            | String    |
+| Nome          | String    |
+| Empresa       | String    |
+| Email         | String    |
+| Telefone      | String    |
+| Endereco      | String    |
+| Data_Cadastro | Timestamp |
+| Ativo         | Boolean   |
 
+### Exemplo
 
----
-
-### Coleção: mensagens
-
-Responsável pela comunicação interna entre usuários da plataforma.
-
-| Campo | Tipo |
-|---|---|
-| mensagemId | String |
-| remetenteId | Reference |
-| destinatarioId | Reference |
-| texto | String |
-| dataHora | Timestamp |
-| lida | Boolean |
+```json
+{
+  "Nome": "João Silva",
+  "Empresa": "Recicla Minas",
+  "Email": "contato@reciclaminas.com",
+  "Telefone": "(31) 9 9999-9999",
+  "Endereco": "Rua A, 100",
+  "Data_Cadastro": "2026-06-08T14:30:00",
+  "Ativo": true
+}
+```
 
 ---
 
-### Coleção: parametrosSistema
+## Coleção: Medicoes
 
-Define os parâmetros operacionais utilizados pelos gatilhos automáticos da aplicação.
+Responsável pelo armazenamento das medições enviadas pelo Kinect.
 
-| Campo | Tipo |
-|---|---|
-| volumeMaximo | Number |
-| percentualAlerta | Number |
-| emailNotificacaoAtivo | Boolean |
-| intervaloCapturaSegundos | Number |
-| intervaloSnapshotSegundos | Number |
-| dataAtualizacao | Timestamp |
+| Campo         | Tipo      |
+| ------------- | --------- |
+| Id            | String    |
+| OrigemLeitura | String    |
+| Status        | String    |
+| VolumeMedido  | Number    |
+| DataHora      | Timestamp |
 
----
+### Exemplo
 
-###  espacosMapeados
-
-Representa os ambientes cadastrados e mapeados pelo Kinect.
-
-| Campo | Tipo |
-|---|---|
-| espacoId | String |
-| nomeEspaco | String |
-| volumeTotalEspaco | Number |
-| volumeMaximoPermitido | Number |
-| percentualAlerta | Number |
-| ativo | Boolean |
-| dataMapeamento | Timestamp |
+```json
+{
+  "OrigemLeitura": "Kinect",
+  "Status": "Normal",
+  "VolumeMedido": 8.75,
+  "DataHora": "2026-06-08T14:30:00"
+}
+```
 
 ---
 
-###  snapshotsEspaciais
+## Coleção: Notificacoes
 
-Armazena os estados periódicos do ambiente.
+Armazena notificações e alertas gerados automaticamente quando os limites configurados são atingidos.
 
-| Campo | Tipo |
-|---|---|
-| snapshotId | String |
-| espacoId | Reference |
-| dataHora | Timestamp |
-| volumeAtual | Number |
-| espacoLivre | Number |
-| percentualOcupacao | Number |
-| quantidadePontos3D | Number |
+| Campo                | Tipo      |
+| -------------------- | --------- |
+| Id                   | String    |
+| VolumeMedido         | Number    |
+| ParceiroId           | String    |
+| ParceiroQueAceitouId | String    |
+| DataHora             | Timestamp |
+| StatusEnvio          | String    |
+| Mensagem             | String    |
+| Tipo                 | String    |
+| Automatica           | Boolean   |
+
+### Exemplo
+
+```json
+{
+  "VolumeMedido": 8.75,
+  "ParceiroId": "abc123",
+  "ParceiroQueAceitouId": null,
+  "DataHora": "2026-06-08T14:30:00",
+  "StatusEnvio": "Pendente",
+  "Mensagem": "O estoque atingiu 85% da capacidade máxima.",
+  "Tipo": "Capacidade",
+  "Automatica": true
+}
+```
 
 ---
 
-###  historicoOcupacao
+## Coleção: parametrosSistema
 
-Permite gerar gráficos e dashboards.
+Armazena as configurações utilizadas pelo sistema para cálculo de ocupação e geração de alertas.
 
-| Campo | Tipo |
-|---|---|
-| historicoId | String |
-| espacoId | Reference |
-| dataHora | Timestamp |
-| percentualOcupacao | Number |
-| volumeOcupado | Number |
-| volumeLivre | Number |
+### Documento
 
+```text
+parametrosSistema/configuracao
+```
 
+### Campos
 
-## Considerações Arquiteturais
+| Campo                 | Tipo      |
+| --------------------- | --------- |
+| CapacidadeMaxima      | Number    |
+| CapacidadeMinima      | Number    |
+| PercentualAlerta      | Number    |
+| DataAtualizacao       | Timestamp |
+| NotificacaoAutomatica | Boolean   |
+| ExibirAlertaDashboard | Boolean   |
+| ParceiroPadraoId      | String    |
+| DiasSemColetaAlerta   | Number    |
 
-A adoção do Firebase Firestore trouxe benefícios importantes para a solução:
+### Exemplo
 
-- Escalabilidade em nuvem;
-- Sincronização em tempo real;
-- Redução da complexidade relacional;
-- Melhor desempenho para aplicações distribuídas;
-- Facilidade de integração com aplicações Web e Mobile;
-- Estrutura orientada a documentos adequada para IoT e monitoramento contínuo.
+```json
+{
+  "CapacidadeMaxima": 10.0,
+  "CapacidadeMinima": 1.0,
+  "PercentualAlerta": 80,
+  "DataAtualizacao": "2026-06-08T14:30:00",
+  "NotificacaoAutomatica": true,
+  "ExibirAlertaDashboard": true,
+  "ParceiroPadraoId": "abc123",
+  "DiasSemColetaAlerta": 15
+}
+```
 
-A arquitetura híbrida implementada no projeto permite que o módulo Kinect opere de maneira independente localmente, enquanto a aplicação MVC centraliza e distribui as informações operacionalmente em ambiente cloud.
+---
+
+## Coleção: Perfis
+
+Responsável pelos perfis de acesso disponíveis para o sistema.
+
+| Campo  | Tipo   |
+| ------ | ------ |
+| Id     | String |
+| Perfil | String |
+
+### Exemplo
+
+```json
+{
+  "Perfil": "Administrador"
+}
+```
+
+---
+
+# Relacionamentos Entre Coleções
+
+```text
+Usuarios
+    │
+    └── Perfil
+
+Notificacoes
+    │
+    ├── ParceiroId
+    │
+    └── ParceiroQueAceitouId
+
+Medicoes
+    │
+    └── Utilizadas para geração de Notificacoes
+
+parametrosSistema
+    │
+    ├── Define CapacidadeMaxima
+    ├── Define PercentualAlerta
+    └── Controla geração automática de alertas
+```
+
+---
+
+# Considerações Arquiteturais
+
+A solução utiliza o Firebase Firestore como banco de dados NoSQL orientado a documentos. A escolha do Firestore permite:
+
+* Armazenamento em nuvem escalável;
+* Sincronização em tempo real com SignalR;
+* Integração simplificada com o módulo Kinect;
+* Alta disponibilidade dos dados;
+* Flexibilidade na evolução da estrutura dos documentos;
+* Facilidade de integração com aplicações Web MVC.
+
+A arquitetura implementada segue o fluxo:
+
+```text
+Kinect
+   ↓
+SignalR Hub
+   ↓
+Firestore
+   ↓
+MVC Inventory Masters
+   ↓
+Dashboard e Notificações
+```
+
+Essa estrutura representa a modelagem atualmente implementada no projeto Inventory Masters e utilizada para armazenamento, monitoramento e gerenciamento dos dados operacionais do sistema.
+
 
 ---
 
