@@ -423,6 +423,8 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 </p>
 
+---
+
 #### Casos de Uso da Aplicação MVC
 
 A tabela abaixo apresenta os casos de uso relacionados exclusivamente à aplicação web MVC, responsável pela administração, monitoramento, parametrização, notificações e gestão operacional da plataforma.
