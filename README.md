@@ -352,19 +352,37 @@ Os requisitos do sistema foram organizados por categoria, separando as funcional
 
 ---
 
-## 4. Requisitos Não Funcionais
+## Requisitos Não Funcionais (RNF)
 
-| ID | Tipo | Requisito Não Funcional | Casos de Uso |
-| :--- | :--- | :--- | :--- |
-| **RNF01** | Desempenho | Processamento volumétrico e atualização em tempo real com baixa latência. | - |
-| **RNF02** | Resiliência | Auto-recuperação e cache local para evitar perda de dados. | UC50, UC58 |
-| **RNF03** | Segurança | Autenticação, validação de acesso e proteção das informações transmitidas. | UC57, UC59 |
-| **RNF04** | Confiabilidade | Diagnóstico contínuo de hardware e gestão de memória. | UC37, UC39 |
-| **RNF05** | Manutenibilidade | Uso de injeção de dependência e separação de responsabilidades para desacoplamento. | UC63 |
-| **RNF06** | Usabilidade | Interface clara para exibir volume ocupado, espaço livre, percentual de ocupação e status operacional. | - |
-| **RNF07** | Disponibilidade Local | O módulo Kinect deve operar localmente mesmo quando a aplicação MVC estiver indisponível. | UC58 |
-| **RNF08** | Rastreabilidade | As medições devem ser registradas para permitir consulta histórica e auditoria operacional. | UC19, UC26 |
+### 1. Desempenho e Performance
+* **RNF01 - Latência de Processamento:** O tempo total entre a captura da imagem pelo Kinect e a atualização do *Dashboard* não deve exceder 2.5 segundos em condições ideais de rede.
+* **RNF02 - Taxa de Atualização (Frame Rate):** O módulo de visão computacional deve processar, no mínimo, 10 frames por segundo (FPS) para garantir a fluidez na detecção de mudanças volumétricas.
+* **RNF03 - Consumo de Memória:** A aplicação local (Módulo Kinect) não deve exceder 500MB de RAM em operação contínua, devendo disparar rotinas de coleta de lixo (*Garbage Collection*) caso atinja este limiar.
+* **RNF04 - Tempo de Resposta do Banco:** Consultas de leitura no *Firestore* não devem exceder 500ms para carregamento de listagens de histórico.
+* **RNF05 - Precisão Métrica:** A margem de erro na medição volumétrica não deve exceder ± 2% do volume real, garantindo a acurácia necessária para o controle de estoque.
 
+### 2. Confiabilidade e Disponibilidade
+* **RNF06 - Disponibilidade do Sistema:** O sistema deve manter uma disponibilidade de 99.5%, permitindo janelas de manutenção programada fora do horário comercial (00:00 - 06:00).
+* **RNF07 - Resiliência (Modo Offline):** O sistema deve ser capaz de operar de forma autônoma (armazenamento em cache local/SQLite) por até 48 horas em caso de falha total de comunicação com o servidor em nuvem.
+* **RNF08 - Recuperação de Falhas (Failover):** Em caso de queda do serviço de *backend*, o módulo de captura deve restabelecer a conexão automaticamente sem intervenção humana após a normalização do link de dados.
+
+### 3. Segurança e Governança
+* **RNF09 - Autenticação:** O acesso ao sistema deve exigir autenticação via protocolo HTTPS/TLS 1.2+, garantindo a criptografia dos dados em trânsito.
+* **RNF10 - Integridade de Dados:** O sistema deve garantir a imutabilidade dos logs de auditoria; uma vez gravado, o `AuditLog` não pode ser editado nem mesmo pelo perfil Administrador.
+* **RNF11 - Proteção contra Acessos:** Implementação de políticas de proteção contra ataques de força bruta, com bloqueio automático de IP após sucessivas falhas de autenticação.
+* **RNF12 - Controle de Acesso (RBAC):** O sistema deve seguir o princípio do privilégio mínimo, onde cada perfil possui acesso estritamente necessário para suas funções.
+
+### 4. Usabilidade e Acessibilidade
+* **RNF13 - Tempo de Aprendizado:** O sistema deve possuir uma interface intuitiva que permita a um operador treinado realizar uma calibração em menos de 3 minutos.
+* **RNF14 - Responsividade:** O *dashboard* deve ser compatível com resoluções de 1024x768 até 1920x1080 (Full HD), garantindo legibilidade em telas industriais e dispositivos móveis.
+* **RNF15 - Feedback do Usuário:** Toda ação crítica (ex: exclusão de parceiro ou calibração) deve exigir confirmação explícita via *modal* de diálogo.
+
+### 5. Manutenibilidade e Portabilidade
+* **RNF16 - Modularidade:** O sistema deve ser desenvolvido seguindo uma arquitetura desacoplada, permitindo a substituição do sensor Kinect ou do banco de dados sem a necessidade de reescrita total do código.
+* **RNF17 - Documentação de Código:** Todo novo componente deve seguir o padrão de documentação técnica (JSDoc ou XML Comments) para facilitar a manutenção de terceiros.
+* **RNF18 - Portabilidade do Backend:** A aplicação MVC deve ser compatível com ambientes de hospedagem baseados em containers (ex: Docker) para facilitar a escalabilidade.
+* **RNF19 - Versionamento e Evolução:** O sistema deve seguir o padrão de versionamento semântico (*Semantic Versioning*), permitindo atualizações incrementais do *firmware* do Kinect sem impacto na API do MVC.
+  
  ---
 # MODELAGEM DO SISTEMA
 
@@ -382,7 +400,6 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
   <img src="./Imagens/UC_Diagrama.png" width="800" alt="Diagrama de Caso de Uso" />
 
 </p>
-
 
 ---
 
