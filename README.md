@@ -98,7 +98,7 @@ Mais do que uma iniciativa sustentável, a Inventory Masters configura-se como u
 
 ---
 
-### ÁREA TECNOLÓGICA DA SOLUÇÃO
+## ÁREA TECNOLÓGICA DA SOLUÇÃO
 
 A solução Inventory Masters está inserida no contexto da **Indústria 4.0**, integrando tecnologias de visão computacional, monitoramento volumétrico, processamento de dados e comunicação em tempo real para apoiar a gestão inteligente de excedentes produtivos e ocupação de espaços de armazenamento.
 
@@ -116,7 +116,9 @@ As principais áreas tecnológicas envolvidas são:
 
 A combinação dessas tecnologias permite que a solução transforme medições físicas em informações estratégicas para apoio à tomada de decisão, rastreabilidade de excedentes e otimização dos espaços de armazenamento.
 
-### JUSTIFICATIVA
+---
+
+## JUSTIFICATIVA
 
 A implementação deste projeto justifica-se pelas limitações dos métodos tradicionais de controle de estoque e monitoramento de espaços de armazenamento, que normalmente dependem de medições manuais, inspeções periódicas e registros sujeitos a falhas humanas.
 
@@ -126,7 +128,9 @@ Nesse contexto, a Inventory Masters propõe uma alternativa tecnológica de baix
 
 Além dos benefícios operacionais, a solução contribui para práticas de economia circular, rastreabilidade de materiais e redução de impactos ambientais, tornando a gestão dos excedentes mais eficiente, sustentável e orientada por dados.
 
-### OBJETIVOS
+---
+
+## OBJETIVOS
 
 #### Objetivo Geral
 
@@ -160,7 +164,7 @@ Desenvolver e implementar uma plataforma tecnológica capaz de realizar o monito
 
 ---
 
-### DESENVOLVIMENTO
+## DESENVOLVIMENTO
 
 O desenvolvimento do projeto foi estruturado em etapas progressivas, permitindo a construção independente dos módulos Kinect e MVC, bem como sua integração para formação da solução completa.
 
@@ -209,13 +213,31 @@ Foram realizados testes de calibração, precisão das medições, persistência
 Após a integração dos componentes, a plataforma passou a disponibilizar informações sobre ocupação dos espaços, capacidade disponível, histórico de medições e indicadores operacionais, apoiando a gestão dos excedentes produtivos e a tomada de decisão.
 
 ---
+
+## Minimundo
+
+O **Inventory Masters** é um sistema de monitoramento logístico inteligente projetado para o controle preciso de estoques em armazéns e centros de distribuição. O problema central que o sistema resolve é a divergência entre o estoque físico e o estoque registrado no sistema de gestão, causada principalmente por processos manuais de contagem, falhas na identificação de carga e falta de visibilidade em tempo real sobre a ocupação volumétrica dos espaços de armazenamento.
+
+## O Cenário Operacional
+O sistema atua em um ambiente industrial onde o monitoramento é realizado por sensores de profundidade (**Microsoft Kinect**). Cada área de armazenamento (ou "Espaço Monitorado") possui um sensor dedicado que realiza leituras constantes do ambiente. O processo inicia-se com a **Calibração**, onde o sistema mapeia o "ambiente vazio" (estado de referência), permitindo que qualquer objeto introduzido no campo de visão seja detectado e calculado matematicamente.
+
+## A Jornada do Dado
+As leituras brutas são processadas localmente para filtrar ruídos e oclusões, garantindo que apenas dados íntegros sejam convertidos para volumes volumétricos ($m^3$). Devido à natureza instável de redes industriais, o módulo de borda opera com **resiliência (Modo Offline)**, utilizando cache local (**SQLite**) para garantir a continuidade da medição mesmo em casos de queda de conexão.
+
+A integração com o módulo central (web) ocorre via **SignalR**, permitindo que o *Dashboard* receba atualizações em tempo real. O sistema MVC atua como o cérebro da operação, onde os administradores configuram os limites de capacidade e os alertas de ocupação. Toda alteração de parâmetros ou ocorrência crítica (como uma zona de ocupação vermelha) gera um log de auditoria imutável, garantindo a conformidade e a rastreabilidade necessárias para processos de qualidade.
+
+## A Experiência do Operador
+O operador do sistema interage com um *dashboard* responsivo e intuitivo, que oferece uma visão holística dos armazéns. Através de indicadores visuais (gráficos *Doughnut* com código de cores), ele identifica rapidamente se o armazém está operando dentro dos parâmetros de segurança. Quando um limite crítico é atingido, o sistema dispara notificações que exigem uma resposta ativa ("Ciente"), garantindo que nenhuma anomalia seja ignorada, transformando o monitoramento passivo em uma ferramenta ativa de suporte à tomada de decisão logística.
+
+---
+
 ## REGRA DE NEGÓCIO
 
 As regras de negócio definem o comportamento esperado do sistema, garantindo a precisão das medições, a integridade dos dados, a operação correta do hardware Kinect, a comunicação em tempo real com a aplicação MVC e o apoio à tomada de decisão logística.
 
 As regras foram organizadas por domínio para separar claramente as responsabilidades do **Módulo Kinect**, do **Módulo MVC** e da **Integração entre os módulos**.
 
-## 1. Regras de Domínio e Processamento (Visão Computacional)
+#### 1. Regras de Domínio e Processamento (Visão Computacional)
 * **RN01 - Cálculo de Percentual de Ocupação:** Derivado da fórmula: $$Ocupacao = \left( \frac{VolumeMedido}{CapacidadeMaxima} \right) \times 100$$
     * *Validação:* Recalculado a cada nova medição válida.
 * **RN02 - Cálculo Volumétrico:** Diferença absoluta entre o mapa de profundidade calibrado (vazio) e a leitura atual do Kinect. Valor negativo é tratado como erro ou 0.
@@ -225,7 +247,7 @@ As regras foram organizadas por domínio para separar claramente as responsabili
 * **RN06 - Critério de Aceitação da Leitura:** Medição válida apenas se houver dados de profundidade consistentes, sem ruídos ou oclusões.
 * **RN07 - Rastreabilidade Espacial:** Toda medição registra o estado (timestamp e mapa) para auditoria.
 
-## 2. Regras de Hardware e Calibração (Kinect)
+#### 2. Regras de Hardware e Calibração (Kinect)
 * **RN08 - Inicialização do Sensor:** O Kinect deve estar operacional antes de qualquer processo.
 * **RN09 - Calibração Obrigatória:** Nenhuma medição é válida sem calibração prévia do ambiente vazio.
 * **RN10 - Referência Espacial:** A calibração gera o mapa base para comparações futuras.
@@ -236,14 +258,14 @@ As regras foram organizadas por domínio para separar claramente as responsabili
 * **RN15 - Operação Offline:** Armazenamento local caso o front-end MVC esteja indisponível.
 * **RN16 - Limpeza de Memória:** Rotina de limpeza de buffer pós-processamento para evitar *memory leaks*.
 
-## 3. Regras de Integração (SignalR)
+#### 3. Regras de Integração (SignalR)
 * **RN17 - Broadcast de Medição:** Evento `NovaMedicao` disparado imediatamente após validação.
 * **RN18 - Resiliência e Cache:** Cache local se houver queda de conexão.
 * **RN19 - Ciclo de Vida da Conexão:** Gerenciamento ativo de estados `Connect/Disconnect`.
 * **RN20 - Conectividade Estável:** Uso obrigatório de `withAutomaticReconnect`.
 * **RN21 - Proteção contra Replay Attacks:** Validação de `SequenceID` para evitar reprocessamento de mensagens antigas.
 
-## 4. Regras de Segurança, Persistência e Acesso (Módulo MVC)
+#### 4. Regras de Segurança, Persistência e Acesso (Módulo MVC)
 * **RN22 - Singleton de Instância:** `FirebaseApp` instanciado uma única vez.
 * **RN23 - Rastreabilidade:** Notificações registram o `VolumeMedido` no momento do disparo.
 * **RN24 - Segregação de Perfis:** Admin (gestão total) vs. Operador (operação/monitoramento).
@@ -258,7 +280,7 @@ As regras foram organizadas por domínio para separar claramente as responsabili
 * **RN53 - Bloqueio de Login por Tentativas:** Bloqueio temporário (15 min) da conta após 5 tentativas falhas de login.
 * **RN54 - Validação de Origin (CORS):** Hubs SignalR e Endpoints MVC configurados para aceitar requisições apenas de domínios homologados.
 
-## 5. Regras de Interface e UX
+#### 5. Regras de Interface e UX
 * **RN31 - Validação de Formulários:** Bloqueio via *Data Annotations* (Client-Side).
 * **RN32 - Máscara de Dados:** Telefone padrão `(00) 0 0000-0000`.
 * **RN33 - Preservação de Estado:** Filtros persistidos na URL durante paginação.
@@ -269,7 +291,7 @@ As regras foram organizadas por domínio para separar claramente as responsabili
 * **RN38 - Notificação de Alerta Pendente:** Modal "Vermelho" persistente que exige interação ("Ciente").
 * **RN39 - Indicador de Conexão:** Status visual (Verde/Amarelo/Vermelho) em tempo real.
 
-## 6. Regras Adicionais de Robustez
+#### 6. Regras Adicionais de Robustez
 * **RN40 - Idempotência:** Garantia de que leituras via rede instável não criem duplicidade.
 * **RN41 - Validação de Latência:** Log de `Warning` se processamento sensor-dashboard exceder 2 segundos.
 * **RN42 - Fallback de Sensores:** Bloqueio e solicitação de recalibração caso o sensor detecte ruído anômalo.
@@ -313,7 +335,7 @@ O processamento do *Inventory Masters* segue um pipeline de **validação contí
 
 Os requisitos do sistema foram organizados por categoria, separando as funcionalidades relacionadas à gestão web, ao módulo Kinect, ao monitoramento, à integração e aos aspectos não funcionais da solução.
 
-### Requisitos Funcionais
+### Requisitos Funcionais (RF)
 
 #### 1. Módulo de Aquisição de Dados (Hardware e Visão Computacional)
 * **RF01 - Captura Espacial:** O sistema deve iniciar a leitura de profundidade via sensor Kinect, convertendo o fluxo de frames em um mapa de profundidade tridimensional em tempo real.
