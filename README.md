@@ -788,7 +788,7 @@ Essa abordagem elimina a necessidade de relacionamentos complexos e operações 
 ## Modelagem NoSQL Firebase Firestore (MVC)
 
 <p align="center">
-  <img src="./Imagens/Modelagem_NoSQL_MVC.png" width="1200" alt="Modelagem NoSQL Firebase Firestore MVC" />
+  <img src="./Imagens/ModelagemFireBase_InevtoryMasters.png" width="1200" alt="Modelagem NoSQL Firebase Firestore MVC" />
 </p>
 
 ---
