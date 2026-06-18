@@ -247,6 +247,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             /// e KinectRepository para acesso ao banco de dados SQLite.
             UsuarioLogado = sessao.Usuario;
             EmpresaLogada = sessao.Empresa;
+            LoggerService.DefinirEmpresa(sessao.Empresa);
 
             _kinectService = new KinectService();
             _signalRService = new SignalRService();
