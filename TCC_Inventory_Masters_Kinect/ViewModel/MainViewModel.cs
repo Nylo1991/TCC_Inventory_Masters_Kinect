@@ -647,5 +647,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             double volumeM3 = volumeCm3 / 1000000.0;
             return $"{volumeM3:F3} m3";
         }
+
+        /// <summary>
+        /// Metodo de encerramento do sistema ao clicar em sair todo o sistema e desligado e o usuario retorna  
+        /// a tela de login .
+        /// </summary>
+        public void DesligarMonitoramento()
+        {
+            DesligarKinect();
+        }
     }
 }

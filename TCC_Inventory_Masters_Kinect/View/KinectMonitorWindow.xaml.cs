@@ -222,13 +222,21 @@ namespace TCC_Inventory_Masters_Kinect.View
 
         /// <summary>
         /// Evento de clique do botão "Sair", que fecha a aplicação de forma segura,
-        /// garantindo que todos os recursos sejam liberados corretamente.
+        /// garantindo que todos os recursos sejam liberados corretamente  e retornando a tela de login .
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void SairButton_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            if (_viewModel != null)
+            {
+                _viewModel.DesligarMonitoramento();
+            }
+
+            var login = new KinectLogin();
+            login.Show();
+
+            Close();
         }
 
         private void AbrirMonitoramento_Click(object sender, RoutedEventArgs e)
