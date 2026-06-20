@@ -126,21 +126,23 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         Calibrado INTEGER NOT NULL,
                         Status TEXT,
                         Empresa TEXT,
-                        Usuario TEXT
+                        Usuario TEXT,
+                        NomeEspaco TEXT,
+                        LimiteOcupacaoPercentual REAL
                     );
 
                     CREATE TABLE IF NOT EXISTS HistoricosOcupacao (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    EspacoMapeadoId INTEGER NOT NULL,
-                    VolumeAtualCm3 REAL NOT NULL,
-                    VolumeMaximoCm3 REAL NOT NULL,
-                    EspacoLivreCm3 REAL NOT NULL,
-                    PercentualOcupacao REAL NOT NULL,
-                    LimiteUltrapassado INTEGER NOT NULL,
-                    NivelOcupacao TEXT,
-                    Status TEXT,
-                    DataHora TEXT NOT NULL,
-                    Empresa TEXT
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        EspacoMapeadoId INTEGER NOT NULL,
+                        VolumeAtualCm3 REAL NOT NULL,
+                        VolumeMaximoCm3 REAL NOT NULL,
+                        EspacoLivreCm3 REAL NOT NULL,
+                        PercentualOcupacao REAL NOT NULL,
+                        LimiteUltrapassado INTEGER NOT NULL,
+                        NivelOcupacao TEXT,
+                        Status TEXT,
+                        DataHora TEXT NOT NULL,
+                        Empresa TEXT
                     );
 
                     CREATE TABLE IF NOT EXISTS Logs (
@@ -175,11 +177,11 @@ namespace TCC_Inventory_Masters_Kinect.Data
 
                 GarantirColuna(conn, "MedicaoVolumes", "Empresa", "TEXT");
                 GarantirColuna(conn, "MedicaoVolumes", "Usuario", "TEXT");
+                GarantirColuna(conn, "MedicaoVolumes", "NomeEspaco", "TEXT");
+                GarantirColuna(conn, "MedicaoVolumes", "LimiteOcupacaoPercentual", "REAL");
 
-                /// <summary>
-                /// Garante a existência da coluna Empresa na tabela de históricos de ocupação,
-                /// permitindo o isolamento dos dados entre diferentes empresas.
-                /// </summary>
+                // Garante a existência da coluna Empresa na tabela de históricos de ocupação,
+                // permitindo o isolamento dos dados entre diferentes empresas.
                 GarantirColuna(conn, "HistoricosOcupacao", "Empresa", "TEXT");
             }
         }
