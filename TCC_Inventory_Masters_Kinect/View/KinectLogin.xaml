@@ -82,6 +82,8 @@
                                    Margin="0,0,0,6"/>
 
                         <TextBox x:Name="LoginUsuarioTextBox"
+                                 HorizontalContentAlignment="Center"
+
                                   Height="42"
                                     FontSize="15"
                                     Padding="12,0"
