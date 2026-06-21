@@ -42,7 +42,8 @@
             <Setter Property="Foreground" Value="#111111"/>
             <Setter Property="BorderBrush" Value="#DADDE2"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Margin" Value="0,0,0,12"/>
         </Style>
     </Window.Resources>
@@ -96,15 +97,14 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Margin="18,14,18,0">
-
-
                     <Button Content="Historico de Medicoes"
-                            Height="42"
-                            Background="Transparent"
-                            Foreground="#D1FAE5"
+                            Height="44"
+                            Background="#145A3D"
+                            Foreground="White"
                             BorderBrush="#1E7A53"
                             BorderThickness="1"
                             FontSize="15"
+                            FontWeight="SemiBold"
                             HorizontalContentAlignment="Left"
                             Padding="14,0"
                             Cursor="Hand"
@@ -150,35 +150,35 @@
                            ToolTip="Captura em tempo real e medicao volumetrica pelo Kinect 360."/>
 
                 <StackPanel Grid.Column="1"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Center"
-            Margin="0,0,18,0">
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,18,0">
 
                     <StackPanel Orientation="Horizontal"
-                HorizontalAlignment="Right">
+                                HorizontalAlignment="Right">
                         <TextBlock Text="Usuario: "
-                   Foreground="#D1FAE5"
-                   FontSize="12"
-                   FontWeight="SemiBold"/>
+                                   Foreground="#D1FAE5"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"/>
 
                         <TextBlock Text="{Binding UsuarioLogado}"
-                   Foreground="White"
-                   FontSize="14"
-                   FontWeight="Bold"/>
+                                   Foreground="White"
+                                   FontSize="14"
+                                   FontWeight="Bold"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal"
-                HorizontalAlignment="Right"
-                Margin="0,3,0,0">
+                                HorizontalAlignment="Right"
+                                Margin="0,3,0,0">
                         <TextBlock Text="Empresa: "
-                   Foreground="#D1FAE5"
-                   FontSize="12"
-                   FontWeight="SemiBold"/>
+                                   Foreground="#D1FAE5"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"/>
 
                         <TextBlock Text="{Binding EmpresaLogada}"
-                   Foreground="White"
-                   FontSize="12"
-                   FontWeight="SemiBold"/>
+                                   Foreground="White"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -232,7 +232,7 @@
                     </StackPanel>
 
                     <Image Source="{Binding CameraImage}"
-                           Stretch="Uniform"
+                           Stretch="UniformToFill"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch"
                            Panel.ZIndex="1"
@@ -271,45 +271,46 @@
                                   Source="Videos/calibracao.mp4"
                                   LoadedBehavior="Manual"
                                   UnloadedBehavior="Stop"
-                                  Stretch="Uniform"
+                                  Stretch="UniformToFill"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Visibility="Hidden"
                                   MediaEnded="CalibrationVideoElement_MediaEnded"
                                   Panel.ZIndex="1"
                                   ToolTip="Video de orientacao exibido durante a calibracao."/>
+
                     <Border x:Name="PainelCalibracao"
-                       Background="#CC0B3323"
-                          CornerRadius="8"
-                        Padding="18"
-                         Width="420"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                           Visibility="Collapsed"
-                          Panel.ZIndex="2">
+                            Background="#CC0B3323"
+                            CornerRadius="8"
+                            Padding="18"
+                            Width="420"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Visibility="Collapsed"
+                            Panel.ZIndex="2">
                         <StackPanel>
                             <TextBlock Text="Calibracao em andamento"
-                               Foreground="White"
-                                     FontSize="22"
-                               FontWeight="Bold"
-                              HorizontalAlignment="Center"
-                                Margin="0,0,0,8"/>
+                                       Foreground="White"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,8"/>
 
                             <TextBlock Text="{Binding StatusMessage}"
-                                 Foreground="#D1FAE5"
-                               FontSize="15"
-                               FontWeight="SemiBold"
-                                 HorizontalAlignment="Center"
-                                TextAlignment="Center"
-                                 TextWrapping="Wrap"
-                                    Margin="0,0,0,6"/>
+                                       Foreground="#D1FAE5"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,6"/>
 
                             <TextBlock Text="{Binding StatusCalibracao}"
-                                   Foreground="#FFD966"
-                                     FontSize="14"
-                                   HorizontalAlignment="Center"
-                                  TextAlignment="Center"
-                                TextWrapping="Wrap"/>
+                                       Foreground="#FFD966"
+                                       FontSize="14"
+                                       HorizontalAlignment="Center"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"/>
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -321,50 +322,6 @@
                       VerticalScrollBarVisibility="Auto"
                       Margin="0,22,22,22">
             <StackPanel>
-                <Border Style="{StaticResource PanelBorderStyle}">
-                    <StackPanel>
-                        <TextBlock Text="Status"
-                                   Foreground="#111111"
-                                   FontWeight="Bold"
-                                   FontSize="17"
-                                   Margin="0,0,0,12"/>
-
-                        <Border BorderBrush="#16A34A"
-                                BorderThickness="1.5"
-                                CornerRadius="6"
-                                Padding="10"
-                                Margin="0,0,0,8">
-                            <TextBlock Text="{Binding StatusKinect}"
-                                       Foreground="#16A34A"
-                                       FontSize="13"
-                                       FontWeight="SemiBold"
-                                       ToolTip="Estado de conexao do Kinect."/>
-                        </Border>
-
-                        <Border BorderBrush="#2563EB"
-                                BorderThickness="1.5"
-                                CornerRadius="6"
-                                Padding="10"
-                                Margin="0,0,0,8">
-                            <TextBlock Text="{Binding StatusSQLite}"
-                                       Foreground="#2563EB"
-                                       FontSize="13"
-                                       FontWeight="SemiBold"
-                                       ToolTip="Estado do salvamento local no SQLite."/>
-                        </Border>
-
-                        <Border BorderBrush="#D97706"
-                                BorderThickness="1.5"
-                                CornerRadius="6"
-                                Padding="10">
-                            <TextBlock Text="{Binding StatusSignalR}"
-                                       Foreground="#D97706"
-                                       FontSize="13"
-                                       FontWeight="SemiBold"
-                                       ToolTip="Estado da comunicacao com o MVC via SignalR."/>
-                        </Border>
-                    </StackPanel>
-                </Border>
 
                 <Border Style="{StaticResource PanelBorderStyle}">
                     <StackPanel>
@@ -403,8 +360,9 @@
                                     BorderThickness="2"
                                     CornerRadius="8"
                                     Padding="10"
+                                    MinHeight="78"
                                     Margin="0,0,6,6">
-                                <StackPanel>
+                                <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="Ocupacao"
                                                Foreground="#D97706"
                                                FontSize="12"
@@ -424,8 +382,9 @@
                                     BorderThickness="2"
                                     CornerRadius="8"
                                     Padding="10"
+                                    MinHeight="78"
                                     Margin="6,0,0,6">
-                                <StackPanel>
+                                <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="Livre"
                                                Foreground="#16A34A"
                                                FontSize="12"
@@ -445,8 +404,9 @@
                                     BorderThickness="2"
                                     CornerRadius="8"
                                     Padding="10"
+                                    MinHeight="78"
                                     Margin="0,6,6,0">
-                                <StackPanel>
+                                <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="Pontos"
                                                Foreground="#2563EB"
                                                FontSize="12"
@@ -466,8 +426,9 @@
                                     BorderThickness="2"
                                     CornerRadius="8"
                                     Padding="10"
+                                    MinHeight="78"
                                     Margin="6,6,0,0">
-                                <StackPanel>
+                                <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="Situacao"
                                                Foreground="#DC2626"
                                                FontSize="12"
@@ -517,7 +478,6 @@
                         <TextBlock Text="{Binding MensagemEspaco}"
                                    Foreground="#16A34A"
                                    FontSize="12"
-                                   Margin="0,0,0,0"
                                    TextWrapping="Wrap"/>
 
                         <Button Content="Salvar Espaco"
@@ -565,6 +525,51 @@
 
                 <Border Style="{StaticResource PanelBorderStyle}">
                     <StackPanel>
+                        <TextBlock Text="Status do Sistema"
+                                   Foreground="#111111"
+                                   FontWeight="Bold"
+                                   FontSize="17"
+                                   Margin="0,0,0,12"/>
+
+                        <Border BorderBrush="#16A34A"
+                                BorderThickness="1.5"
+                                CornerRadius="6"
+                                Padding="10"
+                                Margin="0,0,0,8">
+                            <TextBlock Text="{Binding StatusKinect}"
+                                       Foreground="#16A34A"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       ToolTip="Estado de conexao do Kinect."/>
+                        </Border>
+
+                        <Border BorderBrush="#2563EB"
+                                BorderThickness="1.5"
+                                CornerRadius="6"
+                                Padding="10"
+                                Margin="0,0,0,8">
+                            <TextBlock Text="{Binding StatusSQLite}"
+                                       Foreground="#2563EB"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       ToolTip="Estado do salvamento local no SQLite."/>
+                        </Border>
+
+                        <Border BorderBrush="#D97706"
+                                BorderThickness="1.5"
+                                CornerRadius="6"
+                                Padding="10">
+                            <TextBlock Text="{Binding StatusSignalR}"
+                                       Foreground="#D97706"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       ToolTip="Estado da comunicacao com o MVC via SignalR."/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource PanelBorderStyle}">
+                    <StackPanel>
                         <TextBlock Text="Envio em Tempo Real"
                                    Foreground="#111111"
                                    FontWeight="Bold"
@@ -607,91 +612,91 @@
                        TextTrimming="CharacterEllipsis"/>
         </Border>
 
-
         <Grid x:Name="TelaBloqueioInatividade"
-      Grid.Row="0"
-      Grid.Column="0"
-      Grid.RowSpan="3"
-      Grid.ColumnSpan="3"
-      Background="#DD0B3323"
-      Visibility="Collapsed"
-      Panel.ZIndex="99">
+              Grid.Row="0"
+              Grid.Column="0"
+              Grid.RowSpan="3"
+              Grid.ColumnSpan="3"
+              Background="#DD0B3323"
+              Visibility="Collapsed"
+              Panel.ZIndex="99">
 
             <Border Width="430"
-            Background="White"
-            CornerRadius="8"
-            Padding="28"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            BorderBrush="#DADDE2"
-            BorderThickness="1">
+                    Background="White"
+                    CornerRadius="8"
+                    Padding="28"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    BorderBrush="#DADDE2"
+                    BorderThickness="1">
 
                 <StackPanel>
                     <TextBlock Text="Sessao bloqueada"
-                       Foreground="#111111"
-                       FontSize="26"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Center"/>
+                               Foreground="#111111"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
 
                     <TextBlock Text="O monitoramento do Kinect continua ativo."
-                       Foreground="#6B7280"
-                       FontSize="14"
-                       TextAlignment="Center"
-                       TextWrapping="Wrap"
-                       Margin="0,8,0,22"/>
+                               Foreground="#6B7280"
+                               FontSize="14"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               Margin="0,8,0,22"/>
 
                     <TextBlock Text="Usuario"
-                       Foreground="#6B7280"
-                       FontSize="12"
-                       FontWeight="SemiBold"/>
+                               Foreground="#6B7280"
+                               FontSize="12"
+                               FontWeight="SemiBold"/>
 
                     <TextBlock Text="{Binding UsuarioLogado}"
-                       Foreground="#111111"
-                       FontSize="16"
-                       FontWeight="Bold"
-                       Margin="0,4,0,14"/>
+                               Foreground="#111111"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               Margin="0,4,0,14"/>
 
                     <TextBlock Text="Empresa"
-                       Foreground="#6B7280"
-                       FontSize="12"
-                       FontWeight="SemiBold"/>
+                               Foreground="#6B7280"
+                               FontSize="12"
+                               FontWeight="SemiBold"/>
 
                     <TextBlock Text="{Binding EmpresaLogada}"
-                       Foreground="#111111"
-                       FontSize="16"
-                       FontWeight="Bold"
-                       Margin="0,4,0,18"/>
+                               Foreground="#111111"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               Margin="0,4,0,18"/>
 
                     <TextBlock Text="Senha"
-                       Foreground="#111111"
-                       FontSize="14"
-                       FontWeight="SemiBold"
-                       Margin="0,0,0,6"/>
+                               Foreground="#111111"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,6"/>
 
                     <PasswordBox x:Name="SenhaDesbloqueioPasswordBox"
-                         Height="42"
-                         FontSize="15"
-                         Padding="12,0"
-                         BorderBrush="#DADDE2"
-                         BorderThickness="1"
-                         KeyDown="SenhaDesbloqueioPasswordBox_KeyDown"/>
+                                 Height="42"
+                                 FontSize="15"
+                                 Padding="12,0"
+                                 VerticalContentAlignment="Center"
+                                 BorderBrush="#DADDE2"
+                                 BorderThickness="1"
+                                 KeyDown="SenhaDesbloqueioPasswordBox_KeyDown"/>
 
                     <TextBlock x:Name="MensagemBloqueioTextBlock"
-                       Foreground="#DC2626"
-                       FontSize="13"
-                       TextWrapping="Wrap"
-                       Margin="0,12,0,0"/>
+                               Foreground="#DC2626"
+                               FontSize="13"
+                               TextWrapping="Wrap"
+                               Margin="0,12,0,0"/>
 
                     <Button Content="Desbloquear"
-                    Height="42"
-                    Margin="0,22,0,0"
-                    Background="#108A3B"
-                    Foreground="White"
-                    FontSize="15"
-                    FontWeight="Bold"
-                    BorderThickness="0"
-                    Cursor="Hand"
-                    Click="DesbloquearSessao_Click"/>
+                            Height="42"
+                            Margin="0,22,0,0"
+                            Background="#108A3B"
+                            Foreground="White"
+                            FontSize="15"
+                            FontWeight="Bold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="DesbloquearSessao_Click"/>
                 </StackPanel>
             </Border>
         </Grid>
