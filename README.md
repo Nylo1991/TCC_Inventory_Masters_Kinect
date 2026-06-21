@@ -1140,7 +1140,7 @@ Essa estrutura representa a modelagem atualmente implementada no projeto Invento
 O modelo conceitual do módulo MVVM Kinect representa as entidades utilizadas para o controle local das medições volumétricas, histórico de ocupação, acesso temporário de usuários, registros de logs, sessão ativa e controle do processo de calibração.
 
 <p align="center">
-  <img src="./Imagens/Modelo_Conceitual_MVVM.png" width="1000" alt="Modelo Conceitual MVVM Kinect" />
+  <img src="./Imagens/ModeloConceitualMVVM.png" width="1000" alt="Modelo Conceitual MVVM Kinect" />
 </p>
 
 ## Descrição das Entidades
@@ -1273,7 +1273,7 @@ As models de controle em memória não possuem, obrigatoriamente, persistência 
 O modelo físico do módulo MVVM Kinect foi implementado utilizando banco de dados SQLite com persistência local embarcada. A aplicação utiliza o Entity Framework para realizar o mapeamento entre as classes do domínio e as tabelas do banco de dados.
 
 <p align="center">
-  <img src="./Imagens/Modelo_Fisico_MVVM.png" width="1000" alt="Modelo Físico MVVM Kinect" />
+  <img src="./Imagens/ModeloLogicoMVVM.png" width="1000" alt="Modelo Físico MVVM Kinect" />
 </p>
 
 ## Tecnologias Utilizadas
