@@ -1140,7 +1140,7 @@ Essa estrutura representa a modelagem atualmente implementada no projeto Invento
 O modelo conceitual do módulo MVVM Kinect representa as entidades utilizadas para o controle local das medições volumétricas, histórico de ocupação, acesso temporário de usuários, registros de logs, sessão ativa e controle do processo de calibração.
 
 <p align="center">
-  <img src="./Imagens/Modelo_Conceitual_MVVM.png" width="1000" alt="Modelo Conceitual MVVM Kinect" />
+  <img src="./Imagens/ModeloConceitualMVVM.png" width="1000" alt="Modelo Conceitual MVVM Kinect" />
 </p>
 
 ## Descrição das Entidades
