@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 namespace TCC_Inventory_Masters_Kinect.Model
 {
     /// <summary>
@@ -24,7 +23,13 @@ namespace TCC_Inventory_Masters_Kinect.Model
         public bool Calibrado { get; set; }
 
         public string Status { get; set; }
+
         public string Usuario { get; set; }
+
         public string Empresa { get; set; }
+
+        public string NomeEspaco { get; set; }
+
+        public double LimiteOcupacaoPercentual { get; set; }
     }
 }

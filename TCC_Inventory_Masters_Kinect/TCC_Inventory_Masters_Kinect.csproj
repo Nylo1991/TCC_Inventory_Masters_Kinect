@@ -287,6 +287,10 @@
     <Compile Include="Model\UsuarioAcesso.cs" />
     <Compile Include="Model\ValidacaoTokenResultado.cs" />
     <Compile Include="Service\AutenticacaoMvcService.cs" />
+    <Compile Include="ViewModel\MainViewModel.Espaco.cs" />
+    <Compile Include="ViewModel\MainViewModel.Historico.cs" />
+    <Compile Include="ViewModel\MainViewModel.Kinect.cs" />
+    <Compile Include="ViewModel\MainViewModel.Volume.cs" />
     <Compile Include="View\KinectLogin.xaml.cs">
       <DependentUpon>KinectLogin.xaml</DependentUpon>
     </Compile>

@@ -94,8 +94,19 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             {
                 using (var db = new AppDbContext(_empresa))
                 {
-                    return db.MedicaoVolumes
-                        .Where(x => x.Usuario == usuario && x.Empresa == empresa)
+                    var consulta = db.MedicaoVolumes.AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(usuario))
+                    {
+                        consulta = consulta.Where(x => x.Usuario == usuario);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(empresa))
+                    {
+                        consulta = consulta.Where(x => x.Empresa == empresa);
+                    }
+
+                    return consulta
                         .OrderByDescending(x => x.Id)
                         .Take(quantidade)
                         .OrderBy(x => x.Id)
@@ -104,7 +115,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             }
             catch
             {
-                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente por usuario.");
+                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente por usuario e empresa.");
                 return new List<MedicaoVolume>();
             }
         }
@@ -180,10 +191,8 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                 {
                     var consulta = db.HistoricosOcupacao.AsQueryable();
 
-                    /// <summary>
-                    /// Aplica filtro de segurança por empresa na consulta,
-                    /// impedindo o retorno de históricos pertencentes a outras empresas.
-                    /// </summary>
+                    // Aplica filtro de segurança por empresa na consulta,
+                    // impedindo o retorno de históricos pertencentes a outras empresas.
                     if (!string.IsNullOrWhiteSpace(_empresa))
                     {
                         consulta = consulta.Where(x => x.Empresa == _empresa);
