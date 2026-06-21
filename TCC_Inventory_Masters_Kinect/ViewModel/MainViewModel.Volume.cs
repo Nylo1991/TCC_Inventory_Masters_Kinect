@@ -13,28 +13,21 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         /// </summary>
         private void IniciarTimerVolume()
         {
-            try
+            _volumeTimer?.Stop();
+
+            _volumeTimer = new DispatcherTimer
             {
-                _volumeTimer?.Stop();
+                Interval = TimeSpan.FromSeconds(60)
+            };
 
-                _volumeTimer = new DispatcherTimer
-                {
-                    Interval = TimeSpan.FromSeconds(15)
-                };
-
-                _volumeTimer.Tick += async (s, e) =>
-                {
-                    await MedirSalvarEEnviarAsync("Medição automática");
-                };
-
-                _volumeTimer.Start();
-
-                LoggerService.Info("Timer de medição automática iniciado.");
-            }
-            catch
+            _volumeTimer.Tick += async (s, e) =>
             {
-                LoggerService.Erro("Erro ao iniciar timer de medição automática.");
-            }
+                await MedirSalvarEEnviarAsync("Medição automática");
+            };
+
+            _volumeTimer.Start();
+
+            LoggerService.Info("Timer de medição automática iniciado.");
         }
 
         /// <summary>
@@ -110,7 +103,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 CarregarHistoricoMedicoes();
 
-                StatusSQLite = "SQLite: Medição salva";
+                StatusSQLite = $"SQLite: medicao salva. Historico: {HistoricoMedicoes.Count}";
                 StatusMessage = $"Medido: {FormatarVolumeM3(volumeAtualCm3)}";
 
                 if (_signalRService.EstaConectado)

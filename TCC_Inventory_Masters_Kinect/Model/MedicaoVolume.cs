@@ -20,7 +20,17 @@ namespace TCC_Inventory_Masters_Kinect.Model
 
         public bool KinectLigado { get; set; }
 
+        public string KinectTexto
+        {
+            get { return KinectLigado ? "Ligado" : "Desligado"; }
+        }
+
         public bool Calibrado { get; set; }
+
+        public string CalibradoTexto
+        {
+            get { return Calibrado ? "Sim" : "Nao"; }
+        }
 
         public string Status { get; set; }
 

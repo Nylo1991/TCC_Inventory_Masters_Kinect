@@ -20,10 +20,17 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 );
 
                 HistoricoMedicoes = new ObservableCollection<MedicaoVolume>(medicoes);
+
+                StatusSQLite = $"SQLite: {HistoricoMedicoes.Count} medicoes carregadas";
+
+                LoggerService.Info(
+                    $"Historico carregado. Usuario: {_sessao.Usuario}. Empresa: {_sessao.Empresa}. Total: {HistoricoMedicoes.Count}"
+                );
             }
             catch
             {
                 HistoricoMedicoes = new ObservableCollection<MedicaoVolume>();
+                StatusSQLite = "SQLite: erro ao carregar historico";
                 LoggerService.Erro("Erro ao carregar histórico de medições na MainViewModel.");
             }
         }

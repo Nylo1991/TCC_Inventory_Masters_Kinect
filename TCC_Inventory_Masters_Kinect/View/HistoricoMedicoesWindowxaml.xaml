@@ -177,31 +177,30 @@
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                         </Style>
                     </DataGrid.CellStyle>
-
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID"
-                                            Binding="{Binding Id}"
-                                            Width="70"/>
+                        Binding="{Binding Id}"
+                        Width="0.6*"/>
 
                         <DataGridTextColumn Header="Volume (m3)"
-                                            Binding="{Binding VolumeM3, StringFormat={}{0:F3}}"
-                                            Width="160"/>
+                        Binding="{Binding VolumeM3, StringFormat={}{0:F3}}"
+                        Width="*"/>
 
                         <DataGridTextColumn Header="Data/Hora"
-                                            Binding="{Binding DataHora, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}"
-                                            Width="190"/>
+                        Binding="{Binding DataHora, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}"
+                        Width="*"/>
 
                         <DataGridTextColumn Header="Kinect"
-                                            Binding="{Binding KinectLigado}"
-                                            Width="110"/>
+                        Binding="{Binding KinectTexto}"
+                        Width="*"/>
 
                         <DataGridTextColumn Header="Calibrado"
-                                            Binding="{Binding Calibrado}"
-                                            Width="110"/>
+                        Binding="{Binding CalibradoTexto}"
+                        Width="*"/>
 
                         <DataGridTextColumn Header="Status"
-                                            Binding="{Binding Status}"
-                                            Width="*"/>
+                        Binding="{Binding Status}"
+                        Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

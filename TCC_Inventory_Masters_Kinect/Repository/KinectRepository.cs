@@ -42,9 +42,11 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                 {
                     db.MedicaoVolumes.Add(medicao);
                     db.SaveChanges();
-                }
 
-                LoggerService.Info($"Medicao salva no SQLite. Volume: {medicao.VolumeCm3:F0} cm3");
+                    int total = db.MedicaoVolumes.Count();
+
+                    LoggerService.Info($"Medicao salva no SQLite. Total no banco: {total}. Volume: {medicao.VolumeCm3:F0} cm3");
+                }
             }
             catch
             {
@@ -63,14 +65,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             {
                 using (var db = new AppDbContext(_empresa))
                 {
-                    var consulta = db.MedicaoVolumes.AsQueryable();
-
-                    if (!string.IsNullOrWhiteSpace(_empresa))
-                    {
-                        consulta = consulta.Where(x => x.Empresa == _empresa);
-                    }
-
-                    return consulta
+                    return db.MedicaoVolumes
                         .OrderByDescending(x => x.Id)
                         .Take(quantidade)
                         .ToList();
@@ -94,19 +89,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             {
                 using (var db = new AppDbContext(_empresa))
                 {
-                    var consulta = db.MedicaoVolumes.AsQueryable();
-
-                    if (!string.IsNullOrWhiteSpace(usuario))
-                    {
-                        consulta = consulta.Where(x => x.Usuario == usuario);
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(empresa))
-                    {
-                        consulta = consulta.Where(x => x.Empresa == empresa);
-                    }
-
-                    return consulta
+                    return db.MedicaoVolumes
                         .OrderByDescending(x => x.Id)
                         .Take(quantidade)
                         .OrderBy(x => x.Id)
@@ -115,7 +98,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
             }
             catch
             {
-                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente por usuario e empresa.");
+                LoggerService.Erro("Erro ao buscar medicoes em ordem crescente por empresa.");
                 return new List<MedicaoVolume>();
             }
         }
