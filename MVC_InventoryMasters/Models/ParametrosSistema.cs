@@ -1,4 +1,5 @@
 ﻿using Google.Cloud.Firestore;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MVC_InventoryMasters.Models
@@ -74,11 +75,74 @@ namespace MVC_InventoryMasters.Models
             ErrorMessage = "Informe um valor entre 1 e 365 dias.")]
         public int DiasSemColetaAlerta { get; set; } = 15;
 
+        [FirestoreProperty]
+        public string? EmpresaId { get; set; }
+
+        [FirestoreProperty]
+        public bool AtivarSistemaCalibracao { get; set; }
+
+        [FirestoreProperty]
+        [Display(Name = "Raio de Detecção Kinect (m)")]
+        [Range(0, 100,
+            ErrorMessage = "Informe um raio entre 0 e 100 metros.")]
+        public double RaioDeteccaoKinect { get; set; }
+
+        [FirestoreProperty]
+        public bool HabilitarZonaExclusaoDeteccao { get; set; }
+
+        [FirestoreProperty]
+        [Display(Name = "Taxa de Amostragem de Volume (minutos)")]
+        [Range(1, 1440,
+            ErrorMessage = "Informe uma taxa entre 1 e 1440 minutos.")]
+        public int TaxaAmostragemVolumeMinutos { get; set; } = 10;
+
+        [FirestoreProperty]
+        [Display(Name = "Duração Máxima de Medição (segundos)")]
+        [Range(1, 86400,
+            ErrorMessage = "Informe uma duração entre 1 e 86400 segundos.")]
+        public int DuracaoMaximaMedicaoSegundos { get; set; } = 2000;
+
+        [FirestoreProperty]
+        [Display(Name = "Tipo de Alerta")]
+        public string TipoAlertaPadrao { get; set; } = "Critico";
+
+        [FirestoreProperty]
+        [Display(Name = "Template de Mensagem")]
+        [StringLength(1000,
+            ErrorMessage = "O template deve ter no máximo 1000 caracteres.")]
+        public string TemplateMensagemPadrao { get; set; } =
+            "Olá, {{Parceiro}}.\n\nO estoque em {{EspacoID}} atingiu {{VolumePercentual}}% da capacidade crítica às {{DataHora}}. Por favor, realize a coleta imediata.\n\nAcompanhe no painel.";
+
+        [FirestoreProperty]
+        public bool CanalEmailAtivo { get; set; } = true;
+
+        [FirestoreProperty]
+        public bool CanalWhatsAppAtivo { get; set; } = true;
+
+        [FirestoreProperty]
+        public bool CanalDashboardPushAtivo { get; set; } = true;
+
+        [FirestoreProperty]
+        [Display(Name = "Nome do Remetente no WhatsApp")]
+        [StringLength(80,
+            ErrorMessage = "O nome do remetente deve ter no máximo 80 caracteres.")]
+        public string? NomeRemetenteWhatsApp { get; set; }
+
+        [FirestoreProperty]
+        [Display(Name = "Minutos para Escalonamento")]
+        [Range(1, 1440,
+            ErrorMessage = "Informe um tempo entre 1 e 1440 minutos.")]
+        public int EscalonamentoMinutos { get; set; } = 10;
+
+        [FirestoreProperty]
+        [Display(Name = "Canal de Escalonamento")]
+        public string CanalEscalonamento { get; set; } = "E-mail";
+
         /// <summary>
         /// Retorna o percentual atual do estoque.
         /// Utilizado em validações e alertas.
         /// </summary>
-        
+
         public double PercentualAtual { get; set; }
     }
 }

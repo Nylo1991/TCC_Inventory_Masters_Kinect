@@ -28,6 +28,16 @@ namespace MVC_InventoryMasters.Models
         public string? Perfil { get; set; }
 
         [FirestoreProperty]
+        public string? PerfilId { get; set; }
+
+        [FirestoreProperty]
+        [Display(Name = "Empresa")]
+        public string? EmpresaId { get; set; }
+
+        [FirestoreProperty]
+        public string? Empresa { get; set; }
+
+        [FirestoreProperty]
         [Required(ErrorMessage = "A senha é obrigatória.")]
         [DataType(DataType.Password)]
         [StringLength(20, MinimumLength = 6, ErrorMessage = "A senha deve ter entre 6 e 20 caracteres.")]

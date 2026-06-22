@@ -220,7 +220,12 @@ namespace TCC_Inventory_Masters_Kinect.Data
             }
         }
     }
-
+    /// <summary>
+    /// A configuração da persistência foi abstraída pela classe SQLiteConfigurationInternal,
+    /// responsável por registrar as fábricas de conexão (SQLiteFactory) e os serviços de provisão do Entity Framework. 
+    /// Essa implementação isola a infraestrutura de acesso a dados da lógica de negócio, garantindo que o 
+    /// mapeamento objeto-relacional seja executado com sucesso no ambiente SQLite.
+    /// </summary>
     public class SQLiteConfigurationInternal : DbConfiguration
     {
         public SQLiteConfigurationInternal()

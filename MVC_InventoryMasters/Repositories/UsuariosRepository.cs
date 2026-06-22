@@ -21,6 +21,7 @@ namespace MVC_InventoryMasters.Repositories
         /// </summary>
         private readonly string _colecao = "Usuarios";
         private readonly ILogger<UsuariosRepository> _logger;
+        private readonly ContextoUsuarioService _contextoUsuario;
 
         /// <summary>
         /// Instância do Firestore usada para comunicação com o banco.
@@ -41,10 +42,12 @@ namespace MVC_InventoryMasters.Repositories
         /// </param>
         public UsuariosRepository(
             FirebaseService firebaseService,
-            ILogger<UsuariosRepository> logger)
+            ILogger<UsuariosRepository> logger,
+            ContextoUsuarioService contextoUsuario)
         {
             _db = firebaseService.Firestore;
             _logger = logger;
+            _contextoUsuario = contextoUsuario;
         }
         /// <summary>
         /// Retorna todos os usuários cadastrados
@@ -81,6 +84,22 @@ namespace MVC_InventoryMasters.Repositories
 
                 return new List<Usuario>();
             }
+        }
+
+        public async Task<List<Usuario>> ListarPorEmpresa(string? empresaId = null)
+        {
+            string empresa = string.IsNullOrWhiteSpace(empresaId)
+                ? _contextoUsuario.ObterEmpresaId()
+                : empresaId;
+
+            var usuarios = await ListarTodos();
+
+            // Registros antigos sem EmpresaId continuam visíveis no contexto global até a migração dos dados.
+            return usuarios
+                .Where(u => u.EmpresaId == empresa ||
+                            (empresa == ContextoUsuarioService.EmpresaPadraoId &&
+                             string.IsNullOrWhiteSpace(u.EmpresaId)))
+                .ToList();
         }
 
         /// <summary>
@@ -120,6 +139,37 @@ namespace MVC_InventoryMasters.Repositories
             }
         }
 
+        public async Task<Usuario?> BuscarPorEmail(string email)
+        {
+            try
+            {
+                string emailNormalizado = email.Trim().ToLowerInvariant();
+
+                var snapshot = await _db
+                    .Collection(_colecao)
+                    .WhereEqualTo("Email", emailNormalizado)
+                    .GetSnapshotAsync();
+
+                var doc = snapshot.Documents.FirstOrDefault();
+
+                if (doc == null)
+                {
+                    var usuarios = await ListarTodos();
+                    return usuarios.FirstOrDefault(u =>
+                        string.Equals(u.Email?.Trim(), emailNormalizado, StringComparison.OrdinalIgnoreCase));
+                }
+
+                var usuario = doc.ConvertTo<Usuario>();
+                usuario.Id = doc.Id;
+                return usuario;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar usuário por e-mail.");
+                return null;
+            }
+        }
+
         /// <summary>
         /// Adiciona um novo usuário no Firestore.
         /// </summary>
@@ -130,11 +180,18 @@ namespace MVC_InventoryMasters.Repositories
         {
             try
             {
+                usuario.EmpresaId = string.IsNullOrWhiteSpace(usuario.EmpresaId)
+                    ? _contextoUsuario.ObterEmpresaId()
+                    : usuario.EmpresaId;
+
                 var dados = new Dictionary<string, object>
         {
             { "Nome", usuario.Nome ?? "" },
             { "Email", usuario.Email ?? "" },
             { "Perfil", usuario.Perfil ?? "" },
+            { "PerfilId", usuario.PerfilId ?? "" },
+            { "EmpresaId", usuario.EmpresaId ?? "" },
+            { "Empresa", usuario.Empresa ?? "" },
             { "Senha", usuario.Senha ?? "" },
             { "Data_Cadastro", DateTime.UtcNow },
             { "Ativo", usuario.Ativo }
@@ -177,6 +234,9 @@ namespace MVC_InventoryMasters.Repositories
                 { "Nome", usuario.Nome ?? "" },
                 { "Email", usuario.Email ?? "" },
                 { "Perfil", usuario.Perfil ?? "" },
+                { "PerfilId", usuario.PerfilId ?? "" },
+                { "EmpresaId", usuario.EmpresaId ?? "" },
+                { "Empresa", usuario.Empresa ?? "" },
                 { "Senha", usuario.Senha ?? "" },
                 { "Ativo", usuario.Ativo }
                     });
@@ -225,6 +285,24 @@ namespace MVC_InventoryMasters.Repositories
 
                 throw new Exception(
                     "Não foi possível excluir o usuário.");
+            }
+        }
+
+        public async Task AtualizarStatus(string id, bool ativo)
+        {
+            try
+            {
+                await _db
+                    .Collection(_colecao)
+                    .Document(id)
+                    .UpdateAsync("Ativo", ativo);
+
+                _logger.LogInformation("Status do usuário {Id} atualizado para {Ativo}.", id, ativo);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao atualizar status do usuário {Id}.", id);
+                throw new Exception("Não foi possível atualizar o status do usuário.");
             }
         }
     }

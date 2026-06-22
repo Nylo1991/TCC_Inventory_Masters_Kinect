@@ -19,6 +19,7 @@ namespace MVC_InventoryMasters.Repositories
         private readonly string _colecao = "parametrosSistema";
         private readonly FirestoreDb _db;
         private readonly ILogger<ParametrosSistemaRepository> _logger;
+        private readonly ContextoUsuarioService _contextoUsuario;
 
         /// <summary>
         /// Inicializa uma nova instância do repositório de parâmetros do sistema.
@@ -28,10 +29,12 @@ namespace MVC_InventoryMasters.Repositories
         /// </param>
         public ParametrosSistemaRepository(
             FirebaseService firebaseService,
-            ILogger<ParametrosSistemaRepository> logger)
+            ILogger<ParametrosSistemaRepository> logger,
+            ContextoUsuarioService contextoUsuario)
         {
             _db = firebaseService.Firestore;
             _logger = logger;
+            _contextoUsuario = contextoUsuario;
         }
 
         /// <summary>
@@ -47,11 +50,18 @@ namespace MVC_InventoryMasters.Repositories
         /// </returns>
         public ParametrosSistema Buscar()
         {
+            return BuscarPorEmpresa(_contextoUsuario.ObterEmpresaId());
+        }
+
+        public ParametrosSistema BuscarPorEmpresa(string empresaId)
+        {
             try
             {
+                string documentId = ObterDocumentId(empresaId);
+
                 var docRef = _db
                     .Collection(_colecao)
-                    .Document("configuracao");
+                    .Document(documentId);
 
                 var snapshot = docRef
                     .GetSnapshotAsync()
@@ -59,7 +69,9 @@ namespace MVC_InventoryMasters.Repositories
 
                 if (!snapshot.Exists)
                 {
-                    return new ParametrosSistema();
+                    return empresaId == ContextoUsuarioService.EmpresaPadraoId
+                        ? new ParametrosSistema { EmpresaId = empresaId }
+                        : BuscarConfiguracaoGlobalComoFallback(empresaId);
                 }
 
                 var dados = snapshot.ToDictionary();
@@ -105,7 +117,77 @@ namespace MVC_InventoryMasters.Repositories
                     DiasSemColetaAlerta =
                         dados.TryGetValue("DiasSemColetaAlerta", out var diasSemColeta)
                             ? Convert.ToInt32(diasSemColeta)
-                            : 15
+                            : 15,
+
+                    EmpresaId =
+                        dados.TryGetValue("EmpresaId", out var empresaConfiguracao)
+                            ? empresaConfiguracao?.ToString()
+                            : empresaId,
+
+                    AtivarSistemaCalibracao =
+                        dados.TryGetValue("AtivarSistemaCalibracao", out var ativarCalibracao)
+                            ? Convert.ToBoolean(ativarCalibracao)
+                            : false,
+
+                    RaioDeteccaoKinect =
+                        dados.TryGetValue("RaioDeteccaoKinect", out var raioDeteccao)
+                            ? Convert.ToDouble(raioDeteccao)
+                            : 0,
+
+                    HabilitarZonaExclusaoDeteccao =
+                        dados.TryGetValue("HabilitarZonaExclusaoDeteccao", out var zonaExclusao)
+                            ? Convert.ToBoolean(zonaExclusao)
+                            : false,
+
+                    TaxaAmostragemVolumeMinutos =
+                        dados.TryGetValue("TaxaAmostragemVolumeMinutos", out var taxaAmostragem)
+                            ? Convert.ToInt32(taxaAmostragem)
+                            : 10,
+
+                    DuracaoMaximaMedicaoSegundos =
+                        dados.TryGetValue("DuracaoMaximaMedicaoSegundos", out var duracaoMedicao)
+                            ? Convert.ToInt32(duracaoMedicao)
+                            : 2000,
+
+                    TipoAlertaPadrao =
+                        dados.TryGetValue("TipoAlertaPadrao", out var tipoAlerta)
+                            ? tipoAlerta?.ToString() ?? "Critico"
+                            : "Critico",
+
+                    TemplateMensagemPadrao =
+                        dados.TryGetValue("TemplateMensagemPadrao", out var templateMensagem)
+                            ? templateMensagem?.ToString() ?? string.Empty
+                            : "Olá, {{Parceiro}}.\n\nO estoque em {{EspacoID}} atingiu {{VolumePercentual}}% da capacidade crítica às {{DataHora}}. Por favor, realize a coleta imediata.\n\nAcompanhe no painel.",
+
+                    CanalEmailAtivo =
+                        dados.TryGetValue("CanalEmailAtivo", out var canalEmail)
+                            ? Convert.ToBoolean(canalEmail)
+                            : true,
+
+                    CanalWhatsAppAtivo =
+                        dados.TryGetValue("CanalWhatsAppAtivo", out var canalWhatsApp)
+                            ? Convert.ToBoolean(canalWhatsApp)
+                            : true,
+
+                    CanalDashboardPushAtivo =
+                        dados.TryGetValue("CanalDashboardPushAtivo", out var canalDashboard)
+                            ? Convert.ToBoolean(canalDashboard)
+                            : true,
+
+                    NomeRemetenteWhatsApp =
+                        dados.TryGetValue("NomeRemetenteWhatsApp", out var remetenteWhatsApp)
+                            ? remetenteWhatsApp?.ToString()
+                            : null,
+
+                    EscalonamentoMinutos =
+                        dados.TryGetValue("EscalonamentoMinutos", out var escalonamentoMinutos)
+                            ? Convert.ToInt32(escalonamentoMinutos)
+                            : 10,
+
+                    CanalEscalonamento =
+                        dados.TryGetValue("CanalEscalonamento", out var canalEscalonamento)
+                            ? canalEscalonamento?.ToString() ?? "E-mail"
+                            : "E-mail"
                 };
             }
             catch (Exception ex)
@@ -118,6 +200,49 @@ namespace MVC_InventoryMasters.Repositories
             }
         }
 
+        private ParametrosSistema BuscarConfiguracaoGlobalComoFallback(string empresaId)
+        {
+            var global = _db
+                .Collection(_colecao)
+                .Document("configuracao")
+                .GetSnapshotAsync()
+                .Result;
+
+            if (!global.Exists)
+                return new ParametrosSistema { EmpresaId = empresaId };
+
+            var parametros = global.ConvertTo<ParametrosSistema>();
+            parametros.EmpresaId = empresaId;
+            return parametros;
+        }
+
+        public ParametrosSistema ObterPadroes()
+        {
+            return new ParametrosSistema
+            {
+                CapacidadeMaxima = 300,
+                CapacidadeMinima = 0,
+                PercentualAlerta = 10,
+                NotificacaoAutomatica = true,
+                ExibirAlertaDashboard = true,
+                DiasSemColetaAlerta = 10,
+                AtivarSistemaCalibracao = false,
+                RaioDeteccaoKinect = 0,
+                HabilitarZonaExclusaoDeteccao = false,
+                TaxaAmostragemVolumeMinutos = 10,
+                DuracaoMaximaMedicaoSegundos = 2000,
+                TipoAlertaPadrao = "Critico",
+                TemplateMensagemPadrao =
+                    "Olá, {{Parceiro}}.\n\nO estoque em {{EspacoID}} atingiu {{VolumePercentual}}% da capacidade crítica às {{DataHora}}. Por favor, realize a coleta imediata.\n\nAcompanhe no painel.",
+                CanalEmailAtivo = true,
+                CanalWhatsAppAtivo = true,
+                CanalDashboardPushAtivo = true,
+                NomeRemetenteWhatsApp = string.Empty,
+                EscalonamentoMinutos = 10,
+                CanalEscalonamento = "E-mail"
+            };
+        }
+
         /// <summary>
         /// Salva as configurações do sistema.
         /// </summary>
@@ -125,10 +250,15 @@ namespace MVC_InventoryMasters.Repositories
         {
             try
             {
+                parametros.EmpresaId = string.IsNullOrWhiteSpace(parametros.EmpresaId)
+                    ? _contextoUsuario.ObterEmpresaId()
+                    : parametros.EmpresaId;
+
                 parametros.DataAtualizacao = DateTime.UtcNow;
 
                 var dados = new Dictionary<string, object>
         {
+            { "EmpresaId", parametros.EmpresaId ?? ContextoUsuarioService.EmpresaPadraoId },
             { "CapacidadeMaxima", parametros.CapacidadeMaxima },
             { "CapacidadeMinima", parametros.CapacidadeMinima },
             { "PercentualAlerta", parametros.PercentualAlerta },
@@ -136,12 +266,25 @@ namespace MVC_InventoryMasters.Repositories
             { "NotificacaoAutomatica", parametros.NotificacaoAutomatica },
             { "ExibirAlertaDashboard", parametros.ExibirAlertaDashboard },
             { "ParceiroPadraoId", parametros.ParceiroPadraoId ?? string.Empty },
-            { "DiasSemColetaAlerta", parametros.DiasSemColetaAlerta }
+            { "DiasSemColetaAlerta", parametros.DiasSemColetaAlerta },
+            { "AtivarSistemaCalibracao", parametros.AtivarSistemaCalibracao },
+            { "RaioDeteccaoKinect", parametros.RaioDeteccaoKinect },
+            { "HabilitarZonaExclusaoDeteccao", parametros.HabilitarZonaExclusaoDeteccao },
+            { "TaxaAmostragemVolumeMinutos", parametros.TaxaAmostragemVolumeMinutos },
+            { "DuracaoMaximaMedicaoSegundos", parametros.DuracaoMaximaMedicaoSegundos },
+            { "TipoAlertaPadrao", parametros.TipoAlertaPadrao ?? "Critico" },
+            { "TemplateMensagemPadrao", parametros.TemplateMensagemPadrao ?? string.Empty },
+            { "CanalEmailAtivo", parametros.CanalEmailAtivo },
+            { "CanalWhatsAppAtivo", parametros.CanalWhatsAppAtivo },
+            { "CanalDashboardPushAtivo", parametros.CanalDashboardPushAtivo },
+            { "NomeRemetenteWhatsApp", parametros.NomeRemetenteWhatsApp ?? string.Empty },
+            { "EscalonamentoMinutos", parametros.EscalonamentoMinutos },
+            { "CanalEscalonamento", parametros.CanalEscalonamento ?? "E-mail" }
         };
 
                 _db
                     .Collection(_colecao)
-                    .Document("configuracao")
+                    .Document(ObterDocumentId(parametros.EmpresaId))
                     .SetAsync(dados)
                     .Wait();
 
@@ -157,6 +300,17 @@ namespace MVC_InventoryMasters.Repositories
                 throw new Exception(
                     "Não foi possível salvar os parâmetros do sistema.");
             }
+        }
+
+        private static string ObterDocumentId(string? empresaId)
+        {
+            if (string.IsNullOrWhiteSpace(empresaId) ||
+                empresaId == ContextoUsuarioService.EmpresaPadraoId)
+            {
+                return "configuracao";
+            }
+
+            return $"configuracao_{empresaId}";
         }
 
         /// <summary>

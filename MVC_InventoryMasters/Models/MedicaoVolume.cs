@@ -19,6 +19,12 @@ namespace MVC_InventoryMasters.Models
         public double? VolumeMedido { get; set; }
 
         [FirestoreProperty]
+        public string? EmpresaId { get; set; }
+
+        [FirestoreProperty]
+        public string? Empresa { get; set; }
+
+        [FirestoreProperty]
         public DateTime? DataHora { get; set; }
     }
 }
