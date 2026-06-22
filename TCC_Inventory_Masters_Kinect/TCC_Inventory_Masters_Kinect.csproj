@@ -284,6 +284,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\SessaoUsuario.cs" />
+    <Compile Include="Model\TokenSolicitadoResultado.cs" />
     <Compile Include="Model\UsuarioAcesso.cs" />
     <Compile Include="Model\ValidacaoTokenResultado.cs" />
     <Compile Include="Service\AutenticacaoMvcService.cs" />
