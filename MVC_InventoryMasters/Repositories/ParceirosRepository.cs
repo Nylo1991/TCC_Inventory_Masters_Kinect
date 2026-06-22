@@ -19,6 +19,7 @@ namespace MVC_InventoryMasters.Repositories
         private readonly string _colecao = "Parceiros";
         private readonly FirestoreDb _db;
         private readonly ILogger<ParceirosRepository> _logger;
+        private readonly ContextoUsuarioService _contextoUsuario;
 
         /// <summary>
         /// Inicializa uma nova instância do repositório de parceiros.
@@ -31,10 +32,12 @@ namespace MVC_InventoryMasters.Repositories
         /// </param>
         public ParceirosRepository(
             FirebaseService firebaseService,
-            ILogger<ParceirosRepository> logger)
+            ILogger<ParceirosRepository> logger,
+            ContextoUsuarioService contextoUsuario)
         {
             _db = firebaseService.Firestore;
             _logger = logger;
+            _contextoUsuario = contextoUsuario;
         }
 
 
@@ -57,6 +60,21 @@ namespace MVC_InventoryMasters.Repositories
             return lista;
         }
 
+        public async Task<List<Parceiro>> ListarPorEmpresa(string? empresaId = null)
+        {
+            string empresa = string.IsNullOrWhiteSpace(empresaId)
+                ? _contextoUsuario.ObterEmpresaId()
+                : empresaId;
+
+            var parceiros = await ListarTodos();
+
+            return parceiros
+                .Where(p => p.EmpresaId == empresa ||
+                            (empresa == ContextoUsuarioService.EmpresaPadraoId &&
+                             string.IsNullOrWhiteSpace(p.EmpresaId)))
+                .ToList();
+        }
+
         /// <summary>
         /// Busca um parceiro utilizando seu identificador único.
         /// </summary>
@@ -77,7 +95,7 @@ namespace MVC_InventoryMasters.Repositories
 
         public async Task<List<Parceiro>> Pesquisar(string termo)
         {
-            var parceiros = await ListarTodos();
+            var parceiros = await ListarPorEmpresa();
             if (string.IsNullOrWhiteSpace(termo)) return parceiros;
             termo = termo.ToLower();
             return parceiros.Where(p =>
@@ -110,7 +128,7 @@ namespace MVC_InventoryMasters.Repositories
         /// </returns>
         public async Task<List<Parceiro>> FiltrarAvancado(string termo, DateTime? dataInicio, DateTime? dataFim, bool? ativo)
         {
-            var lista = await ListarTodos();
+            var lista = await ListarPorEmpresa();
 
             // 1. Filtro Geral
             if (!string.IsNullOrWhiteSpace(termo))
@@ -151,12 +169,17 @@ namespace MVC_InventoryMasters.Repositories
         /// </returns>
         public async Task Adicionar(Parceiro parceiro)
         {
+            parceiro.EmpresaId = string.IsNullOrWhiteSpace(parceiro.EmpresaId)
+                ? _contextoUsuario.ObterEmpresaId()
+                : parceiro.EmpresaId;
+
             var dados = new Dictionary<string, object>
             {
                 { "Nome", parceiro.Nome ?? string.Empty },
                 { "Email", parceiro.Email ?? string.Empty },
                 { "Telefone", parceiro.Telefone ?? string.Empty },
                 { "Empresa", parceiro.Empresa ?? string.Empty },
+                { "EmpresaId", parceiro.EmpresaId ?? string.Empty },
                 { "Endereco", parceiro.Endereco ?? string.Empty },
                 { "Data_Cadastro", DateTime.UtcNow },
                 { "Ativo", parceiro.Ativo }
@@ -181,6 +204,7 @@ namespace MVC_InventoryMasters.Repositories
                 { "Email", parceiro.Email ?? string.Empty },
                 { "Telefone", parceiro.Telefone ?? string.Empty },
                 { "Empresa", parceiro.Empresa ?? string.Empty },
+                { "EmpresaId", parceiro.EmpresaId ?? string.Empty },
                 { "Endereco", parceiro.Endereco ?? string.Empty },
                 { "Ativo", parceiro.Ativo }
             });
@@ -216,6 +240,23 @@ namespace MVC_InventoryMasters.Repositories
 
                 throw new Exception(
                     "Não foi possível excluir o parceiro.");
+            }
+        }
+
+        public async Task AtualizarStatus(string id, bool ativo)
+        {
+            try
+            {
+                await _db.Collection(_colecao)
+                         .Document(id)
+                         .UpdateAsync("Ativo", ativo);
+
+                _logger.LogInformation("Status do parceiro {Id} atualizado para {Ativo}.", id, ativo);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao atualizar status do parceiro {Id}.", id);
+                throw new Exception("Não foi possível atualizar o status do parceiro.");
             }
         }
     }
