@@ -1,0 +1,87 @@
+﻿@model MVC_InventoryMasters.Models.Parceiro
+
+@{
+    ViewData["Title"] = "Novo Parceiro";
+}
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h4>Novo Parceiro</h4>
+    </div>
+    <div class="card-body">
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All" class="alert alert-danger"></div>
+        }
+
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="Nome" class="form-label"></label>
+                <input asp-for="Nome" class="form-control"
+                       data-bs-toggle="tooltip" title="Insira o nome completo do parceiro." />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control"
+                       data-bs-toggle="tooltip" title="E-mail de contato principal do parceiro." />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Telefone" class="form-label"></label>
+                <input asp-for="Telefone" class="form-control" id="Telefone"
+                       data-bs-toggle="tooltip" title="Informe o telefone com DDD (formato: (99) 9 9999-9999)." />
+                <span asp-validation-for="Telefone" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Empresa" class="form-label"></label>
+                <input asp-for="Empresa" class="form-control"
+                       data-bs-toggle="tooltip" title="Nome da empresa vinculada ao parceiro." />
+                <span asp-validation-for="Empresa" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Endereco" class="form-label"></label>
+                <input asp-for="Endereco" class="form-control"
+                       data-bs-toggle="tooltip" title="Endereço físico completo do parceiro." />
+                <span asp-validation-for="Endereco" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="Ativo" class="form-check-input" />
+                <label class="form-check-label">Parceiro Ativo</label>
+                <span asp-validation-for="Ativo" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success">Salvar</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+    <script>
+        $(function () {
+        // Máscara de telefone
+        $("#Telefone").mask("(00) 0 0000-0000");
+
+        // Inicialização dos Tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        });
+    </script>
+}

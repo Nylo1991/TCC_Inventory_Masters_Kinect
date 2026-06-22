@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Inventory Masters</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+    <div class="wrapper">
+
+        <aside class="sidebar">
+
+            <div class="logo-area">
+                <h4>📦 Inventory Masters</h4>
+                <small>Gestão de Estoque Inteligente</small>
+            </div>
+
+            <nav class="menu">
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="right"
+                   title="Visão geral do sistema">
+                    <i class="bi bi-speedometer2"></i>
+                    Dashboard
+                </a>
+
+                <a asp-controller="Parceiros"
+                   asp-action="Index"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="right"
+                   title="Gerenciar empresas parceiras e contatos">
+                    <i class="bi bi-buildings"></i>
+                    Parceiros
+                </a>
+
+                <a asp-controller="Usuarios"
+                   asp-action="Index"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="right"
+                   title="Gerenciar usuários do sistema">
+                    <i class="bi bi-people"></i>
+                    Usuários
+                </a>
+
+                <a asp-controller="Medicoes"
+                   asp-action="Index"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="right"
+                   title="Consultar medições de volume">
+                    <i class="bi bi-rulers"></i>
+                    Medições
+                </a>
+
+                <a asp-controller="Notificacoes"
+                   asp-action="Index"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="right"
+                   title="Histórico de alertas enviados">
+                    <i class="bi bi-bell"></i>
+                    Notificações
+                </a>
+
+                <a asp-controller="Parametros"
+                   asp-action="Index"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="right"
+                   title="Configurar limites e parâmetros do sistema">
+                    <i class="bi bi-gear"></i>
+                    Configurações
+                </a>
+
+            </nav>
+
+        </aside>
+
+        <div class="main-content">
+
+            <header class="topbar">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <button id="sidebarToggle"
+                            class="btn btn-light btn-sm"
+                            type="button">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <h5 class="m-0">@ViewData["Title"]</h5>
+
+                </div>
+
+                <!--
+                    Botão temporário utilizado para representar
+                    o futuro módulo de perfil do usuário.
+
+                    Atualmente exibe uma mensagem informando
+                    que a funcionalidade ainda está em desenvolvimento.
+                -->
+                <div class="user-info">
+
+                    <button type="button"
+                            id="btnPerfilEmDesenvolvimento"
+                            class="btn btn-outline-light btn-sm"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="left"
+                            title="Funcionalidade em desenvolvimento">
+
+                        <i class="bi bi-person-circle"></i>
+                        Administrador
+
+                    </button>
+
+                </div>
+
+            </header>
+
+            <main class="content">
+                @RenderBody()
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- Modal Funcionalidade em Desenvolvimento -->
+    <div class="modal fade"
+         id="modalEmDesenvolvimento"
+         tabindex="-1"
+         aria-labelledby="modalEmDesenvolvimentoLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header bg-warning">
+
+                    <h5 class="modal-title"
+                        id="modalEmDesenvolvimentoLabel">
+
+                        <i class="bi bi-tools"></i>
+                        Funcionalidade em Desenvolvimento
+
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Fechar">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    Esta funcionalidade ainda está em desenvolvimento
+                    e será disponibilizada em versões futuras do sistema.
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            data-bs-dismiss="modal">
+                        Entendi
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            /**
+             * Inicializa todos os tooltips da aplicação.
+             */
+            const tooltipTriggerList = [].slice.call(
+                document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            );
+
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            /**
+             * Controla a abertura e fechamento da sidebar.
+             */
+            const sidebarToggle = document.getElementById("sidebarToggle");
+
+            if (sidebarToggle) {
+
+                sidebarToggle.addEventListener("click", function () {
+
+                    document
+                        .querySelector(".wrapper")
+                        .classList.toggle("collapsed");
+
+                });
+
+            }
+
+            /**
+             * Exibe mensagem para funcionalidades
+             * ainda não implementadas.
+             *
+             */
+            function exibirFuncionalidadeEmDesenvolvimento(mensagem) {
+
+                const modalBody = document.querySelector(
+                    "#modalEmDesenvolvimento .modal-body"
+                );
+
+                if (modalBody) {
+                    modalBody.innerText = mensagem;
+                }
+
+                const modal = new bootstrap.Modal(
+                    document.getElementById("modalEmDesenvolvimento")
+                );
+
+                modal.show();
+            }
+
+            /**
+             * Evento do botão de perfil.
+             */
+            const btnPerfil = document.getElementById(
+                "btnPerfilEmDesenvolvimento"
+            );
+
+            if (btnPerfil) {
+
+                btnPerfil.addEventListener("click", function () {
+
+                    exibirFuncionalidadeEmDesenvolvimento(
+                        "O módulo de gerenciamento de perfil do usuário ainda está em desenvolvimento e será disponibilizado em versões futuras do sistema."
+                    );
+
+                });
+
+            }
+
+        });
+
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

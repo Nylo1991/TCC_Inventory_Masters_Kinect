@@ -1,0 +1,286 @@
+﻿@model IEnumerable<MVC_InventoryMasters.Models.Notificacao>
+
+@{
+    ViewData["Title"] = "Histórico de Notificações";
+}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+                <i class="bi bi-bell-fill"></i>
+                Central de Notificações
+            </h5>
+
+            <span class="badge bg-secondary">
+                Total: @(Model?.Count() ?? 0)
+            </span>
+
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead style="background:#1f2937;color:white;">
+
+                        <tr>
+                            <th>Status</th>
+                            <th>Tipo</th>
+                            <th>Origem</th>
+                            <th>Mensagem</th>
+                            <th>Volume</th>
+                            <th>Data</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var n in Model.OrderByDescending(x => x.DataHora))
+                            {
+                                string badgeClass;
+                                string icone;
+
+                                switch (n.StatusEnvio)
+                                {
+                                    case "Pendente":
+                                        badgeClass = "bg-warning text-dark";
+                                        icone = "bi-clock-history";
+                                        break;
+
+                                    case "Aceito":
+                                        badgeClass = "bg-success";
+                                        icone = "bi-check-circle";
+                                        break;
+
+                                    case "Resolvido":
+                                        badgeClass = "bg-secondary";
+                                        icone = "bi-check2-all";
+                                        break;
+
+                                    case "Erro":
+                                        badgeClass = "bg-danger";
+                                        icone = "bi-exclamation-triangle";
+                                        break;
+
+                                    default:
+                                        badgeClass = "bg-info text-dark";
+                                        icone = "bi-bell";
+                                        break;
+                                }
+
+                        <tr>
+
+                            <td>
+                                <span class="badge @badgeClass">
+                                    <i class="bi @icone"></i>
+                                    @n.StatusEnvio
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-primary">
+                                    @(string.IsNullOrEmpty(n.Tipo)
+                                                                        ? "Alerta"
+                                                                        : n.Tipo)
+                                </span>
+                            </td>
+
+                                    <td>
+                                @if (n.Automatica)
+                                        {
+                                            <span class="badge bg-dark">
+                                                Kinect
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                Manual
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @n.Mensagem
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @(n.VolumeMedido?.ToString("F2") ?? "0.00") m³
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        @(n.DataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        @if (n.StatusEnvio == "Pendente")
+                                        {
+                                            <button class="btn btn-sm btn-success"
+                                                    style="width: 120px; height: 38px;"
+                                                    onclick="exibirFuncionalidadeEmDesenvolvimento('A funcionalidade de aceite de notificações ainda está em desenvolvimento e será disponibilizada em versões futuras do sistema.')">
+                                                <i class="bi bi-check-circle"></i>
+                                                Aceitar
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="7"
+                                    class="text-center py-5 text-muted">
+
+                                    <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
+
+                                    Nenhuma notificação encontrada.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row mt-4">
+
+        <div class="col-md-3">
+
+            <div class="card border-danger shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
+
+                    <h6 class="mt-2">
+                        Alerta Crítico
+                    </h6>
+
+                    <small class="text-muted">
+                        Estoque acima do limite configurado.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-warning shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-clock-history text-warning fs-1"></i>
+
+                    <h6 class="mt-2">
+                        Pendente
+                    </h6>
+
+                    <small class="text-muted">
+                        Aguardando parceiro aceitar.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-success shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-check-circle-fill text-success fs-1"></i>
+
+                    <h6 class="mt-2">
+                        Aceito
+                    </h6>
+
+                    <small class="text-muted">
+                        Parceiro confirmou coleta.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-secondary shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <i class="bi bi-check2-all text-secondary fs-1"></i>
+
+                    <h6 class="mt-2">
+                        Resolvido
+                    </h6>
+
+                    <small class="text-muted">
+                        Situação normalizada.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+    function exibirFuncionalidadeEmDesenvolvimento(mensagem) {
+
+            const modalBody = document.querySelector(
+                "#modalEmDesenvolvimento .modal-body"
+            );
+
+            if (modalBody) {
+                modalBody.innerText = mensagem;
+            }
+
+            const modal = new bootstrap.Modal(
+                document.getElementById("modalEmDesenvolvimento")
+            );
+
+            modal.show();
+        }
+</script>
