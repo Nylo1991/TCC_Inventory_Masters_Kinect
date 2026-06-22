@@ -58,7 +58,7 @@
                                FontWeight="Bold"/>
 
                     <TextBlock x:Name="SubtituloTextBlock"
-                               Text="Entre ou cadastre um acesso"
+                               Text="Informe o token enviado pelo MVC"
                                Foreground="#6B7280"
                                FontSize="14"
                                Margin="0,8,0,24"/>
@@ -82,7 +82,7 @@
 
                         <Button x:Name="AbaCadastroButton"
                                 Grid.Column="1"
-                                Content="Cadastro"
+                                Content="Token pelo MVC"
                                 Height="40"
                                 Background="#E5E7EB"
                                 Foreground="#111111"
@@ -94,7 +94,7 @@
                     </Grid>
 
                     <StackPanel x:Name="LoginPanel">
-                        <TextBlock Text="Usuario ou Email"
+                        <TextBlock Text="Token de Acesso"
                                    Foreground="#111111"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -108,21 +108,23 @@
                                  VerticalContentAlignment="Center"
                                  BorderBrush="#DADDE2"
                                  BorderThickness="1"
-                                 ToolTip="Digite seu usuario ou email cadastrado."/>
+                                 ToolTip="Digite o token recebido por e-mail."/>
 
-                        <TextBlock Text="Digite o usuario ou email usado no cadastro."
+                        <TextBlock Text="Solicite o token no sistema MVC usando seu e-mail cadastrado."
                                    Foreground="#6B7280"
                                    FontSize="12"
                                    Margin="0,5,0,12"
                                    TextWrapping="Wrap"/>
 
                         <TextBlock Text="Senha"
+                                   Visibility="Collapsed"
                                    Foreground="#111111"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,6"/>
 
                         <PasswordBox x:Name="LoginSenhaPasswordBox"
+                                     Visibility="Collapsed"
                                      Height="42"
                                      FontSize="15"
                                      Padding="10,0"
@@ -130,15 +132,16 @@
                                      VerticalContentAlignment="Center"
                                      BorderBrush="#DADDE2"
                                      BorderThickness="1"
-                                     ToolTip="Digite sua senha cadastrada."/>
+                                     ToolTip="Campo não utilizado no acesso por token."/>
 
                         <TextBlock Text="Digite a senha cadastrada para acessar o sistema."
+                                   Visibility="Collapsed"
                                    Foreground="#6B7280"
                                    FontSize="12"
                                    Margin="0,5,0,0"
                                    TextWrapping="Wrap"/>
 
-                        <Button Content="Entrar"
+                        <Button Content="Validar token e entrar"
                                 Height="44"
                                 Margin="0,24,0,0"
                                 Background="#108A3B"
@@ -153,51 +156,7 @@
                     <StackPanel x:Name="CadastroPanel"
                                 Visibility="Collapsed">
 
-                        <TextBlock Text="Usuario"
-                                   Foreground="#111111"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,6"/>
-
-                        <TextBox x:Name="CadastroUsuarioTextBox"
-                                 Height="42"
-                                 FontSize="15"
-                                 Padding="10,0"
-                                 HorizontalContentAlignment="Left"
-                                 VerticalContentAlignment="Center"
-                                 BorderBrush="#DADDE2"
-                                 BorderThickness="1"
-                                 ToolTip="Digite o nome de usuario."/>
-
-                        <TextBlock Text="Informe o nome que sera usado para acessar o sistema."
-                                   Foreground="#6B7280"
-                                   FontSize="12"
-                                   Margin="0,5,0,12"
-                                   TextWrapping="Wrap"/>
-
-                        <TextBlock Text="Empresa"
-                                   Foreground="#111111"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,6"/>
-
-                        <TextBox x:Name="CadastroEmpresaTextBox"
-                                 Height="42"
-                                 FontSize="15"
-                                 Padding="10,0"
-                                 HorizontalContentAlignment="Left"
-                                 VerticalContentAlignment="Center"
-                                 BorderBrush="#DADDE2"
-                                 BorderThickness="1"
-                                 ToolTip="Digite o nome da empresa."/>
-
-                        <TextBlock Text="Informe a empresa vinculada ao acesso."
-                                   Foreground="#6B7280"
-                                   FontSize="12"
-                                   Margin="0,5,0,12"
-                                   TextWrapping="Wrap"/>
-
-                        <TextBlock Text="Email"
+                        <TextBlock Text="E-mail cadastrado"
                                    Foreground="#111111"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -211,59 +170,15 @@
                                  VerticalContentAlignment="Center"
                                  BorderBrush="#DADDE2"
                                  BorderThickness="1"
-                                 ToolTip="Digite seu email."/>
+                                 ToolTip="Digite o e-mail cadastrado no MVC."/>
 
-                        <TextBlock Text="Informe um email valido para identificar o acesso."
-                                   Foreground="#6B7280"
-                                   FontSize="12"
-                                   Margin="0,5,0,12"
-                                   TextWrapping="Wrap"/>
-
-                        <TextBlock Text="Senha"
-                                   Foreground="#111111"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,6"/>
-
-                        <PasswordBox x:Name="CadastroSenhaPasswordBox"
-                                     Height="42"
-                                     FontSize="15"
-                                     Padding="10,0"
-                                     HorizontalContentAlignment="Left"
-                                     VerticalContentAlignment="Center"
-                                     BorderBrush="#DADDE2"
-                                     BorderThickness="1"
-                                     ToolTip="Digite sua senha."/>
-
-                        <TextBlock Text="A senha deve ter no minimo 6 caracteres e nao pode conter espacos."
-                                   Foreground="#6B7280"
-                                   FontSize="12"
-                                   Margin="0,5,0,12"
-                                   TextWrapping="Wrap"/>
-
-                        <TextBlock Text="Confirmar senha"
-                                   Foreground="#111111"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,6"/>
-
-                        <PasswordBox x:Name="CadastroConfirmarSenhaPasswordBox"
-                                     Height="42"
-                                     FontSize="15"
-                                     Padding="10,0"
-                                     HorizontalContentAlignment="Left"
-                                     VerticalContentAlignment="Center"
-                                     BorderBrush="#DADDE2"
-                                     BorderThickness="1"
-                                     ToolTip="Confirme sua senha."/>
-
-                        <TextBlock Text="Repita a mesma senha informada acima."
+                        <TextBlock Text="O MVC vai validar se o e-mail existe no cadastro de usuarios e enviar um token temporario."
                                    Foreground="#6B7280"
                                    FontSize="12"
                                    Margin="0,5,0,0"
                                    TextWrapping="Wrap"/>
 
-                        <Button Content="Cadastrar e entrar"
+                        <Button Content="Solicitar token ao MVC"
                                 Height="44"
                                 Margin="0,24,0,0"
                                 Background="#108A3B"
@@ -273,7 +188,7 @@
                                 BorderThickness="0"
                                 Cursor="Hand"
                                 Click="Cadastrar_Click"
-                                ToolTip="Finalizar o cadastro e acessar o sistema."/>
+                                ToolTip="Solicitar token para o e-mail cadastrado."/>
                     </StackPanel>
 
                     <TextBlock x:Name="MensagemTextBlock"
