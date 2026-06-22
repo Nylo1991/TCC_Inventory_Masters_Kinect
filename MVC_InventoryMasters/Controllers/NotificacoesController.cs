@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MVC_InventoryMasters.Hubs;
+using MVC_InventoryMasters.Filters;
 using MVC_InventoryMasters.Repositories;
 using MVC_InventoryMasters.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MVC_InventoryMasters.Controllers
@@ -17,16 +19,22 @@ namespace MVC_InventoryMasters.Controllers
     /// de solicitações de coleta por parceiros,</remarks>
     /// <param></param>
     /// <return></return>
+    [PermissaoAuthorize(PermissoesSistema.NotificacoesVisualizar)]
     public class NotificacoesController : Controller
     {
         private readonly NotificacaoRepository _repo;
+        private readonly ParceirosRepository _parceirosRepository;
         private readonly IHubContext<NotificacaoHub> _hubContext;
         private readonly ILogger<NotificacoesController> _logger;
-        
-        public NotificacoesController(NotificacaoRepository repo,
-            IHubContext<NotificacaoHub> hubContext, ILogger<NotificacoesController> logger)
+
+        public NotificacoesController(
+            NotificacaoRepository repo,
+            ParceirosRepository parceirosRepository,
+            IHubContext<NotificacaoHub> hubContext,
+            ILogger<NotificacoesController> logger)
         {
             _repo = repo;
+            _parceirosRepository = parceirosRepository;
             _hubContext = hubContext;
             _logger = logger;
         }
@@ -38,12 +46,61 @@ namespace MVC_InventoryMasters.Controllers
         /// </remarks>
         /// <param></param>
         /// <returns></returns>
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            int pagina = 1,
+            DateTime? dataInicio = null,
+            DateTime? dataFim = null,
+            string parceiroId = null,
+            string status = null,
+            string tipo = null)
         {
             try
             {
-                var lista = await _repo.ListarTodos();
-                return View(lista ?? new List<Notificacao>());
+                const int itensPorPagina = 10;
+
+                var parceiros = await _parceirosRepository.ListarPorEmpresa();
+                var lista = await _repo.ListarPorEmpresa() ?? new List<Notificacao>();
+
+                if (dataInicio.HasValue)
+                    lista = lista.Where(n => n.DataHora.Date >= dataInicio.Value.Date).ToList();
+
+                if (dataFim.HasValue)
+                    lista = lista.Where(n => n.DataHora.Date <= dataFim.Value.Date).ToList();
+
+                if (!string.IsNullOrWhiteSpace(parceiroId))
+                    lista = lista.Where(n => n.ParceiroId == parceiroId).ToList();
+
+                if (!string.IsNullOrWhiteSpace(status))
+                    lista = lista.Where(n => string.Equals(n.StatusEnvio, status, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                if (!string.IsNullOrWhiteSpace(tipo))
+                    lista = lista.Where(n => string.Equals(n.Tipo, tipo, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                lista = lista.OrderByDescending(n => n.DataHora).ToList();
+
+                int totalRegistros = lista.Count;
+                int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)itensPorPagina);
+                pagina = Math.Clamp(pagina, 1, Math.Max(1, totalPaginas));
+
+                ViewBag.Parceiros = parceiros;
+                ViewBag.DataInicio = dataInicio?.ToString("yyyy-MM-dd");
+                ViewBag.DataFim = dataFim?.ToString("yyyy-MM-dd");
+                ViewBag.ParceiroId = parceiroId;
+                ViewBag.Status = status;
+                ViewBag.Tipo = tipo;
+                ViewBag.TotalRegistros = totalRegistros;
+                ViewBag.TotalPaginas = totalPaginas;
+                ViewBag.PaginaAtual = pagina;
+                ViewBag.TotalSucesso = lista.Count(n => n.StatusEnvio == "Aceito" || n.StatusEnvio == "Sucesso" || n.StatusEnvio == "Resolvido");
+                ViewBag.TotalErro = lista.Count(n => n.StatusEnvio == "Erro");
+                ViewBag.TotalPendente = lista.Count(n => n.StatusEnvio == "Pendente");
+
+                var paginaLista = lista
+                    .Skip((pagina - 1) * itensPorPagina)
+                    .Take(itensPorPagina)
+                    .ToList();
+
+                return View(paginaLista);
             }
             catch (Exception ex)
             {
@@ -108,7 +165,7 @@ namespace MVC_InventoryMasters.Controllers
                 await _hubContext.Clients.All.SendAsync("ReceberNotificacao", mensagem);
             }
             catch (Exception ex)
-            {                
+            {
                 _logger.LogError(ex, "Erro ao enviar notificação via SignalR.");
             }
         }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MVC_InventoryMasters.Filters;
+using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
 using MVC_InventoryMasters.ViewModels;
 using System;
@@ -16,6 +18,7 @@ namespace MVC_InventoryMasters.Controllers
     /// </remarks>
     /// <param name="DashboardController">Controlador do Dashboard</param>
     /// <retorna>View do Dashboard</returns>
+    [PermissaoAuthorize(PermissoesSistema.DashboardVisualizar)]
     public class DashboardController : Controller
     {
         private readonly MedicaoVolumeRepository _medicaoRepo;
@@ -65,17 +68,17 @@ namespace MVC_InventoryMasters.Controllers
         {
             try
             {
-                var parceiros = await _parceirosRepo.ListarTodos();
-                var usuarios = await _usuariosRepo.ListarTodos();
-                var medicoes = await _medicaoRepo.ListarTodos();
-                var alertas = await _notificacaoRepo.ListarTodos();
+                var parceiros = await _parceirosRepo.ListarPorEmpresa();
+                var usuarios = await _usuariosRepo.ListarPorEmpresa();
+                var medicoes = await _medicaoRepo.ListarPorEmpresa();
+                var alertas = await _notificacaoRepo.ListarPorEmpresa();
 
                 var parametros = _parametrosRepo.Buscar();
 
                 var ultimaMedicao = medicoes.OrderByDescending(m => m.DataHora).FirstOrDefault()?.VolumeMedido ?? 0;
-              
+
                 double capacidade = parametros.CapacidadeMaxima > 0 ? parametros.CapacidadeMaxima : 10000.0;
-              
+
                 decimal percentual = capacidade > 0 ? (decimal)((double)ultimaMedicao / capacidade) * 100 : 0;
 
                 var model = new DashboardViewModel
