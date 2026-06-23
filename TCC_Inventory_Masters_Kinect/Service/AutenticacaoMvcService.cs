@@ -14,7 +14,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
         public AutenticacaoMvcService()
         {
-            // A chamada é local; não deve depender de proxy corporativo/configurado no Windows.
+            /// A chamada é local; não deve depender de proxy corporativo/
+            /// configurado no Windows.
             var handler = new HttpClientHandler
             {
                 UseProxy = false
@@ -52,7 +53,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     "application/json"
                 );
 
-                // O Kinect apenas solicita; quem gera e registra o token continua sendo o MVC.
+                /// O Kinect apenas solicita; quem gera e registra o token continua 
+                /// sendo o MVC.
                 var resposta = await _httpClient.PostAsync(
                     KinectConfig.UrlSolicitarTokenMvc,
                     conteudo

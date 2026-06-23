@@ -6,7 +6,8 @@ using TCC_Inventory_Masters_Kinect.Service;
 namespace TCC_Inventory_Masters_Kinect.View
 {
     /// <summary>
-    /// Janela de acesso ao Kinect. O MVC gera/envia o token e o aplicativo Kinect valida esse token antes de liberar o monitor.
+    /// Janela de acesso ao Kinect. O MVC gera/envia o token e o aplicativo Kinect valida
+    /// esse token antes de liberar o monitor.
     /// </summary>
     public partial class KinectLogin : Window
     {
@@ -16,17 +17,14 @@ namespace TCC_Inventory_Masters_Kinect.View
             MensagemTextBlock.Text = string.Empty;
             MostrarLogin();
         }
-
         private void AbaEntrar_Click(object sender, RoutedEventArgs e)
         {
             MostrarLogin();
         }
-
         private void AbaCadastro_Click(object sender, RoutedEventArgs e)
         {
             MostrarSolicitacaoToken();
         }
-
         private void MostrarLogin()
         {
             MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
@@ -40,7 +38,6 @@ namespace TCC_Inventory_Masters_Kinect.View
             AbaCadastroButton.Background = System.Windows.Media.Brushes.LightGray;
             AbaCadastroButton.Foreground = System.Windows.Media.Brushes.Black;
         }
-
         private void MostrarSolicitacaoToken()
         {
             MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
@@ -54,7 +51,6 @@ namespace TCC_Inventory_Masters_Kinect.View
             AbaCadastroButton.Background = System.Windows.Media.Brushes.ForestGreen;
             AbaCadastroButton.Foreground = System.Windows.Media.Brushes.White;
         }
-
         private async void Entrar_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -97,7 +93,6 @@ namespace TCC_Inventory_Masters_Kinect.View
                 LoggerService.Erro("Erro ao validar token no MVC.");
             }
         }
-
         private async void Cadastrar_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -133,7 +128,6 @@ namespace TCC_Inventory_Masters_Kinect.View
                 LoggerService.Erro("Erro ao solicitar token no MVC pelo aplicativo Kinect.");
             }
         }
-
         private void AbrirMonitor(SessaoUsuario sessao)
         {
             var janela = new KinectMonitorWindow(sessao);
