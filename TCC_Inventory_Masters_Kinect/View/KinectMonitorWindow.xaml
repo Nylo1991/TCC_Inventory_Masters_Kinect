@@ -84,7 +84,7 @@
                                FontWeight="Bold"
                                Margin="0,-6,0,0"/>
 
-                    <TextBlock Text="Gestao de Estoque Inteligente"
+                    <TextBlock Text="Gestão de Estoque Inteligente"
                                Foreground="#B7D6C8"
                                FontSize="14"
                                Margin="0,10,0,0"/>
@@ -97,7 +97,7 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Margin="18,14,18,0">
-                    <Button Content="Historico de Medicoes"
+                    <Button Content="Histórico de Medições"
                             Height="44"
                             Background="#145A3D"
                             Foreground="White"
@@ -109,22 +109,9 @@
                             Padding="14,0"
                             Cursor="Hand"
                             Click="AbrirHistorico_Click"
-                            ToolTip="Historico de medicoes em tempo real."/>
+                            ToolTip="Histórico de medições em tempo real."/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="2" Margin="24,0,24,24">
-                    <TextBlock Text="{Binding EmpresaLogada}"
-                               Foreground="#D1FAE5"
-                               FontSize="13"
-                               FontWeight="SemiBold"
-                               TextWrapping="Wrap"/>
-
-                    <TextBlock Text="{Binding UsuarioLogado}"
-                               Foreground="#B7D6C8"
-                               FontSize="12"
-                               Margin="0,4,0,0"
-                               TextWrapping="Wrap"/>
-                </StackPanel>
             </Grid>
         </Border>
 
@@ -147,7 +134,7 @@
                            FontWeight="Bold"
                            VerticalAlignment="Center"
                            TextTrimming="CharacterEllipsis"
-                           ToolTip="Captura em tempo real e medicao volumetrica pelo Kinect 360."/>
+                           ToolTip="Captura em tempo real e medição volumétrica pelo Kinect 360."/>
 
                 <StackPanel Grid.Column="1"
                             HorizontalAlignment="Right"
@@ -156,7 +143,7 @@
 
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Right">
-                        <TextBlock Text="Usuario: "
+                        <TextBlock Text="Usuário: "
                                    Foreground="#D1FAE5"
                                    FontSize="12"
                                    FontWeight="SemiBold"/>
@@ -194,7 +181,7 @@
                         BorderThickness="0"
                         Cursor="Hand"
                         Click="SairButton_Click"
-                        ToolTip="Sair do sistema e fechar a aplicacao."/>
+                        ToolTip="Sair do sistema e fechar a aplicação."/>
             </Grid>
         </Border>
 
@@ -218,7 +205,7 @@
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Panel.ZIndex="0">
-                        <TextBlock Text="Camera RGB"
+                        <TextBlock Text="Câmera RGB"
                                    Foreground="#111111"
                                    FontSize="20"
                                    FontWeight="SemiBold"
@@ -253,14 +240,14 @@
                                 VerticalAlignment="Center"
                                 Panel.ZIndex="0">
                         <TextBlock x:Name="CalibrationTitleTextBlock"
-                                   Text="Video de Calibracao"
+                                   Text="Calibração"
                                    Foreground="#111111"
                                    FontSize="18"
                                    FontWeight="SemiBold"
                                    HorizontalAlignment="Center"/>
 
                         <TextBlock x:Name="CalibrationSubtitleTextBlock"
-                                   Text="O video inicia ao clicar em Calibrar"
+                                   Text=""
                                    Foreground="#6B7280"
                                    FontSize="13"
                                    HorizontalAlignment="Center"
@@ -277,7 +264,7 @@
                                   Visibility="Hidden"
                                   MediaEnded="CalibrationVideoElement_MediaEnded"
                                   Panel.ZIndex="1"
-                                  ToolTip="Video de orientacao exibido durante a calibracao."/>
+                                  ToolTip="Video de orientação exibido durante a calibração."/>
 
                     <Border x:Name="PainelCalibracao"
                             Background="#CC0B3323"
@@ -289,7 +276,7 @@
                             Visibility="Collapsed"
                             Panel.ZIndex="2">
                         <StackPanel>
-                            <TextBlock Text="Calibracao em andamento"
+                            <TextBlock Text="Calibração em andamento"
                                        Foreground="White"
                                        FontSize="22"
                                        FontWeight="Bold"
@@ -325,7 +312,7 @@
 
                 <Border Style="{StaticResource PanelBorderStyle}">
                     <StackPanel>
-                        <TextBlock Text="Medicao de Volume"
+                        <TextBlock Text="Medição de Volume"
                                    Foreground="#111111"
                                    FontWeight="Bold"
                                    FontSize="17"
@@ -449,19 +436,19 @@
 
                 <Border Style="{StaticResource PanelBorderStyle}">
                     <StackPanel>
-                        <TextBlock Text="Cadastro do Espaco"
+                        <TextBlock Text="Cadastro do Espaço"
                                    Foreground="#111111"
                                    FontWeight="Bold"
                                    FontSize="17"
                                    Margin="0,0,0,12"/>
 
-                        <TextBlock Text="Nome do Espaco"
+                        <TextBlock Text="Nome do Espaço"
                                    Style="{StaticResource LabelTextStyle}"/>
 
                         <TextBox Text="{Binding NomeEspaco, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource InputTextBoxStyle}"/>
 
-                        <TextBlock Text="Limite de Ocupacao (%)"
+                        <TextBlock Text="Limite de Ocupação (%)"
                                    Style="{StaticResource LabelTextStyle}"/>
 
                         <TextBox Text="{Binding PercentualAlerta, UpdateSourceTrigger=PropertyChanged}"
@@ -480,12 +467,12 @@
                                    FontSize="12"
                                    TextWrapping="Wrap"/>
 
-                        <Button Content="Salvar Espaco"
+                        <Button Content="Salvar Espaço"
                                 Command="{Binding SalvarEspacoCommand}"
                                 Style="{StaticResource ActionButtonStyle}"
                                 Background="#16A34A"
                                 Margin="0,12,0,0"
-                                ToolTip="Salva os dados do espaco e libera o historico de medicoes."/>
+                                ToolTip="Salva os dados do espaço e libera o histórico de medições."/>
                     </StackPanel>
                 </Border>
 
@@ -503,7 +490,7 @@
                                 Background="#16A34A"
                                 Margin="0,0,0,8"/>
 
-                        <Button Content="Calibrar Espaco"
+                        <Button Content="Calibrar Espaço"
                                 Command="{Binding CalibrarCommand}"
                                 Click="CalibrarButton_Click"
                                 Style="{StaticResource ActionButtonStyle}"
@@ -540,7 +527,7 @@
                                        Foreground="#16A34A"
                                        FontSize="13"
                                        FontWeight="SemiBold"
-                                       ToolTip="Estado de conexao do Kinect."/>
+                                       ToolTip="Estado de conexão do Kinect."/>
                         </Border>
 
                         <Border BorderBrush="#2563EB"
@@ -563,7 +550,7 @@
                                        Foreground="#D97706"
                                        FontSize="13"
                                        FontWeight="SemiBold"
-                                       ToolTip="Estado da comunicacao com o MVC via SignalR."/>
+                                       ToolTip="Estado da comunicação com o MVC via SignalR."/>
                         </Border>
                     </StackPanel>
                 </Border>
@@ -631,7 +618,7 @@
                     BorderThickness="1">
 
                 <StackPanel>
-                    <TextBlock Text="Sessao bloqueada"
+                    <TextBlock Text="Sessão bloqueada"
                                Foreground="#111111"
                                FontSize="26"
                                FontWeight="Bold"
@@ -644,7 +631,7 @@
                                TextWrapping="Wrap"
                                Margin="0,8,0,22"/>
 
-                    <TextBlock Text="Usuario"
+                    <TextBlock Text="Usuário"
                                Foreground="#6B7280"
                                FontSize="12"
                                FontWeight="SemiBold"/>

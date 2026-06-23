@@ -1,8 +1,8 @@
 ﻿<Window x:Class="TCC_Inventory_Masters_Kinect.View.HistoricoMedicoesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Historico de Medicoes"
-        Height="620"
+        Title=" Histórico de Medições"
+        Height="675"
         Width="980"
         WindowStartupLocation="CenterOwner"
         Background="#F4F6F8">
@@ -17,7 +17,7 @@
                 Background="#108A3B"
                 Padding="24,0">
             <Grid>
-                <TextBlock Text="Historico de Medicoes"
+                <TextBlock Text="Histórico de Medições"
                            Foreground="White"
                            FontSize="22"
                            FontWeight="Bold"
@@ -57,17 +57,17 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0">
-                        <TextBlock Text="Medicoes Salvas"
-                   Foreground="#111111"
-                   FontSize="20"
-                   FontWeight="Bold"
-                   ToolTip="Historico de medicoes em tempo real."/>
+                        <TextBlock Text="Medições Salvas"
+                                   Foreground="#111111"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   ToolTip="Histórico de medições em tempo real."/>
 
                         <TextBlock Text="Dados salvos em tempo real"
                    Foreground="#6B7280"
                    FontSize="13"
                    Margin="0,4,0,0"
-                   ToolTip="Dados carregados automaticamente do banco SQLite."/>
+                   ToolTip="Dados Carregados automaticamente do banco de Dados."/>
                     </StackPanel>
 
                     <UniformGrid Grid.Row="1"
@@ -98,7 +98,7 @@
                 Padding="12"
                 Margin="4,0,4,0">
                             <StackPanel>
-                                <TextBlock Text="Espaco"
+                                <TextBlock Text="Espaço"
                            Foreground="#2563EB"
                            FontSize="12"
                            FontWeight="SemiBold"/>
@@ -151,7 +151,7 @@
                           ColumnHeaderHeight="42"
                           SelectionMode="Single"
                           SelectionUnit="FullRow"
-                          ToolTip="Historico de medicoes em tempo real.">
+                          ToolTip="Histórico de medições em tempo real.">
                     <DataGrid.Resources>
                         <Style TargetType="ScrollBar">
                             <Setter Property="Width" Value="10"/>
