@@ -1,286 +1,179 @@
-﻿@model IEnumerable<MVC_InventoryMasters.Models.Notificacao>
+@model IEnumerable<MVC_InventoryMasters.Models.Notificacao>
+@using MVC_InventoryMasters.Models
 
 @{
     ViewData["Title"] = "Histórico de Notificações";
+    var parceiros = ViewBag.Parceiros as List<Parceiro> ?? new List<Parceiro>();
+    int paginaAtual = ViewBag.PaginaAtual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    int totalRegistros = ViewBag.TotalRegistros ?? 0;
+    string statusAtual = ViewBag.Status ?? "";
+    string tipoAtual = ViewBag.Tipo ?? "";
+    string parceiroAtual = ViewBag.ParceiroId ?? "";
 }
 
-<div class="container-fluid mt-4">
+<div class="container-fluid px-4 mt-4 page-shell">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h2 class="page-title">Histórico de Notificações</h2>
+        <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosNotificacoes">
+            <i class="bi bi-funnel"></i>
+            Filtros
+        </button>
+    </div>
 
-    <div class="card shadow-sm">
-
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-
-            <h5 class="mb-0">
-                <i class="bi bi-bell-fill"></i>
-                Central de Notificações
-            </h5>
-
-            <span class="badge bg-secondary">
-                Total: @(Model?.Count() ?? 0)
-            </span>
-
+    <div class="summary-grid mb-4">
+        <div class="metric-card accent-green">
+            <span>Total</span>
+            <strong>@totalRegistros</strong>
         </div>
+        <div class="metric-card accent-success">
+            <span>Sucesso</span>
+            <strong>@ViewBag.TotalSucesso</strong>
+        </div>
+        <div class="metric-card accent-danger">
+            <span>Com erro</span>
+            <strong>@ViewBag.TotalErro</strong>
+        </div>
+        <div class="metric-card accent-warning">
+            <span>Pendentes</span>
+            <strong>@ViewBag.TotalPendente</strong>
+        </div>
+    </div>
 
+    <div class="collapse show" id="filtrosNotificacoes">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                    <div class="col-md-2">
+                        <label class="form-label small">Data inicial</label>
+                        <input type="date" name="dataInicio" value="@ViewBag.DataInicio" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Data final</label>
+                        <input type="date" name="dataFim" value="@ViewBag.DataFim" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Parceiro</label>
+                        <select name="parceiroId" class="form-select">
+                            <option value="">Todos</option>
+                            @foreach (var parceiro in parceiros)
+                            {
+                                <option value="@parceiro.Id" selected="@(parceiroAtual == parceiro.Id)">@parceiro.Nome</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="Pendente" selected="@(statusAtual == "Pendente")">Pendente</option>
+                            <option value="Aceito" selected="@(statusAtual == "Aceito")">Aceito</option>
+                            <option value="Sucesso" selected="@(statusAtual == "Sucesso")">Sucesso</option>
+                            <option value="Erro" selected="@(statusAtual == "Erro")">Erro</option>
+                            <option value="Resolvido" selected="@(statusAtual == "Resolvido")">Resolvido</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Tipo</label>
+                        <select name="tipo" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="Capacidade" selected="@(tipoAtual == "Capacidade")">Capacidade</option>
+                            <option value="Alerta" selected="@(tipoAtual == "Alerta")">Alerta</option>
+                            <option value="Coleta" selected="@(tipoAtual == "Coleta")">Coleta</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                    <div class="col-12">
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Limpar filtros</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <strong>Notificações enviadas</strong>
+            <span class="text-muted small">Ordenado por data mais recente</span>
+        </div>
         <div class="card-body p-0">
-
             <div class="table-responsive">
-
-                <table class="table table-hover align-middle mb-0">
-
-                    <thead style="background:#1f2937;color:white;">
-
+                <table class="table table-hover align-middle mb-0 app-table">
+                    <thead>
                         <tr>
-                            <th>Status</th>
+                            <th>Data</th>
+                            <th>Parceiro/Destinatário</th>
+                            <th>Empresa</th>
                             <th>Tipo</th>
-                            <th>Origem</th>
+                            <th>Status</th>
                             <th>Mensagem</th>
                             <th>Volume</th>
-                            <th>Data</th>
-                            <th class="text-center">Ações</th>
                         </tr>
-
                     </thead>
-
                     <tbody>
-
                         @if (Model != null && Model.Any())
                         {
-                            foreach (var n in Model.OrderByDescending(x => x.DataHora))
+                            foreach (var n in Model)
                             {
-                                string badgeClass;
-                                string icone;
-
-                                switch (n.StatusEnvio)
+                                var parceiro = parceiros.FirstOrDefault(p => p.Id == n.ParceiroId);
+                                var destinatario = parceiro?.Nome ?? n.Destinatario ?? "Sem destinatário";
+                                var empresa = parceiro?.Empresa ?? n.Empresa ?? "Sem empresa";
+                                var status = string.IsNullOrWhiteSpace(n.StatusEnvio) ? "Info" : n.StatusEnvio;
+                                var badge = status switch
                                 {
-                                    case "Pendente":
-                                        badgeClass = "bg-warning text-dark";
-                                        icone = "bi-clock-history";
-                                        break;
+                                    "Pendente" => "bg-warning text-dark",
+                                    "Aceito" => "bg-success",
+                                    "Sucesso" => "bg-success",
+                                    "Resolvido" => "bg-secondary",
+                                    "Erro" => "bg-danger",
+                                    _ => "bg-info text-dark"
+                                };
 
-                                    case "Aceito":
-                                        badgeClass = "bg-success";
-                                        icone = "bi-check-circle";
-                                        break;
-
-                                    case "Resolvido":
-                                        badgeClass = "bg-secondary";
-                                        icone = "bi-check2-all";
-                                        break;
-
-                                    case "Erro":
-                                        badgeClass = "bg-danger";
-                                        icone = "bi-exclamation-triangle";
-                                        break;
-
-                                    default:
-                                        badgeClass = "bg-info text-dark";
-                                        icone = "bi-bell";
-                                        break;
-                                }
-
-                        <tr>
-
-                            <td>
-                                <span class="badge @badgeClass">
-                                    <i class="bi @icone"></i>
-                                    @n.StatusEnvio
-                                </span>
-                            </td>
-
-                            <td>
-                                <span class="badge bg-primary">
-                                    @(string.IsNullOrEmpty(n.Tipo)
-                                                                        ? "Alerta"
-                                                                        : n.Tipo)
-                                </span>
-                            </td>
-
-                                    <td>
-                                @if (n.Automatica)
-                                        {
-                                            <span class="badge bg-dark">
-                                                Kinect
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary">
-                                                Manual
-                                            </span>
-                                        }
-                                    </td>
-
-                                    <td>
-                                        @n.Mensagem
-                                    </td>
-
-                                    <td>
-                                        <strong>
-                                            @(n.VolumeMedido?.ToString("F2") ?? "0.00") m³
-                                        </strong>
-                                    </td>
-
-                                    <td>
-                                        @(n.DataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))
-                                    </td>
-
-                                    <td class="text-center">
-
-                                        @if (n.StatusEnvio == "Pendente")
-                                        {
-                                            <button class="btn btn-sm btn-success"
-                                                    style="width: 120px; height: 38px;"
-                                                    onclick="exibirFuncionalidadeEmDesenvolvimento('A funcionalidade de aceite de notificações ainda está em desenvolvimento e será disponibilizada em versões futuras do sistema.')">
-                                                <i class="bi bi-check-circle"></i>
-                                                Aceitar
-                                            </button>
-                                        }
-                                        else
-                                        {
-                                            <button class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        }
-
-                                    </td>
-
+                                <tr>
+                                    <td>@n.DataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="fw-semibold">@destinatario</td>
+                                    <td>@empresa</td>
+                                    <td><span class="badge bg-primary">@(string.IsNullOrWhiteSpace(n.Tipo) ? "Alerta" : n.Tipo)</span></td>
+                                    <td><span class="badge @badge">@status</span></td>
+                                    <td class="text-truncate-cell" title="@n.Mensagem">@n.Mensagem</td>
+                                    <td>@(n.VolumeMedido?.ToString("N2") ?? "0,00") m³</td>
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-
-                                <td colspan="7"
-                                    class="text-center py-5 text-muted">
-
-                                    <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
-
-                                    Nenhuma notificação encontrada.
-
-                                </td>
-
+                                <td colspan="7" class="text-center text-muted py-4">Nenhuma notificação encontrada.</td>
                             </tr>
                         }
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
-
+        <div class="card-footer bg-white">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span class="text-muted small">Total de registros: @totalRegistros</span>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(paginaAtual == 1 ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-pagina="@(paginaAtual - 1)" asp-route-dataInicio="@ViewBag.DataInicio" asp-route-dataFim="@ViewBag.DataFim" asp-route-parceiroId="@parceiroAtual" asp-route-status="@statusAtual" asp-route-tipo="@tipoAtual">&lt;</a>
+                        </li>
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaAtual ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-pagina="@i" asp-route-dataInicio="@ViewBag.DataInicio" asp-route-dataFim="@ViewBag.DataFim" asp-route-parceiroId="@parceiroAtual" asp-route-status="@statusAtual" asp-route-tipo="@tipoAtual">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(paginaAtual == totalPaginas ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-pagina="@(paginaAtual + 1)" asp-route-dataInicio="@ViewBag.DataInicio" asp-route-dataFim="@ViewBag.DataFim" asp-route-parceiroId="@parceiroAtual" asp-route-status="@statusAtual" asp-route-tipo="@tipoAtual">&gt;</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
-
-    <div class="row mt-4">
-
-        <div class="col-md-3">
-
-            <div class="card border-danger shadow-sm">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
-
-                    <h6 class="mt-2">
-                        Alerta Crítico
-                    </h6>
-
-                    <small class="text-muted">
-                        Estoque acima do limite configurado.
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card border-warning shadow-sm">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-clock-history text-warning fs-1"></i>
-
-                    <h6 class="mt-2">
-                        Pendente
-                    </h6>
-
-                    <small class="text-muted">
-                        Aguardando parceiro aceitar.
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card border-success shadow-sm">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-check-circle-fill text-success fs-1"></i>
-
-                    <h6 class="mt-2">
-                        Aceito
-                    </h6>
-
-                    <small class="text-muted">
-                        Parceiro confirmou coleta.
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card border-secondary shadow-sm">
-
-                <div class="card-body text-center">
-
-                    <i class="bi bi-check2-all text-secondary fs-1"></i>
-
-                    <h6 class="mt-2">
-                        Resolvido
-                    </h6>
-
-                    <small class="text-muted">
-                        Situação normalizada.
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
 </div>
-<script>
-    function exibirFuncionalidadeEmDesenvolvimento(mensagem) {
-
-            const modalBody = document.querySelector(
-                "#modalEmDesenvolvimento .modal-body"
-            );
-
-            if (modalBody) {
-                modalBody.innerText = mensagem;
-            }
-
-            const modal = new bootstrap.Modal(
-                document.getElementById("modalEmDesenvolvimento")
-            );
-
-            modal.show();
-        }
-</script>

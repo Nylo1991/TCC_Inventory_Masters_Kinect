@@ -1,4 +1,4 @@
-﻿@model MVC_InventoryMasters.Models.ParametrosSistema
+@model MVC_InventoryMasters.Models.ParametrosSistema
 
 @{
     ViewData["Title"] = "Configurações";
@@ -8,250 +8,312 @@
 
     @if (TempData["Sucesso"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
             @TempData["Sucesso"]
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
     }
 
     @if (TempData["Erro"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
             @TempData["Erro"]
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
     }
 
     @if (TempData["Aviso"] != null)
     {
-        <div class="alert alert-warning alert-dismissible fade show">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
             @TempData["Aviso"]
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
     }
 
-    <form id="formConfiguracoes"
-          asp-controller="Parametros"
-          asp-action="Salvar"
-          method="post">
-
+    <form id="formConfiguracoes" asp-controller="Parametros" asp-action="Salvar" method="post">
         @Html.AntiForgeryToken()
 
-        <div asp-validation-summary="ModelOnly"
-             class="text-danger mb-3">
-        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
         <div class="row">
-
-            <!-- ========================= -->
-            <!-- CONFIGURAÇÕES DO SISTEMA -->
-            <!-- ========================= -->
-
             <div class="col-lg-6 mb-4">
-
                 <div class="card shadow-sm h-100">
-
-                    <div class="card-header bg-primary text-white">
-
+                    <div class="card-header text-white" style="background:#15803d;">
                         <h5 class="mb-0">
                             <i class="bi bi-sliders"></i>
                             Configurações do Sistema
                         </h5>
-
                     </div>
 
                     <div class="card-body">
+                        <h6 class="fw-bold mb-3">Parâmetros Kinect</h6>
+
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                            <div class="form-check form-switch mb-0">
+                                <input asp-for="AtivarSistemaCalibracao" class="form-check-input" role="switch" />
+                                <label asp-for="AtivarSistemaCalibracao" class="form-check-label fw-semibold">
+                                    Ativar Sistema de Calibração
+                                </label>
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-sm"
+                                    formaction="@Url.Action("IniciarCalibracao", "Parametros")">
+                                <i class="bi bi-arrow-clockwise"></i>
+                                Iniciar Nova Calibração
+                            </button>
+                        </div>
+
+                        <hr />
+
+                        <h6 class="fw-bold mb-3">Parâmetros de Detecção</h6>
 
                         <div class="mb-3">
-
-                            <label asp-for="CapacidadeMaxima"
-                                   class="form-label fw-semibold">
-                            </label>
-
+                            <label asp-for="CapacidadeMaxima" class="form-label fw-semibold"></label>
                             <input asp-for="CapacidadeMaxima"
                                    type="number"
                                    min="1"
                                    step="0.01"
+                                   inputmode="decimal"
                                    class="form-control" />
-
-                            <span asp-validation-for="CapacidadeMaxima"
-                                  class="text-danger">
-                            </span>
-
+                            <span asp-validation-for="CapacidadeMaxima" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-
-                            <label asp-for="CapacidadeMinima"
-                                   class="form-label fw-semibold">
-                            </label>
-
+                            <label asp-for="CapacidadeMinima" class="form-label fw-semibold"></label>
                             <input asp-for="CapacidadeMinima"
                                    type="number"
                                    min="0"
                                    step="0.01"
+                                   inputmode="decimal"
                                    class="form-control" />
-
-                            <span asp-validation-for="CapacidadeMinima"
-                                  class="text-danger">
-                            </span>
-
+                            <span asp-validation-for="CapacidadeMinima" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-
-                            <label asp-for="PercentualAlerta"
-                                   class="form-label fw-semibold">
-                            </label>
-
+                            <label asp-for="PercentualAlerta" class="form-label fw-semibold"></label>
                             <input asp-for="PercentualAlerta"
                                    type="number"
                                    min="1"
                                    max="100"
+                                   inputmode="numeric"
                                    class="form-control" />
+                            <span asp-validation-for="PercentualAlerta" class="text-danger"></span>
+                        </div>
 
-                            <span asp-validation-for="PercentualAlerta"
-                                  class="text-danger">
-                            </span>
+                        <div class="mb-3">
+                            <label asp-for="RaioDeteccaoKinect" class="form-label fw-semibold"></label>
+                            <input asp-for="RaioDeteccaoKinect"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   inputmode="decimal"
+                                   class="form-control" />
+                            <span asp-validation-for="RaioDeteccaoKinect" class="text-danger"></span>
+                        </div>
 
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="HabilitarZonaExclusaoDeteccao" class="form-check-input" role="switch" />
+                            <label asp-for="HabilitarZonaExclusaoDeteccao" class="form-check-label fw-semibold">
+                                Habilitar Zona de Exclusão de Detecção
+                            </label>
+                        </div>
+
+                        <hr />
+
+                        <h6 class="fw-bold mb-3">Parâmetros Operacionais</h6>
+
+                        <div class="mb-3">
+                            <label asp-for="TaxaAmostragemVolumeMinutos" class="form-label fw-semibold"></label>
+                            <input asp-for="TaxaAmostragemVolumeMinutos"
+                                   type="number"
+                                   min="1"
+                                   max="1440"
+                                   inputmode="numeric"
+                                   class="form-control" />
+                            <span asp-validation-for="TaxaAmostragemVolumeMinutos" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DuracaoMaximaMedicaoSegundos" class="form-label fw-semibold"></label>
+                            <input asp-for="DuracaoMaximaMedicaoSegundos"
+                                   type="number"
+                                   min="1"
+                                   max="86400"
+                                   inputmode="numeric"
+                                   class="form-control" />
+                            <span asp-validation-for="DuracaoMaximaMedicaoSegundos" class="text-danger"></span>
                         </div>
 
                         <div class="alert alert-light border">
-
                             <strong>Objetivo:</strong>
-
-                            Define a capacidade total do estoque e o
-                            percentual que dispara alertas automáticos
-                            quando o volume armazenado atingir níveis críticos.
-
+                            Define a capacidade total do estoque, os limites de alerta e os parâmetros de leitura do Kinect.
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- ============================== -->
-            <!-- CONFIGURAÇÕES DE NOTIFICAÇÃO -->
-            <!-- ============================== -->
-
             <div class="col-lg-6 mb-4">
-
                 <div class="card shadow-sm h-100">
-
-                    <div class="card-header bg-warning">
-
+                    <div class="card-header text-white" style="background:#15803d;">
                         <h5 class="mb-0">
                             <i class="bi bi-bell"></i>
                             Configurações de Notificação
                         </h5>
-
                     </div>
 
                     <div class="card-body">
+                        <h6 class="fw-bold mb-3">Template de Mensagem Padrão</h6>
 
-                        <div class="form-check form-switch mb-3">
-
-                            <input asp-for="NotificacaoAutomatica"
-                                   class="form-check-input" />
-
-                            <label asp-for="NotificacaoAutomatica"
-                                   class="form-check-label fw-semibold">
-                                Enviar notificações automáticas
-                            </label>
-
-                        </div>
-
-                        <div class="form-check form-switch mb-3">
-
-                            <input asp-for="ExibirAlertaDashboard"
-                                   class="form-check-input" />
-
-                            <label asp-for="ExibirAlertaDashboard"
-                                   class="form-check-label fw-semibold">
-                                Exibir alertas no Dashboard
-                            </label>
-
+                        <div class="mb-3">
+                            <label asp-for="TipoAlertaPadrao" class="form-label fw-semibold"></label>
+                            <select asp-for="TipoAlertaPadrao" class="form-select">
+                                <option value="Critico">Crítico</option>
+                                <option value="Alerta">Alerta</option>
+                                <option value="Informativo">Informativo</option>
+                            </select>
+                            <span asp-validation-for="TipoAlertaPadrao" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
+                            <label asp-for="TemplateMensagemPadrao" class="form-label fw-semibold"></label>
+                            <textarea asp-for="TemplateMensagemPadrao"
+                                      rows="5"
+                                      class="form-control"
+                                      id="TemplateMensagemPadrao"></textarea>
+                            <span asp-validation-for="TemplateMensagemPadrao" class="text-danger"></span>
+                        </div>
 
-                            <label asp-for="DiasSemColetaAlerta"
-                                   class="form-label fw-semibold">
+                        <div class="mb-3">
+                            <div class="form-label fw-semibold">Variáveis rápidas</div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary token-btn" data-token="{{Parceiro}}">{{Parceiro}}</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary token-btn" data-token="{{EspacoID}}">{{EspacoID}}</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary token-btn" data-token="{{VolumePercentual}}">{{VolumePercentual}}</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary token-btn" data-token="{{DataHora}}">{{DataHora}}</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary token-btn" data-token="{{LinkDashboard}}">{{LinkDashboard}}</button>
+                            </div>
+                        </div>
 
-                                Dias sem coleta para gerar alerta
+                        <div class="alert alert-success border mb-4" id="previewMensagem"></div>
 
+                        <h6 class="fw-bold mb-3">Canais e Regras de Disparo</h6>
+
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="NotificacaoAutomatica" class="form-check-input" role="switch" />
+                            <label asp-for="NotificacaoAutomatica" class="form-check-label fw-semibold">
+                                Enviar notificações automáticas
                             </label>
+                        </div>
 
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="ExibirAlertaDashboard" class="form-check-input" role="switch" />
+                            <label asp-for="ExibirAlertaDashboard" class="form-check-label fw-semibold">
+                                Exibir alertas no Dashboard
+                            </label>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    <input asp-for="CanalEmailAtivo" class="form-check-input" role="switch" />
+                                    <label asp-for="CanalEmailAtivo" class="form-check-label fw-semibold">E-mail</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    <input asp-for="CanalWhatsAppAtivo" class="form-check-input" role="switch" />
+                                    <label asp-for="CanalWhatsAppAtivo" class="form-check-label fw-semibold">WhatsApp</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check form-switch">
+                                    <input asp-for="CanalDashboardPushAtivo" class="form-check-input" role="switch" />
+                                    <label asp-for="CanalDashboardPushAtivo" class="form-check-label fw-semibold">Dashboard Push</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="NomeRemetenteWhatsApp" class="form-label fw-semibold"></label>
+                            <input asp-for="NomeRemetenteWhatsApp" class="form-control" placeholder="Nome do Remetente" />
+                            <span asp-validation-for="NomeRemetenteWhatsApp" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DiasSemColetaAlerta" class="form-label fw-semibold">
+                                Dias sem coleta para gerar alerta
+                            </label>
                             <input asp-for="DiasSemColetaAlerta"
                                    type="number"
                                    min="1"
+                                   max="365"
+                                   inputmode="numeric"
                                    class="form-control" />
+                            <span asp-validation-for="DiasSemColetaAlerta" class="text-danger"></span>
+                        </div>
 
+                        <h6 class="fw-bold mb-3">Regras de Escalonamento</h6>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EscalonamentoMinutos" class="form-label fw-semibold"></label>
+                                <input asp-for="EscalonamentoMinutos"
+                                       type="number"
+                                       min="1"
+                                       max="1440"
+                                       inputmode="numeric"
+                                       class="form-control" />
+                                <span asp-validation-for="EscalonamentoMinutos" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CanalEscalonamento" class="form-label fw-semibold"></label>
+                                <select asp-for="CanalEscalonamento" class="form-select">
+                                    <option value="E-mail">E-mail</option>
+                                    <option value="WhatsApp">WhatsApp</option>
+                                    <option value="Dashboard Push">Dashboard Push</option>
+                                </select>
+                                <span asp-validation-for="CanalEscalonamento" class="text-danger"></span>
+                            </div>
                         </div>
 
                         <div class="alert alert-warning border">
-
-                            <strong><i class="bi bi-tools"></i> Funcionalidade em Desenvolvimento</strong>
-
+                            <strong><i class="bi bi-tools"></i> Integrações externas</strong>
                             <br />
-
-                            Os parâmetros e configurações avançadas de notificações ainda estão em desenvolvimento
-                            e serão disponibilizados em versões futuras do sistema.
-
+                            Os canais ficam configurados aqui. O envio real por E-mail e WhatsApp depende dos serviços externos serem conectados.
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
         <div class="card shadow-sm">
-
             <div class="card-body">
-
-                <div class="d-flex gap-2">
-
-                    <button id="btnSalvar"
-                            type="submit"
-                            class="btn btn-success"
-                            disabled>
-
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="btnSalvar" type="submit" class="btn btn-success" disabled>
                         <i class="bi bi-check-circle"></i>
                         Salvar Alterações
-
                     </button>
 
-                    <a asp-action="Index"
-                       asp-controller="Home"
-                       class="btn btn-secondary">
+                    <button type="submit"
+                            class="btn btn-outline-warning"
+                            formaction="@Url.Action("RestaurarPadroes", "Parametros")"
+                            formnovalidate>
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Restaurar Padrões Globais
+                    </button>
 
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i>
                         Voltar
-
                     </a>
-
                 </div>
-
             </div>
-
         </div>
-
     </form>
-
 </div>
 
 @section Scripts
@@ -259,41 +321,65 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
+        const form = document.getElementById("formConfiguracoes");
+        const btnSalvar = document.getElementById("btnSalvar");
+        const templateMensagem = document.getElementById("TemplateMensagemPadrao");
+        const previewMensagem = document.getElementById("previewMensagem");
 
-        const form =
-            document.getElementById("formConfiguracoes");
+        function atualizarPreview() {
+            if (!templateMensagem || !previewMensagem) {
+                return;
+            }
 
-        const btnSalvar =
-            document.getElementById("btnSalvar");
+            const texto = templateMensagem.value
+                .replaceAll("{{Parceiro}}", "Equipe Logística")
+                .replaceAll("{{EspacoID}}", "SP-001")
+                .replaceAll("{{VolumePercentual}}", "92")
+                .replaceAll("{{DataHora}}", "21/06/2026 18:20")
+                .replaceAll("{{LinkDashboard}}", "/Dashboard");
 
-        let alterado = false;
+            previewMensagem.innerText = texto || "Prévia da mensagem configurada.";
+        }
 
-        form.querySelectorAll("input, select").forEach(campo => {
+        if (form && btnSalvar) {
+            const habilitarBotaoSalvar = () => {
+                btnSalvar.disabled = false;
+                atualizarPreview();
+            };
 
-            campo.addEventListener("input", () => {
+            form.querySelectorAll("input, select, textarea").forEach(campo => {
+                campo.addEventListener("input", habilitarBotaoSalvar);
+                campo.addEventListener("change", habilitarBotaoSalvar);
+            });
+        }
 
-                if (!alterado)
-                {
-                    alterado = true;
+        document.querySelectorAll(".token-btn").forEach(botao => {
+            botao.addEventListener("click", function () {
+                if (!templateMensagem) {
+                    return;
+                }
+
+                const inicio = templateMensagem.selectionStart ?? templateMensagem.value.length;
+                const fim = templateMensagem.selectionEnd ?? templateMensagem.value.length;
+                const token = this.dataset.token ?? "";
+
+                templateMensagem.value =
+                    templateMensagem.value.substring(0, inicio) +
+                    token +
+                    templateMensagem.value.substring(fim);
+
+                templateMensagem.focus();
+                templateMensagem.selectionStart = inicio + token.length;
+                templateMensagem.selectionEnd = inicio + token.length;
+
+                if (btnSalvar) {
                     btnSalvar.disabled = false;
                 }
 
+                atualizarPreview();
             });
-
-            campo.addEventListener("change", () => {
-
-                if (!alterado)
-                {
-                    alterado = true;
-                    btnSalvar.disabled = false;
-                }
-
-            });
-
         });
 
-            
-
-
+        atualizarPreview();
     </script>
 }

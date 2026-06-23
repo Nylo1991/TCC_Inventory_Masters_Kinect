@@ -1,4 +1,5 @@
 using Google.Cloud.Firestore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using MVC_InventoryMasters.Hubs;
 using MVC_InventoryMasters.Repositories;
 using MVC_InventoryMasters.Services;
@@ -10,8 +11,25 @@ string jsonPath = Path.Combine(AppContext.BaseDirectory, "firebase-service-accou
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", jsonPath);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<FirebaseService>();
 
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Acesso/Login";
+        options.AccessDeniedPath = "/Acesso/Negado";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    });
+
+builder.Services.AddScoped<ContextoUsuarioService>();
+builder.Services.AddScoped<PermissaoService>();
+builder.Services.AddScoped<TokenAcessoKinectService>();
+builder.Services.AddScoped<EmailTokenService>();
+builder.Services.AddScoped<EmpresasRepository>();
+builder.Services.AddScoped<LogsSistemaRepository>();
+builder.Services.AddScoped<TokensAcessoKinectRepository>();
 builder.Services.AddScoped<ParceirosRepository>();
 builder.Services.AddScoped<MedicaoVolumeRepository>();
 builder.Services.AddScoped<NotificacaoRepository>();
@@ -53,6 +71,7 @@ app.UseRouting();
 // 2. CORS deve vir DEPOIS do Routing e ANTES de Autorização e Endpoints
 app.UseCors("AllowAll");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // 3. Mapeamento de Hubs e Controllers

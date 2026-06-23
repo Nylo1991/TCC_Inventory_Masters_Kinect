@@ -20,8 +20,10 @@
     <div class="card shadow-sm border-0">
         <div class="card-body">
             <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
                 <input asp-for="Id" type="hidden" />
                 <input asp-for="Data_Cadastro" type="hidden" />
+                <input asp-for="EmpresaId" type="hidden" />
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -43,6 +45,11 @@
                             <option value="">Selecione um perfil...</option>
                         </select>
                         <span asp-validation-for="Perfil" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Empresa" class="form-label"></label>
+                        <input asp-for="Empresa" class="form-control" />
+                        <span asp-validation-for="Empresa" class="text-danger"></span>
                     </div>
                 </div>
 

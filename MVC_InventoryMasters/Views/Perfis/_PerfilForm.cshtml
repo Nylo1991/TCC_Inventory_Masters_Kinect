@@ -1,0 +1,39 @@
+@model MVC_InventoryMasters.Models.Perfil
+
+@{
+    var permissoes = ViewBag.Permissoes as string[] ?? Array.Empty<string>();
+}
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Nome" class="form-label fw-semibold">Nome do perfil</label>
+        <input asp-for="Nome" class="form-control" />
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="Descricao" class="form-label fw-semibold">Descrição</label>
+        <input asp-for="Descricao" class="form-control" />
+    </div>
+</div>
+
+<div class="form-check form-switch mb-3">
+    <input asp-for="Ativo" class="form-check-input" role="switch" />
+    <label asp-for="Ativo" class="form-check-label fw-semibold">Perfil ativo</label>
+</div>
+
+<div class="card border-0 bg-light">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3">Permissões por funcionalidade</h6>
+        <div class="row">
+            @foreach (var permissao in permissoes)
+            {
+                var marcada = Model.Permissoes?.Contains(permissao) == true;
+                <div class="col-md-6 col-lg-4 mb-2">
+                    <label class="form-check">
+                        <input class="form-check-input" type="checkbox" name="permissoesSelecionadas" value="@permissao" checked="@marcada" />
+                        <span class="form-check-label">@permissao</span>
+                    </label>
+                </div>
+            }
+        </div>
+    </div>
+</div>

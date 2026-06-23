@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MVC_InventoryMasters.Filters;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
 using System;
@@ -14,6 +15,7 @@ namespace MVC_InventoryMasters.Controllers
     /// remarks>Este controlador permite listar os parceiros, exibir detalhes, criar novos parceiros, editar e excluir parceiros existentes </remarks>
     /// <param></param>
     /// <returns></returns>
+    [PermissaoAuthorize(PermissoesSistema.ParceirosVisualizar)]
     public class ParceirosController : Controller
     {
         private readonly ParceirosRepository _repository;
@@ -247,6 +249,26 @@ namespace MVC_InventoryMasters.Controllers
                 TempData["Erro"] = "Não foi possível excluir o parceiro devido a uma dependência ou erro interno.";
                 return RedirectToAction(nameof(Index));
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlternarStatus(string id, bool ativo)
+        {
+            if (string.IsNullOrEmpty(id)) return BadRequest();
+
+            try
+            {
+                await _repository.AtualizarStatus(id, !ativo);
+                TempData["Sucesso"] = !ativo ? "Parceiro ativado com sucesso." : "Parceiro inativado com sucesso.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao alternar status do parceiro ID: {Id}", id);
+                TempData["Erro"] = "Não foi possível alterar o status do parceiro.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

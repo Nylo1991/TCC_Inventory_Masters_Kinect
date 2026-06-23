@@ -28,6 +28,15 @@ namespace MVC_InventoryMasters.Models
         [FirestoreProperty]
         public string? ParceiroId { get; set; }
 
+        [FirestoreProperty]
+        public string? EmpresaId { get; set; }
+
+        [FirestoreProperty]
+        public string? Empresa { get; set; }
+
+        [FirestoreProperty]
+        public string? Destinatario { get; set; }
+
         /// <summary>
         /// Data e hora do evento (para dashboard em tempo real).
         /// </summary>

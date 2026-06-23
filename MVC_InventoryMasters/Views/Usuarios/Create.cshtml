@@ -6,7 +6,7 @@
 
 <div class="container">
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header text-white" style="background:#15803d;">
             <h4>Novo Usuário</h4>
         </div>
         <div class="card-body">
@@ -37,6 +37,14 @@
                         <option value="">Selecione um perfil</option>
                     </select>
                     <span asp-validation-for="Perfil" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Empresa" class="form-label">Empresa</label>
+                    <input asp-for="Empresa" class="form-control"
+                           data-bs-toggle="tooltip"
+                           title="Informe a empresa vinculada ao usuário." />
+                    <span asp-validation-for="Empresa" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">

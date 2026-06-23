@@ -1,4 +1,4 @@
-/* ==========================
+Ôªø/* ==========================
    INVENTORY MASTERS - GREEN ACCENT THEME
    ========================== */
 
@@ -8,7 +8,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: "Segoe UI", sans-serif;
-    background-color: #f4f6f9; /* mantÈm claro */
+    background-color: #f4f6f9; /* mant√©m claro */
 }
 
 /* ==========================
@@ -170,7 +170,7 @@ body {
     }
 
 /* ==========================
-   BOT’ES
+   BOT√ïES
    ========================== */
 
 .btn-primary {
@@ -183,7 +183,7 @@ body {
     }
 
 /* ==========================
-   FORMUL¡RIOS
+   FORMUL√ÅRIOS
    ========================== */
 
 .form-control,
@@ -196,3 +196,113 @@ body {
         box-shadow: 0 0 0 .2rem rgba(21,128,61,.15);
     }
 
+
+/* ==========================
+   PADR√ÉO GERAL DE TELAS
+   ========================== */
+.user-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(255,255,255,.45);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: white;
+}
+
+.user-pill span {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.user-pill small {
+    color: rgba(255,255,255,.8);
+    font-size: .75rem;
+}
+
+.page-shell {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.page-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #10251b;
+    margin: 0;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.metric-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #15803d;
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(15,42,31,.06);
+    min-height: 78px;
+}
+
+.metric-card span {
+    display: block;
+    font-size: .8rem;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.metric-card strong {
+    font-size: 1.4rem;
+    color: #111827;
+    line-height: 1;
+}
+
+.accent-green { border-left-color: #15803d; }
+.accent-success { border-left-color: #16a34a; }
+.accent-warning { border-left-color: #d97706; }
+.accent-danger { border-left-color: #dc2626; }
+
+.app-table {
+    table-layout: auto;
+    width: 100%;
+}
+
+.app-table th {
+    background: #0f2a1f !important;
+    color: white;
+    white-space: nowrap;
+    font-size: .9rem;
+}
+
+.app-table td {
+    vertical-align: middle;
+    font-size: .93rem;
+}
+
+.text-truncate-cell {
+    max-width: 360px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #15803d;
+    border-color: #15803d;
+}
+
+@media (max-width: 992px) {
+    .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .content { padding: 20px; }
+}
+
+@media (max-width: 576px) {
+    .summary-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 0 15px; }
+    .user-pill small { display: none; }
+}

@@ -1,0 +1,76 @@
+@model MVC_InventoryMasters.ViewModels.ValidarTokenViewModel
+
+@{
+    ViewData["Title"] = "Validar Token";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            @if (TempData["Erro"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["Erro"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            }
+
+            @if (TempData["Sucesso"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Sucesso"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            }
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header text-white" style="background:#16813a;">
+                    <h4 class="mb-0">
+                        <i class="bi bi-key"></i>
+                        Validar Token
+                    </h4>
+                </div>
+
+                <div class="card-body p-4">
+                    @if (TempData["EmailToken"] != null)
+                    {
+                        <div class="alert alert-light border">
+                            Token enviado para <strong>@TempData["EmailToken"]</strong>.
+                        </div>
+                    }
+
+                    <form asp-action="ValidarToken" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Token" class="form-label fw-semibold"></label>
+                            <input asp-for="Token"
+                                   class="form-control text-center fw-bold"
+                                   maxlength="6"
+                                   inputmode="numeric"
+                                   autocomplete="one-time-code"
+                                   placeholder="000000" />
+                            <span asp-validation-for="Token" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i>
+                            Validar e Entrar
+                        </button>
+
+                        <a asp-action="Login" class="btn btn-outline-secondary w-100 mt-2">
+                            Solicitar novo token
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

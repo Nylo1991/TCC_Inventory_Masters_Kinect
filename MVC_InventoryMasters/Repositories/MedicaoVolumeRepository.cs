@@ -17,6 +17,7 @@ namespace MVC_InventoryMasters.Repositories
     {
         private readonly string _colecao = "Medicoes";
         private readonly FirestoreDb _db;
+        private readonly ContextoUsuarioService _contextoUsuario;
 
         /// <summary>
         /// Inicializa uma nova instância do repositório de medições.
@@ -24,9 +25,12 @@ namespace MVC_InventoryMasters.Repositories
         /// <param name="firebaseService">
         /// Serviço responsável por fornecer a conexão com o Firebase Firestore.
         /// </param>
-        public MedicaoVolumeRepository(FirebaseService firebaseService)
+        public MedicaoVolumeRepository(
+            FirebaseService firebaseService,
+            ContextoUsuarioService contextoUsuario)
         {
             _db = firebaseService.Firestore;
+            _contextoUsuario = contextoUsuario;
         }
 
         /// <summary>
@@ -41,6 +45,9 @@ namespace MVC_InventoryMasters.Repositories
         public async Task Adicionar(MedicaoVolume medicao)
         {
             medicao.DataHora = DateTime.UtcNow;
+            medicao.EmpresaId = string.IsNullOrWhiteSpace(medicao.EmpresaId)
+                ? _contextoUsuario.ObterEmpresaId()
+                : medicao.EmpresaId;
 
             await _db
                 .Collection(_colecao)
@@ -73,6 +80,21 @@ namespace MVC_InventoryMasters.Repositories
             return lista;
         }
 
+        public async Task<List<MedicaoVolume>> ListarPorEmpresa(string? empresaId = null)
+        {
+            string empresa = string.IsNullOrWhiteSpace(empresaId)
+                ? _contextoUsuario.ObterEmpresaId()
+                : empresaId;
+
+            var medicoes = await ListarTodos();
+
+            return medicoes
+                .Where(m => m.EmpresaId == empresa ||
+                            (empresa == ContextoUsuarioService.EmpresaPadraoId &&
+                             string.IsNullOrWhiteSpace(m.EmpresaId)))
+                .ToList();
+        }
+
         /// <summary>
         /// Realiza a filtragem das medições utilizando múltiplos critérios.
         /// </summary>
@@ -86,7 +108,7 @@ namespace MVC_InventoryMasters.Repositories
             DateTime? dataInicio,
             DateTime? dataFim)
         {
-            var lista = await ListarTodos();
+            var lista = await ListarPorEmpresa();
 
             if (!string.IsNullOrWhiteSpace(origem))
             {
@@ -136,7 +158,7 @@ namespace MVC_InventoryMasters.Repositories
         /// </remarks>
         public async Task<MedicaoSummary> ObterSummary()
         {
-            var medicoes = await ListarTodos();
+            var medicoes = await ListarPorEmpresa();
 
             if (!medicoes.Any())
             {

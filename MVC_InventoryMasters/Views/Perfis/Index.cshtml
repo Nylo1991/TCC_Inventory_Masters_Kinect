@@ -1,0 +1,109 @@
+@model IEnumerable<MVC_InventoryMasters.Models.Perfil>
+
+@{
+    ViewData["Title"] = "Perfis";
+    int paginaAtual = ViewBag.PaginaAtual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    int totalRegistros = ViewBag.TotalRegistros ?? 0;
+    string ativoParam = ViewBag.Ativo != null ? ViewBag.Ativo.ToString().ToLower() : "";
+}
+
+<div class="container-fluid px-4 mt-4 page-shell">
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">@TempData["Sucesso"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">@TempData["Erro"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h2 class="page-title">Perfis</h2>
+        <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> Novo Perfil</a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label small">Nome ou descrição</label>
+                    <input type="text" name="termo" value="@ViewBag.Termo" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small">Status</label>
+                    <select name="ativo" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="true" selected="@(ViewBag.Ativo == true)">Ativo</option>
+                        <option value="false" selected="@(ViewBag.Ativo == false)">Inativo</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filtrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 app-table">
+                    <thead>
+                        <tr>
+                            <th>Perfil</th>
+                            <th>Descrição</th>
+                            <th>Permissões</th>
+                            <th>Status</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var perfil in Model)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@perfil.Nome</td>
+                                    <td>@perfil.Descricao</td>
+                                    <td>@(perfil.Permissoes?.Count ?? 0)</td>
+                                    <td><span class="badge @(perfil.Ativo ? "bg-success" : "bg-warning text-dark")">@(perfil.Ativo ? "Ativo" : "Inativo")</span></td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Details" asp-route-id="@perfil.Id" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></a>
+                                            <a asp-action="Edit" asp-route-id="@perfil.Id" class="btn btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                            <form asp-action="Inativar" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@perfil.Id" />
+                                                <button type="submit" class="btn btn-outline-warning"><i class="bi bi-toggle-off"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center text-muted py-4">Nenhum perfil encontrado.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-white">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span class="text-muted small">Total de registros: @totalRegistros</span>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaAtual ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-pagina="@i" asp-route-termo="@ViewBag.Termo" asp-route-ativo="@ativoParam">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>

@@ -44,6 +44,9 @@ namespace MVC_InventoryMasters.Models
         public string? Empresa { get; set; }
 
         [FirestoreProperty]
+        public string? EmpresaId { get; set; }
+
+        [FirestoreProperty]
         [Required(ErrorMessage = "O endereço é obrigatório.")]
         [Display(Name = "Endereço")]
         public string? Endereco { get; set; }

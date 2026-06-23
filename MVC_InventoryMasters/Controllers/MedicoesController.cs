@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MVC_InventoryMasters.Hubs;
+using MVC_InventoryMasters.Filters;
+using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,6 +14,7 @@ namespace MVC_InventoryMasters.Controllers
     /// <summary>
     /// Controlador responsável por gerenciar as ações relacionadas às medições de volume realizadas pelos sensores.
     /// </summary>
+    [PermissaoAuthorize(PermissoesSistema.MedicoesVisualizar)]
     public class MedicoesController : Controller
     {
         private readonly MedicaoVolumeRepository _repo;
@@ -31,12 +34,17 @@ namespace MVC_InventoryMasters.Controllers
         /// <summary>
         /// Exibe a lista paginada de medições e estatísticas gerais.
         /// </summary>
-        public async Task<IActionResult> Index(int pagina = 1)
+        public async Task<IActionResult> Index(
+            int pagina = 1,
+            DateTime? dataInicio = null,
+            DateTime? dataFim = null,
+            string status = null,
+            string origem = null)
         {
             try
             {
                 const int itensPorPagina = 10;
-                var todasMedicoes = await _repo.ListarTodos();
+                var todasMedicoes = await _repo.FiltrarAvancado(origem, status, dataInicio, dataFim);
 
                 var listaOrdenada = todasMedicoes
                     .OrderByDescending(x => x.DataHora)
@@ -56,6 +64,12 @@ namespace MVC_InventoryMasters.Controllers
                 ViewBag.TotalPaginas = totalPaginas;
                 ViewBag.PaginaAtual = pagina;
                 ViewBag.ItensPorPagina = itensPorPagina;
+                ViewBag.DataInicio = dataInicio?.ToString("yyyy-MM-dd");
+                ViewBag.DataFim = dataFim?.ToString("yyyy-MM-dd");
+                ViewBag.Status = status;
+                ViewBag.Origem = origem;
+                ViewBag.TotalNormal = listaOrdenada.Count(x => string.Equals(x.Status, "Normal", StringComparison.OrdinalIgnoreCase));
+                ViewBag.TotalAlerta = listaOrdenada.Count(x => string.Equals(x.Status, "Alerta", StringComparison.OrdinalIgnoreCase));
 
                 ViewBag.VolumeMedio = listaOrdenada.Any() ? listaOrdenada.Average(x => x.VolumeMedido ?? 0) : 0;
                 ViewBag.UltimaMedicao = listaOrdenada.Any() ? listaOrdenada.First().DataHora : null;

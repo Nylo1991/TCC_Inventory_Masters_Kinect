@@ -1,0 +1,67 @@
+@model MVC_InventoryMasters.ViewModels.LoginEmailViewModel
+
+@{
+    ViewData["Title"] = "Acesso ao Sistema";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            @if (TempData["Erro"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["Erro"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            }
+
+            @if (TempData["Sucesso"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Sucesso"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            }
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header text-white" style="background:#16813a;">
+                    <h4 class="mb-0">
+                        <i class="bi bi-shield-lock"></i>
+                        Login por E-mail
+                    </h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <form asp-action="SolicitarToken" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   placeholder="nome@empresa.com"
+                                   autocomplete="email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="alert alert-light border">
+                            Informe o e-mail cadastrado no sistema. Um token temporário será enviado para liberar o acesso.
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-envelope-check"></i>
+                            Enviar Token
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

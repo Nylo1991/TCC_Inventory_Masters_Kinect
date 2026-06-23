@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using MVC_InventoryMasters.Filters;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
 using System;
@@ -15,6 +16,7 @@ namespace MVC_InventoryMasters.Controllers
     /// <remarks>Este controlador permite listar, criar, editar, excluir e visualizar detalhes dos usuários cadastrados no sistema.</remarks>
     /// <param></param>
     /// <returns></returns>
+    [PermissaoAuthorize(PermissoesSistema.UsuariosGerenciar)]
     public class UsuariosController : Controller
     {
         private readonly UsuariosRepository _repository;
@@ -33,7 +35,7 @@ namespace MVC_InventoryMasters.Controllers
 
         private async Task CarregarPerfis()
         {
-            var perfis = await _perfisRepository.ListarTodos();
+            var perfis = await _perfisRepository.ListarPorEmpresa();
             ViewBag.Perfis = perfis
                 .Select(p => new SelectListItem
                 {
@@ -47,13 +49,14 @@ namespace MVC_InventoryMasters.Controllers
             int pagina = 1,
             string termo = null,
             string perfil = null,
+            string empresa = null,
             bool? ativo = null)
         {
             try
             {
                 int itensPorPagina = 10;
 
-                var todosUsuarios = await _repository.ListarTodos();
+                var todosUsuarios = await _repository.ListarPorEmpresa();
 
                 if (!string.IsNullOrWhiteSpace(termo))
                 {
@@ -75,6 +78,17 @@ namespace MVC_InventoryMasters.Controllers
                         .ToList();
                 }
 
+                if (!string.IsNullOrWhiteSpace(empresa))
+                {
+                    todosUsuarios = todosUsuarios
+                        .Where(u =>
+                            (!string.IsNullOrEmpty(u.Empresa) &&
+                             u.Empresa.Contains(empresa, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(u.EmpresaId) &&
+                             u.EmpresaId.Contains(empresa, StringComparison.OrdinalIgnoreCase)))
+                        .ToList();
+                }
+
                 if (ativo.HasValue)
                 {
                     todosUsuarios = todosUsuarios
@@ -93,6 +107,7 @@ namespace MVC_InventoryMasters.Controllers
 
                 ViewBag.Termo = termo;
                 ViewBag.Perfil = perfil;
+                ViewBag.Empresa = empresa;
                 ViewBag.Ativo = ativo;
                 ViewBag.TotalPaginas = totalPaginas;
                 ViewBag.PaginaAtual = pagina;
@@ -184,6 +199,7 @@ namespace MVC_InventoryMasters.Controllers
                     !string.Equals(usuario.Nome?.Trim(), existente.Nome?.Trim(), StringComparison.OrdinalIgnoreCase) ||
                     !string.Equals(usuario.Email?.Trim(), existente.Email?.Trim(), StringComparison.OrdinalIgnoreCase) ||
                     !string.Equals(usuario.Perfil?.Trim(), existente.Perfil?.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(usuario.Empresa?.Trim(), existente.Empresa?.Trim(), StringComparison.OrdinalIgnoreCase) ||
                     usuario.Ativo != existente.Ativo;
 
                 if (!houveAlteracao)
@@ -195,6 +211,7 @@ namespace MVC_InventoryMasters.Controllers
 
                 usuario.Senha = existente.Senha;
                 usuario.Data_Cadastro = existente.Data_Cadastro;
+                usuario.EmpresaId = existente.EmpresaId;
 
                 await _repository.Atualizar(usuario);
                 TempData["Sucesso"] = "Usuário atualizado com sucesso.";
@@ -244,6 +261,26 @@ namespace MVC_InventoryMasters.Controllers
                 TempData["Erro"] = "Não foi possível excluir o usuário.";
                 return RedirectToAction(nameof(Index));
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlternarStatus(string id, bool ativo)
+        {
+            if (string.IsNullOrEmpty(id)) return BadRequest();
+
+            try
+            {
+                await _repository.AtualizarStatus(id, !ativo);
+                TempData["Sucesso"] = !ativo ? "Usuário ativado com sucesso." : "Usuário inativado com sucesso.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao alternar status do usuário ID: {Id}", id);
+                TempData["Erro"] = "Não foi possível alterar o status do usuário.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]

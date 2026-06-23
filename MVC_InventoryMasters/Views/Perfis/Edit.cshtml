@@ -1,0 +1,25 @@
+@model MVC_InventoryMasters.Models.Perfil
+
+@{
+    ViewData["Title"] = "Editar Perfil";
+}
+
+<div class="container-fluid px-4 mt-4 page-shell">
+    <div class="card shadow-sm border-0">
+        <div class="card-header text-white" style="background:#15803d;">
+            <strong>Editar Perfil</strong>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="EmpresaId" type="hidden" />
+                <partial name="_PerfilForm" model="Model" />
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

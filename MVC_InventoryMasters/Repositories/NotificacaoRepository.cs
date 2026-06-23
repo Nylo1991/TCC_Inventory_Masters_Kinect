@@ -18,12 +18,17 @@ namespace MVC_InventoryMasters.Repositories
     {
         private readonly FirestoreDb _db;
         private readonly ILogger<NotificacaoRepository> _logger;
+        private readonly ContextoUsuarioService _contextoUsuario;
         private readonly string _colecao = "Notificacoes";
 
-        public NotificacaoRepository(FirebaseService firebaseService, ILogger<NotificacaoRepository> logger)
+        public NotificacaoRepository(
+            FirebaseService firebaseService,
+            ILogger<NotificacaoRepository> logger,
+            ContextoUsuarioService contextoUsuario)
         {
             _db = firebaseService.Firestore;
             _logger = logger;
+            _contextoUsuario = contextoUsuario;
         }
 
         /// <summary>
@@ -40,6 +45,10 @@ namespace MVC_InventoryMasters.Repositories
             try
             {
                 notif.DataHora = DateTime.UtcNow;
+                notif.EmpresaId = string.IsNullOrWhiteSpace(notif.EmpresaId)
+                    ? _contextoUsuario.ObterEmpresaId()
+                    : notif.EmpresaId;
+
                 await _db.Collection(_colecao).AddAsync(notif);
                 _logger.LogInformation("Notificação de {Mensagem} adicionada com sucesso ao Firestore.", notif.Mensagem);
             }
@@ -84,6 +93,22 @@ namespace MVC_InventoryMasters.Repositories
                 _logger.LogError(ex, "Falha ao recuperar a lista de notificações.");
                 return new List<Notificacao>();
             }
+        }
+
+        public async Task<List<Notificacao>> ListarPorEmpresa(string? empresaId = null)
+        {
+            string empresa = string.IsNullOrWhiteSpace(empresaId)
+                ? _contextoUsuario.ObterEmpresaId()
+                : empresaId;
+
+            var notificacoes = await ListarTodos();
+
+            return notificacoes
+                .Where(n => n.EmpresaId == empresa ||
+                            (empresa == ContextoUsuarioService.EmpresaPadraoId &&
+                             string.IsNullOrWhiteSpace(n.EmpresaId)))
+                .OrderByDescending(n => n.DataHora)
+                .ToList();
         }
 
         /// <summary>
@@ -140,7 +165,16 @@ namespace MVC_InventoryMasters.Repositories
                         "Pendente")
                     .GetSnapshotAsync();
 
-                return snapshot.Documents.Any();
+                string empresa = _contextoUsuario.ObterEmpresaId();
+
+                return snapshot.Documents.Any(doc =>
+                {
+                    var notificacao = doc.ConvertTo<Notificacao>();
+
+                    return notificacao.EmpresaId == empresa ||
+                           (empresa == ContextoUsuarioService.EmpresaPadraoId &&
+                            string.IsNullOrWhiteSpace(notificacao.EmpresaId));
+                });
             }
             catch (Exception ex)
             {
