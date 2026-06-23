@@ -1,17 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
-using System.Windows;
-using TCC_Inventory_Masters_Kinect.Data;
+﻿using System.Windows;
 using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Model;
+using TCC_Inventory_Masters_Kinect.Service;
 
 namespace TCC_Inventory_Masters_Kinect.View
 {
     /// <summary>
-    /// Janela de login e cadastro de usuarios para acesso ao monitoramento volumétrico do Kinect.
-    /// Todas as responsabilidades de validação, autenticação e persistência de usuarios estão centralizadas nesta classe.
+    /// Janela de acesso ao Kinect. O MVC gera/envia o token e o aplicativo Kinect valida
+    /// esse token antes de liberar o monitor.
     /// </summary>
     public partial class KinectLogin : Window
     {
@@ -19,280 +15,119 @@ namespace TCC_Inventory_Masters_Kinect.View
         {
             InitializeComponent();
             MensagemTextBlock.Text = string.Empty;
-            DefinirTelaInicial();
+            MostrarLogin();
         }
-
-        private void DefinirTelaInicial()
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    if (db.UsuariosAcesso.Any())
-                    {
-                        MostrarLogin();
-                    }
-                    else
-                    {
-                        MostrarCadastro();
-                    }
-                }
-            }
-            catch
-            {
-                MensagemTextBlock.Text = string.Empty;
-                MostrarCadastro();
-                LoggerService.Erro("Erro ao verificar usuarios cadastrados.");
-            }
-        }
-
         private void AbaEntrar_Click(object sender, RoutedEventArgs e)
         {
             MostrarLogin();
         }
-
         private void AbaCadastro_Click(object sender, RoutedEventArgs e)
         {
-            MostrarCadastro();
+            MostrarSolicitacaoToken();
         }
-
         private void MostrarLogin()
         {
+            MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
             MensagemTextBlock.Text = string.Empty;
             LoginPanel.Visibility = Visibility.Visible;
             CadastroPanel.Visibility = Visibility.Collapsed;
             TituloTextBlock.Text = "Acesso ao Kinect";
-            SubtituloTextBlock.Text = "Entre para iniciar o monitoramento volumetrico";
+            SubtituloTextBlock.Text = "Informe o token enviado pelo sistema MVC";
             AbaEntrarButton.Background = System.Windows.Media.Brushes.ForestGreen;
             AbaEntrarButton.Foreground = System.Windows.Media.Brushes.White;
             AbaCadastroButton.Background = System.Windows.Media.Brushes.LightGray;
             AbaCadastroButton.Foreground = System.Windows.Media.Brushes.Black;
         }
-
-        private void MostrarCadastro()
+        private void MostrarSolicitacaoToken()
         {
+            MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
             MensagemTextBlock.Text = string.Empty;
             LoginPanel.Visibility = Visibility.Collapsed;
             CadastroPanel.Visibility = Visibility.Visible;
-            TituloTextBlock.Text = "Cadastro de Acesso";
-            SubtituloTextBlock.Text = "Crie um usuario para acessar o sistema";
+            TituloTextBlock.Text = "Solicitar Token";
+            SubtituloTextBlock.Text = "O MVC envia o token para o e-mail cadastrado";
             AbaEntrarButton.Background = System.Windows.Media.Brushes.LightGray;
             AbaEntrarButton.Foreground = System.Windows.Media.Brushes.Black;
             AbaCadastroButton.Background = System.Windows.Media.Brushes.ForestGreen;
             AbaCadastroButton.Foreground = System.Windows.Media.Brushes.White;
         }
-
-        private void Entrar_Click(object sender, RoutedEventArgs e)
+        private async void Entrar_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                string identificador = LoginUsuarioTextBox.Text?.Trim().ToLower();
-                string senha = LoginSenhaPasswordBox.Password?.Trim();
+                string token = LoginUsuarioTextBox.Text?.Trim();
 
-                if (string.IsNullOrWhiteSpace(identificador) || string.IsNullOrWhiteSpace(senha))
+                if (string.IsNullOrWhiteSpace(token))
                 {
-                    MensagemTextBlock.Text = "Informe usuario ou email e senha.";
+                    MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
+                    MensagemTextBlock.Text = "Informe o token de acesso.";
                     return;
                 }
 
-                using (var db = new AppDbContext())
+                var autenticacaoService = new AutenticacaoMvcService();
+                var resultado = await autenticacaoService.ValidarTokenAsync(token);
+
+                if (resultado == null || !resultado.TokenValido)
                 {
-                    var usuarioAcesso = db.UsuariosAcesso
-                        .FirstOrDefault(x =>
-                            (x.Usuario.ToLower() == identificador || x.Email.ToLower() == identificador) &&
-                            x.Senha == senha &&
-                            x.Ativo);
-
-                    if (usuarioAcesso == null)
-                    {
-                        MensagemTextBlock.Text = "Usuario, email ou senha invalidos.";
-                        LoggerService.LogWarning("Tentativa de login invalida.");
-                        return;
-                    }
-
-                    var sessao = new SessaoUsuario
-                    {
-                        Usuario = usuarioAcesso.Usuario,
-                        Empresa = string.IsNullOrWhiteSpace(usuarioAcesso.Empresa)
-                            ? "Empresa Teste"
-                            : usuarioAcesso.Empresa,
-                        Email = usuarioAcesso.Email,
-                        Token = "DEV"
-                    };
-
-                    LoggerService.Info("Login realizado com sucesso.");
-                    AbrirMonitor(sessao);
-                }
-            }
-            catch
-            {
-                MensagemTextBlock.Text = "Erro ao realizar login.";
-                LoggerService.Erro("Erro ao realizar login.");
-            }
-        }
-
-        private void Cadastrar_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                MensagemTextBlock.Text = string.Empty;
-
-                string usuario = CadastroUsuarioTextBox.Text?.Trim();
-                string empresa = CadastroEmpresaTextBox.Text?.Trim();
-                string email = CadastroEmailTextBox.Text?.Trim().ToLower();
-                string senha = CadastroSenhaPasswordBox.Password?.Trim();
-                string confirmarSenha = CadastroConfirmarSenhaPasswordBox.Password?.Trim();
-
-                if (string.IsNullOrWhiteSpace(usuario))
-                {
-                    MensagemTextBlock.Text = "Informe o usuario.";
+                    MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
+                    MensagemTextBlock.Text = resultado?.Mensagem ?? "Token invalido ou expirado.";
+                    LoggerService.LogWarning("Tentativa invalida de acesso ao Kinect.");
                     return;
-                }
-
-                if (string.IsNullOrWhiteSpace(empresa))
-                {
-                    MensagemTextBlock.Text = "Informe o nome da empresa.";
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(email))
-                {
-                    MensagemTextBlock.Text = "Informe o email.";
-                    return;
-                }
-
-                if (!EmailValido(email))
-                {
-                    MensagemTextBlock.Text = "Informe um email valido.";
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(senha))
-                {
-                    MensagemTextBlock.Text = "Informe a senha.";
-                    return;
-                }
-
-                if (senha.Contains(" "))
-                {
-                    MensagemTextBlock.Text = "A senha não pode conter espaços.";
-                    return;
-                }
-
-                if (senha.Length < 6)
-                {
-                    MensagemTextBlock.Text = "A senha deve ter no minimo 6 caracteres.";
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(confirmarSenha))
-                {
-                    MensagemTextBlock.Text = "Confirme a senha.";
-                    return;
-                }
-
-                if (confirmarSenha.Contains(" "))
-                {
-                    MensagemTextBlock.Text = "A confirmação da senha não pode conter espaços.";
-                    return;
-                }
-
-                if (senha != confirmarSenha)
-                {
-                    MensagemTextBlock.Text = "As senhas nao conferem.";
-                    return;
-                }
-
-                using (var db = new AppDbContext())
-                {
-                    bool usuarioJaExiste = db.UsuariosAcesso
-                        .Any(x => x.Usuario.ToLower() == usuario.ToLower());
-
-                    if (usuarioJaExiste)
-                    {
-                        MensagemTextBlock.Text = "Este usuario ja esta cadastrado.";
-                        return;
-                    }
-
-                    bool emailJaExiste = db.UsuariosAcesso
-                        .Any(x => x.Email.ToLower() == email);
-
-                    if (emailJaExiste)
-                    {
-                        MensagemTextBlock.Text = "Este email ja esta cadastrado.";
-                        return;
-                    }
-
-                    var novoUsuario = new UsuarioAcesso
-                    {
-                        Usuario = usuario,
-                        Empresa = empresa,
-                        Email = email,
-                        Senha = senha,
-                        Perfil = "Usuario",
-                        CriadoEm = DateTime.Now,
-                        Ativo = true
-                    };
-
-                    db.UsuariosAcesso.Add(novoUsuario);
-                    db.SaveChanges();
                 }
 
                 var sessao = new SessaoUsuario
                 {
-                    Usuario = usuario,
-                    Empresa = empresa,
-                    Email = email,
-                    Token = "DEV"
+                    Usuario = resultado.Usuario,
+                    Empresa = resultado.Empresa,
+                    Email = resultado.Email,
+                    Token = token
                 };
 
-                LoggerService.Info("Usuario cadastrado com sucesso.");
+                LoggerService.Info("Acesso ao Kinect liberado com token validado pelo MVC.");
                 AbrirMonitor(sessao);
             }
             catch
             {
-                MensagemTextBlock.Text = "Erro ao salvar usuario. Verifique se a tabela UsuariosAcesso existe no banco.";
-                LoggerService.Erro("Erro ao cadastrar usuario.");
+                MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
+                MensagemTextBlock.Text = "Erro ao validar token no MVC.";
+                LoggerService.Erro("Erro ao validar token no MVC.");
             }
         }
-
-        private bool EmailValido(string email)
+        private async void Cadastrar_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return false;
-            }
-
-            email = email.Trim();
-
-            if (email.Contains(" "))
-            {
-                return false;
-            }
-
-            if (email.Count(x => x == '@') != 1)
-            {
-                return false;
-            }
-
-            string padrao = @"^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$";
-
-            if (!Regex.IsMatch(email, padrao))
-            {
-                return false;
-            }
-
             try
             {
-                var endereco = new MailAddress(email);
-                return endereco.Address.Equals(email, StringComparison.OrdinalIgnoreCase);
+                string email = CadastroEmailTextBox.Text?.Trim();
+
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
+                    MensagemTextBlock.Text = "Informe o e-mail cadastrado.";
+                    return;
+                }
+
+                var autenticacaoService = new AutenticacaoMvcService();
+                var resultado = await autenticacaoService.SolicitarTokenAsync(email);
+
+                if (resultado == null || !resultado.Sucesso)
+                {
+                    MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
+                    MensagemTextBlock.Text = resultado?.Mensagem ?? "Nao foi possivel solicitar o token.";
+                    return;
+                }
+
+                MostrarLogin();
+                MensagemTextBlock.Foreground = System.Windows.Media.Brushes.ForestGreen;
+                MensagemTextBlock.Text = "Token enviado. Informe o codigo recebido para acessar o Kinect.";
+                LoggerService.Info("Token solicitado ao MVC pelo aplicativo Kinect.");
             }
             catch
             {
-                return false;
+                MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
+                MensagemTextBlock.Text = "Erro ao solicitar token no MVC.";
+                LoggerService.Erro("Erro ao solicitar token no MVC pelo aplicativo Kinect.");
             }
         }
-
         private void AbrirMonitor(SessaoUsuario sessao)
         {
             var janela = new KinectMonitorWindow(sessao);

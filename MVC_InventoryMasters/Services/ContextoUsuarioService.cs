@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using Microsoft.AspNetCore.Http;
+=======
+﻿using Microsoft.AspNetCore.Http;
+>>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 using MVC_InventoryMasters.Models;
 using System.Security.Claims;
 

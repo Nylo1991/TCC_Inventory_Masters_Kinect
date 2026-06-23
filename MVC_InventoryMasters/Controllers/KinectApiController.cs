@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 using Microsoft.AspNetCore.Mvc;
 using MVC_InventoryMasters.Repositories;
+=======
+﻿using Microsoft.AspNetCore.Mvc;
+>>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 using MVC_InventoryMasters.Services;
 using MVC_InventoryMasters.ViewModels;
 
@@ -10,6 +14,7 @@ namespace MVC_InventoryMasters.Controllers
     public class KinectApiController : ControllerBase
     {
         private readonly TokenAcessoKinectService _tokenService;
+<<<<<<< HEAD
         private readonly EmailTokenService _emailService;
         private readonly LogsSistemaRepository _logsRepository;
         private readonly IConfiguration _configuration;
@@ -88,6 +93,12 @@ namespace MVC_InventoryMasters.Controllers
                     mensagem = "Não foi possível solicitar o token no MVC."
                 });
             }
+=======
+
+        public KinectApiController(TokenAcessoKinectService tokenService)
+        {
+            _tokenService = tokenService;
+>>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
         }
 
         [HttpPost("validar-token")]

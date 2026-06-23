@@ -76,9 +76,9 @@ namespace MVC_InventoryMasters.Controllers
                 var parametros = _parametrosRepo.Buscar();
 
                 var ultimaMedicao = medicoes.OrderByDescending(m => m.DataHora).FirstOrDefault()?.VolumeMedido ?? 0;
-              
+
                 double capacidade = parametros.CapacidadeMaxima > 0 ? parametros.CapacidadeMaxima : 10000.0;
-              
+
                 decimal percentual = capacidade > 0 ? (decimal)((double)ultimaMedicao / capacidade) * 100 : 0;
 
                 var model = new DashboardViewModel

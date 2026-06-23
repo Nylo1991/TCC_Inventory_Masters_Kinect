@@ -174,8 +174,8 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                 {
                     var consulta = db.HistoricosOcupacao.AsQueryable();
 
-                    // Aplica filtro de segurança por empresa na consulta,
-                    // impedindo o retorno de históricos pertencentes a outras empresas.
+                    /// Aplica filtro de segurança por empresa na consulta,
+                    /// impedindo o retorno de históricos pertencentes a outras empresas.
                     if (!string.IsNullOrWhiteSpace(_empresa))
                     {
                         consulta = consulta.Where(x => x.Empresa == _empresa);

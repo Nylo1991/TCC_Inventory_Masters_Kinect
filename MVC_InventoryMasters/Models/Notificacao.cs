@@ -51,7 +51,7 @@ namespace MVC_InventoryMasters.Models
         public string? StatusEnvio { get; set; }
 
         [FirestoreProperty]
-        public string? ParceiroQueAceitouId { get; set; } 
+        public string? ParceiroQueAceitouId { get; set; }
 
         /// <summary>
         /// Mensagem descritiva do evento.

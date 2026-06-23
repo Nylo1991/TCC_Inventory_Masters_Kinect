@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using Microsoft.Extensions.Configuration;
+=======
+﻿using Microsoft.Extensions.Configuration;
+>>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
 using MVC_InventoryMasters.ViewModels;
@@ -152,3 +156,12 @@ namespace MVC_InventoryMasters.Services
         }
     }
 }
+<<<<<<< HEAD
+=======
+namespace MVC_InventoryMasters.Services
+{
+    public class TokenAcessoKinectService
+    {
+    }
+}
+>>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec

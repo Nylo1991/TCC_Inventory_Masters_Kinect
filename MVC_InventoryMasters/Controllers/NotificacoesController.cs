@@ -26,7 +26,11 @@ namespace MVC_InventoryMasters.Controllers
         private readonly ParceirosRepository _parceirosRepository;
         private readonly IHubContext<NotificacaoHub> _hubContext;
         private readonly ILogger<NotificacoesController> _logger;
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
         public NotificacoesController(
             NotificacaoRepository repo,
             ParceirosRepository parceirosRepository,
@@ -165,7 +169,7 @@ namespace MVC_InventoryMasters.Controllers
                 await _hubContext.Clients.All.SendAsync("ReceberNotificacao", mensagem);
             }
             catch (Exception ex)
-            {                
+            {
                 _logger.LogError(ex, "Erro ao enviar notificação via SignalR.");
             }
         }

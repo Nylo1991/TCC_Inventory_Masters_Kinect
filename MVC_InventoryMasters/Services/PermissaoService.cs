@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using MVC_InventoryMasters.Models;
+=======
+﻿using MVC_InventoryMasters.Models;
+>>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 
 namespace MVC_InventoryMasters.Services
 {

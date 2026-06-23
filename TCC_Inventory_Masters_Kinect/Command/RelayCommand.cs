@@ -6,8 +6,6 @@ using System.Windows.Input;
 /// Implementação de ICommand para facilitar a criação de comandos no MVVM.
 /// Projeto: TCC Inventory Masters Kinect
 /// </summary>
-
-
 namespace TCC_Inventory_Masters_Kinect.Command
 {
     /// <summary>
@@ -26,13 +24,11 @@ namespace TCC_Inventory_Masters_Kinect.Command
         /// </summary>
         /// <param name="execute">Ação a ser executada pelo comando.</param>
         /// <param name="canExecute">Função que determina se o comando pode ser executado.</param>
-       
         public RelayCommand(Action execute, Func<bool> canExecute = null)
         {
             _execute = execute;
             _canExecute = canExecute;
         }
-
 
         /// <summary>
         /// Construtor para comandos assíncronos.
@@ -40,7 +36,6 @@ namespace TCC_Inventory_Masters_Kinect.Command
         /// </summary>
         /// <param name="executeAsync">Função assíncrona a ser executada pelo comando.</param>
         /// <param name="canExecute">Função que determina se o comando pode ser executado.</param>
-        
         public RelayCommand(Func<Task> executeAsync, Func<bool> canExecute = null)
         {
             _executeAsync = executeAsync;
@@ -57,8 +52,6 @@ namespace TCC_Inventory_Masters_Kinect.Command
             return _canExecute == null || _canExecute();
         }
        
-
-
         /// <summary>
         /// Executa a ação associada ao comando
         /// </summary>

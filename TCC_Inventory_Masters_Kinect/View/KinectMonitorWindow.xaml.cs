@@ -14,7 +14,8 @@ namespace TCC_Inventory_Masters_Kinect.View
     public partial class KinectMonitorWindow : Window
     {
         /// <summary>
-        /// Janela principal do monitoramento do Kinect, responsável por exibir a interface de calibração,
+        /// Janela principal do monitoramento do Kinect, responsável por exibir a 
+        /// interface de calibração,
         /// exibir o vídeo de calibração e gerenciar a interação do usuário com o sistema.
         /// </summary>
         private MainViewModel _viewModel;
@@ -51,8 +52,9 @@ namespace TCC_Inventory_Masters_Kinect.View
 
             DataContext = _viewModel;
 
-            ///Metado de bloqueio automatico da tela apos 15 minutos de inatividade, 
-            ///para evitar o uso indevido do sistema em caso de esquecimento ou abandono da estação de trabalho
+            /// Metado de bloqueio automatico da tela apos 15 minutos de inatividade, 
+            /// para evitar o uso indevido do sistema em caso de esquecimento ou 
+            /// abandono da estação de trabalho
 
             _inatividadeTimer = new DispatcherTimer
             {
@@ -69,7 +71,8 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Evento que é acionado sempre que o usuário interage com a interface, seja movendo o mouse, clicando ou pressionando uma tecla,
+        /// Evento que é acionado sempre que o usuário interage com a interface, 
+        /// seja movendo o mouse, clicando ou pressionando uma tecla,
         /// para registrar a atividade do usuário e reiniciar o timer de inatividade, 
         /// garantindo que a sessão permaneça ativa enquanto o usuário estiver presente.
         /// </summary>
@@ -111,7 +114,8 @@ namespace TCC_Inventory_Masters_Kinect.View
             MensagemBloqueioTextBlock.Text = string.Empty;
             SenhaDesbloqueioPasswordBox.Focus();
 
-            LoggerService.LogWarning("Sessao bloqueada por inatividade. Monitoramento Kinect continua ativo.");
+            LoggerService.LogWarning(
+                "Sessao bloqueada por inatividade. Monitoramento Kinect continua ativo.");
         }
 
         private void DesbloquearSessao_Click(object sender, RoutedEventArgs e)
@@ -127,8 +131,10 @@ namespace TCC_Inventory_Masters_Kinect.View
             }
         }
         /// <summary>
-        /// metado que realiza o processo de desbloqueio da sessão quando o usuário informa a senha correta,
-        /// e volta a tela apos o bloqueio por inatividade , garantindo que apenas usuários autorizados possam 
+        /// metado que realiza o processo de desbloqueio da sessão quando o usuário informa a 
+        /// senha correta,
+        /// e volta a tela apos o bloqueio por inatividade , garantindo que apenas usuários 
+        /// autorizados possam 
         /// acessar a interface após um período de inatividade,
         /// </summary>
         private void DesbloquearSessao()
@@ -153,7 +159,8 @@ namespace TCC_Inventory_Masters_Kinect.View
                     if (usuario == null)
                     {
                         MensagemBloqueioTextBlock.Text = "Senha invalida.";
-                        LoggerService.LogWarning("Tentativa invalida de desbloqueio por inatividade.");
+                        LoggerService.LogWarning(
+                            "Tentativa invalida de desbloqueio por inatividade.");
                         return;
                     }
                 }
@@ -176,7 +183,8 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Evento de clique do botão "Calibrar", que inicia o processo de calibração do Kinect.
+        /// Evento de clique do botão "Calibrar", que inicia o processo de calibração do
+        /// Kinect.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -222,7 +230,8 @@ namespace TCC_Inventory_Masters_Kinect.View
 
         /// <summary>
         /// Evento de clique do botão "Sair", que fecha a aplicação de forma segura,
-        /// garantindo que todos os recursos sejam liberados corretamente  e retornando a tela de login .
+        /// garantindo que todos os recursos sejam liberados corretamente  e retornando a 
+        /// tela de login .
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -241,12 +250,15 @@ namespace TCC_Inventory_Masters_Kinect.View
 
         private void AbrirMonitoramento_Click(object sender, RoutedEventArgs e)
         {
+
         }
 
         /// <summary>
-        /// Evento de fechamento da janela, que garante que os recursos do Kinect sejam liberados corretamente e 
-        /// que os eventos sejam desvinculados para evitar vazamentos de memória,e aciona a tela novamente apos o usuario fechar a janela de monitoramento, 
-        /// para permitir que o usuário possa realizar novas calibrações ou acessar o histórico de medições sem precisar reiniciar a aplicação.
+        /// Evento de fechamento da janela, que garante que os recursos do Kinect sejam 
+        /// liberados corretamente e que os eventos sejam desvinculados para evitar vazamentos 
+        /// de memória,e aciona a tela novamente apos o usuario fechar a janela de 
+        /// monitoramento, para permitir que o usuário possa realizar novas calibrações ou 
+        /// acessar o histórico de medições sem precisar reiniciar a aplicação.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -269,7 +281,8 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Evento de clique do botão "Abrir Histórico", que verifica se os dados do espaço foram salvos
+        /// Evento de clique do botão "Abrir Histórico", que verifica se os dados do espaço 
+        /// foram salvos
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -292,7 +305,8 @@ namespace TCC_Inventory_Masters_Kinect.View
         }
 
         /// <summary>
-        /// Metado de mostra que antes de abrir o hstorico e necessario registra o espaço antes 
+        /// Metado de mostra que antes de abrir o hstorico e necessario registra o 
+        /// espaço antes 
         /// </summary>
         private void ExibirAvisoHistoricoIndisponivel()
         {
