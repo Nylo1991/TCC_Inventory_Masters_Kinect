@@ -4,11 +4,12 @@
 
 html,
 body {
-    height: 100%;
+    height: 100vh;
     margin: 0;
     padding: 0;
+    overflow: hidden;
     font-family: "Segoe UI", sans-serif;
-    background-color: #f4f6f9; /* mantém claro */
+    background-color: #f4f6f9;
 }
 
 /* ==========================
@@ -17,7 +18,8 @@ body {
 
 .wrapper {
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
 }
 
 /* ==========================
@@ -26,11 +28,14 @@ body {
 
 .sidebar {
     width: 260px;
-    background: #0f2a1f; /* verde escuro */
+    background: #0f2a1f;
     color: white;
     display: flex;
     flex-direction: column;
     box-shadow: 2px 0 10px rgba(0,0,0,.1);
+    flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .logo-area {
@@ -79,6 +84,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* ==========================
@@ -88,9 +94,13 @@ body {
 .topbar {
     height: 70px;
     background: #15803d; /* verde principal */
+    min-height: 70px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     padding: 0 30px;
     color: white;
 }
@@ -120,6 +130,8 @@ body {
    ========================== */
 
 .content {
+    flex: 1;
+    overflow-y: auto;
     padding: 30px;
 }
 
