@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 using Microsoft.AspNetCore.Mvc;
-=======
-﻿using Microsoft.AspNetCore.Mvc;
->>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 
 namespace MVC_InventoryMasters.Filters
 {

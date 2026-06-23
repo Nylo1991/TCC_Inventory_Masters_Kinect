@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 using Microsoft.AspNetCore.Authentication;
-=======
-﻿using Microsoft.AspNetCore.Authentication;
->>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using MVC_InventoryMasters.Repositories;

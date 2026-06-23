@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 using Google.Cloud.Firestore;
-=======
-﻿using Google.Cloud.Firestore;
->>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 using System;
 using System.ComponentModel.DataAnnotations;
 

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 using Microsoft.Extensions.Configuration;
-=======
-﻿using Microsoft.Extensions.Configuration;
->>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 using System.Net;
 using System.Net.Mail;
 using System.Text;

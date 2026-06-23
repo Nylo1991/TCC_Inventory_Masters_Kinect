@@ -1,17 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-<<<<<<< HEAD
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-=======
->>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 using MVC_InventoryMasters.Filters;
 using MVC_InventoryMasters.Models;
 using MVC_InventoryMasters.Repositories;
-using MVC_InventoryMasters.Services;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MVC_InventoryMasters.Controllers
 {
-<<<<<<< HEAD
     /// <summary>
     /// Controlador responsável por gerenciar as ações relacionadas aos usuários do sistema,
     /// </summary>
@@ -20,21 +18,21 @@ namespace MVC_InventoryMasters.Controllers
     /// <returns></returns>
     [PermissaoAuthorize(PermissoesSistema.UsuariosGerenciar)]
     public class UsuariosController : Controller
-=======
-    [PermissaoAuthorize(PermissoesSistema.PerfisGerenciar)]
-    public class PerfisController : Controller
->>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
     {
-        private readonly PerfisRepository _repository;
-        private readonly ILogger<PerfisController> _logger;
+        private readonly UsuariosRepository _repository;
+        private readonly PerfisRepository _perfisRepository;
+        private readonly ILogger<UsuariosController> _logger;
 
-        public PerfisController(PerfisRepository repository, ILogger<PerfisController> logger)
+        public UsuariosController(
+            UsuariosRepository repository,
+            PerfisRepository perfisRepository,
+            ILogger<UsuariosController> logger)
         {
             _repository = repository;
+            _perfisRepository = perfisRepository;
             _logger = logger;
         }
 
-<<<<<<< HEAD
         private async Task CarregarPerfis()
         {
             var perfis = await _perfisRepository.ListarPorEmpresa();
@@ -59,20 +57,25 @@ namespace MVC_InventoryMasters.Controllers
                 int itensPorPagina = 10;
 
                 var todosUsuarios = await _repository.ListarPorEmpresa();
-=======
-        public async Task<IActionResult> Index(int pagina = 1, string termo = null, bool? ativo = null)
-        {
-            try
-            {
-                const int itensPorPagina = 10;
-                var perfis = await _repository.ListarPorEmpresa();
->>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
 
                 if (!string.IsNullOrWhiteSpace(termo))
                 {
-                    perfis = perfis.Where(p =>
-                        (p.Nome ?? "").Contains(termo, StringComparison.OrdinalIgnoreCase) ||
-                        (p.Descricao ?? "").Contains(termo, StringComparison.OrdinalIgnoreCase)).ToList();
+                    todosUsuarios = todosUsuarios
+                        .Where(u =>
+                            (!string.IsNullOrEmpty(u.Nome) &&
+                             u.Nome.Contains(termo, StringComparison.OrdinalIgnoreCase)) ||
+                            (!string.IsNullOrEmpty(u.Email) &&
+                             u.Email.Contains(termo, StringComparison.OrdinalIgnoreCase)))
+                        .ToList();
+                }
+
+                if (!string.IsNullOrWhiteSpace(perfil))
+                {
+                    todosUsuarios = todosUsuarios
+                        .Where(u =>
+                            !string.IsNullOrEmpty(u.Perfil) &&
+                            u.Perfil.Contains(perfil, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
                 }
 
                 if (!string.IsNullOrWhiteSpace(empresa))
@@ -87,79 +90,108 @@ namespace MVC_InventoryMasters.Controllers
                 }
 
                 if (ativo.HasValue)
-                    perfis = perfis.Where(p => p.Ativo == ativo.Value).ToList();
+                {
+                    todosUsuarios = todosUsuarios
+                        .Where(u => u.Ativo == ativo.Value)
+                        .ToList();
+                }
 
-                int totalRegistros = perfis.Count;
-                int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)itensPorPagina);
-                pagina = Math.Clamp(pagina, 1, Math.Max(1, totalPaginas));
+                int totalRegistros = todosUsuarios.Count();
+
+                var totalPaginas = (int)Math.Ceiling(totalRegistros / (double)itensPorPagina);
+
+                var usuariosPaginados = todosUsuarios
+                    .Skip((pagina - 1) * itensPorPagina)
+                    .Take(itensPorPagina)
+                    .ToList();
 
                 ViewBag.Termo = termo;
-<<<<<<< HEAD
                 ViewBag.Perfil = perfil;
                 ViewBag.Empresa = empresa;
-=======
->>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
                 ViewBag.Ativo = ativo;
-                ViewBag.TotalRegistros = totalRegistros;
                 ViewBag.TotalPaginas = totalPaginas;
                 ViewBag.PaginaAtual = pagina;
+                ViewBag.TotalRegistros = totalRegistros;
 
-                return View(perfis.Skip((pagina - 1) * itensPorPagina).Take(itensPorPagina).ToList());
+                return View(usuariosPaginados);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao carregar perfis.");
-                TempData["Erro"] = "Não foi possível carregar os perfis.";
-                return View(new List<Perfil>());
+                _logger.LogError(ex, "Erro ao carregar listagem de usuários.");
+                return RedirectToAction("Error", "Home");
             }
         }
-
+        /// <summary>
+        /// Exibe a tela de criação de um novo usuário, carregando os perfis disponíveis para seleção.
+        /// </summary>
+        /// <remarks
+        /// <returns></returns>
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Permissoes = PermissoesSistema.Todas;
-            return View(new Perfil { Ativo = true });
+            await CarregarPerfis();
+            return View(new Usuario { Ativo = true });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Perfil perfil, string[] permissoesSelecionadas)
+        public async Task<IActionResult> Create(Usuario usuario)
         {
+            if (!ModelState.IsValid)
+            {
+                await CarregarPerfis();
+                return View(usuario);
+            }
+
             try
             {
-                perfil.Permissoes = permissoesSelecionadas?.ToList() ?? new List<string>();
-                await _repository.Adicionar(perfil);
-                TempData["Sucesso"] = "Perfil cadastrado com sucesso.";
+                await _repository.Adicionar(usuario);
+                TempData["Sucesso"] = "Usuário cadastrado com sucesso.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao cadastrar perfil.");
-                ViewBag.Permissoes = PermissoesSistema.Todas;
-                TempData["Erro"] = "Não foi possível cadastrar o perfil.";
-                return View(perfil);
+                _logger.LogError(ex, "Erro ao cadastrar novo usuário.");
+                TempData["Erro"] = "Ocorreu um erro ao salvar o usuário.";
+                await CarregarPerfis();
+                return View(usuario);
             }
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            if (string.IsNullOrWhiteSpace(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) return BadRequest();
 
-            var perfil = await _repository.BuscarPorId(id);
-            if (perfil == null) return NotFound();
+            try
+            {
+                var usuario = await _repository.BuscarPorId(id);
+                if (usuario == null) return NotFound();
 
-            ViewBag.Permissoes = PermissoesSistema.Todas;
-            return View(perfil);
+                await CarregarPerfis();
+                return View(usuario);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao carregar tela de edição do usuário ID: {Id}", id);
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Perfil perfil, string[] permissoesSelecionadas)
+        public async Task<IActionResult> Edit(Usuario usuario)
         {
+            ModelState.Remove(nameof(usuario.Senha));
+
+            if (!ModelState.IsValid)
+            {
+                await CarregarPerfis();
+                return View(usuario);
+            }
+
             try
             {
-<<<<<<< HEAD
                 var existente = await _repository.BuscarPorId(usuario.Id);
                 if (existente == null) return NotFound();
 
@@ -183,19 +215,51 @@ namespace MVC_InventoryMasters.Controllers
 
                 await _repository.Atualizar(usuario);
                 TempData["Sucesso"] = "Usuário atualizado com sucesso.";
-=======
-                perfil.Permissoes = permissoesSelecionadas?.ToList() ?? new List<string>();
-                await _repository.Atualizar(perfil);
-                TempData["Sucesso"] = "Perfil atualizado com sucesso.";
->>>>>>> 69278f70785abed625eb15930bd6564a7fd280ec
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao atualizar perfil {PerfilId}.", perfil.Id);
-                ViewBag.Permissoes = PermissoesSistema.Todas;
-                TempData["Erro"] = "Não foi possível atualizar o perfil.";
-                return View(perfil);
+                _logger.LogError(ex, "Erro ao atualizar usuário ID: {Id}", usuario.Id);
+                TempData["Erro"] = "Ocorreu um erro ao atualizar os dados.";
+                await CarregarPerfis();
+                return View(usuario);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return BadRequest();
+
+            try
+            {
+                var usuario = await _repository.BuscarPorId(id);
+                return usuario == null ? NotFound() : View(usuario);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao carregar tela de exclusão do usuário ID: {Id}", id);
+                return RedirectToAction("Error", "Home");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return BadRequest();
+
+            try
+            {
+                await _repository.Excluir(id);
+                TempData["Sucesso"] = "Usuário excluído com sucesso.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao excluir usuário ID: {Id}", id);
+                TempData["Erro"] = "Não foi possível excluir o usuário.";
+                return RedirectToAction(nameof(Index));
             }
         }
 
@@ -222,21 +286,18 @@ namespace MVC_InventoryMasters.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(string id)
         {
-            if (string.IsNullOrWhiteSpace(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id)) return BadRequest();
 
-            var perfil = await _repository.BuscarPorId(id);
-            return perfil == null ? NotFound() : View(perfil);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Inativar(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id)) return BadRequest();
-
-            await _repository.Inativar(id);
-            TempData["Sucesso"] = "Perfil inativado com sucesso.";
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var usuario = await _repository.BuscarPorId(id);
+                return usuario == null ? NotFound() : View(usuario);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar detalhes do usuário ID: {Id}", id);
+                return RedirectToAction("Error", "Home");
+            }
         }
     }
 }
