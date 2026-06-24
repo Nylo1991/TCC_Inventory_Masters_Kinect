@@ -93,7 +93,19 @@
                         Login
                     </a>
                 }
+
+                
             </nav>
+            <div class="sidebar-footer">
+                <form asp-controller="Acesso" asp-action="Sair" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit" class="btn-logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Encerrar Sessão
+                    </button>
+                </form>
+            </div>
         </aside>
 
         <div class="main-content">
@@ -115,14 +127,6 @@
                                 <small>@perfilUsuario@(string.IsNullOrWhiteSpace(empresaUsuario) ? "" : $" • {empresaUsuario}")</small>
                             </span>
                         </div>
-
-                        <form asp-controller="Acesso" asp-action="Sair" method="post" class="m-0">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-outline-light btn-sm">
-                                <i class="bi bi-box-arrow-right"></i>
-                                Sair
-                            </button>
-                        </form>
                     }
                     else
                     {
