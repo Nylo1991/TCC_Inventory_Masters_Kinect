@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Inventory Masters"
         Width="1100"
-        Height="685"
+        Height="678"
         WindowStartupLocation="CenterScreen"
         Background="#F4F6F8">
 
@@ -26,7 +26,7 @@
                            FontWeight="Bold"
                            Margin="0,-6,0,0"/>
 
-                <TextBlock Text="Gestao de Estoque Inteligente"
+                <TextBlock Text="Gestão de Estoque Inteligente"
                            Foreground="#B7D6C8"
                            FontSize="16"
                            Margin="0,12,0,0"/>
@@ -90,7 +90,7 @@
                                 BorderThickness="0"
                                 Cursor="Hand"
                                 Click="AbaCadastro_Click"
-                                ToolTip="Primeiro acesso."/>
+                                ToolTip="Primeiro Acesso."/>
                     </Grid>
 
                     <StackPanel x:Name="LoginPanel">
@@ -156,7 +156,7 @@
                     <StackPanel x:Name="CadastroPanel"
                                 Visibility="Collapsed">
 
-                        <TextBlock Text="E-mail cadastrado"
+                        <TextBlock Text="E-mail Cadastrado"
                                    Foreground="#111111"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -170,9 +170,9 @@
                                  VerticalContentAlignment="Center"
                                  BorderBrush="#DADDE2"
                                  BorderThickness="1"
-                                 ToolTip="Digite o e-mail cadastrado no MVC."/>
+                                 ToolTip="Digite o e-mail Cadastrado no MVC."/>
 
-                        <TextBlock Text="O MVC vai validar se o e-mail existe no cadastro de usuarios e enviar um token temporario."
+                        <TextBlock Text="O MVC vai validar se o e-mail existe no cadastro de usuários e enviar um token temporário."
                                    Foreground="#6B7280"
                                    FontSize="12"
                                    Margin="0,5,0,0"
