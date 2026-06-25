@@ -2611,32 +2611,63 @@ Essa abordagem elimina a necessidade de relacionamentos complexos e operações 
 
 # Estrutura das Coleções Firestore
 
-| Coleção               | Finalidade                                                         |
-| --------------------- | ------------------------------------------------------------------ |
-| **Usuarios**          | Armazena os usuários cadastrados no sistema                        |
-| **Parceiros**         | Armazena os parceiros responsáveis pelo recolhimento dos materiais |
-| **Medicoes**          | Registra as medições volumétricas recebidas pelo Kinect            |
-| **Notificacoes**      | Armazena os alertas gerados automaticamente pelo sistema           |
-| **parametrosSistema** | Armazena as configurações globais e regras operacionais do sistema |
-| **Perfis**            | Define os perfis de acesso disponíveis para os usuários            |
+| Coleção | Finalidade |
+|---------|------------|
+| **Empresas** | Armazena as empresas cadastradas na plataforma. |
+| **Usuarios** | Armazena os usuários vinculados às empresas. |
+| **Perfis** | Define os perfis de acesso e permissões do sistema. |
+| **Parceiros** | Armazena os parceiros responsáveis pelo recolhimento dos materiais. |
+| **Medicoes** | Registra as medições volumétricas enviadas pelo Kinect. |
+| **Notificacoes** | Armazena alertas automáticos e notificações enviadas aos parceiros. |
+| **ParametrosSistema** | Centraliza as configurações operacionais da aplicação. |
+| **LogsSistema** | Registra eventos, auditorias e ações executadas pelos usuários. |
+| **TokenAcessoKinect** | Armazena tokens temporários para autenticação do módulo Kinect. |
 
 ---
 
 # Descrição das Coleções
 
+## Coleção: Empresas
+
+Armazena as empresas cadastradas na plataforma.
+
+| Campo | Tipo |
+|-------|------|
+| Id | String |
+| Nome | String |
+| Cnpj | String |
+| Data_Cadastro | Timestamp |
+| Ativo | Boolean |
+
+### Exemplo
+
+```json
+{
+  "Nome": "Inventory Masters LTDA",
+  "Cnpj": "12.345.678/0001-90",
+  "Data_Cadastro": "2026-06-08T14:30:00",
+  "Ativo": true
+}
+```
+
+---
+
 ## Coleção: Usuarios
 
-Responsável pelo armazenamento dos usuários cadastrados na plataforma.
+Representa os usuários responsáveis pela operação do sistema.
 
-| Campo         | Tipo      |
-| ------------- | --------- |
-| Id            | String    |
-| Nome          | String    |
-| Email         | String    |
-| Perfil        | String    |
-| Senha         | String    |
+| Campo | Tipo |
+|-------|------|
+| Id | String |
+| Nome | String |
+| Email | String |
+| Perfil | String |
+| PerfilId | String |
+| EmpresaId | String |
+| Empresa | String |
+| Senha | String |
 | Data_Cadastro | Timestamp |
-| Ativo         | Boolean   |
+| Ativo | Boolean |
 
 ### Exemplo
 
@@ -2645,7 +2676,43 @@ Responsável pelo armazenamento dos usuários cadastrados na plataforma.
   "Nome": "Administrador",
   "Email": "admin@inventorymasters.com",
   "Perfil": "Administrador",
+  "PerfilId": "perfil01",
+  "EmpresaId": "empresa01",
+  "Empresa": "Inventory Masters",
   "Senha": "******",
+  "Data_Cadastro": "2026-06-08T14:30:00",
+  "Ativo": true
+}
+```
+
+---
+
+## Coleção: Perfis
+
+Define os perfis de acesso e suas respectivas permissões.
+
+| Campo | Tipo |
+|-------|------|
+| Id | String |
+| Nome | String |
+| EmpresaId | String |
+| Descricao | String |
+| Permissoes | Array<String> |
+| Data_Cadastro | Timestamp |
+| Ativo | Boolean |
+
+### Exemplo
+
+```json
+{
+  "Nome": "Administrador",
+  "EmpresaId": "empresa01",
+  "Descricao": "Acesso total ao sistema",
+  "Permissoes": [
+    "Dashboard.Visualizar",
+    "Usuarios.Gerenciar",
+    "Perfis.Gerenciar"
+  ],
   "Data_Cadastro": "2026-06-08T14:30:00",
   "Ativo": true
 }
@@ -2655,18 +2722,19 @@ Responsável pelo armazenamento dos usuários cadastrados na plataforma.
 
 ## Coleção: Parceiros
 
-Armazena as empresas parceiras aptas a receber materiais excedentes.
+Armazena os parceiros responsáveis pela coleta dos materiais.
 
-| Campo         | Tipo      |
-| ------------- | --------- |
-| Id            | String    |
-| Nome          | String    |
-| Empresa       | String    |
-| Email         | String    |
-| Telefone      | String    |
-| Endereco      | String    |
+| Campo | Tipo |
+|-------|------|
+| Id | String |
+| Nome | String |
+| Empresa | String |
+| EmpresaId | String |
+| Email | String |
+| Telefone | String |
+| Endereco | String |
 | Data_Cadastro | Timestamp |
-| Ativo         | Boolean   |
+| Ativo | Boolean |
 
 ### Exemplo
 
@@ -2674,6 +2742,7 @@ Armazena as empresas parceiras aptas a receber materiais excedentes.
 {
   "Nome": "João Silva",
   "Empresa": "Recicla Minas",
+  "EmpresaId": "empresa01",
   "Email": "contato@reciclaminas.com",
   "Telefone": "(31) 9 9999-9999",
   "Endereco": "Rua A, 100",
@@ -2686,15 +2755,17 @@ Armazena as empresas parceiras aptas a receber materiais excedentes.
 
 ## Coleção: Medicoes
 
-Responsável pelo armazenamento das medições enviadas pelo Kinect.
+Armazena todas as medições realizadas pelo Kinect.
 
-| Campo         | Tipo      |
-| ------------- | --------- |
-| Id            | String    |
-| OrigemLeitura | String    |
-| Status        | String    |
-| VolumeMedido  | Number    |
-| DataHora      | Timestamp |
+| Campo | Tipo |
+|-------|------|
+| Id | String |
+| OrigemLeitura | String |
+| Status | String |
+| VolumeMedido | Number |
+| EmpresaId | String |
+| Empresa | String |
+| DataHora | Timestamp |
 
 ### Exemplo
 
@@ -2703,6 +2774,8 @@ Responsável pelo armazenamento das medições enviadas pelo Kinect.
   "OrigemLeitura": "Kinect",
   "Status": "Normal",
   "VolumeMedido": 8.75,
+  "EmpresaId": "empresa01",
+  "Empresa": "Inventory Masters",
   "DataHora": "2026-06-08T14:30:00"
 }
 ```
@@ -2711,26 +2784,32 @@ Responsável pelo armazenamento das medições enviadas pelo Kinect.
 
 ## Coleção: Notificacoes
 
-Armazena notificações e alertas gerados automaticamente quando os limites configurados são atingidos.
+Armazena notificações geradas automaticamente ou manualmente.
 
-| Campo                | Tipo      |
-| -------------------- | --------- |
-| Id                   | String    |
-| VolumeMedido         | Number    |
-| ParceiroId           | String    |
-| ParceiroQueAceitouId | String    |
-| DataHora             | Timestamp |
-| StatusEnvio          | String    |
-| Mensagem             | String    |
-| Tipo                 | String    |
-| Automatica           | Boolean   |
+| Campo | Tipo |
+|-------|------|
+| Id | String |
+| VolumeMedido | Number |
+| ParceiroId | String |
+| EmpresaId | String |
+| Empresa | String |
+| Destinatario | String |
+| ParceiroQueAceitouId | String |
+| DataHora | Timestamp |
+| StatusEnvio | String |
+| Mensagem | String |
+| Tipo | String |
+| Automatica | Boolean |
 
 ### Exemplo
 
 ```json
 {
   "VolumeMedido": 8.75,
-  "ParceiroId": "abc123",
+  "ParceiroId": "parceiro01",
+  "EmpresaId": "empresa01",
+  "Empresa": "Inventory Masters",
+  "Destinatario": "contato@reciclaminas.com",
   "ParceiroQueAceitouId": null,
   "DataHora": "2026-06-08T14:30:00",
   "StatusEnvio": "Pendente",
@@ -2742,60 +2821,110 @@ Armazena notificações e alertas gerados automaticamente quando os limites conf
 
 ---
 
-## Coleção: parametrosSistema
+## Coleção: ParametrosSistema
 
-Armazena as configurações utilizadas pelo sistema para cálculo de ocupação e geração de alertas.
+Armazena as configurações operacionais do sistema.
 
 ### Documento
 
 ```text
-parametrosSistema/configuracao
+ParametrosSistema/configuracao
 ```
 
 ### Campos
 
-| Campo                 | Tipo      |
-| --------------------- | --------- |
-| CapacidadeMaxima      | Number    |
-| CapacidadeMinima      | Number    |
-| PercentualAlerta      | Number    |
-| DataAtualizacao       | Timestamp |
-| NotificacaoAutomatica | Boolean   |
-| ExibirAlertaDashboard | Boolean   |
-| ParceiroPadraoId      | String    |
-| DiasSemColetaAlerta   | Number    |
+| Campo | Tipo |
+|-------|------|
+| EmpresaId | String |
+| CapacidadeMaxima | Number |
+| CapacidadeMinima | Number |
+| PercentualAlerta | Number |
+| DataAtualizacao | Timestamp |
+| NotificacaoAutomatica | Boolean |
+| ExibirAlertaDashboard | Boolean |
+| ParceiroPadraoId | String |
+| DiasSemColetaAlerta | Number |
+| AtivarSistemaCalibracao | Boolean |
+| RaioDeteccaoKinect | Number |
+| HabilitarZonaExclusaoDeteccao | Boolean |
+| TaxaAmostragemVolumeMinutos | Number |
+| DuracaoMaximaMedicaoSegundos | Number |
+| TipoAlertaPadrao | String |
+| TemplateMensagemPadrao | String |
+| CanalEmailAtivo | Boolean |
+| CanalWhatsAppAtivo | Boolean |
+| CanalDashboardPushAtivo | Boolean |
+| NomeRemetenteWhatsApp | String |
+| EscalonamentoMinutos | Number |
+| CanalEscalonamento | String |
+
+---
+
+## Coleção: LogsSistema
+
+Registra auditorias e eventos executados na plataforma.
+
+| Campo | Tipo |
+|-------|------|
+| Id | String |
+| EmpresaId | String |
+| UsuarioId | String |
+| Email | String |
+| Acao | String |
+| Mensagem | String |
+| Nivel | String |
+| DataHora | Timestamp |
 
 ### Exemplo
 
 ```json
 {
-  "CapacidadeMaxima": 10.0,
-  "CapacidadeMinima": 1.0,
-  "PercentualAlerta": 80,
-  "DataAtualizacao": "2026-06-08T14:30:00",
-  "NotificacaoAutomatica": true,
-  "ExibirAlertaDashboard": true,
-  "ParceiroPadraoId": "abc123",
-  "DiasSemColetaAlerta": 15
+  "EmpresaId": "empresa01",
+  "UsuarioId": "usuario01",
+  "Email": "admin@inventorymasters.com",
+  "Acao": "Cadastro de parceiro",
+  "Mensagem": "Novo parceiro cadastrado.",
+  "Nivel": "Informacao",
+  "DataHora": "2026-06-08T14:30:00"
 }
 ```
 
 ---
 
-## Coleção: Perfis
+## Coleção: TokenAcessoKinect
 
-Responsável pelos perfis de acesso disponíveis para o sistema.
+Responsável pelo controle de autenticação do módulo Kinect.
 
-| Campo  | Tipo   |
-| ------ | ------ |
-| Id     | String |
+| Campo | Tipo |
+|-------|------|
+| Id | String |
+| UsuarioId | String |
+| UsuarioNome | String |
+| Email | String |
+| EmpresaId | String |
+| Empresa | String |
 | Perfil | String |
+| TokenHash | String |
+| CriadoEm | Timestamp |
+| ExpiraEm | Timestamp |
+| ValidadoEm | Timestamp |
+| Utilizado | Boolean |
+| Revogado | Boolean |
 
 ### Exemplo
 
 ```json
 {
-  "Perfil": "Administrador"
+  "UsuarioId": "usuario01",
+  "UsuarioNome": "Administrador",
+  "EmpresaId": "empresa01",
+  "Empresa": "Inventory Masters",
+  "Perfil": "Administrador",
+  "TokenHash": "d7af85d8c9...",
+  "CriadoEm": "2026-06-08T14:30:00",
+  "ExpiraEm": "2026-06-08T15:00:00",
+  "Utilizado": false,
+  "Revogado": false
 }
 ```
 
@@ -2804,56 +2933,94 @@ Responsável pelos perfis de acesso disponíveis para o sistema.
 # Relacionamentos Entre Coleções
 
 ```text
-Usuarios
-    │
-    └── Perfil
+Empresas
+│
+├── Usuarios (EmpresaId)
+├── Perfis (EmpresaId)
+├── Parceiros (EmpresaId)
+├── Medicoes (EmpresaId)
+├── Notificacoes (EmpresaId)
+├── ParametrosSistema (EmpresaId)
+├── LogsSistema (EmpresaId)
+└── TokenAcessoKinect (EmpresaId)
 
-Notificacoes
-    │
-    ├── ParceiroId
-    │
-    └── ParceiroQueAceitouId
+Usuarios
+│
+├── PerfilId → Perfis
+├── EmpresaId → Empresas
+├── LogsSistema
+└── TokenAcessoKinect
+
+Perfis
+│
+└── Utilizados pelos Usuarios
+
+Parceiros
+│
+└── Utilizados pelas Notificacoes
 
 Medicoes
-    │
-    └── Utilizadas para geração de Notificacoes
+│
+└── Geram Notificacoes automáticas
 
-parametrosSistema
-    │
-    ├── Define CapacidadeMaxima
-    ├── Define PercentualAlerta
-    └── Controla geração automática de alertas
+ParametrosSistema
+│
+├── Define capacidade máxima
+├── Define percentual de alerta
+├── Configura canais de comunicação
+└── Configura parâmetros do Kinect
+
+LogsSistema
+│
+└── Auditoria das ações dos Usuarios
+
+TokenAcessoKinect
+│
+└── Controla autenticação entre o Kinect e o sistema MVC
 ```
 
 ---
 
 # Considerações Arquiteturais
 
-A solução utiliza o Firebase Firestore como banco de dados NoSQL orientado a documentos. A escolha do Firestore permite:
+A modelagem atual do Firebase Firestore foi estruturada para suportar um ambiente **multiempresa (multi-tenant)**, permitindo que diversas organizações utilizem a mesma plataforma de forma isolada por meio do campo **EmpresaId** presente nas principais coleções.
 
-* Armazenamento em nuvem escalável;
-* Sincronização em tempo real com SignalR;
-* Integração simplificada com o módulo Kinect;
-* Alta disponibilidade dos dados;
-* Flexibilidade na evolução da estrutura dos documentos;
-* Facilidade de integração com aplicações Web MVC.
+Além disso, a arquitetura incorpora:
 
-A arquitetura implementada segue o fluxo:
+- Controle de acesso baseado em perfis e permissões;
+- Autenticação segura do módulo Kinect por meio de tokens temporários;
+- Auditoria completa das operações através da coleção **LogsSistema**;
+- Configuração dinâmica dos parâmetros operacionais por empresa;
+- Geração automática de notificações baseada nas medições recebidas;
+- Sincronização em tempo real utilizando Firebase Firestore e SignalR.
+
+O fluxo principal da aplicação é representado por:
 
 ```text
 Kinect
-   ↓
+   │
+   ▼
+TokenAcessoKinect
+   │
+   ▼
 SignalR Hub
-   ↓
+   │
+   ▼
 Firestore
-   ↓
+   │
+   ├── Medicoes
+   ├── Notificacoes
+   ├── LogsSistema
+   └── ParametrosSistema
+   │
+   ▼
 MVC Inventory Masters
-   ↓
-Dashboard e Notificações
+   │
+   ▼
+Dashboard • Alertas • Administração
 ```
 
-Essa estrutura representa a modelagem atualmente implementada no projeto Inventory Masters e utilizada para armazenamento, monitoramento e gerenciamento dos dados operacionais do sistema.
-
+Essa modelagem representa a estrutura atual implementada no **Inventory Masters**, oferecendo escalabilidade, rastreabilidade, segurança e suporte ao gerenciamento de múltiplas empresas em uma única plataforma.
 
 # Modelo Conceitual — MVVM Kinect
 
