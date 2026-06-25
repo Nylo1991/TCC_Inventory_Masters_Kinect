@@ -2989,7 +2989,64 @@ O modelo físico do módulo **MVVM Kinect** foi implementado utilizando o banco 
 A estrutura física do banco de dados é criada e gerenciada automaticamente pelo **Entity Framework 6**, através do **AppDbContext**, responsável por gerenciar a comunicação entre a aplicação e o banco de dados, realizando a criação das tabelas, o gerenciamento das conexões e a persistência dos dados utilizados pelo módulo MVVM Kinect.
 A utilização do SQLite foi escolhida por ser um banco de dados leve, embarcado e de baixo consumo de recursos, características adequadas para aplicações desktop que precisam operar localmente e com suporte ao funcionamento offline.
 
-A estrutura física do banco de dados é composta por tabelas relacionadas através de chaves primárias do tipo **INTEGER AUTOINCREMENT** e chaves estrangeiras, garantindo a integridade referencial entre as entidades persistidas.
+---
+
+## Estrutura
+
+A estrutura física contempla as seguintes tabelas:
+
+- UsuarioAcesso
+- MedicaoVolume
+- HistoricoOcupacao
+- SessaoUsuario
+- Log
+
+Foram utilizadas chaves primárias do tipo **INTEGER AUTOINCREMENT** e chaves estrangeiras para garantir a integridade referencial entre as tabelas. :contentReference[oaicite:5]{index=5}
+
+---
+
+# Arquitetura de Persistência Local
+
+```text
+                 MVVM Kinect
+
+                  MainViewModel
+                         │
+                         ▼
+                KinectRepository
+                         │
+                         ▼
+                  Entity Framework 6
+                         │
+                         ▼
+                      SQLite
+                         │
+     ┌───────────────────┼────────────────────┐
+     │                   │                    │
+     ▼                   ▼                    ▼
+MedicaoVolume   HistoricoOcupacao   UsuarioAcesso
+                         │
+                         ▼
+                  SessaoUsuario
+                         │
+                         ▼
+                        Log
+```
+
+---
+
+# Considerações
+
+A modelagem adotada permite organizar de forma eficiente os dados gerados pelo sensor Kinect, garantindo:
+
+- Persistência local das medições;
+- Histórico de ocupação dos espaços monitorados;
+- Controle de acesso dos usuários;
+- Registro das sessões ativas;
+- Rastreabilidade das operações realizadas;
+- Funcionamento offline do módulo MVVM.
+
+A utilização do SQLite proporciona baixo consumo de recursos computacionais, rápida recuperação das informações e integração transparente com o Entity Framework, atendendo aos requisitos do módulo **Inventory Masters Kinect**.
 
 ## Tecnologias Utilizadas
 
@@ -2998,18 +3055,6 @@ A estrutura física do banco de dados é composta por tabelas relacionadas atrav
 - .NET Framework 4.8
 - Arquitetura MVVM
 - Kinect SDK 1.8
-
----
-
-## Tabelas Persistidas
-
-| Tabela | Finalidade |
-|---------|-----------|
-| **UsuarioAcesso** | Armazena os usuários locais responsáveis pelo acesso ao módulo Kinect. |
-| **MedicaoVolume** | Registra as medições volumétricas capturadas pelo sensor Kinect. |
-| **HistoricoOcupacao** | Armazena o histórico consolidado da ocupação dos espaços monitorados. |
-| **SessaoUsuario** | Mantém os dados da sessão autenticada do usuário durante a execução da aplicação. |
-| **Log** | Registra mensagens informativas, avisos e erros gerados pelo sistema. |
 
 ---
 
