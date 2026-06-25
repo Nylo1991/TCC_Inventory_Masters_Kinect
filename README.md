@@ -1937,80 +1937,326 @@ Critério de organização:
 **Ação:** O Kinect registra erro no log local.<br>
 
 ---
-
 ## REQUISITOS DO SISTEMA
 
-Os requisitos do sistema foram organizados por categoria, separando as funcionalidades relacionadas à gestão web, ao módulo Kinect, ao monitoramento, à integração e aos aspectos não funcionais da solução.
+Os requisitos do sistema foram organizados conforme o modelo de comparação entre requisito funcional e requisito não funcional.
 
-### Requisitos Funcionais (RF)
+Os **requisitos funcionais (RF)** descrevem o que o sistema deve fazer, ou seja, as funcionalidades esperadas pelos usuários e pelos módulos do sistema, como autenticação por token, cadastro de usuários e parceiros, controle de permissões, configuração de parâmetros, dashboard, medições volumétricas, notificações e integração com o Kinect.
 
-#### 1. Módulo de Aquisição de Dados (Hardware e Visão Computacional)
-* **RF01 - Captura Espacial:** O sistema deve iniciar a leitura de profundidade via sensor Kinect, convertendo o fluxo de frames em um mapa de profundidade tridimensional em tempo real.
-* **RF02 - Calibração de Referência:** O sistema deve permitir que o operador execute uma rotina de calibração para capturar o "estado zero" (ambiente vazio), armazenando essa matriz de profundidade como *baseline*.
-* **RF03 - Cálculo Volumétrico:** O sistema deve processar a diferença absoluta entre o mapa atual e o mapa de referência, aplicando algoritmos de integração volumétrica para determinar o volume ocupado.
-* **RF04 - Conversão Dinâmica de Unidades:** O sistema deve possuir uma camada de tradução que converte o resultado do processamento de $cm^3$ para $m^3$, garantindo a precisão de até 3 casas decimais.
-* **RF05 - Filtro de Integridade (Noise Filtering):** O sistema deve aplicar filtros de suavização para eliminar ruídos brancos (pixels espúrios) e desconsiderar oclusões físicas momentâneas no sensor.
-* **RF06 - Auto-Diagnóstico:** O sistema deve verificar a conectividade do hardware e a integridade do driver do Kinect antes de cada ciclo de medição.
-* **RF07 - Operação Offline:** O módulo local deve persistir medições em um banco SQLite caso a conexão com a internet seja interrompida, sincronizando o lote assim que a rede for restabelecida.
+Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comportar para garantir qualidade, segurança e confiabilidade. Eles abrangem aspectos como autenticação segura, isolamento de dados por empresa, rastreabilidade por logs, comunicação em tempo real via SignalR, persistência em Firebase e SQLite, desempenho das listagens, clareza das mensagens, disponibilidade operacional e suporte à evolução do sistema.
 
-#### 2. Módulo de Integração (Barramento SignalR)
-* **RF08 - Broadcast de Medições:** O sistema deve emitir eventos de *push* via SignalR contendo o objeto de medição validado para todos os clientes conectados.
-* **RF09 - Gerenciamento de Reconexão:** O sistema deve implementar protocolos de *Exponential Backoff* para reconexão automática ao servidor MVC.
-* **RF10 - Controle de Consistência (SequenceID):** Cada pacote transmitido deve conter um identificador sequencial único para garantir que o cliente não processe dados fora de ordem ou duplicados.
-* **RF11 - Cache Local de Transmissão:** O sistema deve enfileirar as medições não enviadas durante a desconexão, garantindo a integridade do histórico.
+#### Tabela Geral de Comparação
 
-#### 3. Módulo MVC (Persistência e Gestão)
-* **RF12 - Gestão de Contas:** O sistema deve permitir que o Administrador realize o CRUD (Create, Read, Update, Delete) de usuários, atribuindo perfis de acesso (Admin/Operador).
-* **RF13 - Parametrização de Espaços:** O sistema deve permitir que o Admin defina a `CapacidadeMaxima` (em $m^3$) e o `PercentualAlerta` (em %) para cada unidade monitorada.
-* **RF14 - Persistência em Nuvem:** O sistema deve gravar todas as medições validadas no Firestore, indexando-as por `ID_Espaço` e `Timestamp`.
-* **RF15 - Auditoria de Dados:** O sistema deve manter um log imutável de todas as alterações CRUD, registrando o `ID_Usuário`, `Ação`, `Timestamp` e o `Valor_Original/Novo`.
-* **RF16 - Gestão de Sessões:** O sistema deve encerrar sessões após 30 minutos de inatividade do usuário.
-* **RF17 - Segurança de Acesso:** O sistema deve validar hashes de senha antes da persistência e implementar bloqueio temporário (15 min) após 5 falhas de login.
+| Característica | Requisito Funcional | Requisito Não Funcional |
+|---|---|---|
+| Foco principal | O comportamento do sistema: o que o sistema faz. | A qualidade do sistema: como o sistema se comporta. |
+| Formato comum | Casos de uso, fluxos e funcionalidades. | Atributos de qualidade, restrições e propriedades operacionais. |
+| Validação | Passa ou falha: a funcionalidade existe e executa o fluxo esperado. | Escala/grau: segurança, desempenho, disponibilidade, usabilidade e rastreabilidade. |
+| Exemplo no projeto | O sistema deve permitir solicitar token por e-mail. | O token deve ser temporário, seguro e de uso único. |
 
-#### 4. Módulo de Interface e UX
-* **RF19 - Visualização Dinâmica:** O sistema deve renderizar um gráfico (Doughnut Chart) que reflete em tempo real o estado de ocupação do espaço.
-* **RF20 - Sistema de Alertas Visuais:** A interface deve alterar a cor dos indicadores (Verde/Amarelo/Vermelho) automaticamente com base no *Threshold* configurado.
-* **RF21 - Notificação Persistente:** O sistema deve apresentar um modal de alerta que bloqueia a interação do usuário até que o mesmo confirme ("Ciente") a leitura de uma ocorrência crítica.
-* **RF22 - Status de Saúde (Conectividade):** O dashboard deve exibir um ícone de status (LED Virtual) que reflete a saúde da comunicação entre o sensor, o MVC e o cliente.
+#### Autenticação e Acesso - MVC/Web
 
-#### 5. Módulo de Governança e Performance
-* **RF26 - Hierarquia de Logs:** O sistema deve gerar registros de erro detalhados, categorizados por severidade (`Information`, `Warning`, `Critical`), facilitando a manutenção corretiva.
-* **RF27 - Gestão de Ciclo de Vida (Cold Storage):** O sistema deve mover automaticamente medições com data superior a 90 dias para arquivos de backup, liberando recursos do banco operacional.
-* **RF28 - Throttling de Escrita:** O sistema deve limitar a quantidade de requisições de escrita por segundo para proteger a cota de uso do banco de dados (Cloud Firestore).
-* **RF29 - Integridade Referencial:** O sistema deve validar bloqueios de exclusão: é proibido excluir um Parceiro que possua medições históricas associadas.
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Solicitar token de acesso por e-mail | **RF001:** O sistema deve permitir que o usuário solicite um token informando seu e-mail na tela de login. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Validar e-mail informado no login | **RF002:** O sistema deve validar o formato do e-mail informado antes de solicitar o token. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Verificar cadastro do usuário pelo e-mail | **RF003:** O sistema deve consultar se o e-mail informado pertence a um usuário cadastrado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Verificar status ativo do usuário | **RF004:** O sistema deve permitir solicitação de token apenas para usuários ativos. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Gerar token de acesso | **RF005:** O sistema deve gerar um token numérico para autenticação do usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Enviar token por e-mail | **RF006:** O sistema deve enviar o token gerado para o e-mail cadastrado do usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Validar token informado pelo usuário | **RF007:** O sistema deve validar o token informado na tela de validação. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Bloquear token inválido, expirado ou já utilizado | **RF008:** O sistema deve impedir o acesso quando o token não for válido. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Autenticar usuário com token válido | **RF009:** O sistema deve autenticar o usuário quando o token for válido e dentro do prazo. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Criar sessão autenticada | **RF010:** O sistema deve criar uma sessão contendo identificador, nome, e-mail, perfil e empresa do usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Encerrar sessão do usuário | **RF011:** O sistema deve permitir logout e encerrar a sessão autenticada. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Redirecionar usuário sem permissão | **RF012:** O sistema deve redirecionar usuários sem permissão para a tela de acesso negado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
 
----
+#### Perfis e Permissões - MVC/Web
 
-### Requisitos Não Funcionais (RNF)
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Controlar acesso por perfil | **RF013:** O sistema deve controlar o acesso às funcionalidades com base no perfil do usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Aplicar permissões do perfil Administrador | **RF014:** O sistema deve permitir que o perfil Administrador acesse todas as funcionalidades. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Aplicar permissões do perfil Gestor | **RF015:** O sistema deve permitir que o perfil Gestor acesse dashboard, medições, notificações e parceiros. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Aplicar permissões do perfil Operador | **RF016:** O sistema deve permitir que o perfil Operador acesse dashboard, medições e Kinect. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Aplicar permissões do perfil Visualizador | **RF017:** O sistema deve permitir que o perfil Visualizador acesse dashboard, medições e notificações. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Cadastrar perfis | **RF018:** O sistema deve permitir o cadastro de perfis com permissões selecionadas. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Editar perfis | **RF019:** O sistema deve permitir a alteração dos dados e permissões de um perfil. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Inativar perfis | **RF020:** O sistema deve permitir a inativação de perfis. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Listar perfis | **RF021:** O sistema deve listar perfis cadastrados. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Filtrar perfis | **RF022:** O sistema deve permitir busca de perfis por termo e status. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
 
-#### 1. Desempenho e Performance
-* **RNF01 - Latência de Processamento:** O tempo total entre a captura da imagem pelo Kinect e a atualização do *Dashboard* não deve exceder 2.5 segundos em condições ideais de rede.
-* **RNF02 - Taxa de Atualização (Frame Rate):** O módulo de visão computacional deve processar, no mínimo, 10 frames por segundo (FPS) para garantir a fluidez na detecção de mudanças volumétricas.
-* **RNF03 - Consumo de Memória:** A aplicação local (Módulo Kinect) não deve exceder 500MB de RAM em operação contínua, devendo disparar rotinas de coleta de lixo (*Garbage Collection*) caso atinja este limiar.
-* **RNF04 - Tempo de Resposta do Banco:** Consultas de leitura no *Firestore* não devem exceder 500ms para carregamento de listagens de histórico.
-* **RNF05 - Precisão Métrica:** A margem de erro na medição volumétrica não deve exceder ± 2% do volume real, garantindo a acurácia necessária para o controle de estoque.
+#### Usuários - MVC/Web
 
-#### 2. Confiabilidade e Disponibilidade
-* **RNF06 - Disponibilidade do Sistema:** O sistema deve manter uma disponibilidade de 99.5%, permitindo janelas de manutenção programada fora do horário comercial (00:00 - 06:00).
-* **RNF07 - Resiliência (Modo Offline):** O sistema deve ser capaz de operar de forma autônoma (armazenamento em cache local/SQLite) por até 48 horas em caso de falha total de comunicação com o servidor em nuvem.
-* **RNF08 - Recuperação de Falhas (Failover):** Em caso de queda do serviço de *backend*, o módulo de captura deve restabelecer a conexão automaticamente sem intervenção humana após a normalização do link de dados.
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Cadastrar usuários | **RF023:** O sistema deve permitir o cadastro de usuários. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Validar dados obrigatórios do usuário | **RF024:** O sistema deve validar nome, e-mail, perfil e senha no cadastro de usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Editar usuários | **RF025:** O sistema deve permitir a edição de dados de usuários cadastrados. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Preservar senha na edição padrão do usuário | **RF026:** O sistema deve manter a senha existente quando a edição não tratar troca de senha. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Ativar e inativar usuários | **RF027:** O sistema deve permitir alterar o status de um usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Excluir usuários | **RF028:** O sistema deve permitir excluir usuários cadastrados. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Detalhar usuários | **RF029:** O sistema deve permitir visualizar detalhes de um usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Listar usuários por empresa | **RF030:** O sistema deve listar usuários conforme a empresa do usuário autenticado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Filtrar usuários | **RF031:** O sistema deve permitir filtrar usuários por termo, perfil, empresa e status. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
 
-#### 3. Segurança e Governança
-* **RNF09 - Autenticação:** O acesso ao sistema deve exigir autenticação via protocolo HTTPS/TLS 1.2+, garantindo a criptografia dos dados em trânsito.
-* **RNF10 - Integridade de Dados:** O sistema deve garantir a imutabilidade dos logs de auditoria; uma vez gravado, o `AuditLog` não pode ser editado nem mesmo pelo perfil Administrador.
-* **RNF11 - Proteção contra Acessos:** Implementação de políticas de proteção contra ataques de força bruta, com bloqueio automático de IP após sucessivas falhas de autenticação.
-* **RNF12 - Controle de Acesso (RBAC):** O sistema deve seguir o princípio do privilégio mínimo, onde cada perfil possui acesso estritamente necessário para suas funções.
+#### Parceiros - MVC/Web
 
-#### 4. Usabilidade e Acessibilidade
-* **RNF13 - Tempo de Aprendizado:** O sistema deve possuir uma interface intuitiva que permita a um operador treinado realizar uma calibração em menos de 3 minutos.
-* **RNF14 - Responsividade:** O *dashboard* deve ser compatível com resoluções de 1024x768 até 1920x1080 (Full HD), garantindo legibilidade em telas industriais e dispositivos móveis.
-* **RNF15 - Feedback do Usuário:** Toda ação crítica (ex: exclusão de parceiro ou calibração) deve exigir confirmação explícita via *modal* de diálogo.
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Cadastrar parceiros | **RF032:** O sistema deve permitir o cadastro de parceiros. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
+| Validar dados obrigatórios do parceiro | **RF033:** O sistema deve validar nome, e-mail, telefone, empresa e endereço no cadastro de parceiro. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
+| Editar parceiros | **RF034:** O sistema deve permitir a edição dos dados de parceiros. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
+| Ativar e inativar parceiros | **RF035:** O sistema deve permitir alterar o status de um parceiro. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
+| Excluir parceiros | **RF036:** O sistema deve permitir excluir parceiros cadastrados. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
+| Detalhar parceiros | **RF037:** O sistema deve permitir visualizar detalhes de um parceiro. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
+| Listar parceiros por empresa | **RF038:** O sistema deve listar parceiros conforme a empresa do usuário autenticado. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
+| Filtrar parceiros | **RF039:** O sistema deve permitir filtrar parceiros por termo, período de cadastro e status. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
+| Pesquisar parceiros por texto | **RF040:** O sistema deve permitir pesquisa por ID, nome, e-mail, empresa ou telefone. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
 
-#### 5. Manutenibilidade e Portabilidade
-* **RNF16 - Modularidade:** O sistema deve ser desenvolvido seguindo uma arquitetura desacoplada, permitindo a substituição do sensor Kinect ou do banco de dados sem a necessidade de reescrita total do código.
-* **RNF17 - Documentação de Código:** Todo novo componente deve seguir o padrão de documentação técnica (JSDoc ou XML Comments) para facilitar a manutenção de terceiros.
-* **RNF18 - Portabilidade do Backend:** A aplicação MVC deve ser compatível com ambientes de hospedagem baseados em containers (ex: Docker) para facilitar a escalabilidade.
-* **RNF19 - Versionamento e Evolução:** O sistema deve seguir o padrão de versionamento semântico (*Semantic Versioning*), permitindo atualizações incrementais do *firmware* do Kinect sem impacto na API do MVC.
+#### Parâmetros e Configurações - MVC/Web
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Exibir parâmetros do sistema | **RF041:** O sistema deve exibir os parâmetros operacionais cadastrados. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Editar parâmetros do sistema | **RF042:** O sistema deve permitir que usuários autorizados alterem parâmetros operacionais. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Validar capacidade máxima | **RF043:** O sistema deve validar se a capacidade máxima é maior que zero. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Validar capacidade mínima | **RF044:** O sistema deve validar se a capacidade mínima é menor que a capacidade máxima. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Validar percentual de alerta | **RF045:** O sistema deve validar se o percentual de alerta está entre 1 e 100. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar notificação automática | **RF046:** O sistema deve permitir ativar ou desativar notificações automáticas. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar exibição de alerta no dashboard | **RF047:** O sistema deve permitir ativar ou desativar alertas visuais no dashboard. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar parceiro padrão | **RF048:** O sistema deve permitir definir parceiro padrão para alertas. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar dias sem coleta para alerta | **RF049:** O sistema deve permitir definir o limite de dias sem coleta. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar calibração pelo MVC | **RF050:** O sistema deve permitir marcar o parâmetro de calibração do Kinect. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar raio de detecção do Kinect | **RF051:** O sistema deve permitir configurar o raio de detecção. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar zona de exclusão | **RF052:** O sistema deve permitir ativar ou desativar zona de exclusão. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar taxa de amostragem | **RF053:** O sistema deve permitir configurar a taxa de amostragem de volume. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar duração máxima de medição | **RF054:** O sistema deve permitir configurar a duração máxima de medição. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar tipo de alerta padrão | **RF055:** O sistema deve permitir definir o tipo padrão de alerta. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar template de mensagem | **RF056:** O sistema deve permitir configurar o texto padrão das mensagens de alerta. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar canais de comunicação | **RF057:** O sistema deve permitir ativar ou desativar canais como e-mail, WhatsApp e dashboard push. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Configurar escalonamento de alerta | **RF058:** O sistema deve permitir configurar tempo e canal de escalonamento. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Restaurar parâmetros padrão | **RF059:** O sistema deve permitir restaurar os padrões globais de configuração. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### Dashboard - MVC/Web
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Exibir dashboard operacional | **RF060:** O sistema deve exibir um dashboard com dados consolidados. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
+| Exibir usuários no dashboard | **RF061:** O sistema deve apresentar usuários vinculados à empresa. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
+| Exibir parceiros no dashboard | **RF062:** O sistema deve apresentar parceiros vinculados à empresa. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
+| Exibir medições no dashboard | **RF063:** O sistema deve apresentar medições registradas. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
+| Exibir alertas no dashboard | **RF064:** O sistema deve apresentar alertas e notificações. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
+| Calcular percentual de ocupação | **RF065:** O sistema deve calcular a ocupação com base na última medição e capacidade máxima. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
+| Limitar percentual exibido | **RF066:** O sistema deve limitar a exibição do percentual de ocupação a 100%. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
+
+#### Medições - MVC/Web
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Receber medição enviada pelo Kinect | **RF067:** O sistema deve receber volume enviado pelo Kinect via SignalR/Hub. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Converter unidade de volume | **RF068:** O sistema deve converter volume recebido em cm3 para m3. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Salvar medição no Firebase | **RF069:** O sistema deve persistir medições recebidas na coleção de medições. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Registrar origem da medição | **RF070:** O sistema deve registrar a origem da medição como Kinect. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Registrar status da medição | **RF071:** O sistema deve registrar status inicial da medição recebida. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Listar medições | **RF072:** O sistema deve listar medições registradas. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Paginar medições | **RF073:** O sistema deve paginar medições em grupos de registros. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Filtrar medições | **RF074:** O sistema deve permitir filtros por origem, status e período. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Ordenar medições | **RF075:** O sistema deve ordenar medições da mais recente para a mais antiga. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Exibir resumo estatístico de medições | **RF076:** O sistema deve calcular total, média, maior e menor volume. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Exibir última medição | **RF077:** O sistema deve apresentar a data/hora da última medição registrada. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### Notificações e Coleta - MVC/Web
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Verificar alerta após medição | **RF078:** O sistema deve verificar se uma nova medição ultrapassou o percentual de alerta. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Gerar notificação automática por capacidade | **RF079:** O sistema deve gerar notificação quando a ocupação atingir ou ultrapassar o limite configurado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Evitar notificação pendente duplicada | **RF080:** O sistema deve impedir nova notificação quando já existir pendência. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Salvar notificação no Firebase | **RF081:** O sistema deve salvar notificações geradas. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Listar notificações | **RF082:** O sistema deve listar notificações cadastradas. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Paginar notificações | **RF083:** O sistema deve paginar notificações. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Filtrar notificações | **RF084:** O sistema deve permitir filtros por período, parceiro, status e tipo. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Calcular totais de notificações | **RF085:** O sistema deve calcular totais de sucesso, erro e pendência. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Aceitar solicitação de coleta | **RF086:** O sistema deve permitir aceitar uma solicitação de coleta. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Atualizar status da notificação | **RF087:** O sistema deve alterar o status da notificação para Aceito após aceite de coleta. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Notificar clientes em tempo real | **RF088:** O sistema deve enviar aviso em tempo real quando uma coleta for aceita. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### SignalR/Hub - MVC/Web e Integração
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Disponibilizar Hub de medições | **RF089:** O sistema deve disponibilizar um Hub para receber medições do Kinect. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Distribuir nova medição aos clientes conectados | **RF090:** O sistema deve enviar evento de nova medição aos clientes conectados. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Disponibilizar Hub de notificações | **RF091:** O sistema deve disponibilizar um Hub para envio de notificações em tempo real. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Registrar conexão ao Hub | **RF092:** O sistema deve registrar conexões realizadas aos Hubs. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Registrar desconexão do Hub | **RF093:** O sistema deve registrar desconexões normais ou com erro. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### Firebase e Persistência - MVC/Web
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Persistir dados no Firestore | **RF094:** O sistema deve persistir dados do MVC no Firebase Firestore. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Separar dados por coleções | **RF095:** O sistema deve organizar usuários, perfis, parceiros, parâmetros, medições, notificações, tokens e logs em coleções. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Consultar dados por empresa | **RF096:** O sistema deve filtrar dados conforme a empresa do usuário autenticado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Usar configuração global como fallback | **RF097:** O sistema deve usar configuração global quando a empresa não possuir configuração própria. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Considerar registros globais legados | **RF098:** O sistema deve permitir registros sem empresa no contexto global. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### Logs - MVC/Web
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Registrar logs de autenticação | **RF099:** O sistema deve registrar eventos de solicitação de token, validação de token e login. | **RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF049:** O sistema deve registrar eventos de solicitação, envio, validação e uso de token.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
+| Registrar logs de erro | **RF100:** O sistema deve registrar falhas críticas e erros operacionais. | **RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF049:** O sistema deve registrar eventos de solicitação, envio, validação e uso de token.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
+| Registrar logs de operações relevantes | **RF101:** O sistema deve registrar eventos importantes para rastreabilidade. | **RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF049:** O sistema deve registrar eventos de solicitação, envio, validação e uso de token.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
+
+#### Autenticação - Kinect/Desktop
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Solicitar token pelo Kinect | **RF102:** O sistema Kinect deve permitir solicitar token informando e-mail cadastrado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Validar token pelo MVC | **RF103:** O sistema Kinect deve validar o token junto ao MVC. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Bloquear acesso com token inválido | **RF104:** O sistema Kinect deve bloquear acesso ao monitor quando o token for inválido. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Criar sessão local do Kinect | **RF105:** O sistema Kinect deve criar uma sessão com usuário, empresa, e-mail e token. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Abrir monitor Kinect após autenticação | **RF106:** O sistema Kinect deve abrir a tela de monitoramento após validação do token. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### Calibração - Kinect/Desktop
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Verificar conexão do Kinect | **RF107:** O sistema deve verificar se o sensor Kinect está conectado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Iniciar calibração do ambiente | **RF108:** O sistema deve permitir iniciar calibração do espaço monitorado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Capturar referência do ambiente vazio | **RF109:** O sistema deve capturar mapa de profundidade do ambiente vazio. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Mover motor do Kinect durante calibração | **RF110:** O sistema deve mover o sensor em ângulos definidos durante a calibração. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Capturar múltiplos frames de profundidade | **RF111:** O sistema deve capturar múltiplos frames para formar referência mais estável. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Detectar referência angular do ambiente | **RF112:** O sistema deve identificar a referência angular adequada durante a calibração. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Calcular volume máximo de referência | **RF113:** O sistema deve calcular o volume máximo do espaço monitorado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Concluir calibração válida | **RF114:** O sistema deve marcar o ambiente como calibrado quando a referência for válida. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Cancelar calibração inválida | **RF115:** O sistema deve impedir calibração quando não houver dados válidos suficientes. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Restaurar ângulo original do Kinect | **RF116:** O sistema deve tentar restaurar o ângulo original após calibração, erro ou cancelamento. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### Espaço Monitorado - Kinect/Desktop
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Salvar espaço monitorado | **RF117:** O sistema deve permitir salvar nome do espaço e limite de ocupação. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Validar nome do espaço | **RF118:** O sistema deve exigir nome para salvar o espaço monitorado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Validar limite de ocupação do espaço | **RF119:** O sistema deve exigir limite numérico entre 1% e 100%. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Liberar medição após salvar espaço | **RF120:** O sistema deve liberar histórico e medição automática após salvar espaço válido. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### Medição Volumétrica - Kinect/Desktop
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Realizar medição manual | **RF121:** O sistema deve permitir medição manual do volume. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Realizar medição automática | **RF122:** O sistema deve realizar medições automáticas em intervalo definido. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Calcular volume atual | **RF123:** O sistema deve calcular o volume ocupado com base no mapa calibrado e leitura atual. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Aplicar filtros de profundidade | **RF124:** O sistema deve considerar apenas pontos válidos de profundidade. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Aplicar filtros de altura do objeto | **RF125:** O sistema deve considerar apenas alturas dentro dos limites definidos. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Aplicar margem de leitura | **RF126:** O sistema deve ignorar bordas do frame de profundidade. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Estabilizar volume calculado | **RF127:** O sistema deve aplicar média móvel e suavização ao volume. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Exibir volume em metros cúbicos | **RF128:** O sistema deve exibir volume em m3. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Calcular percentual de ocupação local | **RF129:** O sistema deve calcular percentual de ocupação do espaço. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Calcular espaço livre local | **RF130:** O sistema deve calcular espaço livre disponível. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Exibir status local de ocupação | **RF131:** O sistema deve exibir status Normal ou Limite. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Bloquear medição sem Kinect conectado | **RF132:** O sistema deve impedir medição se o Kinect estiver desconectado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Bloquear medição sem calibração | **RF133:** O sistema deve impedir medição sem calibração válida. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Bloquear medição sem espaço salvo | **RF134:** O sistema deve impedir medição sem espaço monitorado salvo. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Descartar medição sem volume detectado | **RF135:** O sistema não deve salvar nem enviar medições com volume zero ou inválido. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### SQLite e Histórico - Kinect/Desktop
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Salvar medição no SQLite | **RF136:** O sistema deve salvar medições locais no banco SQLite. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Vincular medição ao usuário | **RF137:** O sistema deve salvar o usuário da sessão na medição local. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Vincular medição à empresa | **RF138:** O sistema deve salvar a empresa da sessão na medição local. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Vincular medição ao espaço | **RF139:** O sistema deve salvar o nome do espaço monitorado na medição. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Salvar estado do Kinect na medição | **RF140:** O sistema deve registrar se o Kinect estava ligado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Salvar estado de calibração na medição | **RF141:** O sistema deve registrar se a medição ocorreu com calibração. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Salvar limite de ocupação na medição | **RF142:** O sistema deve salvar o limite configurado junto à medição. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Carregar histórico local de medições | **RF143:** O sistema deve carregar medições salvas no SQLite. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Limitar histórico local exibido | **RF144:** O sistema deve limitar o histórico local a registros recentes. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Salvar histórico de ocupação | **RF145:** O sistema deve salvar histórico consolidado de ocupação. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Consultar histórico por espaço | **RF146:** O sistema deve permitir consultar histórico de ocupação por espaço. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Consultar últimos históricos | **RF147:** O sistema deve permitir consultar os últimos históricos registrados. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### Comunicação Kinect com MVC - Integração
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Conectar Kinect ao SignalR do MVC | **RF148:** O sistema Kinect deve conectar ao Hub SignalR configurado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Enviar volume ao MVC | **RF149:** O sistema Kinect deve enviar volume calculado ao MVC em tempo real. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Enviar status operacional ao MVC | **RF150:** O sistema Kinect deve enviar status operacional quando necessário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Atualizar status visual da comunicação | **RF151:** O sistema Kinect deve informar ao usuário o estado da conexão. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Tentar reconexão automática | **RF152:** O sistema Kinect deve tentar reconectar ao MVC quando a comunicação cair. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Desconectar SignalR de forma controlada | **RF153:** O sistema Kinect deve encerrar a conexão de forma controlada. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+
+#### Logs - Kinect/Desktop
+
+| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+|---|---|---|
+| Registrar logs locais do Kinect | **RF154:** O sistema Kinect deve registrar eventos operacionais locais. | **RNF010:** O módulo Kinect deve tratar falhas de sensor, calibração, medição e comunicação.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF051:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
+| Registrar falhas de medição | **RF155:** O sistema Kinect deve registrar falhas durante medição. | **RNF010:** O módulo Kinect deve tratar falhas de sensor, calibração, medição e comunicação.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF051:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
+| Registrar falhas de calibração | **RF156:** O sistema Kinect deve registrar falhas durante calibração. | **RNF010:** O módulo Kinect deve tratar falhas de sensor, calibração, medição e comunicação.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF051:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
+| Registrar falhas de comunicação | **RF157:** O sistema Kinect deve registrar falhas de comunicação com o MVC. | **RNF010:** O módulo Kinect deve tratar falhas de sensor, calibração, medição e comunicação.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF051:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
+
+#### Resumo dos Requisitos Não Funcionais
+
+| Categoria | Requisito Não Funcional |
+|---|---|
+| Segurança | **RNF001 - Autenticação obrigatória:** O sistema deve exigir autenticação para acesso às funcionalidades protegidas. |
+| Segurança | **RNF002 - Controle de autorização por perfil:** O sistema deve restringir funcionalidades conforme perfil do usuário. |
+| Segurança | **RNF003 - Token temporário:** O token de acesso deve possuir prazo de validade. |
+| Segurança | **RNF004 - Token de uso único:** O token validado não deve ser reutilizado. |
+| Segurança | **RNF005 - Armazenamento protegido do token:** O token não deve ser persistido em texto puro. |
+| Segurança | **RNF006 - Proteção contra requisições indevidas:** Formulários sensíveis devem utilizar proteção antifalsificação. |
+| Segurança | **RNF007 - Isolamento por empresa:** O sistema deve impedir acesso a dados de outras empresas. |
+| Segurança | **RNF008 - Sessão com dados mínimos de segurança:** A sessão deve armazenar dados necessários para autorização e filtragem. |
+| Confiabilidade | **RNF009 - Tratamento de erros no MVC:** O MVC deve tratar falhas sem expor detalhes técnicos ao usuário. |
+| Confiabilidade | **RNF010 - Tratamento de erros no Kinect:** O módulo Kinect deve tratar falhas de sensor, calibração, medição e comunicação. |
+| Confiabilidade | **RNF011 - Persistência local em caso de falha de comunicação:** O Kinect deve manter medições salvas localmente quando não conseguir enviar ao MVC. |
+| Confiabilidade | **RNF012 - Reconexão automática SignalR:** A comunicação SignalR deve tentar reconectar em caso de queda. |
+| Confiabilidade | **RNF013 - Logs para rastreabilidade:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico. |
+| Confiabilidade | **RNF014 - Fallback de configuração global:** O sistema deve usar configuração global quando não houver configuração por empresa. |
+| Confiabilidade | **RNF015 - Não interrupção por falha de Firestore:** Falhas no Firestore devem ser tratadas sem derrubar toda a aplicação. |
+| Desempenho e Eficiência | **RNF016 - Paginação de listagens:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas. |
+| Desempenho e Eficiência | **RNF017 - Limitação do histórico local:** O Kinect deve limitar a quantidade de medições carregadas na tela. |
+| Desempenho e Eficiência | **RNF018 - Processamento de medição em tempo real:** O sistema deve processar medições recebidas pelo Hub em tempo real. |
+| Desempenho e Eficiência | **RNF019 - Atualização em tempo real do dashboard:** Clientes conectados devem receber novas medições sem atualização manual da página. |
+| Desempenho e Eficiência | **RNF020 - Suavização da leitura volumétrica:** O Kinect deve reduzir oscilações de leitura por meio de estabilização do volume. |
+| Desempenho e Eficiência | **RNF021 - Filtro de pontos inválidos:** O cálculo volumétrico deve descartar pontos fora dos limites físicos definidos. |
+| Usabilidade | **RNF022 - Mensagens claras de erro:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição. |
+| Usabilidade | **RNF023 - Feedback visual de comunicação:** O Kinect deve informar se está conectado, reconectando, desconectado ou com falha. |
+| Usabilidade | **RNF024 - Feedback visual de ocupação:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação. |
+| Usabilidade | **RNF025 - Formatação de volume:** Volumes exibidos ao usuário devem estar em m3 com formatação adequada. |
+| Usabilidade | **RNF026 - Formatação de data e hora:** Datas exibidas aos clientes devem estar em formato legível. |
+| Usabilidade | **RNF027 - Preservação de mensagens consistentes:** O sistema deve limpar mensagens antigas ao alternar telas de login no Kinect. |
+| Manutenibilidade | **RNF028 - Separação por módulos:** O sistema deve manter separação entre MVC/Web, Kinect/Desktop e serviços de integração. |
+| Manutenibilidade | **RNF029 - Uso de repositórios:** O acesso a dados deve ser centralizado em repositórios. |
+| Manutenibilidade | **RNF030 - Uso de serviços:** Regras de autenticação, token, permissões, e-mail e Firebase devem ser organizadas em serviços. |
+| Manutenibilidade | **RNF031 - Permissões centralizadas:** As permissões do sistema devem estar centralizadas em lista oficial. |
+| Manutenibilidade | **RNF032 - Parâmetros centralizados:** Configurações operacionais devem ser mantidas em estrutura própria de parâmetros. |
+| Manutenibilidade | **RNF033 - Código dividido por responsabilidade:** Funcionalidades do Kinect devem ser separadas por câmera, calibração, volume, histórico e comunicação. |
+| Interoperabilidade | **RNF034 - Comunicação em tempo real por SignalR:** O sistema deve usar SignalR/Hub para comunicação entre Kinect, MVC e clientes conectados. |
+| Interoperabilidade | **RNF035 - Integração com Firebase Firestore:** O MVC deve integrar-se ao Firebase Firestore para persistência principal. |
+| Interoperabilidade | **RNF036 - Integração com SQLite:** O Kinect deve integrar-se ao SQLite para persistência local. |
+| Interoperabilidade | **RNF037 - Compatibilidade entre unidades de medida:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
+| Interoperabilidade | **RNF038 - Configuração de URLs de comunicação:** Endereços de comunicação entre Kinect e MVC devem ser configuráveis. |
+| Disponibilidade e Operação | **RNF039 - Operação local do Kinect:** O Kinect deve conseguir salvar medições localmente mesmo sem comunicação ativa com o MVC. |
+| Disponibilidade e Operação | **RNF040 - Dependência de ambiente Windows para Kinect:** O módulo Kinect deve executar em ambiente compatível com Kinect SDK. |
+| Disponibilidade e Operação | **RNF041 - Sensor Kinect obrigatório para medições reais:** Medições volumétricas dependem do sensor Kinect conectado e funcional. |
+| Disponibilidade e Operação | **RNF042 - Calibração prévia obrigatória:** O ambiente deve ser calibrado antes das medições operacionais. |
+| Disponibilidade e Operação | **RNF043 - Configuração prévia do espaço monitorado:** O espaço deve ser salvo antes do início das medições automáticas. |
+| Escalabilidade e Evolução | **RNF044 - Configuração por empresa:** O sistema deve suportar parâmetros específicos por empresa. |
+| Escalabilidade e Evolução | **RNF045 - Preparação para canais de comunicação futuros:** O sistema deve manter configurações para canais como WhatsApp e dashboard push. |
+| Escalabilidade e Evolução | **RNF046 - Preparação para escalonamento de alertas:** O sistema deve manter parâmetros de tempo e canal de escalonamento. |
+| Escalabilidade e Evolução | **RNF047 - Suporte a dados legados globais:** O sistema deve manter compatibilidade com registros antigos sem empresa. |
+| Escalabilidade e Evolução | **RNF048 - Expansão por novos perfis e permissões:** O sistema deve permitir criação de novos perfis com permissões selecionáveis. |
+| Auditoria e Diagnóstico | **RNF049 - Registro de login e token:** O sistema deve registrar eventos de solicitação, envio, validação e uso de token. |
+| Auditoria e Diagnóstico | **RNF050 - Registro de erros de integração:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC. |
+| Auditoria e Diagnóstico | **RNF051 - Registro de eventos do Kinect:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect. |
+| Auditoria e Diagnóstico | **RNF052 - Registro de operações críticas:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
   
  ---
 ## MODELAGEM DO SISTEMA
