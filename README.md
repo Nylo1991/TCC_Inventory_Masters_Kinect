@@ -252,205 +252,205 @@ Critério de organização:
 
 **RN001 - Solicitação de token por e-mail**
 
-**Condição:** O cliente informa o e-mail na tela de login do MVC.
+**Condição:** O cliente informa o e-mail na tela de login do MVC.<br>
 
-**Restrição:** O e-mail deve possuir formato válido e estar cadastrado para um usuário ativo.
+**Restrição:** O e-mail deve possuir formato válido e estar cadastrado para um usuário ativo.<br>
 
-**Ação:** O MVC gera um token numérico e envia para o e-mail cadastrado.
+**Ação:** O MVC gera um token numérico e envia para o e-mail cadastrado.<br>
 
 **RN009 - Envio do token por e-mail**
 
-**Condição:** O token é gerado com sucesso.
+**Condição:** O token é gerado com sucesso.<br>
 
-**Restrição:** O envio deve ocorrer para o e-mail cadastrado do usuário.
+**Restrição:** O envio deve ocorrer para o e-mail cadastrado do usuário.<br>
 
-**Ação:** O MVC envia o token e informa sucesso na tela.
+**Ação:** O MVC envia o token e informa sucesso na tela.<br>
 
 **RN014 - Login autorizado**
 
-**Condição:** O usuário informa token válido, ativo e dentro do prazo.
+**Condição:** O usuário informa token válido, ativo e dentro do prazo.<br>
 
-**Restrição:** O usuário vinculado ao token deve existir e estar ativo.
+**Restrição:** O usuário vinculado ao token deve existir e estar ativo.<br>
 
-**Ação:** O sistema autentica o usuário e libera o dashboard.
+**Ação:** O sistema autentica o usuário e libera o dashboard.<br>
 
 **RN018 - Controle de acesso por perfil**
 
-**Condição:** Usuário autenticado acessa uma funcionalidade.
+**Condição:** Usuário autenticado acessa uma funcionalidade.<br>
 
-**Restrição:** O perfil deve possuir a permissão exigida.
+**Restrição:** O perfil deve possuir a permissão exigida.<br>
 
-**Ação:** O sistema libera ou bloqueia o acesso.
+**Ação:** O sistema libera ou bloqueia o acesso.<br>
 
 **RN020 - Permissões do perfil Administrador**
 
-**Condição:** O usuário possui perfil Administrador.
+**Condição:** O usuário possui perfil Administrador.<br>
 
-**Restrição:** Esse perfil representa controle total do sistema.
+**Restrição:** Esse perfil representa controle total do sistema.<br>
 
-**Ação:** O sistema libera todas as permissões.
+**Ação:** O sistema libera todas as permissões.<br>
 
 **RN021 - Permissões do perfil Gestor**
 
-**Condição:** O usuário possui perfil Gestor.
+**Condição:** O usuário possui perfil Gestor.<br>
 
-**Restrição:** O gestor deve acompanhar dados gerenciais sem administrar todo o sistema.
+**Restrição:** O gestor deve acompanhar dados gerenciais sem administrar todo o sistema.<br>
 
-**Ação:** O sistema libera dashboard, medições, notificações e parceiros.
+**Ação:** O sistema libera dashboard, medições, notificações e parceiros.<br>
 
 **RN022 - Permissões do perfil Operador**
 
-**Condição:** O usuário possui perfil Operador.
+**Condição:** O usuário possui perfil Operador.<br>
 
-**Restrição:** O operador atua nas atividades operacionais.
+**Restrição:** O operador atua nas atividades operacionais.<br>
 
-**Ação:** O sistema libera dashboard, medições e acesso ao Kinect.
+**Ação:** O sistema libera dashboard, medições e acesso ao Kinect.<br>
 
 **RN023 - Permissões do perfil Visualizador**
 
-**Condição:** O usuário possui perfil Visualizador.
+**Condição:** O usuário possui perfil Visualizador.<br>
 
-**Restrição:** Esse perfil não deve alterar cadastros.
+**Restrição:** Esse perfil não deve alterar cadastros.<br>
 
-**Ação:** O sistema permite visualizar dashboard, medições e notificações.
+**Ação:** O sistema permite visualizar dashboard, medições e notificações.<br>
 
 **RN024 - Cadastro de perfil**
 
-**Condição:** O administrador cadastra um perfil.
+**Condição:** O administrador cadastra um perfil.<br>
 
-**Restrição:** O perfil deve possuir nome, status e permissões selecionadas da lista oficial.
+**Restrição:** O perfil deve possuir nome, status e permissões selecionadas da lista oficial.<br>
 
-**Ação:** O sistema salva o perfil para uso no controle de acesso.
+**Ação:** O sistema salva o perfil para uso no controle de acesso.<br>
 
 **RN025 - Edição de perfil**
 
-**Condição:** O administrador edita um perfil.
+**Condição:** O administrador edita um perfil.<br>
 
-**Restrição:** As permissões devem continuar vinculadas à lista oficial do sistema.
+**Restrição:** As permissões devem continuar vinculadas à lista oficial do sistema.<br>
 
-**Ação:** O sistema atualiza o perfil e suas permissões.
+**Ação:** O sistema atualiza o perfil e suas permissões.<br>
 
 **RN026 - Inativação de perfil**
 
-**Condição:** O administrador inativa um perfil.
+**Condição:** O administrador inativa um perfil.<br>
 
-**Restrição:** O perfil deixa de representar uma opção ativa para operação.
+**Restrição:** O perfil deixa de representar uma opção ativa para operação.<br>
 
-**Ação:** O sistema marca o perfil como inativo.
+**Ação:** O sistema marca o perfil como inativo.<br>
 
 **RN027 - Cadastro de usuário**
 
-**Condição:** O administrador cadastra um usuário.
+**Condição:** O administrador cadastra um usuário.<br>
 
-**Restrição:** Nome, e-mail, perfil e senha são obrigatórios.
+**Restrição:** Nome, e-mail, perfil e senha são obrigatórios.<br>
 
-**Ação:** O sistema salva o usuário vinculado à empresa atual.
+**Ação:** O sistema salva o usuário vinculado à empresa atual.<br>
 
 **RN038 - Cadastro de parceiro**
 
-**Condição:** Usuário autorizado cadastra um parceiro.
+**Condição:** Usuário autorizado cadastra um parceiro.<br>
 
-**Restrição:** Nome, e-mail, telefone, empresa e endereço são obrigatórios.
+**Restrição:** Nome, e-mail, telefone, empresa e endereço são obrigatórios.<br>
 
-**Ação:** O sistema salva o parceiro vinculado à empresa atual.
+**Ação:** O sistema salva o parceiro vinculado à empresa atual.<br>
 
 **RN040 - Edição de parceiro somente com alteração real**
 
-**Condição:** Usuário autorizado edita um parceiro.
+**Condição:** Usuário autorizado edita um parceiro.<br>
 
-**Restrição:** O sistema deve identificar mudanças reais nos dados, inclusive telefone normalizado.
+**Restrição:** O sistema deve identificar mudanças reais nos dados, inclusive telefone normalizado.<br>
 
-**Ação:** O sistema atualiza o parceiro ou informa que nada foi alterado.
+**Ação:** O sistema atualiza o parceiro ou informa que nada foi alterado.<br>
 
 **RN047 - Configuração de parâmetros do sistema**
 
-**Condição:** Usuário autorizado altera configurações operacionais.
+**Condição:** Usuário autorizado altera configurações operacionais.<br>
 
-**Restrição:** Apenas perfis com permissão podem gerenciar configurações.
+**Restrição:** Apenas perfis com permissão podem gerenciar configurações.<br>
 
-**Ação:** O sistema salva os parâmetros da empresa.
+**Ação:** O sistema salva os parâmetros da empresa.<br>
 
 **RN055 - Calibração acionada pelo MVC**
 
-**Condição:** Usuário autorizado aciona nova calibração nos parâmetros.
+**Condição:** Usuário autorizado aciona nova calibração nos parâmetros.<br>
 
-**Restrição:** O parâmetro de calibração deve ser ativado.
+**Restrição:** O parâmetro de calibração deve ser ativado.<br>
 
-**Ação:** O MVC marca `AtivarSistemaCalibracao` como verdadeiro.
+**Ação:** O MVC marca `AtivarSistemaCalibracao` como verdadeiro.<br>
 
 **RN068 - Dashboard consolidado por empresa**
 
-**Condição:** Usuário acessa o dashboard.
+**Condição:** Usuário acessa o dashboard.<br>
 
-**Restrição:** Devem ser considerados parceiros, usuários, medições, alertas e parâmetros da empresa.
+**Restrição:** Devem ser considerados parceiros, usuários, medições, alertas e parâmetros da empresa.<br>
 
-**Ação:** O sistema monta uma visão consolidada para tomada de decisão.
+**Ação:** O sistema monta uma visão consolidada para tomada de decisão.<br>
 
 **RN069 - Cálculo de ocupação no dashboard**
 
-**Condição:** Existe medição e capacidade máxima configurada.
+**Condição:** Existe medição e capacidade máxima configurada.<br>
 
-**Restrição:** O percentual deve usar a última medição dividida pela capacidade máxima.
+**Restrição:** O percentual deve usar a última medição dividida pela capacidade máxima.<br>
 
-**Ação:** O sistema calcula o percentual de ocupação.
+**Ação:** O sistema calcula o percentual de ocupação.<br>
 
 ## Regras de Negócio Kinect
 
 **RNK001 - Solicitação de token pelo Kinect**
 
-**Condição:** Usuário informa e-mail no módulo Kinect.
+**Condição:** Usuário informa e-mail no módulo Kinect.<br>
 
-**Restrição:** O e-mail deve estar cadastrado e ativo no MVC.
+**Restrição:** O e-mail deve estar cadastrado e ativo no MVC.<br>
 
-**Ação:** O Kinect solicita ao MVC o envio do token.
+**Ação:** O Kinect solicita ao MVC o envio do token.<br>
 
 **RNK004 - Validação de token no Kinect**
 
-**Condição:** Usuário informa token no módulo Kinect.
+**Condição:** Usuário informa token no módulo Kinect.<br>
 
-**Restrição:** O token deve ser validado pelo MVC.
+**Restrição:** O token deve ser validado pelo MVC.<br>
 
-**Ação:** O Kinect libera o monitor somente se o token for válido.
+**Ação:** O Kinect libera o monitor somente se o token for válido.<br>
 
 **RNK012 - Criação da sessão local**
 
-**Condição:** MVC retorna token válido ao Kinect.
+**Condição:** MVC retorna token válido ao Kinect.<br>
 
-**Restrição:** A sessão local deve guardar usuário, empresa, e-mail e token.
+**Restrição:** A sessão local deve guardar usuário, empresa, e-mail e token.<br>
 
-**Ação:** O sistema cria a sessão do usuário.
+**Ação:** O sistema cria a sessão do usuário.<br>
 
 **RNK013 - Abertura do monitor somente após autenticação**
 
-**Condição:** Usuário tenta acessar o monitor Kinect.
+**Condição:** Usuário tenta acessar o monitor Kinect.<br>
 
-**Restrição:** É necessário possuir sessão validada pelo MVC.
+**Restrição:** É necessário possuir sessão validada pelo MVC.<br>
 
-**Ação:** O sistema abre o monitor somente após token validado.
+**Ação:** O sistema abre o monitor somente após token validado.<br>
 
 **RNK017 - Ambiente vazio na calibração**
 
-**Condição:** Usuário inicia a calibração.
+**Condição:** Usuário inicia a calibração.<br>
 
-**Restrição:** A área monitorada deve estar vazia.
+**Restrição:** A área monitorada deve estar vazia.<br>
 
-**Ação:** O Kinect captura o mapa de referência do ambiente vazio.
+**Ação:** O Kinect captura o mapa de referência do ambiente vazio.<br>
 
 **RNK032 - Medição manual**
 
-**Condição:** Usuário aciona uma medição manual.
+**Condição:** Usuário aciona uma medição manual.<br>
 
-**Restrição:** Kinect conectado, espaço calibrado e espaço salvo são obrigatórios.
+**Restrição:** Kinect conectado, espaço calibrado e espaço salvo são obrigatórios.<br>
 
-**Ação:** O sistema calcula, salva e envia a medição.
+**Ação:** O sistema calcula, salva e envia a medição.<br>
 
 **RNK033 - Medição automática**
 
-**Condição:** O timer de medição automática é executado.
+**Condição:** O timer de medição automática é executado.<br>
 
-**Restrição:** As mesmas validações da medição manual devem ser respeitadas.
+**Restrição:** As mesmas validações da medição manual devem ser respeitadas.<br>
 
-**Ação:** O sistema realiza a medição automática.
+**Ação:** O sistema realiza a medição automática.<br>
 
 ## Regras de Validação
 
@@ -458,637 +458,637 @@ Critério de organização:
 
 **RN002 - Bloqueio de e-mail em formato inválido**
 
-**Condição:** O cliente informa um e-mail na tela de login.
+**Condição:** O cliente informa um e-mail na tela de login.<br>
 
-**Restrição:** O e-mail deve seguir o formato nome@dominio.com.
+**Restrição:** O e-mail deve seguir o formato nome@dominio.com.<br>
 
-**Ação:** O sistema exibe mensagem de e-mail inválido e não envia token.
+**Ação:** O sistema exibe mensagem de e-mail inválido e não envia token.<br>
 
 **RN003 - Bloqueio de e-mail não cadastrado**
 
-**Condição:** O cliente solicita token com um e-mail em formato válido.
+**Condição:** O cliente solicita token com um e-mail em formato válido.<br>
 
-**Restrição:** O e-mail precisa existir na base de usuários.
+**Restrição:** O e-mail precisa existir na base de usuários.<br>
 
-**Ação:** O sistema recusa a solicitação e informa que o e-mail não foi encontrado ou o usuário está inativo.
+**Ação:** O sistema recusa a solicitação e informa que o e-mail não foi encontrado ou o usuário está inativo.<br>
 
 **RN004 - Bloqueio de usuário inativo**
 
-**Condição:** O cliente solicita token com e-mail cadastrado.
+**Condição:** O cliente solicita token com e-mail cadastrado.<br>
 
-**Restrição:** O usuário vinculado ao e-mail deve estar ativo.
+**Restrição:** O usuário vinculado ao e-mail deve estar ativo.<br>
 
-**Ação:** O sistema bloqueia o envio do token e registra a tentativa.
+**Ação:** O sistema bloqueia o envio do token e registra a tentativa.<br>
 
 **RN005 - Geração de token numérico**
 
-**Condição:** A solicitação de acesso é aceita.
+**Condição:** A solicitação de acesso é aceita.<br>
 
-**Restrição:** O token deve ser numérico e possuir seis dígitos.
+**Restrição:** O token deve ser numérico e possuir seis dígitos.<br>
 
-**Ação:** O MVC gera um código entre 100000 e 999999.
+**Ação:** O MVC gera um código entre 100000 e 999999.<br>
 
 **RN010 - Validação de token vazio**
 
-**Condição:** O usuário tenta validar acesso sem informar token.
+**Condição:** O usuário tenta validar acesso sem informar token.<br>
 
-**Restrição:** Token vazio não pode liberar acesso.
+**Restrição:** Token vazio não pode liberar acesso.<br>
 
-**Ação:** O sistema informa que o token deve ser preenchido.
+**Ação:** O sistema informa que o token deve ser preenchido.<br>
 
 **RN011 - Validação de token inexistente**
 
-**Condição:** O usuário informa um token.
+**Condição:** O usuário informa um token.<br>
 
-**Restrição:** O hash informado deve corresponder a um token ativo salvo.
+**Restrição:** O hash informado deve corresponder a um token ativo salvo.<br>
 
-**Ação:** O sistema retorna token inválido quando não encontrar correspondência.
+**Ação:** O sistema retorna token inválido quando não encontrar correspondência.<br>
 
 **RN012 - Bloqueio de token expirado**
 
-**Condição:** O usuário informa um token existente.
+**Condição:** O usuário informa um token existente.<br>
 
-**Restrição:** A data/hora atual não pode ser maior que a data de expiração.
+**Restrição:** A data/hora atual não pode ser maior que a data de expiração.<br>
 
-**Ação:** O sistema nega o acesso e informa que o token expirou.
+**Ação:** O sistema nega o acesso e informa que o token expirou.<br>
 
 **RN013 - Uso único do token**
 
-**Condição:** Um token válido é utilizado com sucesso.
+**Condição:** Um token válido é utilizado com sucesso.<br>
 
-**Restrição:** O mesmo token não pode liberar novo acesso.
+**Restrição:** O mesmo token não pode liberar novo acesso.<br>
 
-**Ação:** O sistema marca o token como utilizado.
+**Ação:** O sistema marca o token como utilizado.<br>
 
 **RN017 - Proteção de telas autenticadas**
 
-**Condição:** Um usuário tenta acessar tela protegida.
+**Condição:** Um usuário tenta acessar tela protegida.<br>
 
-**Restrição:** O usuário precisa estar autenticado.
+**Restrição:** O usuário precisa estar autenticado.<br>
 
-**Ação:** O sistema solicita autenticação ou bloqueia o acesso.
+**Ação:** O sistema solicita autenticação ou bloqueia o acesso.<br>
 
 **RN019 - Acesso negado por falta de permissão**
 
-**Condição:** O usuário tenta acessar uma funcionalidade sem permissão.
+**Condição:** O usuário tenta acessar uma funcionalidade sem permissão.<br>
 
-**Restrição:** A permissão necessária não pertence ao perfil do usuário.
+**Restrição:** A permissão necessária não pertence ao perfil do usuário.<br>
 
-**Ação:** O sistema redireciona para a tela de acesso negado.
+**Ação:** O sistema redireciona para a tela de acesso negado.<br>
 
 **RN028 - Validação de senha do usuário**
 
-**Condição:** Um usuário é cadastrado.
+**Condição:** Um usuário é cadastrado.<br>
 
-**Restrição:** A senha deve possuir entre 6 e 20 caracteres.
+**Restrição:** A senha deve possuir entre 6 e 20 caracteres.<br>
 
-**Ação:** O sistema aceita o cadastro somente quando a senha estiver dentro do padrão.
+**Ação:** O sistema aceita o cadastro somente quando a senha estiver dentro do padrão.<br>
 
 **RN029 - Validação de e-mail do usuário**
 
-**Condição:** Um usuário é cadastrado ou editado.
+**Condição:** Um usuário é cadastrado ou editado.<br>
 
-**Restrição:** O e-mail deve seguir formato válido.
+**Restrição:** O e-mail deve seguir formato válido.<br>
 
-**Ação:** O sistema valida o e-mail antes de salvar.
+**Ação:** O sistema valida o e-mail antes de salvar.<br>
 
 **RN030 - Busca de usuário por e-mail normalizado**
 
-**Condição:** O sistema valida login ou token.
+**Condição:** O sistema valida login ou token.<br>
 
-**Restrição:** A comparação não deve depender de maiúsculas, minúsculas ou espaços extras.
+**Restrição:** A comparação não deve depender de maiúsculas, minúsculas ou espaços extras.<br>
 
-**Ação:** O sistema normaliza o e-mail antes da busca.
+**Ação:** O sistema normaliza o e-mail antes da busca.<br>
 
 **RN032 - Preservação da senha na edição do usuário**
 
-**Condição:** O administrador edita dados gerais de um usuário.
+**Condição:** O administrador edita dados gerais de um usuário.<br>
 
-**Restrição:** A senha não deve ser alterada nessa edição padrão.
+**Restrição:** A senha não deve ser alterada nessa edição padrão.<br>
 
-**Ação:** O sistema preserva a senha cadastrada.
+**Ação:** O sistema preserva a senha cadastrada.<br>
 
 **RN033 - Preservação da data de cadastro do usuário**
 
-**Condição:** Um usuário é editado.
+**Condição:** Um usuário é editado.<br>
 
-**Restrição:** A data original de cadastro não deve ser substituída.
+**Restrição:** A data original de cadastro não deve ser substituída.<br>
 
-**Ação:** O sistema mantém a data original.
+**Ação:** O sistema mantém a data original.<br>
 
 **RN034 - Ativação e inativação de usuário**
 
-**Condição:** O administrador altera o status de um usuário.
+**Condição:** O administrador altera o status de um usuário.<br>
 
-**Restrição:** Usuário inativo não pode acessar o sistema nem receber token.
+**Restrição:** Usuário inativo não pode acessar o sistema nem receber token.<br>
 
-**Ação:** O sistema alterna o status entre ativo e inativo.
+**Ação:** O sistema alterna o status entre ativo e inativo.<br>
 
 **RN035 - Exclusão de usuário**
 
-**Condição:** O administrador confirma exclusão de usuário.
+**Condição:** O administrador confirma exclusão de usuário.<br>
 
-**Restrição:** O ID do usuário deve ser informado e existir.
+**Restrição:** O ID do usuário deve ser informado e existir.<br>
 
-**Ação:** O sistema remove o documento correspondente no Firestore.
+**Ação:** O sistema remove o documento correspondente no Firestore.<br>
 
 **RN036 - Consulta de usuário inexistente**
 
-**Condição:** O administrador tenta editar, excluir ou detalhar usuário.
+**Condição:** O administrador tenta editar, excluir ou detalhar usuário.<br>
 
-**Restrição:** O usuário precisa existir.
+**Restrição:** O usuário precisa existir.<br>
 
-**Ação:** O sistema retorna não encontrado se o usuário não existir.
+**Ação:** O sistema retorna não encontrado se o usuário não existir.<br>
 
 **RN039 - Validação de telefone do parceiro**
 
-**Condição:** Parceiro é cadastrado ou editado.
+**Condição:** Parceiro é cadastrado ou editado.<br>
 
-**Restrição:** O telefone deve seguir o padrão `(31) 9 9999-9999`.
+**Restrição:** O telefone deve seguir o padrão `(31) 9 9999-9999`.<br>
 
-**Ação:** O sistema bloqueia o salvamento se o formato for inválido.
+**Ação:** O sistema bloqueia o salvamento se o formato for inválido.<br>
 
 **RN041 - Preservação da data de cadastro do parceiro**
 
-**Condição:** Um parceiro é editado.
+**Condição:** Um parceiro é editado.<br>
 
-**Restrição:** A data original de cadastro não deve ser substituída.
+**Restrição:** A data original de cadastro não deve ser substituída.<br>
 
-**Ação:** O sistema mantém a data original.
+**Ação:** O sistema mantém a data original.<br>
 
 **RN042 - Ativação e inativação de parceiro**
 
-**Condição:** Usuário altera o status de um parceiro.
+**Condição:** Usuário altera o status de um parceiro.<br>
 
-**Restrição:** O parceiro pode estar ativo ou inativo.
+**Restrição:** O parceiro pode estar ativo ou inativo.<br>
 
-**Ação:** O sistema atualiza o status do parceiro.
+**Ação:** O sistema atualiza o status do parceiro.<br>
 
 **RN043 - Exclusão de parceiro**
 
-**Condição:** Usuário autorizado confirma exclusão de parceiro.
+**Condição:** Usuário autorizado confirma exclusão de parceiro.<br>
 
-**Restrição:** O ID do parceiro deve ser informado e existir.
+**Restrição:** O ID do parceiro deve ser informado e existir.<br>
 
-**Ação:** O sistema remove o parceiro do Firestore ou informa falha.
+**Ação:** O sistema remove o parceiro do Firestore ou informa falha.<br>
 
 **RN044 - Consulta de parceiro inexistente**
 
-**Condição:** Usuário tenta editar, excluir ou detalhar parceiro.
+**Condição:** Usuário tenta editar, excluir ou detalhar parceiro.<br>
 
-**Restrição:** O parceiro precisa existir.
+**Restrição:** O parceiro precisa existir.<br>
 
-**Ação:** O sistema retorna não encontrado se o parceiro não existir.
+**Ação:** O sistema retorna não encontrado se o parceiro não existir.<br>
 
 **RN048 - Capacidade máxima válida**
 
-**Condição:** Usuário configura a capacidade máxima.
+**Condição:** Usuário configura a capacidade máxima.<br>
 
-**Restrição:** A capacidade máxima deve ser maior que zero.
+**Restrição:** A capacidade máxima deve ser maior que zero.<br>
 
-**Ação:** O sistema aceita o valor para cálculo de ocupação.
+**Ação:** O sistema aceita o valor para cálculo de ocupação.<br>
 
 **RN049 - Capacidade mínima válida**
 
-**Condição:** Usuário configura capacidade mínima e máxima.
+**Condição:** Usuário configura capacidade mínima e máxima.<br>
 
-**Restrição:** A capacidade mínima deve ser menor que a capacidade máxima.
+**Restrição:** A capacidade mínima deve ser menor que a capacidade máxima.<br>
 
-**Ação:** O sistema salva somente se a relação for válida.
+**Ação:** O sistema salva somente se a relação for válida.<br>
 
 **RN050 - Percentual de alerta válido**
 
-**Condição:** Usuário configura percentual de alerta.
+**Condição:** Usuário configura percentual de alerta.<br>
 
-**Restrição:** O percentual deve estar entre 1% e 100%.
+**Restrição:** O percentual deve estar entre 1% e 100%.<br>
 
-**Ação:** O sistema usa esse valor para alertas de ocupação.
+**Ação:** O sistema usa esse valor para alertas de ocupação.<br>
 
 **RN051 - Taxa de amostragem válida**
 
-**Condição:** Usuário define a taxa de amostragem de volume.
+**Condição:** Usuário define a taxa de amostragem de volume.<br>
 
-**Restrição:** O valor deve estar entre 1 e 1440 minutos.
+**Restrição:** O valor deve estar entre 1 e 1440 minutos.<br>
 
-**Ação:** O sistema salva a taxa se estiver válida.
+**Ação:** O sistema salva a taxa se estiver válida.<br>
 
 **RN052 - Duração máxima de medição válida**
 
-**Condição:** Usuário define duração máxima da medição.
+**Condição:** Usuário define duração máxima da medição.<br>
 
-**Restrição:** O valor deve estar entre 1 e 86400 segundos.
+**Restrição:** O valor deve estar entre 1 e 86400 segundos.<br>
 
-**Ação:** O sistema salva a duração se estiver válida.
+**Ação:** O sistema salva a duração se estiver válida.<br>
 
 **RN053 - Raio de detecção válido**
 
-**Condição:** Usuário informa raio de detecção do Kinect.
+**Condição:** Usuário informa raio de detecção do Kinect.<br>
 
-**Restrição:** O valor deve estar entre 0 e 100 metros.
+**Restrição:** O valor deve estar entre 0 e 100 metros.<br>
 
-**Ação:** O sistema salva o raio se estiver válido.
+**Ação:** O sistema salva o raio se estiver válido.<br>
 
 **RN054 - Configuração de zona de exclusão**
 
-**Condição:** Usuário configura parâmetros do Kinect no MVC.
+**Condição:** Usuário configura parâmetros do Kinect no MVC.<br>
 
-**Restrição:** A zona de exclusão pode estar habilitada ou desabilitada.
+**Restrição:** A zona de exclusão pode estar habilitada ou desabilitada.<br>
 
-**Ação:** O sistema salva a decisão nos parâmetros.
+**Ação:** O sistema salva a decisão nos parâmetros.<br>
 
 **RN056 - Atualização de parâmetros somente com alteração real**
 
-**Condição:** Usuário salva parâmetros.
+**Condição:** Usuário salva parâmetros.<br>
 
-**Restrição:** Se nenhum campo foi alterado, não deve haver gravação desnecessária.
+**Restrição:** Se nenhum campo foi alterado, não deve haver gravação desnecessária.<br>
 
-**Ação:** O sistema informa que nenhuma alteração foi realizada.
+**Ação:** O sistema informa que nenhuma alteração foi realizada.<br>
 
 **RN057 - Data de atualização dos parâmetros**
 
-**Condição:** Parâmetros são salvos.
+**Condição:** Parâmetros são salvos.<br>
 
-**Restrição:** Toda alteração deve ser rastreável.
+**Restrição:** Toda alteração deve ser rastreável.<br>
 
-**Ação:** O sistema atualiza `DataAtualizacao` em UTC.
+**Ação:** O sistema atualiza `DataAtualizacao` em UTC.<br>
 
 **RN062 - Template de mensagem**
 
-**Condição:** O usuário configura mensagem padrão de alerta.
+**Condição:** O usuário configura mensagem padrão de alerta.<br>
 
-**Restrição:** O texto deve possuir no máximo 1000 caracteres.
+**Restrição:** O texto deve possuir no máximo 1000 caracteres.<br>
 
-**Ação:** O sistema salva o template para uso nas comunicações.
+**Ação:** O sistema salva o template para uso nas comunicações.<br>
 
 **RN064 - Nome do remetente WhatsApp**
 
-**Condição:** O usuário configura remetente para WhatsApp.
+**Condição:** O usuário configura remetente para WhatsApp.<br>
 
-**Restrição:** O nome deve possuir no máximo 80 caracteres.
+**Restrição:** O nome deve possuir no máximo 80 caracteres.<br>
 
-**Ação:** O sistema aceita o remetente somente dentro do limite.
+**Ação:** O sistema aceita o remetente somente dentro do limite.<br>
 
 **RN065 - Escalonamento de alerta**
 
-**Condição:** Uma notificação permanece pendente.
+**Condição:** Uma notificação permanece pendente.<br>
 
-**Restrição:** O tempo de escalonamento deve estar entre 1 e 1440 minutos.
+**Restrição:** O tempo de escalonamento deve estar entre 1 e 1440 minutos.<br>
 
-**Ação:** O sistema mantém o tempo e o canal configurados para escalonamento.
+**Ação:** O sistema mantém o tempo e o canal configurados para escalonamento.<br>
 
 **RN066 - Dias sem coleta para alerta**
 
-**Condição:** O sistema controla ausência de coleta.
+**Condição:** O sistema controla ausência de coleta.<br>
 
-**Restrição:** O limite configurável deve estar entre 1 e 365 dias.
+**Restrição:** O limite configurável deve estar entre 1 e 365 dias.<br>
 
-**Ação:** O sistema mantém esse parâmetro para alerta operacional.
+**Ação:** O sistema mantém esse parâmetro para alerta operacional.<br>
 
 **RN071 - Limite visual do percentual**
 
-**Condição:** O percentual calculado ultrapassa 100%.
+**Condição:** O percentual calculado ultrapassa 100%.<br>
 
-**Restrição:** A exibição do dashboard não deve passar de 100%.
+**Restrição:** A exibição do dashboard não deve passar de 100%.<br>
 
-**Ação:** O sistema limita o percentual exibido.
+**Ação:** O sistema limita o percentual exibido.<br>
 
 **RN080 - Erro no processamento da medição pelo Hub**
 
-**Condição:** Ocorre erro ao processar medição recebida.
+**Condição:** Ocorre erro ao processar medição recebida.<br>
 
-**Restrição:** O erro não pode gerar dado inconsistente nem derrubar a aplicação.
+**Restrição:** O erro não pode gerar dado inconsistente nem derrubar a aplicação.<br>
 
-**Ação:** O MVC registra o erro e envia mensagem de falha ao cliente chamador.
+**Ação:** O MVC registra o erro e envia mensagem de falha ao cliente chamador.<br>
 
 **RN084 - Bloqueio de alerta sem capacidade válida**
 
-**Condição:** O sistema verifica alertas automáticos.
+**Condição:** O sistema verifica alertas automáticos.<br>
 
-**Restrição:** A capacidade máxima deve ser maior que zero.
+**Restrição:** A capacidade máxima deve ser maior que zero.<br>
 
-**Ação:** O sistema não gera alerta se a capacidade estiver inválida.
+**Ação:** O sistema não gera alerta se a capacidade estiver inválida.<br>
 
 **RN085 - Não geração de alerta abaixo do limite**
 
-**Condição:** Uma medição é recebida.
+**Condição:** Uma medição é recebida.<br>
 
-**Restrição:** O percentual calculado está abaixo do percentual de alerta.
+**Restrição:** O percentual calculado está abaixo do percentual de alerta.<br>
 
-**Ação:** O sistema não cria notificação automática.
+**Ação:** O sistema não cria notificação automática.<br>
 
 **RN089 - Listagem paginada de medições**
 
-**Condição:** Usuário acessa o histórico de medições.
+**Condição:** Usuário acessa o histórico de medições.<br>
 
-**Restrição:** A listagem deve exibir 10 registros por página.
+**Restrição:** A listagem deve exibir 10 registros por página.<br>
 
-**Ação:** O sistema pagina as medições.
+**Ação:** O sistema pagina as medições.<br>
 
 **RN092 - Normalização da página de medições**
 
-**Condição:** Usuário informa uma página inválida.
+**Condição:** Usuário informa uma página inválida.<br>
 
-**Restrição:** A página não pode ser menor que 1 nem maior que o total disponível.
+**Restrição:** A página não pode ser menor que 1 nem maior que o total disponível.<br>
 
-**Ação:** O sistema ajusta a página para valor válido.
+**Ação:** O sistema ajusta a página para valor válido.<br>
 
 **RN102 - Aceite de coleta com ID obrigatório**
 
-**Condição:** Parceiro aceita uma coleta.
+**Condição:** Parceiro aceita uma coleta.<br>
 
-**Restrição:** O ID da notificação deve ser informado.
+**Restrição:** O ID da notificação deve ser informado.<br>
 
-**Ação:** O sistema rejeita a operação se o ID estiver vazio.
+**Ação:** O sistema rejeita a operação se o ID estiver vazio.<br>
 
 **RN103 - Atualização da coleta antes da comunicação**
 
-**Condição:** Uma coleta é aceita.
+**Condição:** Uma coleta é aceita.<br>
 
-**Restrição:** O status deve ser atualizado no banco antes de avisar os clientes.
+**Restrição:** O status deve ser atualizado no banco antes de avisar os clientes.<br>
 
-**Ação:** O sistema só envia aviso após sucesso na atualização.
+**Ação:** O sistema só envia aviso após sucesso na atualização.<br>
 
 **RN104 - Status de notificação aceita**
 
-**Condição:** Parceiro aceita a solicitação de coleta.
+**Condição:** Parceiro aceita a solicitação de coleta.<br>
 
-**Restrição:** O registro deve refletir a nova situação.
+**Restrição:** O registro deve refletir a nova situação.<br>
 
-**Ação:** O sistema altera o status para `Aceito`.
+**Ação:** O sistema altera o status para `Aceito`.<br>
 
 **RN106 - Falha no envio de notificação SignalR**
 
-**Condição:** O MVC tenta avisar os clientes conectados.
+**Condição:** O MVC tenta avisar os clientes conectados.<br>
 
-**Restrição:** Falhas de comunicação devem ser rastreadas.
+**Restrição:** Falhas de comunicação devem ser rastreadas.<br>
 
-**Ação:** O sistema registra erro caso o envio falhe.
+**Ação:** O sistema registra erro caso o envio falhe.<br>
 
 **RN109 - Falha de comunicação com Firestore**
 
-**Condição:** O sistema tenta acessar o Firestore e ocorre erro.
+**Condição:** O sistema tenta acessar o Firestore e ocorre erro.<br>
 
-**Restrição:** A falha não deve interromper toda a aplicação.
+**Restrição:** A falha não deve interromper toda a aplicação.<br>
 
-**Ação:** O MVC registra o erro e retorna mensagem adequada ou lista vazia.
+**Ação:** O MVC registra o erro e retorna mensagem adequada ou lista vazia.<br>
 
 **RN111 - Consulta global para dados antigos**
 
-**Condição:** O sistema consulta dados por empresa.
+**Condição:** O sistema consulta dados por empresa.<br>
 
-**Restrição:** Registros antigos sem `EmpresaId` ainda precisam ser acessíveis no contexto global.
+**Restrição:** Registros antigos sem `EmpresaId` ainda precisam ser acessíveis no contexto global.<br>
 
-**Ação:** O MVC exibe registros sem empresa apenas quando o contexto for `global`.
+**Ação:** O MVC exibe registros sem empresa apenas quando o contexto for `global`.<br>
 
 **RN115 - Resposta do MVC para token inválido**
 
-**Condição:** O Kinect envia token inválido, expirado ou inexistente.
+**Condição:** O Kinect envia token inválido, expirado ou inexistente.<br>
 
-**Restrição:** O acesso ao Kinect não pode ser liberado.
+**Restrição:** O acesso ao Kinect não pode ser liberado.<br>
 
-**Ação:** O MVC retorna resposta de recusa da validação.
+**Ação:** O MVC retorna resposta de recusa da validação.<br>
 
 **RN118 - Proteção antifalsificação em formulários**
 
-**Condição:** Usuário envia formulário de criação, edição, exclusão ou configuração.
+**Condição:** Usuário envia formulário de criação, edição, exclusão ou configuração.<br>
 
-**Restrição:** A requisição deve conter token antiforgery válido.
+**Restrição:** A requisição deve conter token antiforgery válido.<br>
 
-**Ação:** O MVC aceita a operação somente após validação.
+**Ação:** O MVC aceita a operação somente após validação.<br>
 
 ### Kinect/Desktop
 
 **RNK002 - E-mail obrigatório para solicitar token**
 
-**Condição:** Usuário tenta solicitar token no Kinect.
+**Condição:** Usuário tenta solicitar token no Kinect.<br>
 
-**Restrição:** O e-mail é obrigatório.
+**Restrição:** O e-mail é obrigatório.<br>
 
-**Ação:** O sistema informa que o e-mail cadastrado deve ser preenchido.
+**Ação:** O sistema informa que o e-mail cadastrado deve ser preenchido.<br>
 
 **RNK005 - Token obrigatório no Kinect**
 
-**Condição:** Usuário tenta entrar no Kinect.
+**Condição:** Usuário tenta entrar no Kinect.<br>
 
-**Restrição:** O token de acesso é obrigatório.
+**Restrição:** O token de acesso é obrigatório.<br>
 
-**Ação:** O sistema informa que o token deve ser preenchido.
+**Ação:** O sistema informa que o token deve ser preenchido.<br>
 
 **RNK007 - Bloqueio por token inválido**
 
-**Condição:** Usuário tenta acessar o Kinect com token inválido.
+**Condição:** Usuário tenta acessar o Kinect com token inválido.<br>
 
-**Restrição:** O token não pode estar expirado, inexistente ou já utilizado.
+**Restrição:** O token não pode estar expirado, inexistente ou já utilizado.<br>
 
-**Ação:** O Kinect bloqueia o acesso e exibe mensagem de erro.
+**Ação:** O Kinect bloqueia o acesso e exibe mensagem de erro.<br>
 
 **RNK014 - Kinect conectado para medir**
 
-**Condição:** Usuário solicita uma medição.
+**Condição:** Usuário solicita uma medição.<br>
 
-**Restrição:** O sensor Kinect deve estar conectado.
+**Restrição:** O sensor Kinect deve estar conectado.<br>
 
-**Ação:** O sistema permite a medição somente com o sensor ativo.
+**Ação:** O sistema permite a medição somente com o sensor ativo.<br>
 
 **RNK015 - Leitura de profundidade obrigatória**
 
-**Condição:** Kinect tenta calcular volume.
+**Condição:** Kinect tenta calcular volume.<br>
 
-**Restrição:** O fluxo de profundidade deve estar disponível.
+**Restrição:** O fluxo de profundidade deve estar disponível.<br>
 
-**Ação:** O sistema retorna volume zero se a leitura de profundidade estiver indisponível.
+**Ação:** O sistema retorna volume zero se a leitura de profundidade estiver indisponível.<br>
 
 **RNK016 - Calibração obrigatória**
 
-**Condição:** Usuário deseja medir o volume.
+**Condição:** Usuário deseja medir o volume.<br>
 
-**Restrição:** O ambiente precisa estar calibrado previamente.
+**Restrição:** O ambiente precisa estar calibrado previamente.<br>
 
-**Ação:** O sistema bloqueia a medição até a calibração ser concluída.
+**Ação:** O sistema bloqueia a medição até a calibração ser concluída.<br>
 
 **RNK019 - Quantidade mínima de pontos na calibração**
 
-**Condição:** Kinect captura o mapa calibrado.
+**Condição:** Kinect captura o mapa calibrado.<br>
 
-**Restrição:** Deve existir quantidade suficiente de pontos válidos.
+**Restrição:** Deve existir quantidade suficiente de pontos válidos.<br>
 
-**Ação:** O sistema cancela a calibração se os dados forem insuficientes.
+**Ação:** O sistema cancela a calibração se os dados forem insuficientes.<br>
 
 **RNK020 - Volume máximo de referência**
 
-**Condição:** A calibração captura o ambiente vazio.
+**Condição:** A calibração captura o ambiente vazio.<br>
 
-**Restrição:** O volume de referência deve ser maior que zero.
+**Restrição:** O volume de referência deve ser maior que zero.<br>
 
-**Ação:** O sistema só marca o ambiente como calibrado se o volume máximo for válido.
+**Ação:** O sistema só marca o ambiente como calibrado se o volume máximo for válido.<br>
 
 **RNK026 - Nome do espaço obrigatório**
 
-**Condição:** Usuário deseja salvar o espaço monitorado.
+**Condição:** Usuário deseja salvar o espaço monitorado.<br>
 
-**Restrição:** O nome do espaço deve ser informado.
+**Restrição:** O nome do espaço deve ser informado.<br>
 
-**Ação:** O sistema bloqueia o salvamento se o nome estiver vazio.
+**Ação:** O sistema bloqueia o salvamento se o nome estiver vazio.<br>
 
 **RNK027 - Limite de ocupação obrigatório**
 
-**Condição:** Usuário salva o espaço monitorado.
+**Condição:** Usuário salva o espaço monitorado.<br>
 
-**Restrição:** O limite de ocupação deve ser informado.
+**Restrição:** O limite de ocupação deve ser informado.<br>
 
-**Ação:** O sistema bloqueia o salvamento se o limite estiver vazio.
+**Ação:** O sistema bloqueia o salvamento se o limite estiver vazio.<br>
 
 **RNK028 - Limite de ocupação válido**
 
-**Condição:** Usuário salva o espaço monitorado.
+**Condição:** Usuário salva o espaço monitorado.<br>
 
-**Restrição:** O limite deve ser numérico e estar entre 1% e 100%.
+**Restrição:** O limite deve ser numérico e estar entre 1% e 100%.<br>
 
-**Ação:** O sistema salva o espaço somente com limite válido.
+**Ação:** O sistema salva o espaço somente com limite válido.<br>
 
 **RNK029 - Espaço salvo somente após calibração**
 
-**Condição:** Usuário tenta salvar o espaço monitorado.
+**Condição:** Usuário tenta salvar o espaço monitorado.<br>
 
-**Restrição:** O volume máximo calibrado deve ser maior que zero.
+**Restrição:** O volume máximo calibrado deve ser maior que zero.<br>
 
-**Ação:** O sistema solicita calibração antes de salvar o espaço.
+**Ação:** O sistema solicita calibração antes de salvar o espaço.<br>
 
 **RNK030 - Espaço salvo antes da medição**
 
-**Condição:** Usuário tenta medir o volume.
+**Condição:** Usuário tenta medir o volume.<br>
 
-**Restrição:** O espaço monitorado precisa estar salvo.
+**Restrição:** O espaço monitorado precisa estar salvo.<br>
 
-**Ação:** O sistema bloqueia a medição até o espaço ser salvo.
+**Ação:** O sistema bloqueia a medição até o espaço ser salvo.<br>
 
 **RNK034 - Frame atual obrigatório**
 
-**Condição:** Uma medição é solicitada.
+**Condição:** Uma medição é solicitada.<br>
 
-**Restrição:** O sensor deve entregar frame de profundidade válido.
+**Restrição:** O sensor deve entregar frame de profundidade válido.<br>
 
-**Ação:** O sistema retorna volume zero se nenhum frame for capturado.
+**Ação:** O sistema retorna volume zero se nenhum frame for capturado.<br>
 
 **RNK035 - Mapa calibrado compatível**
 
-**Condição:** O sistema compara ambiente calibrado e leitura atual.
+**Condição:** O sistema compara ambiente calibrado e leitura atual.<br>
 
-**Restrição:** Os dois mapas devem possuir o mesmo tamanho.
+**Restrição:** Os dois mapas devem possuir o mesmo tamanho.<br>
 
-**Ação:** O sistema cancela o cálculo em caso de incompatibilidade.
+**Ação:** O sistema cancela o cálculo em caso de incompatibilidade.<br>
 
 **RNK036 - Profundidade mínima válida**
 
-**Condição:** Kinect analisa pontos de profundidade.
+**Condição:** Kinect analisa pontos de profundidade.<br>
 
-**Restrição:** Pontos abaixo da profundidade mínima configurada são inválidos.
+**Restrição:** Pontos abaixo da profundidade mínima configurada são inválidos.<br>
 
-**Ação:** O sistema ignora esses pontos no cálculo volumétrico.
+**Ação:** O sistema ignora esses pontos no cálculo volumétrico.<br>
 
 **RNK037 - Profundidade máxima válida**
 
-**Condição:** Kinect analisa pontos de profundidade.
+**Condição:** Kinect analisa pontos de profundidade.<br>
 
-**Restrição:** Pontos acima da profundidade máxima configurada são inválidos.
+**Restrição:** Pontos acima da profundidade máxima configurada são inválidos.<br>
 
-**Ação:** O sistema descarta esses pontos da medição.
+**Ação:** O sistema descarta esses pontos da medição.<br>
 
 **RNK038 - Altura mínima do objeto**
 
-**Condição:** O sistema compara profundidade base e atual.
+**Condição:** O sistema compara profundidade base e atual.<br>
 
-**Restrição:** Diferenças menores que a altura mínima não representam objeto relevante.
+**Restrição:** Diferenças menores que a altura mínima não representam objeto relevante.<br>
 
-**Ação:** O sistema ignora pequenas variações.
+**Ação:** O sistema ignora pequenas variações.<br>
 
 **RNK039 - Altura máxima do objeto**
 
-**Condição:** O sistema calcula altura do objeto detectado.
+**Condição:** O sistema calcula altura do objeto detectado.<br>
 
-**Restrição:** Alturas acima do limite máximo são inconsistentes.
+**Restrição:** Alturas acima do limite máximo são inconsistentes.<br>
 
-**Ação:** O sistema descarta o ponto da medição.
+**Ação:** O sistema descarta o ponto da medição.<br>
 
 **RNK040 - Quantidade mínima de pontos válidos**
 
-**Condição:** O Kinect calcula volume.
+**Condição:** O Kinect calcula volume.<br>
 
-**Restrição:** Deve existir quantidade suficiente de pontos válidos.
+**Restrição:** Deve existir quantidade suficiente de pontos válidos.<br>
 
-**Ação:** O sistema descarta a leitura se houver poucos pontos confiáveis.
+**Ação:** O sistema descarta a leitura se houver poucos pontos confiáveis.<br>
 
 **RNK041 - Margem de leitura do sensor**
 
-**Condição:** O Kinect percorre o frame de profundidade.
+**Condição:** O Kinect percorre o frame de profundidade.<br>
 
-**Restrição:** As bordas do frame são menos confiáveis.
+**Restrição:** As bordas do frame são menos confiáveis.<br>
 
-**Ação:** O sistema ignora margens laterais, superiores e inferiores.
+**Ação:** O sistema ignora margens laterais, superiores e inferiores.<br>
 
 **RNK044 - Volume não detectado**
 
-**Condição:** Kinect realiza uma leitura.
+**Condição:** Kinect realiza uma leitura.<br>
 
-**Restrição:** O volume calculado deve ser maior que zero.
+**Restrição:** O volume calculado deve ser maior que zero.<br>
 
-**Ação:** O sistema não salva nem envia medições sem volume detectado.
+**Ação:** O sistema não salva nem envia medições sem volume detectado.<br>
 
 **RNK046 - Percentual local limitado**
 
-**Condição:** O Kinect calcula percentual de ocupação.
+**Condição:** O Kinect calcula percentual de ocupação.<br>
 
-**Restrição:** O percentual exibido deve ficar entre 0% e 100%.
+**Restrição:** O percentual exibido deve ficar entre 0% e 100%.<br>
 
-**Ação:** O sistema limita o valor antes de exibir.
+**Ação:** O sistema limita o valor antes de exibir.<br>
 
 **RNK047 - Espaço livre não negativo**
 
-**Condição:** O Kinect calcula espaço livre.
+**Condição:** O Kinect calcula espaço livre.<br>
 
-**Restrição:** O espaço livre não pode ficar abaixo de zero.
+**Restrição:** O espaço livre não pode ficar abaixo de zero.<br>
 
-**Ação:** O sistema limita o espaço livre mínimo a zero.
+**Ação:** O sistema limita o espaço livre mínimo a zero.<br>
 
 **RNK048 - Alerta local de limite**
 
-**Condição:** Percentual de ocupação é calculado.
+**Condição:** Percentual de ocupação é calculado.<br>
 
-**Restrição:** O percentual deve ser comparado ao limite configurado para o espaço.
+**Restrição:** O percentual deve ser comparado ao limite configurado para o espaço.<br>
 
-**Ação:** O sistema exibe status `Limite` ou `Normal`.
+**Ação:** O sistema exibe status `Limite` ou `Normal`.<br>
 
 **RNK074 - Mensagem para medição sem calibração**
 
-**Condição:** Usuário tenta medir sem volume máximo calibrado.
+**Condição:** Usuário tenta medir sem volume máximo calibrado.<br>
 
-**Restrição:** O sistema não pode calcular ocupação sem referência.
+**Restrição:** O sistema não pode calcular ocupação sem referência.<br>
 
-**Ação:** O Kinect informa que o espaço deve ser calibrado antes de medir.
+**Ação:** O Kinect informa que o espaço deve ser calibrado antes de medir.<br>
 
 **RNK075 - Mensagem para espaço não salvo**
 
-**Condição:** Usuário tenta medir antes de salvar o espaço.
+**Condição:** Usuário tenta medir antes de salvar o espaço.<br>
 
-**Restrição:** Toda medição deve estar associada a um espaço.
+**Restrição:** Toda medição deve estar associada a um espaço.<br>
 
-**Ação:** O sistema informa que o espaço deve ser salvo.
+**Ação:** O sistema informa que o espaço deve ser salvo.<br>
 
 **RNK076 - Mensagem para Kinect desconectado**
 
-**Condição:** Usuário tenta medir com Kinect desconectado.
+**Condição:** Usuário tenta medir com Kinect desconectado.<br>
 
-**Restrição:** O sensor é obrigatório para capturar profundidade.
+**Restrição:** O sensor é obrigatório para capturar profundidade.<br>
 
-**Ação:** O sistema informa que o Kinect não está conectado.
+**Ação:** O sistema informa que o Kinect não está conectado.<br>
 
 **RNK077 - Limpeza de mensagem ao alternar login**
 
-**Condição:** Usuário alterna entre solicitar token e entrar.
+**Condição:** Usuário alterna entre solicitar token e entrar.<br>
 
-**Restrição:** Mensagens antigas não devem confundir o usuário.
+**Restrição:** Mensagens antigas não devem confundir o usuário.<br>
 
-**Ação:** O Kinect limpa mensagens da tela ao alternar modo.
+**Ação:** O Kinect limpa mensagens da tela ao alternar modo.<br>
 
 ## Regras de Integração
 
@@ -1096,195 +1096,195 @@ Critério de organização:
 
 **RN072 - Recebimento de medição em tempo real**
 
-**Condição:** O Kinect envia volume ao MVC via SignalR.
+**Condição:** O Kinect envia volume ao MVC via SignalR.<br>
 
-**Restrição:** O volume recebido deve representar uma leitura válida em cm3.
+**Restrição:** O volume recebido deve representar uma leitura válida em cm3.<br>
 
-**Ação:** O `MedicaoHub` recebe e processa a medição.
+**Ação:** O `MedicaoHub` recebe e processa a medição.<br>
 
 **RN073 - Conversão do volume recebido**
 
-**Condição:** O MVC recebe volume em cm3.
+**Condição:** O MVC recebe volume em cm3.<br>
 
-**Restrição:** O módulo web trabalha com volume em m3.
+**Restrição:** O módulo web trabalha com volume em m3.<br>
 
-**Ação:** O sistema divide o volume por 1.000.000 antes de salvar e exibir.
+**Ação:** O sistema divide o volume por 1.000.000 antes de salvar e exibir.<br>
 
 **RN074 - Registro da origem da medição**
 
-**Condição:** Uma medição é recebida pelo Hub.
+**Condição:** Uma medição é recebida pelo Hub.<br>
 
-**Restrição:** Toda medição automática deve indicar sua origem.
+**Restrição:** Toda medição automática deve indicar sua origem.<br>
 
-**Ação:** O sistema registra a origem como `Kinect`.
+**Ação:** O sistema registra a origem como `Kinect`.<br>
 
 **RN075 - Status inicial da medição recebida**
 
-**Condição:** Uma medição é processada com sucesso.
+**Condição:** Uma medição é processada com sucesso.<br>
 
-**Restrição:** Medição recebida sem erro operacional deve iniciar como normal.
+**Restrição:** Medição recebida sem erro operacional deve iniciar como normal.<br>
 
-**Ação:** O sistema salva a medição com status `Normal`.
+**Ação:** O sistema salva a medição com status `Normal`.<br>
 
 **RN076 - Persistência da medição no Firestore**
 
-**Condição:** O Hub processa uma medição válida.
+**Condição:** O Hub processa uma medição válida.<br>
 
-**Restrição:** A medição deve ser armazenada na coleção `Medicoes`.
+**Restrição:** A medição deve ser armazenada na coleção `Medicoes`.<br>
 
-**Ação:** O MVC salva volume, origem, status, empresa e data/hora.
+**Ação:** O MVC salva volume, origem, status, empresa e data/hora.<br>
 
 **RN077 - Data e hora da medição no MVC**
 
-**Condição:** Uma medição é registrada.
+**Condição:** Uma medição é registrada.<br>
 
-**Restrição:** O horário deve representar o momento do recebimento no MVC.
+**Restrição:** O horário deve representar o momento do recebimento no MVC.<br>
 
-**Ação:** O sistema grava data/hora atual em UTC.
+**Ação:** O sistema grava data/hora atual em UTC.<br>
 
 **RN078 - Atualização em tempo real do dashboard**
 
-**Condição:** Uma medição é salva com sucesso.
+**Condição:** Uma medição é salva com sucesso.<br>
 
-**Restrição:** Clientes conectados ao Hub devem receber atualização.
+**Restrição:** Clientes conectados ao Hub devem receber atualização.<br>
 
-**Ação:** O sistema envia o evento `NovaMedicao`.
+**Ação:** O sistema envia o evento `NovaMedicao`.<br>
 
 **RN079 - Formatação da data/hora no Hub**
 
-**Condição:** O Hub envia nova medição aos clientes.
+**Condição:** O Hub envia nova medição aos clientes.<br>
 
-**Restrição:** A data/hora deve ser legível ao usuário.
+**Restrição:** A data/hora deve ser legível ao usuário.<br>
 
-**Ação:** O sistema envia a data no formato `dd/MM/yyyy HH:mm:ss`.
+**Ação:** O sistema envia a data no formato `dd/MM/yyyy HH:mm:ss`.<br>
 
 **RN083 - Verificação automática de alerta**
 
-**Condição:** Uma nova medição é recebida pelo Hub.
+**Condição:** Uma nova medição é recebida pelo Hub.<br>
 
-**Restrição:** A medição deve ser comparada aos parâmetros da empresa.
+**Restrição:** A medição deve ser comparada aos parâmetros da empresa.<br>
 
-**Ação:** O sistema verifica se o percentual atingiu o limite de alerta.
+**Ação:** O sistema verifica se o percentual atingiu o limite de alerta.<br>
 
 **RN086 - Notificação automática por capacidade**
 
-**Condição:** O percentual atinge ou ultrapassa o limite de alerta.
+**Condição:** O percentual atinge ou ultrapassa o limite de alerta.<br>
 
-**Restrição:** Não pode existir outra notificação pendente para a empresa.
+**Restrição:** Não pode existir outra notificação pendente para a empresa.<br>
 
-**Ação:** O sistema cria notificação automática de capacidade com status `Pendente`.
+**Ação:** O sistema cria notificação automática de capacidade com status `Pendente`.<br>
 
 **RN087 - Dados da notificação automática**
 
-**Condição:** O sistema cria uma notificação por capacidade.
+**Condição:** O sistema cria uma notificação por capacidade.<br>
 
-**Restrição:** A notificação deve conter volume, tipo, status, mensagem, empresa e data/hora.
+**Restrição:** A notificação deve conter volume, tipo, status, mensagem, empresa e data/hora.<br>
 
-**Ação:** O sistema salva a notificação como automática.
+**Ação:** O sistema salva a notificação como automática.<br>
 
 **RN088 - Mensagem automática de alerta**
 
-**Condição:** Uma notificação automática é criada.
+**Condição:** Uma notificação automática é criada.<br>
 
-**Restrição:** A mensagem deve informar o percentual atingido.
+**Restrição:** A mensagem deve informar o percentual atingido.<br>
 
-**Ação:** O sistema gera texto indicando a ocupação da capacidade máxima.
+**Ação:** O sistema gera texto indicando a ocupação da capacidade máxima.<br>
 
 **RN105 - Comunicação em tempo real de coleta aceita**
 
-**Condição:** A coleta é aceita com sucesso.
+**Condição:** A coleta é aceita com sucesso.<br>
 
-**Restrição:** Todos os clientes conectados devem ser comunicados.
+**Restrição:** Todos os clientes conectados devem ser comunicados.<br>
 
-**Ação:** O MVC envia mensagem via SignalR.
+**Ação:** O MVC envia mensagem via SignalR.<br>
 
 **RN107 - Firebase como banco principal do MVC**
 
-**Condição:** O MVC precisa persistir dados operacionais.
+**Condição:** O MVC precisa persistir dados operacionais.<br>
 
-**Restrição:** Usuários, parceiros, perfis, parâmetros, medições, tokens, logs e notificações devem ser gravados no Firestore.
+**Restrição:** Usuários, parceiros, perfis, parâmetros, medições, tokens, logs e notificações devem ser gravados no Firestore.<br>
 
-**Ação:** O sistema utiliza o Firebase como banco principal web.
+**Ação:** O sistema utiliza o Firebase como banco principal web.<br>
 
 **RN108 - Coleções separadas no Firestore**
 
-**Condição:** O MVC salva dados no Firebase.
+**Condição:** O MVC salva dados no Firebase.<br>
 
-**Restrição:** Cada entidade deve ser gravada em sua coleção correspondente.
+**Restrição:** Cada entidade deve ser gravada em sua coleção correspondente.<br>
 
-**Ação:** O sistema organiza os documentos por tipo de informação.
+**Ação:** O sistema organiza os documentos por tipo de informação.<br>
 
 **RN110 - Isolamento de dados por empresa**
 
-**Condição:** Usuário acessa dados do sistema.
+**Condição:** Usuário acessa dados do sistema.<br>
 
-**Restrição:** Usuários, parceiros, medições, parâmetros e notificações pertencem à empresa logada.
+**Restrição:** Usuários, parceiros, medições, parâmetros e notificações pertencem à empresa logada.<br>
 
-**Ação:** O sistema impede visualização de dados de outras empresas.
+**Ação:** O sistema impede visualização de dados de outras empresas.<br>
 
 **RN112 - Empresa padrão para usuário sem empresa**
 
-**Condição:** Usuário autenticado não possui empresa vinculada.
+**Condição:** Usuário autenticado não possui empresa vinculada.<br>
 
-**Restrição:** O sistema precisa manter compatibilidade operacional.
+**Restrição:** O sistema precisa manter compatibilidade operacional.<br>
 
-**Ação:** O MVC usa a empresa padrão `global`.
+**Ação:** O MVC usa a empresa padrão `global`.<br>
 
 **RN113 - Filtro por cabeçalho de empresa**
 
-**Condição:** Uma requisição informa `X-Empresa-Id`.
+**Condição:** Uma requisição informa `X-Empresa-Id`.<br>
 
-**Restrição:** O contexto da empresa pode vir do cabeçalho quando não houver claim.
+**Restrição:** O contexto da empresa pode vir do cabeçalho quando não houver claim.<br>
 
-**Ação:** O sistema usa esse identificador para filtrar dados.
+**Ação:** O sistema usa esse identificador para filtrar dados.<br>
 
 **RN114 - Validação de token do Kinect pelo MVC**
 
-**Condição:** O módulo Kinect envia token para validação pelo MVC.
+**Condição:** O módulo Kinect envia token para validação pelo MVC.<br>
 
-**Restrição:** O token deve ser validado pelo mesmo serviço usado no MVC.
+**Restrição:** O token deve ser validado pelo mesmo serviço usado no MVC.<br>
 
-**Ação:** O MVC retorna validação positiva para token válido ou recusa para token inválido.
+**Ação:** O MVC retorna validação positiva para token válido ou recusa para token inválido.<br>
 
 **RN121 - Configuração de autenticação do MVC**
 
-**Condição:** O sistema MVC é iniciado.
+**Condição:** O sistema MVC é iniciado.<br>
 
-**Restrição:** A autenticação por cookie deve estar configurada para manter a sessão do usuário.
+**Restrição:** A autenticação por cookie deve estar configurada para manter a sessão do usuário.<br>
 
-**Ação:** O MVC habilita login, sessão autenticada e logout do usuário.
+**Ação:** O MVC habilita login, sessão autenticada e logout do usuário.<br>
 
 **RN122 - Configuração do Firebase no MVC**
 
-**Condição:** O MVC precisa acessar dados persistidos.
+**Condição:** O MVC precisa acessar dados persistidos.<br>
 
-**Restrição:** A conexão com o Firebase Firestore deve estar configurada antes das consultas e gravações.
+**Restrição:** A conexão com o Firebase Firestore deve estar configurada antes das consultas e gravações.<br>
 
-**Ação:** O sistema utiliza o serviço Firebase como fonte de dados do módulo web.
+**Ação:** O sistema utiliza o serviço Firebase como fonte de dados do módulo web.<br>
 
 **RN123 - Configuração dos Hubs SignalR**
 
-**Condição:** O sistema precisa operar comunicação em tempo real.
+**Condição:** O sistema precisa operar comunicação em tempo real.<br>
 
-**Restrição:** Os hubs de medição e notificação devem estar registrados na aplicação MVC.
+**Restrição:** Os hubs de medição e notificação devem estar registrados na aplicação MVC.<br>
 
-**Ação:** O MVC disponibiliza os canais SignalR para receber medições e enviar atualizações aos clientes.
+**Ação:** O MVC disponibiliza os canais SignalR para receber medições e enviar atualizações aos clientes.<br>
 
 **RN124 - Configuração da validade do token**
 
-**Condição:** O MVC gera token de acesso para o usuário.
+**Condição:** O MVC gera token de acesso para o usuário.<br>
 
-**Restrição:** O tempo de validade deve vir da configuração do sistema ou assumir o padrão de 15 minutos.
+**Restrição:** O tempo de validade deve vir da configuração do sistema ou assumir o padrão de 15 minutos.<br>
 
-**Ação:** O sistema define o prazo de expiração usado na autenticação por token.
+**Ação:** O sistema define o prazo de expiração usado na autenticação por token.<br>
 
 **RN126 - Configuração dos serviços e repositórios**
 
-**Condição:** O MVC executa funcionalidades de cadastros, medições, parâmetros e notificações.
+**Condição:** O MVC executa funcionalidades de cadastros, medições, parâmetros e notificações.<br>
 
-**Restrição:** Serviços e repositórios devem estar registrados para injeção de dependência.
+**Restrição:** Serviços e repositórios devem estar registrados para injeção de dependência.<br>
 
-**Ação:** O sistema permite que controllers acessem regras, dados e integrações necessárias.
+**Ação:** O sistema permite que controllers acessem regras, dados e integrações necessárias.<br>
 
 ## Regras de Negócio do Kinect/Desktop
 
@@ -1292,147 +1292,147 @@ Critério de organização:
 
 **RNK003 - Comunicação com MVC para solicitar token**
 
-**Condição:** Usuário solicita token pelo Kinect.
+**Condição:** Usuário solicita token pelo Kinect.<br>
 
-**Restrição:** O endereço do serviço MVC responsável pela solicitação de token deve estar configurado e acessível.
+**Restrição:** O endereço do serviço MVC responsável pela solicitação de token deve estar configurado e acessível.<br>
 
-**Ação:** O Kinect solicita ao MVC a geração e envio do token.
+**Ação:** O Kinect solicita ao MVC a geração e envio do token.<br>
 
 **RNK006 - Comunicação com MVC para validar token**
 
-**Condição:** Usuário informa token no Kinect.
+**Condição:** Usuário informa token no Kinect.<br>
 
-**Restrição:** O endereço do serviço MVC responsável pela validação do token deve estar configurado e acessível.
+**Restrição:** O endereço do serviço MVC responsável pela validação do token deve estar configurado e acessível.<br>
 
-**Ação:** O Kinect solicita ao MVC a validação do token informado.
+**Ação:** O Kinect solicita ao MVC a validação do token informado.<br>
 
 **RNK008 - Timeout na autenticação MVC**
 
-**Condição:** Kinect solicita ou valida token no MVC.
+**Condição:** Kinect solicita ou valida token no MVC.<br>
 
-**Restrição:** A resposta deve ocorrer dentro do tempo limite de 15 segundos.
+**Restrição:** A resposta deve ocorrer dentro do tempo limite de 15 segundos.<br>
 
-**Ação:** O sistema informa tempo esgotado se o MVC não responder.
+**Ação:** O sistema informa tempo esgotado se o MVC não responder.<br>
 
 **RNK009 - Erro de conexão com MVC na autenticação**
 
-**Condição:** Kinect tenta solicitar ou validar token.
+**Condição:** Kinect tenta solicitar ou validar token.<br>
 
-**Restrição:** O MVC pode estar indisponível.
+**Restrição:** O MVC pode estar indisponível.<br>
 
-**Ação:** O sistema informa que não foi possível conectar ao MVC.
+**Ação:** O sistema informa que não foi possível conectar ao MVC.<br>
 
 **RNK010 - Resposta inválida do MVC**
 
-**Condição:** Kinect recebe retorno do MVC.
+**Condição:** Kinect recebe retorno do MVC.<br>
 
-**Restrição:** A resposta precisa estar no formato esperado.
+**Restrição:** A resposta precisa estar no formato esperado.<br>
 
-**Ação:** O sistema bloqueia o acesso se a resposta for inválida.
+**Ação:** O sistema bloqueia o acesso se a resposta for inválida.<br>
 
 **RNK011 - Chamada local sem proxy**
 
-**Condição:** Kinect se comunica com serviços locais do MVC.
+**Condição:** Kinect se comunica com serviços locais do MVC.<br>
 
-**Restrição:** A chamada local não deve depender de proxy configurado no Windows.
+**Restrição:** A chamada local não deve depender de proxy configurado no Windows.<br>
 
-**Ação:** O sistema usa cliente HTTP sem proxy.
+**Ação:** O sistema usa cliente HTTP sem proxy.<br>
 
 **RNK057 - Banco SQLite por empresa**
 
-**Condição:** O Kinect salva medições locais.
+**Condição:** O Kinect salva medições locais.<br>
 
-**Restrição:** Os dados operacionais devem ficar isolados por empresa.
+**Restrição:** Os dados operacionais devem ficar isolados por empresa.<br>
 
-**Ação:** O sistema usa contexto SQLite associado à empresa da sessão.
+**Ação:** O sistema usa contexto SQLite associado à empresa da sessão.<br>
 
 **RNK063 - URL do SignalR obrigatória**
 
-**Condição:** Kinect tenta conectar ao MVC.
+**Condição:** Kinect tenta conectar ao MVC.<br>
 
-**Restrição:** A URL do SignalR deve estar configurada.
+**Restrição:** A URL do SignalR deve estar configurada.<br>
 
-**Ação:** O sistema não inicia conexão e informa erro se a URL estiver vazia.
+**Ação:** O sistema não inicia conexão e informa erro se a URL estiver vazia.<br>
 
 **RNK064 - Evitar múltiplas conexões SignalR**
 
-**Condição:** Kinect solicita conexão ao SignalR.
+**Condição:** Kinect solicita conexão ao SignalR.<br>
 
-**Restrição:** Não deve existir conexão já conectada, conectando ou reconectando.
+**Restrição:** Não deve existir conexão já conectada, conectando ou reconectando.<br>
 
-**Ação:** O sistema evita abrir conexão duplicada.
+**Ação:** O sistema evita abrir conexão duplicada.<br>
 
 **RNK065 - Reconexão automática ao MVC**
 
-**Condição:** A conexão SignalR cai temporariamente.
+**Condição:** A conexão SignalR cai temporariamente.<br>
 
-**Restrição:** O sistema deve tentar restabelecer a comunicação.
+**Restrição:** O sistema deve tentar restabelecer a comunicação.<br>
 
-**Ação:** O Kinect usa reconexão automática.
+**Ação:** O Kinect usa reconexão automática.<br>
 
 **RNK066 - Tempo limite da conexão SignalR**
 
-**Condição:** Kinect está conectado ao MVC.
+**Condição:** Kinect está conectado ao MVC.<br>
 
-**Restrição:** A conexão precisa detectar inatividade ou falha.
+**Restrição:** A conexão precisa detectar inatividade ou falha.<br>
 
-**Ação:** O sistema usa controle de tempo limite e verificação periódica da conexão.
+**Ação:** O sistema usa controle de tempo limite e verificação periódica da conexão.<br>
 
 **RNK067 - Envio apenas com conexão saudável**
 
-**Condição:** O Kinect tenta enviar volume ao MVC.
+**Condição:** O Kinect tenta enviar volume ao MVC.<br>
 
-**Restrição:** A conexão SignalR deve estar no estado `Connected`.
+**Restrição:** A conexão SignalR deve estar no estado `Connected`.<br>
 
-**Ação:** O sistema envia o volume somente com conexão ativa.
+**Ação:** O sistema envia o volume somente com conexão ativa.<br>
 
 **RNK068 - Envio da medição ao MVC**
 
-**Condição:** Medição válida foi salva localmente.
+**Condição:** Medição válida foi salva localmente.<br>
 
-**Restrição:** A conexão SignalR deve estar ativa.
+**Restrição:** A conexão SignalR deve estar ativa.<br>
 
-**Ação:** O Kinect envia o volume ao MVC em tempo real.
+**Ação:** O Kinect envia o volume ao MVC em tempo real.<br>
 
 **RNK069 - Falha no envio ao MVC**
 
-**Condição:** Medição válida foi realizada.
+**Condição:** Medição válida foi realizada.<br>
 
-**Restrição:** O SignalR está desconectado ou não inicializado.
+**Restrição:** O SignalR está desconectado ou não inicializado.<br>
 
-**Ação:** O sistema mantém a medição local e informa falha no envio.
+**Ação:** O sistema mantém a medição local e informa falha no envio.<br>
 
 **RNK070 - Status visual da comunicação**
 
-**Condição:** A conexão SignalR muda de estado.
+**Condição:** A conexão SignalR muda de estado.<br>
 
-**Restrição:** O usuário precisa saber se está conectado, reconectando ou desconectado.
+**Restrição:** O usuário precisa saber se está conectado, reconectando ou desconectado.<br>
 
-**Ação:** O Kinect atualiza a mensagem de status.
+**Ação:** O Kinect atualiza a mensagem de status.<br>
 
 **RNK071 - Envio de status operacional ao MVC**
 
-**Condição:** Kinect precisa comunicar uma situação operacional.
+**Condição:** Kinect precisa comunicar uma situação operacional.<br>
 
-**Restrição:** A conexão SignalR deve estar ativa.
+**Restrição:** A conexão SignalR deve estar ativa.<br>
 
-**Ação:** O sistema envia status ao MVC via Hub.
+**Ação:** O sistema envia status ao MVC via Hub.<br>
 
 **RNK072 - Falha no envio de status**
 
-**Condição:** Kinect tenta enviar status ao MVC.
+**Condição:** Kinect tenta enviar status ao MVC.<br>
 
-**Restrição:** A conexão pode estar nula, desconectada ou falhar.
+**Restrição:** A conexão pode estar nula, desconectada ou falhar.<br>
 
-**Ação:** O sistema registra erro e atualiza a mensagem de comunicação.
+**Ação:** O sistema registra erro e atualiza a mensagem de comunicação.<br>
 
 **RNK073 - Desconexão controlada do SignalR**
 
-**Condição:** O módulo Kinect encerra a comunicação com o MVC.
+**Condição:** O módulo Kinect encerra a comunicação com o MVC.<br>
 
-**Restrição:** A conexão deve ser parada e liberada corretamente.
+**Restrição:** A conexão deve ser parada e liberada corretamente.<br>
 
-**Ação:** O sistema executa parada e descarte da conexão.
+**Ação:** O sistema executa parada e descarte da conexão.<br>
 
 ## Regras Técnicas/Operacionais
 
@@ -1440,501 +1440,501 @@ Critério de organização:
 
 **RN006 - Armazenamento seguro do token**
 
-**Condição:** Um token é gerado.
+**Condição:** Um token é gerado.<br>
 
-**Restrição:** O token não deve ser armazenado em texto puro.
+**Restrição:** O token não deve ser armazenado em texto puro.<br>
 
-**Ação:** O sistema salva o token de forma protegida para evitar exposição do código original.
+**Ação:** O sistema salva o token de forma protegida para evitar exposição do código original.<br>
 
 **RN007 - Registro de criação e expiração do token**
 
-**Condição:** Um token é criado.
+**Condição:** Um token é criado.<br>
 
-**Restrição:** O sistema deve saber quando ele foi criado e até quando pode ser usado.
+**Restrição:** O sistema deve saber quando ele foi criado e até quando pode ser usado.<br>
 
-**Ação:** O MVC registra `CriadoEm` e `ExpiraEm`.
+**Ação:** O MVC registra `CriadoEm` e `ExpiraEm`.<br>
 
 **RN008 - Validade configurável do token**
 
-**Condição:** O sistema define o prazo de uso do token.
+**Condição:** O sistema define o prazo de uso do token.<br>
 
-**Restrição:** A validade deve usar a configuração do sistema ou o padrão de 15 minutos.
+**Restrição:** A validade deve usar a configuração do sistema ou o padrão de 15 minutos.<br>
 
-**Ação:** O token recebe uma data/hora de expiração.
+**Ação:** O token recebe uma data/hora de expiração.<br>
 
 **RN015 - Criação da sessão autenticada**
 
-**Condição:** O login é realizado com sucesso.
+**Condição:** O login é realizado com sucesso.<br>
 
-**Restrição:** A sessão deve conter identificador, nome, e-mail, perfil e empresa.
+**Restrição:** A sessão deve conter identificador, nome, e-mail, perfil e empresa.<br>
 
-**Ação:** O MVC cria as claims e autentica o usuário por cookie.
+**Ação:** O MVC cria as claims e autentica o usuário por cookie.<br>
 
 **RN016 - Logout do sistema**
 
-**Condição:** O usuário solicita sair do MVC.
+**Condição:** O usuário solicita sair do MVC.<br>
 
-**Restrição:** A sessão autenticada deve ser encerrada.
+**Restrição:** A sessão autenticada deve ser encerrada.<br>
 
-**Ação:** O sistema remove a autenticação e retorna para a tela de login.
+**Ação:** O sistema remove a autenticação e retorna para a tela de login.<br>
 
 **RN031 - Edição de usuário somente com alteração real**
 
-**Condição:** O administrador edita um usuário.
+**Condição:** O administrador edita um usuário.<br>
 
-**Restrição:** A alteração só deve ser salva se houver mudança real nos dados.
+**Restrição:** A alteração só deve ser salva se houver mudança real nos dados.<br>
 
-**Ação:** O sistema atualiza o cadastro ou informa que nada foi alterado.
+**Ação:** O sistema atualiza o cadastro ou informa que nada foi alterado.<br>
 
 **RN037 - Listagem e filtro de usuários**
 
-**Condição:** O administrador consulta usuários.
+**Condição:** O administrador consulta usuários.<br>
 
-**Restrição:** A busca pode usar termo, perfil, empresa e status.
+**Restrição:** A busca pode usar termo, perfil, empresa e status.<br>
 
-**Ação:** O sistema retorna usuários compatíveis com os filtros e a empresa atual.
+**Ação:** O sistema retorna usuários compatíveis com os filtros e a empresa atual.<br>
 
 **RN045 - Listagem e filtro de parceiros**
 
-**Condição:** Usuário consulta parceiros.
+**Condição:** Usuário consulta parceiros.<br>
 
-**Restrição:** A busca pode usar termo, data inicial, data final e status.
+**Restrição:** A busca pode usar termo, data inicial, data final e status.<br>
 
-**Ação:** O sistema retorna parceiros compatíveis com os filtros e a empresa atual.
+**Ação:** O sistema retorna parceiros compatíveis com os filtros e a empresa atual.<br>
 
 **RN046 - Pesquisa textual de parceiros**
 
-**Condição:** Usuário pesquisa parceiros por termo.
+**Condição:** Usuário pesquisa parceiros por termo.<br>
 
-**Restrição:** O termo pode corresponder a ID, nome, e-mail, empresa ou telefone.
+**Restrição:** O termo pode corresponder a ID, nome, e-mail, empresa ou telefone.<br>
 
-**Ação:** O sistema retorna os parceiros encontrados.
+**Ação:** O sistema retorna os parceiros encontrados.<br>
 
 **RN058 - Restauração de padrões**
 
-**Condição:** Usuário solicita restauração de padrões globais.
+**Condição:** Usuário solicita restauração de padrões globais.<br>
 
-**Restrição:** O sistema deve possuir valores mínimos para operar.
+**Restrição:** O sistema deve possuir valores mínimos para operar.<br>
 
-**Ação:** O MVC aplica os parâmetros padrão.
+**Ação:** O MVC aplica os parâmetros padrão.<br>
 
 **RN059 - Parâmetros padrão**
 
-**Condição:** Não há parâmetros cadastrados ou eles são restaurados.
+**Condição:** Não há parâmetros cadastrados ou eles são restaurados.<br>
 
-**Restrição:** O sistema precisa operar com valores iniciais.
+**Restrição:** O sistema precisa operar com valores iniciais.<br>
 
-**Ação:** O MVC usa capacidade máxima 300, alerta 10%, notificações ativas e canais padrão.
+**Ação:** O MVC usa capacidade máxima 300, alerta 10%, notificações ativas e canais padrão.<br>
 
 **RN060 - Documento de configuração por empresa**
 
-**Condição:** O sistema busca parâmetros operacionais.
+**Condição:** O sistema busca parâmetros operacionais.<br>
 
-**Restrição:** Cada empresa pode possuir sua própria configuração.
+**Restrição:** Cada empresa pode possuir sua própria configuração.<br>
 
-**Ação:** O sistema busca `configuracao_{EmpresaId}` ou `configuracao` no contexto global.
+**Ação:** O sistema busca `configuracao_{EmpresaId}` ou `configuracao` no contexto global.<br>
 
 **RN061 - Fallback de configuração global**
 
-**Condição:** A empresa não possui configuração própria.
+**Condição:** A empresa não possui configuração própria.<br>
 
-**Restrição:** O sistema não pode ficar sem parâmetros básicos.
+**Restrição:** O sistema não pode ficar sem parâmetros básicos.<br>
 
-**Ação:** O MVC utiliza a configuração global como fallback.
+**Ação:** O MVC utiliza a configuração global como fallback.<br>
 
 **RN063 - Canais de notificação**
 
-**Condição:** O sistema prepara notificações.
+**Condição:** O sistema prepara notificações.<br>
 
-**Restrição:** Os canais e-mail, WhatsApp e dashboard push podem estar ativos ou inativos.
+**Restrição:** Os canais e-mail, WhatsApp e dashboard push podem estar ativos ou inativos.<br>
 
-**Ação:** O sistema respeita os canais configurados.
+**Ação:** O sistema respeita os canais configurados.<br>
 
 **RN067 - Parceiro padrão para alertas**
 
-**Condição:** O sistema possui parceiro padrão configurado.
+**Condição:** O sistema possui parceiro padrão configurado.<br>
 
-**Restrição:** O parceiro padrão pode ser usado como destinatário operacional das notificações.
+**Restrição:** O parceiro padrão pode ser usado como destinatário operacional das notificações.<br>
 
-**Ação:** O sistema mantém o vínculo nos parâmetros.
+**Ação:** O sistema mantém o vínculo nos parâmetros.<br>
 
 **RN070 - Capacidade padrão no dashboard**
 
-**Condição:** O dashboard calcula ocupação sem capacidade configurada.
+**Condição:** O dashboard calcula ocupação sem capacidade configurada.<br>
 
-**Restrição:** O cálculo não pode falhar por ausência de valor.
+**Restrição:** O cálculo não pode falhar por ausência de valor.<br>
 
-**Ação:** O sistema usa capacidade padrão de 10000 quando necessário.
+**Ação:** O sistema usa capacidade padrão de 10000 quando necessário.<br>
 
 **RN081 - Log de conexão ao Hub**
 
-**Condição:** Um cliente se conecta ao Hub de medições.
+**Condição:** Um cliente se conecta ao Hub de medições.<br>
 
-**Restrição:** A conexão em tempo real deve ser rastreável para diagnóstico.
+**Restrição:** A conexão em tempo real deve ser rastreável para diagnóstico.<br>
 
-**Ação:** O sistema registra a conexão em log.
+**Ação:** O sistema registra a conexão em log.<br>
 
 **RN082 - Log de desconexão do Hub**
 
-**Condição:** Um cliente se desconecta do Hub.
+**Condição:** Um cliente se desconecta do Hub.<br>
 
-**Restrição:** Caso exista erro na desconexão, ele deve ser registrado.
+**Restrição:** Caso exista erro na desconexão, ele deve ser registrado.<br>
 
-**Ação:** O sistema registra desconexão normal ou com erro.
+**Ação:** O sistema registra desconexão normal ou com erro.<br>
 
 **RN090 - Ordenação de medições**
 
-**Condição:** Usuário acessa o histórico de medições.
+**Condição:** Usuário acessa o histórico de medições.<br>
 
-**Restrição:** As medições mais recentes devem aparecer primeiro.
+**Restrição:** As medições mais recentes devem aparecer primeiro.<br>
 
-**Ação:** O sistema ordena por data/hora decrescente.
+**Ação:** O sistema ordena por data/hora decrescente.<br>
 
 **RN091 - Filtros de medições**
 
-**Condição:** Usuário consulta o histórico de medições.
+**Condição:** Usuário consulta o histórico de medições.<br>
 
-**Restrição:** A consulta pode considerar origem, status, data inicial e data final.
+**Restrição:** A consulta pode considerar origem, status, data inicial e data final.<br>
 
-**Ação:** O sistema retorna apenas medições compatíveis.
+**Ação:** O sistema retorna apenas medições compatíveis.<br>
 
 **RN093 - Indicadores estatísticos de medições**
 
-**Condição:** Usuário solicita resumo das medições.
+**Condição:** Usuário solicita resumo das medições.<br>
 
-**Restrição:** Devem ser consideradas apenas medições da empresa atual.
+**Restrição:** Devem ser consideradas apenas medições da empresa atual.<br>
 
-**Ação:** O sistema calcula total, média, maior e menor volume.
+**Ação:** O sistema calcula total, média, maior e menor volume.<br>
 
 **RN094 - Contadores de medição por status**
 
-**Condição:** Usuário consulta medições.
+**Condição:** Usuário consulta medições.<br>
 
-**Restrição:** O sistema deve diferenciar medições normais e em alerta.
+**Restrição:** O sistema deve diferenciar medições normais e em alerta.<br>
 
-**Ação:** O MVC calcula totais por status.
+**Ação:** O MVC calcula totais por status.<br>
 
 **RN095 - Última medição**
 
-**Condição:** Existem medições registradas.
+**Condição:** Existem medições registradas.<br>
 
-**Restrição:** A última medição deve ser a mais recente por data/hora.
+**Restrição:** A última medição deve ser a mais recente por data/hora.<br>
 
-**Ação:** O sistema exibe a data da última medição.
+**Ação:** O sistema exibe a data da última medição.<br>
 
 **RN096 - Listagem paginada de notificações**
 
-**Condição:** Usuário acessa notificações.
+**Condição:** Usuário acessa notificações.<br>
 
-**Restrição:** Devem ser exibidas 10 notificações por página.
+**Restrição:** Devem ser exibidas 10 notificações por página.<br>
 
-**Ação:** O sistema pagina as notificações.
+**Ação:** O sistema pagina as notificações.<br>
 
 **RN097 - Ordenação de notificações**
 
-**Condição:** Usuário acessa a lista de notificações.
+**Condição:** Usuário acessa a lista de notificações.<br>
 
-**Restrição:** As notificações mais recentes devem aparecer primeiro.
+**Restrição:** As notificações mais recentes devem aparecer primeiro.<br>
 
-**Ação:** O sistema ordena por data/hora decrescente.
+**Ação:** O sistema ordena por data/hora decrescente.<br>
 
 **RN098 - Filtros de notificações**
 
-**Condição:** Usuário pesquisa notificações.
+**Condição:** Usuário pesquisa notificações.<br>
 
-**Restrição:** A busca pode usar período, parceiro, status e tipo.
+**Restrição:** A busca pode usar período, parceiro, status e tipo.<br>
 
-**Ação:** O sistema retorna apenas notificações compatíveis.
+**Ação:** O sistema retorna apenas notificações compatíveis.<br>
 
 **RN099 - Contagem de notificações com sucesso**
 
-**Condição:** Tela de notificações calcula indicadores.
+**Condição:** Tela de notificações calcula indicadores.<br>
 
-**Restrição:** Status `Aceito`, `Sucesso` e `Resolvido` representam sucesso operacional.
+**Restrição:** Status `Aceito`, `Sucesso` e `Resolvido` representam sucesso operacional.<br>
 
-**Ação:** O sistema agrupa esses status no total de sucesso.
+**Ação:** O sistema agrupa esses status no total de sucesso.<br>
 
 **RN100 - Contagem de notificações com erro**
 
-**Condição:** Tela de notificações calcula indicadores.
+**Condição:** Tela de notificações calcula indicadores.<br>
 
-**Restrição:** Status `Erro` representa falha de comunicação ou processamento.
+**Restrição:** Status `Erro` representa falha de comunicação ou processamento.<br>
 
-**Ação:** O sistema contabiliza essas notificações no total de erro.
+**Ação:** O sistema contabiliza essas notificações no total de erro.<br>
 
 **RN101 - Contagem de notificações pendentes**
 
-**Condição:** Tela de notificações calcula indicadores.
+**Condição:** Tela de notificações calcula indicadores.<br>
 
-**Restrição:** Status `Pendente` representa ação ainda não atendida.
+**Restrição:** Status `Pendente` representa ação ainda não atendida.<br>
 
-**Ação:** O sistema contabiliza essas notificações no total de pendências.
+**Ação:** O sistema contabiliza essas notificações no total de pendências.<br>
 
 **RN116 - Inicialização da aplicação MVC**
 
-**Condição:** O sistema MVC é iniciado.
+**Condição:** O sistema MVC é iniciado.<br>
 
-**Restrição:** Serviços essenciais devem estar configurados.
+**Restrição:** Serviços essenciais devem estar configurados.<br>
 
-**Ação:** O sistema inicializa autenticação, Firebase, repositórios, filtros, SignalR e controllers.
+**Ação:** O sistema inicializa autenticação, Firebase, repositórios, filtros, SignalR e controllers.<br>
 
 **RN117 - Tratamento de erro geral no MVC**
 
-**Condição:** Ocorre falha inesperada.
+**Condição:** Ocorre falha inesperada.<br>
 
-**Restrição:** O usuário não deve visualizar erro técnico interno.
+**Restrição:** O usuário não deve visualizar erro técnico interno.<br>
 
-**Ação:** O sistema redireciona para tela de erro e registra o problema.
+**Ação:** O sistema redireciona para tela de erro e registra o problema.<br>
 
 **RN119 - Registro de logs do sistema**
 
-**Condição:** Ocorre ação crítica no sistema.
+**Condição:** Ocorre ação crítica no sistema.<br>
 
-**Restrição:** Login, token, erros e alterações importantes devem ser rastreados.
+**Restrição:** Login, token, erros e alterações importantes devem ser rastreados.<br>
 
-**Ação:** O sistema registra logs para auditoria.
+**Ação:** O sistema registra logs para auditoria.<br>
 
 **RN120 - Rota inicial e navegação**
 
-**Condição:** Usuário acessa a aplicação MVC sem rota específica.
+**Condição:** Usuário acessa a aplicação MVC sem rota específica.<br>
 
-**Restrição:** A aplicação deve direcionar para uma página inicial válida.
+**Restrição:** A aplicação deve direcionar para uma página inicial válida.<br>
 
-**Ação:** O MVC exibe a tela inicial ou direciona para o fluxo de acesso.
+**Ação:** O MVC exibe a tela inicial ou direciona para o fluxo de acesso.<br>
 
 **RN125 - Configuração das rotas MVC**
 
-**Condição:** O usuário navega pelo sistema web.
+**Condição:** O usuário navega pelo sistema web.<br>
 
-**Restrição:** Controllers e actions precisam estar mapeados para acesso às telas e operações.
+**Restrição:** Controllers e actions precisam estar mapeados para acesso às telas e operações.<br>
 
-**Ação:** O MVC direciona cada requisição para a funcionalidade correspondente.
+**Ação:** O MVC direciona cada requisição para a funcionalidade correspondente.<br>
 
 ### Kinect/Desktop
 
 **RNK018 - Captura múltipla na calibração**
 
-**Condição:** O sistema calibra o ambiente.
+**Condição:** O sistema calibra o ambiente.<br>
 
-**Restrição:** A referência deve ser formada por múltiplos frames válidos.
+**Restrição:** A referência deve ser formada por múltiplos frames válidos.<br>
 
-**Ação:** O Kinect calcula média de profundidade para reduzir ruído.
+**Ação:** O Kinect calcula média de profundidade para reduzir ruído.<br>
 
 **RNK021 - Estado calibrado**
 
-**Condição:** A calibração é concluída com sucesso.
+**Condição:** A calibração é concluída com sucesso.<br>
 
-**Restrição:** Mapa de referência e volume máximo precisam estar válidos.
+**Restrição:** Mapa de referência e volume máximo precisam estar válidos.<br>
 
-**Ação:** O sistema altera o estado para calibrado.
+**Ação:** O sistema altera o estado para calibrado.<br>
 
 **RNK022 - Estado não calibrado em falha**
 
-**Condição:** A calibração falha ou é cancelada.
+**Condição:** A calibração falha ou é cancelada.<br>
 
-**Restrição:** O sistema não pode usar referência incompleta.
+**Restrição:** O sistema não pode usar referência incompleta.<br>
 
-**Ação:** O Kinect permanece marcado como não calibrado.
+**Ação:** O Kinect permanece marcado como não calibrado.<br>
 
 **RNK023 - Movimento seguro do motor**
 
-**Condição:** O Kinect ajusta o ângulo durante a calibração.
+**Condição:** O Kinect ajusta o ângulo durante a calibração.<br>
 
-**Restrição:** O ângulo deve permanecer dentro do intervalo permitido.
+**Restrição:** O ângulo deve permanecer dentro do intervalo permitido.<br>
 
-**Ação:** O sistema limita o movimento ao ângulo mínimo e máximo.
+**Ação:** O sistema limita o movimento ao ângulo mínimo e máximo.<br>
 
 **RNK024 - Restauração do ângulo original**
 
-**Condição:** A calibração termina, falha ou é cancelada.
+**Condição:** A calibração termina, falha ou é cancelada.<br>
 
-**Restrição:** O sensor deve retornar à posição anterior sempre que possível.
+**Restrição:** O sensor deve retornar à posição anterior sempre que possível.<br>
 
-**Ação:** O sistema tenta restaurar o ângulo original do Kinect.
+**Ação:** O sistema tenta restaurar o ângulo original do Kinect.<br>
 
 **RNK025 - Reset da suavização após calibração**
 
-**Condição:** Um novo mapa calibrado é capturado.
+**Condição:** Um novo mapa calibrado é capturado.<br>
 
-**Restrição:** Histórico de volumes anteriores não pode influenciar a nova referência.
+**Restrição:** Histórico de volumes anteriores não pode influenciar a nova referência.<br>
 
-**Ação:** O sistema limpa o histórico de suavização.
+**Ação:** O sistema limpa o histórico de suavização.<br>
 
 **RNK031 - Timer fixo de medição automática**
 
-**Condição:** O espaço é salvo com sucesso.
+**Condição:** O espaço é salvo com sucesso.<br>
 
-**Restrição:** A medição automática deve ocorrer em intervalo fixo local.
+**Restrição:** A medição automática deve ocorrer em intervalo fixo local.<br>
 
-**Ação:** O sistema inicia timer de 60 segundos.
+**Ação:** O sistema inicia timer de 60 segundos.<br>
 
 **RNK042 - Cálculo do volume**
 
-**Condição:** Kinect possui mapa calibrado e leitura atual.
+**Condição:** Kinect possui mapa calibrado e leitura atual.<br>
 
-**Restrição:** O cálculo deve comparar profundidade atual com a referência calibrada.
+**Restrição:** O cálculo deve comparar profundidade atual com a referência calibrada.<br>
 
-**Ação:** O sistema calcula o volume ocupado em cm3.
+**Ação:** O sistema calcula o volume ocupado em cm3.<br>
 
 **RNK043 - Estabilização da leitura**
 
-**Condição:** O volume é calculado pelo Kinect.
+**Condição:** O volume é calculado pelo Kinect.<br>
 
-**Restrição:** A leitura pode oscilar por ruído do sensor.
+**Restrição:** A leitura pode oscilar por ruído do sensor.<br>
 
-**Ação:** O sistema aplica média móvel e suavização antes de exibir.
+**Ação:** O sistema aplica média móvel e suavização antes de exibir.<br>
 
 **RNK045 - Conversão local de volume**
 
-**Condição:** O Kinect exibe volume ou espaço livre.
+**Condição:** O Kinect exibe volume ou espaço livre.<br>
 
-**Restrição:** O cálculo interno usa cm3, mas a interface deve mostrar m3.
+**Restrição:** O cálculo interno usa cm3, mas a interface deve mostrar m3.<br>
 
-**Ação:** O sistema divide por 1.000.000 e exibe com três casas decimais.
+**Ação:** O sistema divide por 1.000.000 e exibe com três casas decimais.<br>
 
 **RNK049 - Salvamento local da medição**
 
-**Condição:** Medição válida é realizada.
+**Condição:** Medição válida é realizada.<br>
 
-**Restrição:** A medição deve conter volume, data, usuário, empresa, espaço e status.
+**Restrição:** A medição deve conter volume, data, usuário, empresa, espaço e status.<br>
 
-**Ação:** O sistema salva a medição no SQLite.
+**Ação:** O sistema salva a medição no SQLite.<br>
 
 **RNK050 - Status da medição local**
 
-**Condição:** Uma medição é realizada.
+**Condição:** Uma medição é realizada.<br>
 
-**Restrição:** O status deve indicar se a medição foi manual ou automática.
+**Restrição:** O status deve indicar se a medição foi manual ou automática.<br>
 
-**Ação:** O SQLite registra `Medição manual` ou `Medição automática`.
+**Ação:** O SQLite registra `Medição manual` ou `Medição automática`.<br>
 
 **RNK051 - Registro do usuário na medição**
 
-**Condição:** Uma medição é salva no SQLite.
+**Condição:** Uma medição é salva no SQLite.<br>
 
-**Restrição:** A medição deve indicar quem realizou a operação.
+**Restrição:** A medição deve indicar quem realizou a operação.<br>
 
-**Ação:** O sistema salva o usuário da sessão.
+**Ação:** O sistema salva o usuário da sessão.<br>
 
 **RNK052 - Registro da empresa na medição**
 
-**Condição:** Uma medição é salva no SQLite.
+**Condição:** Uma medição é salva no SQLite.<br>
 
-**Restrição:** A medição deve estar vinculada à empresa autenticada.
+**Restrição:** A medição deve estar vinculada à empresa autenticada.<br>
 
-**Ação:** O sistema salva a empresa da sessão.
+**Ação:** O sistema salva a empresa da sessão.<br>
 
 **RNK053 - Registro do nome do espaço**
 
-**Condição:** Uma medição válida é salva.
+**Condição:** Uma medição válida é salva.<br>
 
-**Restrição:** A medição precisa identificar o espaço monitorado.
+**Restrição:** A medição precisa identificar o espaço monitorado.<br>
 
-**Ação:** O sistema salva o nome do espaço.
+**Ação:** O sistema salva o nome do espaço.<br>
 
 **RNK054 - Registro do limite de ocupação**
 
-**Condição:** Uma medição válida é salva.
+**Condição:** Uma medição válida é salva.<br>
 
-**Restrição:** O limite configurado para o espaço deve ser preservado.
+**Restrição:** O limite configurado para o espaço deve ser preservado.<br>
 
-**Ação:** O sistema salva o percentual de alerta junto da medição.
+**Ação:** O sistema salva o percentual de alerta junto da medição.<br>
 
 **RNK055 - Registro do estado do Kinect**
 
-**Condição:** Uma medição válida é salva.
+**Condição:** Uma medição válida é salva.<br>
 
-**Restrição:** Deve ser possível saber se o Kinect estava ligado.
+**Restrição:** Deve ser possível saber se o Kinect estava ligado.<br>
 
-**Ação:** O sistema grava o campo `KinectLigado`.
+**Ação:** O sistema grava o campo `KinectLigado`.<br>
 
 **RNK056 - Registro do estado de calibração**
 
-**Condição:** Uma medição válida é salva.
+**Condição:** Uma medição válida é salva.<br>
 
-**Restrição:** Deve ser possível saber se a medição ocorreu com ambiente calibrado.
+**Restrição:** Deve ser possível saber se a medição ocorreu com ambiente calibrado.<br>
 
-**Ação:** O sistema grava o campo `Calibrado`.
+**Ação:** O sistema grava o campo `Calibrado`.<br>
 
 **RNK058 - Histórico local limitado**
 
-**Condição:** O Kinect carrega histórico local.
+**Condição:** O Kinect carrega histórico local.<br>
 
-**Restrição:** A tela não deve carregar registros ilimitados.
+**Restrição:** A tela não deve carregar registros ilimitados.<br>
 
-**Ação:** O sistema recupera até 100 medições recentes.
+**Ação:** O sistema recupera até 100 medições recentes.<br>
 
 **RNK059 - Consulta de histórico por empresa**
 
-**Condição:** Medições são consultadas no SQLite.
+**Condição:** Medições são consultadas no SQLite.<br>
 
-**Restrição:** Dados de empresas diferentes não devem ser misturados.
+**Restrição:** Dados de empresas diferentes não devem ser misturados.<br>
 
-**Ação:** O sistema filtra os registros pela empresa autenticada.
+**Ação:** O sistema filtra os registros pela empresa autenticada.<br>
 
 **RNK060 - Salvamento de histórico de ocupação**
 
-**Condição:** O sistema gera histórico de ocupação.
+**Condição:** O sistema gera histórico de ocupação.<br>
 
-**Restrição:** O histórico deve conter espaço, volume atual, volume máximo, espaço livre, percentual e empresa.
+**Restrição:** O histórico deve conter espaço, volume atual, volume máximo, espaço livre, percentual e empresa.<br>
 
-**Ação:** O Kinect salva o histórico no SQLite.
+**Ação:** O Kinect salva o histórico no SQLite.<br>
 
 **RNK061 - Consulta de histórico por espaço**
 
-**Condição:** Usuário consulta histórico de um espaço específico.
+**Condição:** Usuário consulta histórico de um espaço específico.<br>
 
-**Restrição:** Devem retornar apenas registros daquele espaço e da empresa atual.
+**Restrição:** Devem retornar apenas registros daquele espaço e da empresa atual.<br>
 
-**Ação:** O sistema filtra histórico por espaço e empresa.
+**Ação:** O sistema filtra histórico por espaço e empresa.<br>
 
 **RNK062 - Consulta dos últimos históricos**
 
-**Condição:** Usuário consulta históricos recentes.
+**Condição:** Usuário consulta históricos recentes.<br>
 
-**Restrição:** A consulta deve respeitar a empresa da sessão.
+**Restrição:** A consulta deve respeitar a empresa da sessão.<br>
 
-**Ação:** O sistema retorna os últimos históricos autorizados.
+**Ação:** O sistema retorna os últimos históricos autorizados.<br>
 
 **RNK078 - Log de acesso liberado ao Kinect**
 
-**Condição:** Token é validado com sucesso.
+**Condição:** Token é validado com sucesso.<br>
 
-**Restrição:** O acesso ao módulo físico deve ser rastreável.
+**Restrição:** O acesso ao módulo físico deve ser rastreável.<br>
 
-**Ação:** O sistema registra log de acesso liberado.
+**Ação:** O sistema registra log de acesso liberado.<br>
 
 **RNK079 - Log de tentativa inválida de acesso**
 
-**Condição:** Usuário informa token inválido no Kinect.
+**Condição:** Usuário informa token inválido no Kinect.<br>
 
-**Restrição:** Tentativas recusadas precisam ser rastreadas.
+**Restrição:** Tentativas recusadas precisam ser rastreadas.<br>
 
-**Ação:** O sistema registra aviso de tentativa inválida.
+**Ação:** O sistema registra aviso de tentativa inválida.<br>
 
 **RNK080 - Log de token solicitado pelo Kinect**
 
-**Condição:** Usuário solicita token pelo aplicativo Kinect.
+**Condição:** Usuário solicita token pelo aplicativo Kinect.<br>
 
-**Restrição:** A solicitação deve ser rastreável.
+**Restrição:** A solicitação deve ser rastreável.<br>
 
-**Ação:** O sistema registra log informando que o token foi solicitado ao MVC.
+**Ação:** O sistema registra log informando que o token foi solicitado ao MVC.<br>
 
 **RNK081 - Log de eventos operacionais do Kinect**
 
-**Condição:** Ocorre calibração, medição, erro ou falha de envio.
+**Condição:** Ocorre calibração, medição, erro ou falha de envio.<br>
 
-**Restrição:** Eventos operacionais precisam ser rastreáveis.
+**Restrição:** Eventos operacionais precisam ser rastreáveis.<br>
 
-**Ação:** O sistema registra logs locais.
+**Ação:** O sistema registra logs locais.<br>
 
 **RNK082 - Log de erro no SQLite**
 
-**Condição:** Ocorre falha ao salvar ou consultar medições locais.
+**Condição:** Ocorre falha ao salvar ou consultar medições locais.<br>
 
-**Restrição:** A falha deve ser rastreável.
+**Restrição:** A falha deve ser rastreável.<br>
 
-**Ação:** O Kinect registra erro no log local.
+**Ação:** O Kinect registra erro no log local.<br>
 
 ---
 
