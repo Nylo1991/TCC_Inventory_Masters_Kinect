@@ -248,7 +248,7 @@ Critério de organização:
 - Regras técnicas/operacionais descrevem controles necessários para execução, rastreabilidade, configuração, cálculo e estabilidade.
 - WhatsApp, escalonamento e canais de alerta permanecem como funcionalidades parametrizadas/preparadas para evolução, pois o código já possui configurações para esses recursos.
 
-## Regras de Negócio MVC
+#### Regras de Negócio MVC
 
 **RN001 - Solicitação de token por e-mail**
 
@@ -394,7 +394,7 @@ Critério de organização:
 
 **Ação:** O sistema calcula o percentual de ocupação.<br>
 
-## Regras de Negócio Kinect
+#### Regras de Negócio Kinect
 
 **RNK001 - Solicitação de token pelo Kinect**
 
@@ -452,7 +452,7 @@ Critério de organização:
 
 **Ação:** O sistema realiza a medição automática.<br>
 
-## Regras de Validação
+#### Regras de Validação
 
 ### MVC/Web
 
@@ -856,7 +856,7 @@ Critério de organização:
 
 **Ação:** O MVC aceita a operação somente após validação.<br>
 
-### Kinect/Desktop
+#### Kinect/Desktop
 
 **RNK002 - E-mail obrigatório para solicitar token**
 
@@ -1090,9 +1090,9 @@ Critério de organização:
 
 **Ação:** O Kinect limpa mensagens da tela ao alternar modo.<br>
 
-## Regras de Integração
+#### Regras de Integração
 
-### MVC/Web
+##### MVC/Web
 
 **RN072 - Recebimento de medição em tempo real**
 
@@ -1286,9 +1286,9 @@ Critério de organização:
 
 **Ação:** O sistema permite que controllers acessem regras, dados e integrações necessárias.<br>
 
-## Regras de Negócio do Kinect/Desktop
+#### Regras de Negócio do Kinect/Desktop
 
-### Kinect/Desktop
+##### Kinect/Desktop
 
 **RNK003 - Comunicação com MVC para solicitar token**
 
@@ -1434,9 +1434,9 @@ Critério de organização:
 
 **Ação:** O sistema executa parada e descarte da conexão.<br>
 
-## Regras Técnicas/Operacionais
+#### Regras Técnicas/Operacionais
 
-### MVC/Web
+##### MVC/Web
 
 **RN006 - Armazenamento seguro do token**
 
@@ -1710,7 +1710,7 @@ Critério de organização:
 
 **Ação:** O MVC direciona cada requisição para a funcionalidade correspondente.<br>
 
-### Kinect/Desktop
+##### Kinect/Desktop
 
 **RNK018 - Captura múltipla na calibração**
 
