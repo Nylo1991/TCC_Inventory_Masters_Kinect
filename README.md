@@ -999,8 +999,6 @@ Dashboard e Notificações
 Essa estrutura representa a modelagem atualmente implementada no projeto Inventory Masters e utilizada para armazenamento, monitoramento e gerenciamento dos dados operacionais do sistema.
 
 
----
-
 # Modelo Conceitual — MVVM Kinect
 
 O modelo conceitual do módulo MVVM Kinect representa as principais entidades responsáveis pelo armazenamento das informações utilizadas durante o funcionamento da aplicação desktop. Essas entidades contemplam o registro das medições volumétricas capturadas pelo sensor Kinect, o histórico de ocupação dos espaços monitorados, o controle de usuários locais, as sessões de autenticação e os registros operacionais da aplicação.
@@ -1025,11 +1023,174 @@ Além das entidades persistidas, o módulo utiliza modelos auxiliares responsáv
 
 ## Relacionamentos
 
-| Relacionamento | Cardinalidade |
-|----------------|---------------|
-| UsuarioAcesso → MedicaoVolume | 1:N |
-| UsuarioAcesso → SessaoUsuario | 1:N |
-| MedicaoVolume → HistoricoOcupacao | 1:N |
+| Relacionamento | Cardinalidade | Descrição |
+|----------------|---------------|-----------|
+| **UsuarioAcesso → MedicaoVolume** | 1:N | Um usuário pode realizar várias medições volumétricas. |
+| **UsuarioAcesso → SessaoUsuario** | 1:N | Um usuário pode possuir várias sessões registradas no sistema. |
+| **MedicaoVolume → HistoricoOcupacao** | 1:N | Uma medição volumétrica pode gerar vários registros de histórico de ocupação. |
+
+---
+
+# Modelo Lógico — MVVM Kinect
+
+O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceitual, definindo as tabelas, atributos, tipos de dados, chaves primárias e chaves estrangeiras necessárias para garantir a organização e a integridade dos dados armazenados no banco SQLite local.
+
+<p align="center">
+  <img src="./Imagens/ModeloLogicoMVVM.png" width="1000" alt="Modelo Lógico MVVM Kinect" />
+</p>
+
+## Estrutura Relacional
+
+| Tabela | Descrição |
+|---------|-----------|
+| **UsuarioAcesso** | Controle local dos usuários que acessam o módulo Kinect. |
+| **MedicaoVolume** | Registro das medições volumétricas capturadas pelo sensor Kinect. |
+| **HistoricoOcupacao** | Registro consolidado da ocupação volumétrica dos espaços monitorados. |
+| **SessaoUsuario** | Controle das sessões autenticadas dos usuários. |
+| **Log** | Registro de eventos, avisos e erros operacionais da aplicação. |
+
+---
+
+## Tabela: UsuarioAcesso
+
+| Campo | Tipo | Descrição |
+|---------|---------|-----------|
+| Id | INTEGER | Identificador único do usuário |
+| Usuario | VARCHAR | Nome do usuário |
+| Email | VARCHAR | E-mail do usuário |
+| Senha | VARCHAR | Senha de acesso |
+| Perfil | VARCHAR | Perfil de acesso do usuário |
+| CriadoEm | TIMESTAMP | Data e hora de criação do registro |
+| Ativo | BIT | Indica se o usuário está ativo |
+| Empresa | VARCHAR | Empresa vinculada ao usuário |
+
+---
+
+## Tabela: MedicaoVolume
+
+| Campo | Tipo | Descrição |
+|---------|---------|-----------|
+| Id | INTEGER | Identificador único da medição |
+| VolumeCm3 | DOUBLE | Volume medido em centímetros cúbicos |
+| VolumeM3 | DOUBLE | Volume medido em metros cúbicos |
+| DataHora | TIMESTAMP | Data e hora da medição |
+| KinectLigado | BOOLEAN | Indica se o Kinect estava ligado |
+| Calibrado | BOOLEAN | Indica se o ambiente estava calibrado |
+| Status | VARCHAR | Status da medição |
+| Usuario | VARCHAR | Usuário responsável pela medição |
+| Empresa | VARCHAR | Empresa vinculada à medição |
+| fk_UsuarioAcesso_Id | INTEGER | Chave estrangeira vinculada à tabela UsuarioAcesso |
+
+---
+
+## Tabela: HistoricoOcupacao
+
+| Campo | Tipo | Descrição |
+|---------|---------|-----------|
+| Id | INTEGER | Identificador único do histórico |
+| EspacoMapeadoId | INTEGER | Identificador lógico do espaço mapeado |
+| VolumeAtualCm3 | DOUBLE | Volume atualmente ocupado |
+| VolumeMaximoCm3 | DOUBLE | Volume máximo disponível |
+| EspacoLivreCm3 | DOUBLE | Volume livre disponível |
+| PercentualOcupacao | DOUBLE | Percentual de ocupação calculado |
+| LimiteUltrapassado | BOOLEAN | Indica se o limite de ocupação foi ultrapassado |
+| NivelOcupacao | VARCHAR | Nível de ocupação do espaço monitorado |
+| Status | VARCHAR | Status do registro |
+| DataHora | TIMESTAMP | Data e hora do histórico |
+| Empresa | VARCHAR | Empresa vinculada ao histórico |
+| fk_MedicaoVolume_Id | INTEGER | Chave estrangeira vinculada à tabela MedicaoVolume |
+
+---
+
+## Tabela: SessaoUsuario
+
+| Campo | Tipo | Descrição |
+|---------|---------|-----------|
+| Id | INTEGER | Identificador único da sessão |
+| Usuario | VARCHAR | Usuário autenticado |
+| Empresa | VARCHAR | Empresa vinculada à sessão |
+| Email | VARCHAR | E-mail do usuário autenticado |
+| Token | VARCHAR | Token da sessão |
+| fk_UsuarioAcesso_Id | INTEGER | Chave estrangeira vinculada à tabela UsuarioAcesso |
+
+---
+
+## Tabela: Log
+
+| Campo | Tipo | Descrição |
+|---------|---------|-----------|
+| Id | INTEGER | Identificador único do log |
+| DataHora | TIMESTAMP | Data e hora do evento registrado |
+| Nivel | VARCHAR | Nível do log, como Info, Warning ou Erro |
+| Mensagem | VARCHAR | Mensagem registrada pela aplicação |
+
+---
+
+# Modelo Físico — MVVM Kinect
+
+O modelo físico do módulo **MVVM Kinect** foi implementado utilizando o banco de dados **SQLite**, por meio do **Entity Framework 6**, responsável pelo mapeamento objeto-relacional entre as classes do domínio e as tabelas persistidas no banco de dados local.
+
+A estrutura física do banco de dados é criada e gerenciada automaticamente pelo **Entity Framework 6**, através do **AppDbContext**, responsável por gerenciar a comunicação entre a aplicação e o banco de dados, realizando a criação das tabelas, o gerenciamento das conexões e a persistência dos dados utilizados pelo módulo MVVM Kinect.
+A utilização do SQLite foi escolhida por ser um banco de dados leve, embarcado e de baixo consumo de recursos, características adequadas para aplicações desktop que precisam operar localmente e com suporte ao funcionamento offline.
+
+A estrutura física do banco de dados é composta por tabelas relacionadas através de chaves primárias do tipo **INTEGER AUTOINCREMENT** e chaves estrangeiras, garantindo a integridade referencial entre as entidades persistidas.
+
+## Tecnologias Utilizadas
+
+- SQLite
+- Entity Framework 6
+- .NET Framework 4.8
+- Arquitetura MVVM
+- Kinect SDK 1.8
+
+---
+
+## Tabelas Persistidas
+
+| Tabela | Finalidade |
+|---------|-----------|
+| **UsuarioAcesso** | Armazena os usuários locais responsáveis pelo acesso ao módulo Kinect. |
+| **MedicaoVolume** | Registra as medições volumétricas capturadas pelo sensor Kinect. |
+| **HistoricoOcupacao** | Armazena o histórico consolidado da ocupação dos espaços monitorados. |
+| **SessaoUsuario** | Mantém os dados da sessão autenticada do usuário durante a execução da aplicação. |
+| **Log** | Registra mensagens informativas, avisos e erros gerados pelo sistema. |
+
+---
+
+# Models Persistidas no SQLite
+
+As models persistidas representam as entidades armazenadas fisicamente no banco de dados **SQLite** local. Essas entidades são mapeadas pelo **Entity Framework 6** por meio do **AppDbContext**, sendo responsáveis pela persistência das informações operacionais geradas durante a execução do módulo MVVM Kinect.
+
+Cada model corresponde a uma tabela do banco de dados e armazena informações relacionadas às medições volumétricas, histórico de ocupação, autenticação de usuários, sessões ativas e registros operacionais da aplicação.
+
+| Model | Descrição |
+|---------|-----------|
+| **UsuarioAcesso** | Entidade responsável pelo armazenamento dos usuários locais e suas informações de autenticação. |
+| **MedicaoVolume** | Entidade responsável pelo armazenamento das medições volumétricas capturadas pelo sensor Kinect. |
+| **HistoricoOcupacao** | Entidade responsável pelo registro do histórico de ocupação dos espaços monitorados. |
+| **SessaoUsuario** | Entidade responsável pelo controle da sessão autenticada durante a execução da aplicação. |
+| **Log** | Entidade responsável pelo armazenamento de mensagens informativas, avisos e erros registrados pelo sistema. |
+
+Todas essas entidades são gerenciadas automaticamente pelo **Entity Framework 6** através do **AppDbContext**, que realiza as operações de criação, leitura, atualização e exclusão dos registros persistidos no banco SQLite.
+
+---
+
+# Models de Controle em Memória
+
+Além das entidades persistidas, o módulo MVVM utiliza modelos auxiliares que não são armazenados no banco de dados. Essas classes existem apenas durante a execução da aplicação e são responsáveis por controlar o processo de calibração do sensor Kinect.
+
+| Model | Finalidade |
+|---------|-----------|
+| **CalibrationResult** | Armazena o resultado final obtido durante a calibração do Kinect. |
+| **CalibrationProgress** | Controla o progresso da calibração em tempo real, permitindo atualizar a interface do usuário durante o processo. |
+
+---
+
+## Observação Sobre o Armazenamento por Empresa
+
+O módulo MVVM realiza a segregação lógica das informações através do atributo **Empresa**, presente nas principais entidades persistidas.
+
+Essa abordagem garante que medições volumétricas, históricos de ocupação, sessões de autenticação e registros de log permaneçam associados à empresa do usuário autenticado, proporcionando maior organização, rastreabilidade e isolamento dos dados operacionais do sistema.
 
 ---
 ## VIABILIDADE TÉCNICA
