@@ -3239,8 +3239,13 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
 
 O modelo físico do módulo **MVVM Kinect** foi implementado utilizando o banco de dados **SQLite**, por meio do **Entity Framework 6**, responsável pelo mapeamento objeto-relacional entre as classes do domínio e as tabelas persistidas no banco de dados local.
 
-A estrutura física do banco de dados é criada e gerenciada automaticamente pelo **Entity Framework 6**, através do **AppDbContext**, responsável por gerenciar a comunicação entre a aplicação e o banco de dados, realizando a criação das tabelas, o gerenciamento das conexões e a persistência dos dados utilizados pelo módulo MVVM Kinect.
-A utilização do SQLite foi escolhida por ser um banco de dados leve, embarcado e de baixo consumo de recursos, características adequadas para aplicações desktop que precisam operar localmente e com suporte ao funcionamento offline.
+<p align="center">
+  <img src="./Imagens/ArquiteturaPersistenciaMVVM.png" width="1000" alt="Arquitetura de Persistência do Módulo MVVM Kinect" />
+</p>
+
+A Figura acima apresenta a arquitetura de persistência adotada pelo módulo **MVVM Kinect**. Observa-se que a camada de apresentação, representada pelo **MainViewModel**, realiza o acesso aos dados por meio do **KinectRepository**. O **Entity Framework 6**, através do **AppDbContext**, é responsável pelo mapeamento objeto-relacional, pelo gerenciamento da comunicação entre a aplicação e o banco de dados, pela criação das tabelas, pelo controle das conexões e pela persistência dos dados utilizados pelo sistema.
+
+Nesse contexto, o banco **SQLite** foi adotado por ser uma solução leve, embarcada e de baixo consumo de recursos, características adequadas para aplicações desktop que precisam operar localmente e com suporte ao funcionamento offline. Dessa forma, as entidades do módulo MVVM Kinect são armazenadas localmente, garantindo a persistência das informações mesmo sem conexão com serviços externos.
 
 ---
 
