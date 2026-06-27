@@ -2521,6 +2521,68 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 ## Diagrama de Fluxo
 
+---
+
+### MVVM
+
+Etapa 1 – Acesso e Autenticação
+
+A primeira etapa do fluxo é responsável por garantir que apenas usuários autorizados tenham acesso ao módulo Kinect. Inicialmente, o operador informa o e-mail cadastrado na aplicação Web MVC. O sistema valida a existência desse usuário e, caso o cadastro seja encontrado, solicita ao servidor MVC a geração de um token temporário de autenticação, enviado automaticamente para o e-mail informado.
+
+Após o recebimento do token, o operador realiza sua inserção na aplicação desktop, que encaminha a informação ao MVC para validação. Durante esse processo são verificadas situações como token inválido, expirado ou já utilizado. Somente após a validação bem-sucedida é criada uma sessão operacional contendo as informações do usuário autenticado, como nome, e-mail e empresa vinculada. Com a sessão estabelecida, o sistema libera o acesso ao monitoramento volumétrico do Kinect.
+
+Essa etapa garante a autenticação segura entre os módulos Desktop e Web, além de assegurar que todas as medições realizadas posteriormente sejam vinculadas ao usuário e à empresa corretos.
+
+Etapa 2 – Conexão e Preparação do Sensor
+
+Após a autenticação, inicia-se a etapa de preparação do hardware responsável pelas medições. O operador conecta o sensor Kinect ao computador e o sistema verifica automaticamente sua disponibilidade e funcionamento.
+
+Caso o dispositivo não esteja conectado ou apresente alguma falha de inicialização, mensagens de alerta são exibidas ao usuário, permitindo que a conexão seja restabelecida antes da continuidade do processo. Quando o sensor é reconhecido corretamente, inicia-se a captura dos dados de profundidade necessários para o cálculo volumétrico.
+
+Durante toda essa etapa, o operador pode interromper ou reiniciar a captura caso seja necessário realizar ajustes físicos no equipamento ou no ambiente de medição.
+
+Essa etapa garante que o sensor esteja operando adequadamente antes da realização das medições, reduzindo a possibilidade de erros decorrentes de falhas de hardware.
+
+Etapa 3 – Calibração e Configuração
+
+Com o sensor devidamente conectado, o sistema realiza o processo de calibração do ambiente monitorado. Nessa etapa são definidos os parâmetros necessários para que as medições sejam realizadas com precisão, incluindo a captura do mapa referencial do ambiente, o ajuste do ângulo do sensor e a definição da área útil de leitura.
+
+Caso o ambiente não esteja adequado para calibração, o sistema solicita ao operador a remoção de obstáculos ou a reorganização do espaço. Da mesma forma, caso a calibração não seja concluída com sucesso, o procedimento pode ser repetido até que seja obtido um mapa referencial válido.
+
+Após a calibração, o operador define a região que será utilizada para o cálculo do volume ocupado, estabelecendo os limites físicos considerados pelo algoritmo durante o processamento das medições.
+
+Essa etapa é fundamental para garantir que os cálculos realizados posteriormente representem corretamente a ocupação volumétrica do espaço monitorado.
+
+Etapa 4 – Captura e Processamento da Medição
+
+Após a calibração, inicia-se o processo contínuo de captura das informações provenientes do sensor Kinect. O sistema coleta os dados de profundidade do ambiente, aplica filtros para remoção de ruídos e descarta leituras consideradas inconsistentes ou fora da faixa de confiabilidade do equipamento.
+
+Com os dados válidos, o algoritmo realiza o cálculo do volume ocupado em centímetros cúbicos e, posteriormente, converte o resultado para metros cúbicos, unidade utilizada na apresentação das informações ao usuário e na integração com a aplicação Web.
+
+Além do cálculo volumétrico, o sistema compara continuamente os valores obtidos com os limites previamente configurados, classificando a ocupação em níveis como normal, alerta ou crítico. Os resultados são apresentados em tempo real na interface da aplicação e armazenados localmente no banco SQLite, garantindo o histórico das medições mesmo em situações de indisponibilidade da comunicação com o servidor.
+
+Essa etapa representa o núcleo funcional do sistema, sendo responsável pela aquisição, processamento e armazenamento das medições realizadas pelo Kinect.
+
+Etapa 5 – Envio e Sincronização com o MVC
+
+Após o registro local da medição, inicia-se o processo de sincronização com a aplicação Web MVC por meio do protocolo SignalR. Inicialmente é verificado se a conexão com o servidor permanece ativa. Em caso positivo, as medições são transmitidas ao servidor juntamente com informações que identificam sua origem e a empresa responsável.
+
+Após o recebimento, o MVC atualiza automaticamente o painel de monitoramento em tempo real, permitindo que outros usuários visualizem imediatamente as novas informações de ocupação.
+
+Caso ocorra perda de conexão durante o envio, o sistema registra a falha em log, mantém as medições armazenadas localmente e realiza tentativas automáticas de reconexão. Dessa forma, mesmo diante de falhas temporárias de rede, nenhuma medição é perdida.
+
+Essa etapa garante a sincronização contínua entre o módulo Desktop e a aplicação Web, preservando a integridade e disponibilidade das informações monitoradas.
+
+Etapa 6 – Histórico, Logs e Encerramento
+
+A última etapa contempla os mecanismos de rastreabilidade e encerramento da operação. O sistema disponibiliza ao operador o histórico local das medições registradas, permitindo consultas mesmo quando não há comunicação com o servidor Web.
+
+Paralelamente, são registrados logs contendo informações sobre autenticação, medições realizadas, falhas de comunicação, erros de processamento e demais eventos relevantes para auditoria e manutenção do sistema.
+
+Ao término da operação, o operador pode optar por encerrar o monitoramento, finalizando a sessão ativa e encerrando corretamente todos os processos relacionados ao Kinect. Caso o operador opte por continuar utilizando o sistema, o monitoramento permanece ativo e novas medições continuam sendo realizadas automaticamente.
+
+Essa etapa assegura a rastreabilidade completa das operações executadas pelo sistema, contribuindo para auditorias, manutenção e diagnóstico de possíveis falhas, além de garantir um encerramento seguro da sessão operacional.
+
 <p align="center">
   <img src="./Imagens/Diagrama_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
 </p>
