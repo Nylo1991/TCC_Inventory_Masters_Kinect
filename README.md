@@ -2270,7 +2270,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 * **Módulo de Integração:** Responsável pela comunicação entre o Kinect e a aplicação MVC por meio de API e SignalR.
 
 <p align="center">
-  <img src="./Imagens/UC_Diagrama.png" width="800" alt="Diagrama de Caso de Uso" />
+  <img src="./Imagens/casos de uso.png" width="800" alt="Diagrama de Caso de Uso" />
 </p>
 
 ---
