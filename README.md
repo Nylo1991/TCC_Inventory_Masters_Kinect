@@ -2521,11 +2521,17 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 ## Diagrama de Fluxo
 
----
+Esta seção apresenta o fluxo operacional do módulo **MVVM Kinect**, responsável pelo monitoramento volumétrico utilizando o sensor Kinect. Para facilitar a compreensão da lógica implementada e evitar a poluição visual de um único diagrama extenso, o fluxo foi dividido em seis etapas sequenciais, contemplando desde a autenticação do usuário até o encerramento da sessão de monitoramento.
 
-### MVVM
+Cada etapa representa um conjunto específico de funcionalidades executadas pela aplicação desktop, evidenciando as principais decisões, validações e interações entre o operador, o módulo MVVM, o sensor Kinect e a aplicação Web MVC.
 
-Etapa 1 – Acesso e Autenticação
+## MVVM
+
+### Acesso e Autenticação
+
+<p align="center">
+  <img src="./Imagens/DigramaFluxoMVVM_Etapa01.jpeg" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 1 - Acesso e Autenticação" />
+</p>
 
 A primeira etapa do fluxo é responsável por garantir que apenas usuários autorizados tenham acesso ao módulo Kinect. Inicialmente, o operador informa o e-mail cadastrado na aplicação Web MVC. O sistema valida a existência desse usuário e, caso o cadastro seja encontrado, solicita ao servidor MVC a geração de um token temporário de autenticação, enviado automaticamente para o e-mail informado.
 
@@ -2533,7 +2539,13 @@ Após o recebimento do token, o operador realiza sua inserção na aplicação d
 
 Essa etapa garante a autenticação segura entre os módulos Desktop e Web, além de assegurar que todas as medições realizadas posteriormente sejam vinculadas ao usuário e à empresa corretos.
 
-Etapa 2 – Conexão e Preparação do Sensor
+---
+
+### Conexão e Preparação do Sensor
+
+<p align="center">
+  <img src="./Imagens/DigramaFluxoMVVM_Etapa02.jpeg" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 2 - Conexão e Preparação do Sensor" />
+</p>
 
 Após a autenticação, inicia-se a etapa de preparação do hardware responsável pelas medições. O operador conecta o sensor Kinect ao computador e o sistema verifica automaticamente sua disponibilidade e funcionamento.
 
@@ -2543,7 +2555,13 @@ Durante toda essa etapa, o operador pode interromper ou reiniciar a captura caso
 
 Essa etapa garante que o sensor esteja operando adequadamente antes da realização das medições, reduzindo a possibilidade de erros decorrentes de falhas de hardware.
 
-Etapa 3 – Calibração e Configuração
+---
+
+### Calibração e Configuração
+
+<p align="center">
+  <img src="./Imagens/DigramaFluxoMVVM_Etapa03.jpeg" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 3 - Calibração e Configuração" />
+</p>
 
 Com o sensor devidamente conectado, o sistema realiza o processo de calibração do ambiente monitorado. Nessa etapa são definidos os parâmetros necessários para que as medições sejam realizadas com precisão, incluindo a captura do mapa referencial do ambiente, o ajuste do ângulo do sensor e a definição da área útil de leitura.
 
@@ -2553,7 +2571,13 @@ Após a calibração, o operador define a região que será utilizada para o cá
 
 Essa etapa é fundamental para garantir que os cálculos realizados posteriormente representem corretamente a ocupação volumétrica do espaço monitorado.
 
-Etapa 4 – Captura e Processamento da Medição
+---
+
+### Captura e Processamento da Medição
+
+<p align="center">
+  <img src="./Imagens/DigramaFluxoMVVM_Etapa04.jpeg" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Captura e Processamento da Medição" />
+</p>
 
 Após a calibração, inicia-se o processo contínuo de captura das informações provenientes do sensor Kinect. O sistema coleta os dados de profundidade do ambiente, aplica filtros para remoção de ruídos e descarta leituras consideradas inconsistentes ou fora da faixa de confiabilidade do equipamento.
 
@@ -2563,7 +2587,13 @@ Além do cálculo volumétrico, o sistema compara continuamente os valores obtid
 
 Essa etapa representa o núcleo funcional do sistema, sendo responsável pela aquisição, processamento e armazenamento das medições realizadas pelo Kinect.
 
-Etapa 5 – Envio e Sincronização com o MVC
+---
+
+### Envio e Sincronização com o MVC
+
+<p align="center">
+  <img src="./Imagens/DiagramaFluxoMVVM_Etapa05.jpeg" width="900" alt="Digrama de Fluxo MVVM Kinect - Etapa 5 - Envio e Sincronização com o MVC" />
+</p>
 
 Após o registro local da medição, inicia-se o processo de sincronização com a aplicação Web MVC por meio do protocolo SignalR. Inicialmente é verificado se a conexão com o servidor permanece ativa. Em caso positivo, as medições são transmitidas ao servidor juntamente com informações que identificam sua origem e a empresa responsável.
 
@@ -2573,7 +2603,13 @@ Caso ocorra perda de conexão durante o envio, o sistema registra a falha em log
 
 Essa etapa garante a sincronização contínua entre o módulo Desktop e a aplicação Web, preservando a integridade e disponibilidade das informações monitoradas.
 
-Etapa 6 – Histórico, Logs e Encerramento
+---
+
+### Histórico, Logs e Encerramento
+
+<p align="center">
+  <img src="./Imagens/DiagramaFluxoMVVM_Etapa06.jpeg" width="900" alt="Digrama de Fluxo MVVM Kinect - Etapa 6 - Histórico, Logs e Encerramento" />
+</p>
 
 A última etapa contempla os mecanismos de rastreabilidade e encerramento da operação. O sistema disponibiliza ao operador o histórico local das medições registradas, permitindo consultas mesmo quando não há comunicação com o servidor Web.
 
@@ -2582,6 +2618,8 @@ Paralelamente, são registrados logs contendo informações sobre autenticação
 Ao término da operação, o operador pode optar por encerrar o monitoramento, finalizando a sessão ativa e encerrando corretamente todos os processos relacionados ao Kinect. Caso o operador opte por continuar utilizando o sistema, o monitoramento permanece ativo e novas medições continuam sendo realizadas automaticamente.
 
 Essa etapa assegura a rastreabilidade completa das operações executadas pelo sistema, contribuindo para auditorias, manutenção e diagnóstico de possíveis falhas, além de garantir um encerramento seguro da sessão operacional.
+
+---
 
 <p align="center">
   <img src="./Imagens/Diagrama_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
