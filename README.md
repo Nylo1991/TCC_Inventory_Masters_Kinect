@@ -3513,11 +3513,7 @@ Apesar da viabilidade da solução, algumas limitações devem ser consideradas:
 7. A comunicação com a aplicação MVC depende da disponibilidade da rede.
 8. O Kinect Xbox 360 é um equipamento descontinuado, exigindo cuidados adicionais de manutenção.
 
----
-
-## CONCLUSÂO DE VIABILIDADE TÉCNICA
-
-Com base nas tecnologias utilizadas, nos testes realizados e na integração entre hardware e software, conclui-se que a solução proposta é tecnicamente viável.
+Desta forma Conclui-se que com base nas tecnologias utilizadas, nos testes realizados e na integração entre hardware e software, conclui-se que a solução proposta é tecnicamente viável.
 
 A utilização do Kinect Xbox 360 permitiu implementar um sistema de monitoramento volumétrico capaz de acompanhar a ocupação dos espaços de armazenamento de forma automatizada, utilizando recursos acessíveis e tecnologias amplamente consolidadas.
 
@@ -3546,10 +3542,10 @@ O projeto Inventory Masters foi concebido como uma solução tecnológica de bai
 
 Para fins de análise econômica, considerou-se o esforço de desenvolvimento realizado pela equipe do projeto.
 
-- Horas totais: 30 horas
+- Horas totais: 40 horas
 - Valor estimado por hora: R$ 15,00
-
-**Total estimado de mão de obra:** R$ 450,00
+- 
+**Total estimado de mão de obra:** R$ 600,00
 
 ---
 
@@ -3576,11 +3572,9 @@ A implementação da plataforma proporciona diversos benefícios:
 - Possibilidade de reaproveitamento de materiais;
 - Redução de custos operacionais.
 
----
 
-#### Conclusão da viabilidade econômica
 
-O investimento total estimado em **R$ 1.360,00** demonstra que a solução apresenta excelente relação custo-benefício quando comparada a alternativas industriais de monitoramento volumétrico.
+Desta forma Conclui-se  que o investimento total estimado em **R$ 1.360,00** demonstra que a solução apresenta excelente relação custo-benefício quando comparada a alternativas industriais de monitoramento volumétrico.
 
 Além do baixo investimento inicial, a plataforma oferece ganhos operacionais relacionados ao controle dos espaços de armazenamento, rastreabilidade das medições e apoio à gestão dos excedentes produtivos, tornando-se uma alternativa economicamente viável para organizações de diferentes portes.
 
@@ -3618,143 +3612,9 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 ---------------------------------------
 
 
-## ARQUITETURA GERAL DA SOLUÇÃO
 
-A arquitetura do **Inventory Masters** foi projetada para integrar aquisição de dados, processamento local, armazenamento persistente e comunicação em tempo real, garantindo modularidade, escalabilidade e confiabilidade.
 
-```text
-                           Inventory Masters
 
-                    +---------------------------+
-                    |         Usuário          |
-                    +-------------+------------+
-                                  |
-                                  |
-                  +---------------+---------------+
-                  |                               |
-                  |                               |
-          Módulo Kinect                   Aplicação MVC
-                  |                               |
-                  |                               |
-           MainViewModel                  Controllers
-                  |                               |
-        +---------+---------+                     |
-        |         |         |                     |
-        |         |         |                     |
-     Kinect    SQLite    SignalR ------------> Services
-        |
-        |
-   Sensor Kinect
-```
 
-Nesta arquitetura, o usuário interage diretamente com o módulo Kinect, desenvolvido em **WPF utilizando o padrão MVVM (Model-View-ViewModel)**.
-
-O **MainViewModel** atua como núcleo da aplicação, sendo responsável por coordenar a comunicação entre o sensor Kinect, o banco de dados SQLite e o serviço de integração SignalR.
-
-O sensor **Kinect** realiza a captura dos dados de profundidade do ambiente, permitindo que o sistema execute automaticamente a calibração do espaço e o cálculo do volume ocupado.
-
-As medições são armazenadas localmente em **SQLite**, garantindo persistência dos dados e funcionamento mesmo em situações de indisponibilidade da rede.
-
-Paralelamente, o serviço **SignalR** transmite as medições em tempo real para a aplicação **ASP.NET Core MVC**, responsável pelo gerenciamento dos dados, atualização dos dashboards e disponibilização dos indicadores operacionais.
-
----
-
-# Gestão Inteligente de Excedentes
-
-Além do monitoramento dos espaços físicos, a plataforma atua como um elo integrador entre empresas geradoras de excedentes e parceiros aptos a reutilizar materiais, estruturando um ecossistema colaborativo voltado para eficiência operacional, redução de desperdícios e sustentabilidade empresarial.
-
-A integração entre monitoramento volumétrico, rastreabilidade e compartilhamento de informações permite uma gestão mais eficiente dos recursos disponíveis.
-
----
-
-# Benefícios da Plataforma
-
-A utilização da plataforma proporciona diversos benefícios para empresas e parceiros:
-
--  Redução de custos operacionais e de descarte;
--  Melhor aproveitamento dos espaços de armazenamento;
--  Maior controle sobre excedentes produtivos;
--  Melhoria da eficiência logística e operacional;
--  Mitigação dos impactos ambientais relacionados ao descarte inadequado de materiais;
--  Apoio à tomada de decisão por meio de indicadores em tempo real.
-
----
-
-# Diferenciais Tecnológicos
-
-A solução integra diferentes tecnologias em uma única plataforma:
-
-| Tecnologia | Finalidade |
-|---------------------------|-----------------------------------------------|
-| **Kinect SDK 1.8** | Captura de profundidade e cálculo volumétrico |
-| **WPF + MVVM** | Aplicação desktop responsável pelo monitoramento |
-| **SQLite** | Persistência local das medições |
-| **SignalR** | Comunicação em tempo real entre aplicações |
-| **ASP.NET Core MVC** | Dashboard, gerenciamento e indicadores |
-| **Entity Framework 6** | Persistência e acesso aos dados |
-
----
-
-# Fluxo Operacional
-
-```text
-Usuário
-
-↓
-
-Login
-
-↓
-
-Inicialização do Kinect
-
-↓
-
-Calibração do Ambiente
-
-↓
-
-Salvar Espaço Monitorado
-
-↓
-
-Captura de Profundidade
-
-↓
-
-Cálculo Volumétrico
-
-↓
-
-Persistência SQLite
-
-↓
-
-Envio via SignalR
-
-↓
-
-Aplicação MVC
-
-↓
-
-Dashboard
-
-↓
-
-Indicadores e Apoio à Decisão
-```
-
----
-
-# Considerações
-
-Mais do que uma iniciativa sustentável, a **Inventory Masters** configura-se como uma solução de inovação aplicada à gestão de estoques, monitoramento volumétrico e economia circular, alinhada às tendências de transformação digital, responsabilidade socioambiental e competitividade empresarial.
-
-Sua arquitetura modular permite operação offline por meio do SQLite, sincronização em tempo real utilizando SignalR e integração com dashboards gerenciais desenvolvidos em ASP.NET Core MVC, oferecendo uma plataforma robusta, escalável e preparada para futuras expansões.
-
-Ao combinar hardware, software e processamento inteligente de dados, a plataforma transforma medições físicas em informações estratégicas, proporcionando maior controle operacional, rastreabilidade das medições e suporte eficiente à tomada de decisão.
-
----
 
 
