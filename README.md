@@ -2617,6 +2617,60 @@ Ao término da operação, o operador pode optar por encerrar o monitoramento, f
 Essa etapa assegura a rastreabilidade completa das operações executadas pelo sistema, contribuindo para auditorias, manutenção e diagnóstico de possíveis falhas, além de garantir um encerramento seguro da sessão operacional.
 
 ---
+## MVVM
+
+# Login e Acesso Seguro
+
+Este fluxo garante que apenas usuários validados e com as permissões corretas consigam entrar no sistema e visualizar o painel principal.
+
+## 1. Entrada do E-mail (UC01 & UC02)
+
+O usuário acessa a tela de login e informa seu endereço de e-mail.
+
+- O sistema valida se o formato do e-mail é válido.
+- Caso o formato esteja incorreto, o acesso é bloqueado imediatamente e uma mensagem de erro é exibida ao usuário.
+
+## 2. Verificação no Banco de Dados (UC04)
+
+Após a validação do formato do e-mail, o sistema consulta o banco de dados para verificar:
+
+- Se o usuário está cadastrado.
+- Se a conta está com o status **Ativa**.
+
+Caso o usuário não exista ou a conta esteja inativa, o acesso é negado.
+
+## 3. Geração e Envio do Token (UC05 a UC08)
+
+Se o usuário estiver ativo, o sistema:
+
+1. Gera um **Token OTP** (senha temporária).
+2. Armazena no banco de dados o hash do token e sua data de expiração.
+3. Envia o token para o e-mail do usuário.
+
+## 4. Validação do Token (UC10 & UC12)
+
+O usuário:
+
+1. Acessa seu e-mail.
+2. Copia o token recebido.
+3. Informa o token na tela de validação.
+
+O sistema verifica a validade do token.
+
+- Se o token estiver expirado, o acesso é negado.
+- Se o token estiver incorreto, uma mensagem de erro é exibida.
+
+## 5. Criação da Sessão e Redirecionamento (UC13 a UC17)
+
+Quando o token é validado com sucesso, o sistema:
+
+1. Marca o token como **utilizado**, impedindo seu reaproveitamento.
+2. Cria uma **Sessão Segura** (Cookie/Auth).
+3. Verifica o perfil e as permissões do usuário.
+
+Se o usuário possuir autorização para acessar o Dashboard, ele é redirecionado para a tela inicial do sistema com sucesso.
+
+---
 
 <p align="center">
   <img src="./Imagens/Diagrama_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
