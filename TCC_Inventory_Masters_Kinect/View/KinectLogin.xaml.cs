@@ -11,16 +11,31 @@ namespace TCC_Inventory_Masters_Kinect.View
     /// </summary>
     public partial class KinectLogin : Window
     {
+        /// <summary>
+        /// Inicializa a janela de login do Kinect, configurando os elementos visuais e exibindo o painel de login por padrão.
+        /// </summary>
         public KinectLogin()
         {
             InitializeComponent();
             MensagemTextBlock.Text = string.Empty;
             MostrarLogin();
         }
+        /// <summary>
+        /// Evento de clique do botão "Entrar". Exibe o painel de login, ocultando o painel de 
+        /// cadastro e ajustando os textos e cores dos botões.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AbaEntrar_Click(object sender, RoutedEventArgs e)
         {
             MostrarLogin();
         }
+        /// <summary>
+        /// Evento de clique do botão "Cadastrar". 
+        /// Exibe o painel de solicitação de token, ocultando o painel de login e ajustando os textos e cores dos botões.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AbaCadastro_Click(object sender, RoutedEventArgs e)
         {
             MostrarSolicitacaoToken();
@@ -97,14 +112,14 @@ namespace TCC_Inventory_Masters_Kinect.View
                     Token = token
                 };
 
-                LoggerService.Info("Acesso ao Kinect liberado com token validado pelo MVC.");
+                LoggerService.Info("Acesso ao Kinect liberado com token validado pelo Sistema.");
                 AbrirMonitor(sessao);
             }
             catch
             {
                 MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
-                MensagemTextBlock.Text = "Erro ao validar token no MVC.";
-                LoggerService.Erro("Erro ao validar token no MVC.");
+                MensagemTextBlock.Text = "Erro ao validar token no Sistema.";
+                LoggerService.Erro("Erro ao validar token pelo o sistema.");
             }
         }
         /// <summary>
