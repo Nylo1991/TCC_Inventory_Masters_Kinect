@@ -230,11 +230,15 @@ O operador do sistema interage com um *dashboard* responsivo e intuitivo, que of
 
 #  Estrutura do Projeto
 
+
 O **Inventory Masters** é composto por duas aplicações integradas:
 
 - **MVC InventoryMasters** (ASP.NET Core MVC)
 - **TCC Inventory Masters Kinect** (WPF .NET Framework)
-
+- 
+<p align="center">
+  <img src="./Imagens/estruturação de pasta.png" width="600" alt="Logo Inventory Masters" />
+</p>
 ---
 
 # Estrutura de Pastas
