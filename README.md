@@ -3445,6 +3445,10 @@ Essa representação evidencia o comportamento temporal dos componentes envolvid
 
 # Etapa 1 – Login e Autenticação (Token OTP)
 
+<p align="center">
+  <img src="./Imagens/Diagrama_Login_MVC.png" width="900" alt="Etapa de login Diagrama de Sequência" />
+</p>
+
 Esta etapa representa o ponto de entrada seguro da aplicação, garantindo que apenas usuários autorizados tenham acesso ao sistema.
 
 ## Como funciona
@@ -3471,6 +3475,10 @@ Após a validação do token:
 ---
 
 # Etapa 2 – Gestão de Medições (Filtros e Recebimento)
+
+<p align="center">
+  <img src="./Imagens/Diagrama_Medicoes_MVC.png" width="900" alt="Etapa de gestão de medições" />
+</p>
 
 Esta etapa é responsável pelo gerenciamento do histórico de medições do estoque e pelo processamento das novas leituras enviadas pelo sensor Kinect.
 
@@ -3499,6 +3507,10 @@ Toda a atualização ocorre em tempo real por meio do **SignalR**, sem necessida
 
 # Etapa 3 – Gestão de Parceiros (Cadastro, Edição e Status)
 
+<p align="center">
+  <img src="./Imagens/Diagrama_Parceiro_MVC.png" width="900" alt="Etapa de gestão de parceiros" />
+</p>
+
 Esta etapa é responsável pelo gerenciamento das empresas e parceiros comerciais cadastrados na aplicação.
 
 ## Como funciona
@@ -3519,6 +3531,10 @@ Caso o parceiro possua notificações ou outras dependências relacionadas, a ex
 ---
 
 # Etapa 4 – Medição Local (Manual ou Automática)
+
+<p align="center">
+  <img src="./Imagens/Diagrama_Parceiro_MVC.png" width="900" alt="Etapa de gestão de parceiros" />
+</p>
 
 Esta etapa representa o processamento realizado localmente pelo sensor Kinect para calcular o volume do estoque.
 
@@ -3544,6 +3560,10 @@ Após todas as verificações:
 
 # Etapa 5 – Persistência e Envio (Conexão e Sincronização)
 
+<p align="center">
+  <img src="./Imagens/Diagrama_percistencia_MVC.png" width="900" alt="Etapa de persistência" />
+</p>
+
 Esta etapa garante que as medições realizadas localmente sejam transmitidas com segurança ao servidor central.
 
 ## Como funciona
@@ -3559,6 +3579,37 @@ Se a conexão estiver disponível:
 Caso ocorra uma falha de comunicação, o sistema entra automaticamente em um fluxo alternativo de recuperação.
 
 Nesse cenário, são executadas tentativas automáticas de reconexão, garantindo que nenhuma medição seja perdida durante o processo de sincronização.
+
+---
+# Etapa 6 – Histórico, Logs e Encerramento
+
+<p align="center">
+  <img src="./Imagens/Diagrama_Historico_MVC.png" width="900" alt="Etapa de Historico" />
+</p>
+
+Esta etapa representa o encerramento do ciclo de monitoramento, garantindo que todas as informações geradas durante a operação sejam registradas com segurança antes da finalização do processo.
+
+## Como funciona
+
+Antes de encerrar o monitoramento, o sistema realiza uma última consulta ao histórico local para verificar se todas as informações foram registradas corretamente.
+
+Em seguida, é iniciado o processo de auditoria, no qual são armazenados diferentes tipos de registros, incluindo:
+
+- Log de acesso dos usuários;
+- Log das medições realizadas pelo sensor Kinect;
+- Log de erros ou exceções ocorridas durante a execução do sistema.
+
+Após concluir o armazenamento dessas informações, os registros são persistidos no banco de dados local, garantindo a rastreabilidade das operações realizadas.
+
+Com todas as etapas concluídas, o sistema executa o encerramento do monitoramento.
+
+As ações finais incluem:
+
+1. Finalização da sessão de monitoramento;
+2. Interrupção da captura de dados pelo sensor Kinect para reduzir o consumo de recursos;
+3. Atualização da interface da aplicação;
+4. Limpeza dos dados temporários da tela, deixando o sistema preparado para iniciar um novo ciclo de medição.
+
 ---
 
 ## MODELAGEM DO BANCO DE DADOS
