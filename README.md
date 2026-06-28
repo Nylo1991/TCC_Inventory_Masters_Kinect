@@ -2617,9 +2617,13 @@ Ao término da operação, o operador pode optar por encerrar o monitoramento, f
 Essa etapa assegura a rastreabilidade completa das operações executadas pelo sistema, contribuindo para auditorias, manutenção e diagnóstico de possíveis falhas, além de garantir um encerramento seguro da sessão operacional.
 
 ---
-## MVVM
+## MVC
 
 # Login e Acesso Seguro
+
+<p align="center">
+  <img src="./Imagens/Etapa_Login_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa login e acesso ao sistema" />
+</p>
 
 Este fluxo garante que apenas usuários validados e com as permissões corretas consigam entrar no sistema e visualizar o painel principal.
 
@@ -2670,95 +2674,643 @@ Quando o token é validado com sucesso, o sistema:
 
 Se o usuário possuir autorização para acessar o Dashboard, ele é redirecionado para a tela inicial do sistema com sucesso.
 
----
+# Gestão de Usuários (Visualização de Detalhes e Exclusão)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo.png" width="600" alt="Diagrama de Fluxo Inventory Masters" />
+  <img src="./Imagens/Etapa_Usuario_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão usuario" />
 </p>
 
-O diagrama de fluxo descreve o ciclo de vida de uma medição, garantindo a integridade dos dados desde a captura no *Edge* até a persistência em nuvem e a interação no *Dashboard*.
+Este fluxo descreve o processo de governança de contas de usuários, permitindo que administradores consultem informações detalhadas e realizem a exclusão segura de usuários, mantendo registros para auditoria.
 
-#### Etapa 1: Inicialização e Setup de Hardware
-* **Ação:** O operador inicia o `UCK04` (Ligar Kinect) e `UCK06` (Verificar Conectividade).
-* **Tratamento de Exceção:** Caso `UCK07` (Diagnóstico Hardware) retorne erro, o sistema bloqueia o `UCK10` e `UCK11`, disparando uma notificação de falha no *dashboard* local.
-* **Calibração (`UCK08`):** O sistema executa o *include* de `[Validar Calibração]` e `[Criar Mapa Referência]`. Esta matriz (`BaselineMatrix`) é persistida em `D1/D2` para garantir que, em caso de reinicialização, o sistema não perca a referência volumétrica.
+## 1. Visualização de Detalhes (Modo Leitura)
 
-#### Etapa 2: Pipeline de Visão e Cálculo Volumétrico 
-* **Captura e Pré-processamento (`UCK11`, `UCK12`):** O Kinect captura o *stream*. O sistema aplica o *include* `[Aplicar Filtros/Remover Ruídos]` conforme o `UCK15`.
-* **Cálculo (`UCK13`, `UCK14`):** O processamento de Cálculo de Volume Ocupado e Espaço Livre ocorre via comparação matricial (*Delta*).
-* **Conversão de Unidade:** O valor final é convertido de $cm^3$ para $m^3$ com precisão de 3 casas decimais.
+### Requisição por ID (UC31)
 
-#### Etapa 3: Persistência de Integridade (Local)
-* **Escrita em `D1` (SQLite):** A medição (ID, Timestamp, Volume, SequenceID) é gravada via `UCK16` (Salvar Medição Local).
-* **Estado do Dado:** O registro é marcado como `PENDING`. Este banco atua como *Buffer* de Resiliência, garantindo que o `UCK21` (Operar Offline) funcione perfeitamente sem degradação de dados.
+O administrador seleciona um colaborador na lista de usuários, acionando uma requisição **HTTP GET** para `Details(id)`.
 
-## Etapa 4: Camada de Integração e Sincronização (Hub)
+O sistema realiza as seguintes validações:
 
-* **Monitoramento e Roteamento (`UCI05`, `UCI01`, `UCK10`):** O `SyncService` opera em regime de monitoramento constante do `UCI05` (Gerenciar Conexões).
-    * **Fluxo Condicional:** Caso o serviço detecte que a rede está indisponível, o sistema mantém o fluxo no estado de espera local, preservando a integridade do *buffer* (`D1`) e impedindo tentativas de transmissão inócuas.
-    * **Sincronização:** Assim que a conectividade é restabelecida, o sistema retoma o fluxo, executando o `UCK20` (Sincronizar SignalR) para processar o envio do *payload* acumulado.
+- Verifica se o identificador (**ID**) foi informado.
+- Caso o ID seja nulo ou vazio, retorna uma resposta **BadRequest**.
 
-* **Controle de Consistência e Proteção (`SequenceID`):** O `MedicaoHub` (MVC) atua como o ponto de entrada seguro. Ao receber o pacote, o sistema valida o `SequenceID` para garantir a idempotência das transações:
-    * **Prevenção de *Replay Attacks*:** Se o `SequenceID` já existir no banco de dados (`D9`), o sistema descarta o pacote automaticamente, evitando duplicidade de medições.
-    * **Persistência em Nuvem:** Se o `SequenceID` for inédito, o MVC prossegue com a validação do token JWT (`UC57`), aplica a criptografia de transporte (`UC59`) e persiste a informação no Firestore.
+### Consulta ao Banco de Dados
 
-## 5ª Etapa: Gestão, Alerta e Broadcast (MVC)
+Após validar o ID, o sistema consulta o **UsuariosRepository**, que busca o registro correspondente nas coleções do **Firestore**.
 
-Nesta etapa, o sistema realiza o processamento lógico da medição em nuvem, garantindo a governança, a notificação proativa e a auditabilidade das ocorrências críticas.
+- Se o usuário não for encontrado, uma mensagem de erro (**NotFound**) é exibida utilizando **TempData**.
+- Se o usuário existir, o sistema valida as permissões de acesso do administrador e carrega os dados em modo de leitura.
 
-#### 5.1. Pipeline de Validação de Regras de Negócio (UC30, UC34)
-Assim que a medição é persistida no Firestore, o serviço de mensageria (`BusinessRuleEngine`) inicia o fluxo de validação:
+As informações exibidas incluem:
 
-* **Recuperação de Contexto:** O sistema recupera a `CapacidadeMaxima` e o `ParametroAlerta` (percentual) associados ao `SpaceID` da medição vigente (processos `P11`, `P12`).
-* **Categorização de Severidade:** O sistema classifica o status operacional conforme o volume detectado:
-    * **Nível Verde (Normal):** Volume abaixo do limite de alerta.
-    * **Nível Amarelo (Atenção):** Volume entre 80% e 99% da capacidade.
-    * **Nível Vermelho (Crítico):** Volume $\ge$ `ParametroAlerta` (ou 100% da capacidade).
-* **Persistência de Alerta:** Em estados **Vermelhos**, o sistema registra a ocorrência na coleção `D8 (Notificacoes)` com o status `PENDING_ACK` (Aguardando Confirmação).
+- Nome
+- E-mail
+- Perfil
+- Empresa
 
-#### 5.2. Tomada de Decisão, Threshold e Broadcast
-Nesta fase, o `BusinessRuleEngine` atua como um **Gateway de Controle**, executando a lógica de tomada de decisão baseada nos dados persistidos:
+### Registro de Auditoria (UC31)
 
-* **Ponto de Decisão (Gatekeeper):** O sistema avalia a condição booleana de criticidade:
-    $$\text{IsAlertState} = \left( \frac{\text{VolumeAtual}}{\text{CapacidadeMaxima}} \right) \times 100 > \text{ParametroAlerta}$$
+Sempre que a tela de detalhes é acessada, o sistema registra um **Log Operacional** contendo a ação realizada.
 
-* **Fluxo de Bifurcação:**
-    * **Se `Falso`:** O sistema encerra o *pipeline* de alerta, registrando apenas a métrica no histórico (Status: `NORMAL`).
-    * **Se `Verdadeiro`:** O motor de regras dispara o gatilho de criticidade, acionando o fluxo de notificação em tempo real.
-
-* **Broadcast Inteligente:** Uma vez confirmada a decisão de alerta, o `NotificacaoHub` (SignalR) realiza o envio de um *payload* estruturado (contendo `AlertID`, `Timestamp`, `Message` e `SeverityLevel`) apenas para os *dashboards* autorizados (`UC14`).
-
-#### 5.3. UX Crítica: Protocolo de Confirmação Ativa (UC13, UC14)
-Para garantir a governança do processo, implementamos o **Protocolo de Confirmação Ativa**:
-
-* **Bloqueio de Interação (Modal Overlay):** Ao receber o evento `CRITICAL_ALERT`, o *dashboard* dispara um *Modal* de sobreposição que bloqueia a interação do usuário até que a anomalia seja reconhecida.
-* **Ação de Ciência:** O operador deve executar o `UC13` (Aceitar Coleta).
-* **Registro de Auditoria:** Ao confirmar, o sistema realiza um *update* no Firestore, alterando o status da notificação para `ACKNOWLEDGED` (Confirmado), registrando o `UserID` do operador e o `Timestamp` exato.
-* **Objetivo:** Este ciclo garante a rastreabilidade total, permitindo que, em auditorias operacionais, seja possível comprovar que toda anomalia foi detectada, notificada e tratada por um responsável.
-
-#### Tabela de Rastreabilidade: Fluxo de Execução Técnica
-
-Esta tabela relaciona as etapas do ciclo de vida da medição com os Casos de Uso (UCs) e a infraestrutura responsável.
-
-| Fase | Etapa do Fluxo | Agente Responsável | Caso de Uso (UC) | Estado do Dado |
-| :--- | :--- | :--- | :--- | :--- |
-| **01** | Handshake e Diagnóstico | Módulo Kinect | UCK04, UCK07 | `READY` |
-| **02** | Calibração (Baseline) | Módulo Kinect | UCK08 | `BASELINE_STORED` |
-| **03** | Captura e Filtros | Módulo Kinect | UCK11, UCK15 | `PROCESSING` |
-| **04** | Cálculo Volumétrico | Módulo Kinect | UCK13, UCK14 | `VALUATED` |
-| **05** | Persistência Local | SQLite (D1) | UCK16 | `SYNC_PENDING` |
-| **06** | Sincronização (SignalR) | Barramento Integr. | UCK20, UCI01 | `IN_TRANSIT` |
-| **07** | Validação de Consistência | MVC Controller | UCI07 | `VALIDATED` |
-| **08** | Persistência em Nuvem | Firestore (D9) | UC32 | `STORED` |
-| **09** | Broadcast de Alerta | NotificacaoHub | UC14, UC34 | `BROADCASTED` |
-| **10** | Confirmação (ACK) | Operador (UI) | UC13 | `ACKNOWLEDGED` |
+Esse log é armazenado no banco de dados para fins de auditoria e rastreabilidade do acesso a informações sensíveis.
 
 ---
 
-> **Nota:** A rastreabilidade apresentada assegura que cada transição de estado seja auditável, permitindo a verificação de *logs* em caso de falha de comunicação entre o HTTP e a Nuvem.  
+## 2. Processo de Exclusão Segura
+
+### Confirmação e Validações (UC35)
+
+Na tela de detalhes, o administrador possui a opção de excluir o usuário.
+
+Ao confirmar a operação, o sistema envia uma requisição **HTTP POST** para `DetailsConfirmed`, protegida pelos seguintes mecanismos de segurança:
+
+- **ValidateAntiForgeryToken**
+- Validação do **ModelState**
+
+### Remoção Definitiva (UC35)
+
+Após todas as validações serem aprovadas, o sistema estabelece conexão com o **Firestore** e remove permanentemente o registro do usuário da coleção.
+
+### Encerramento do Processo
+
+Após a exclusão, o sistema executa as seguintes ações:
+
+1. Registra um **Log Operacional** informando:
+   - O administrador responsável pela exclusão;
+   - O usuário que foi removido.
+2. Salva o log no banco de dados.
+3. Redireciona o administrador para a lista geral de usuários.
+4. Exibe uma mensagem informando que a exclusão foi realizada com sucesso.
+
+# Gestão de Parceiros (Cadastro, Edição, Exclusão e Controle de Status)
+
+<p align="center">
+  <img src="./Imagens/Etapa_Parceiro_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão parceiros" />
+</p>
+
+Este fluxo descreve todo o ciclo de vida da gestão de parceiros comerciais no sistema, abrangendo a consulta, o cadastro, a edição, a alteração de status e a exclusão segura dos registros, com mecanismos de validação e auditoria.
+
+## 1. Consulta, Filtros e Listagem (Interface Web)
+
+### Acesso à Tela (UC42–UC47)
+
+O Administrador ou Gestor acessa a tela de parceiros por meio de uma requisição **HTTP GET** para `Index`.
+
+O sistema consulta o **Firestore**, recuperando todos os parceiros vinculados à empresa do usuário autenticado.
+
+### Tratamento dos Resultados
+
+Após a consulta, o sistema verifica o resultado da pesquisa.
+
+- Se nenhum parceiro for encontrado, é exibida a mensagem:
+  - **"Nenhum parceiro encontrado."**
+- Caso existam registros, o sistema aplica os filtros informados pelo usuário.
+
+Os filtros disponíveis incluem:
+
+- Busca por termo;
+- Data inicial;
+- Data final;
+- Status (Ativo/Inativo).
+
+Após a filtragem, os registros são ordenados, paginados e apresentados na interface contendo as seguintes informações:
+
+- Nome;
+- Empresa;
+- E-mail;
+- Telefone;
+- Status.
 
 ---
 
+## 2. Cadastro de Novo Parceiro
+
+### Abertura do Formulário (UC48)
+
+Ao selecionar a opção **"Novo Parceiro"**, é enviada uma requisição **HTTP GET** para `Create`.
+
+O sistema exibe um formulário vazio contendo os campos necessários para cadastro, além de dicas e tooltips de auxílio ao preenchimento.
+
+### Envio dos Dados (UC48)
+
+Após preencher o formulário, o usuário envia uma requisição **HTTP POST** para `Create`.
+
+Antes da gravação, o sistema executa as seguintes validações:
+
+- Validação do **ModelState**;
+- Verificação dos campos obrigatórios;
+- Validação dos formatos informados;
+- Proteção contra ataques de falsificação utilizando **ValidateAntiForgeryToken**.
+
+### Persistência dos Dados
+
+Após as validações:
+
+- Se o formulário possuir erros, os campos inválidos são destacados e as mensagens de erro são exibidas.
+- Caso todas as validações sejam aprovadas:
+  1. O parceiro é salvo no **Firestore**;
+  2. Um **Log Operacional** é registrado;
+  3. Uma mensagem de sucesso é exibida ao usuário utilizando **TempData**.
+
+---
+
+## 3. Visualização de Detalhes e Edição
+
+### Visualização de Detalhes (UC49)
+
+Ao solicitar os detalhes de um parceiro, o sistema envia uma requisição **HTTP GET** para `Details(id)`.
+
+São realizadas as seguintes validações:
+
+- Verificação da validade do ID informado;
+- Consulta ao Firestore para localizar o parceiro.
+
+Caso o registro não seja encontrado, o sistema apresenta uma mensagem de **NotFound**.
+
+Se localizado, todas as informações do parceiro são exibidas em uma tela detalhada.
+
+### Alteração de Dados (UC50)
+
+Ao selecionar a opção de edição, é enviada uma requisição **HTTP GET** para `Edit(id)`.
+
+O sistema carrega o formulário preenchido com os dados atuais do parceiro, incluindo:
+
+- Inputs;
+- Checkboxes;
+- Campos Select.
+
+Após as alterações, o formulário é enviado por meio de uma requisição **HTTP POST** para `Edit`.
+
+O sistema então:
+
+1. Valida os dados recebidos;
+2. Verifica se houve alguma modificação em relação aos dados originais;
+3. Atualiza o registro no **Firestore**, caso existam alterações válidas;
+4. Registra um **Log Operacional** informando a edição realizada com sucesso.
+
+---
+
+## 4. Controle de Status e Exclusão
+
+### Alternar Status (UC51 e UC52)
+
+O administrador pode alterar rapidamente o status de um parceiro utilizando uma ação **HTTP POST** para `AlternarStatus`.
+
+O sistema executa as seguintes etapas:
+
+1. Valida o ID recebido;
+2. Altera o campo booleano responsável pelo status (Ativo/Inativo);
+3. Salva a alteração;
+4. Redireciona novamente para a listagem;
+5. Exibe uma mensagem de confirmação utilizando **TempData**, informando se o parceiro foi ativado ou inativado.
+
+### Exclusão do Registro (UC53)
+
+Para remover um parceiro, o sistema executa uma requisição **HTTP POST** para `DeleteConfirmed`.
+
+Antes da exclusão definitiva, é realizada uma verificação de integridade para identificar possíveis dependências associadas ao parceiro, como notificações vinculadas.
+
+O fluxo segue duas possibilidades:
+
+- **Se houver dependências:**
+  - A exclusão é cancelada;
+  - O sistema apresenta uma mensagem informando que não foi possível excluir o parceiro devido às dependências existentes.
+
+- **Se não houver impedimentos:**
+  1. O parceiro é removido definitivamente do **Firestore**;
+  2. Um **Log Operacional** registra a exclusão realizada;
+  3. A listagem de parceiros é recarregada;
+  4. Uma mensagem de sucesso é exibida ao usuário.
+
+# Gestão de Medições (Listagem, Filtros e Recebimento via Kinect)
+
+<p align="center">
+  <img src="./Imagens/Etapa_Medicoes_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa Medições" />
+</p>
+
+Este fluxo descreve o gerenciamento das medições de volumetria do estoque, integrando a consulta histórica realizada pelos usuários com o recebimento automático de dados em tempo real enviados pelo sensor Kinect.
+
+## 1. Consulta, Filtros e Listagem (Interface Web)
+
+### Acesso à Tela (UC63)
+
+O usuário autorizado acessa a tela de medições por meio de uma requisição **HTTP GET** para `Index`.
+
+O sistema consulta a coleção de medições armazenadas no **Firestore**.
+
+### Tratamento dos Resultados
+
+Após a consulta, o sistema verifica os registros encontrados.
+
+- Caso não existam medições cadastradas, é exibida a mensagem:
+  - **"Nenhuma medição encontrada."**
+
+- Caso existam registros, o sistema aplica os filtros disponíveis.
+
+Os filtros incluem:
+
+- Origem da medição;
+- Status;
+- Data inicial;
+- Data final.
+
+Após a filtragem, os registros são ordenados de forma decrescente e paginados utilizando a lógica de **Skip/Take (UC67)**.
+
+A tabela apresenta informações como:
+
+- Volume medido;
+- Origem da leitura;
+- Status da medição, identificado por badges coloridos:
+  - Verde: Normal;
+  - Amarelo/Vermelho: Alerta.
+
+---
+
+## 2. Recebimento Automático das Medições (Aplicação Kinect)
+
+### Captura das Leituras (UC69)
+
+O aplicativo responsável pelo sensor Kinect envia continuamente as medições para o **SignalR Hub**, por meio do serviço de recebimento de medições.
+
+Ao receber uma nova leitura, o sistema valida a integridade do identificador (**ID**) enviado.
+
+### Persistência e Atualização das Estatísticas (UC70–UC72)
+
+Após a validação, o sistema:
+
+1. Monta o objeto contendo os dados da medição;
+2. Persiste o registro no **Firestore**.
+
+Na sequência, são executados os cálculos estatísticos da aplicação, incluindo:
+
+- Total de medições;
+- Média dos volumes;
+- Última medição registrada;
+- Verificação das metas e geração de alertas.
+
+Com os novos valores calculados, os **Cards de Métricas** e os gráficos do Dashboard são atualizados automaticamente através do envio de um **JSON (HTTP POST Summary)**.
+
+---
+
+## 3. Ações Administrativas
+
+### Visualização de Detalhes e Edição (UC69 e UC71)
+
+O administrador pode consultar uma medição específica ou editar seus dados.
+
+Ao editar um registro, o sistema:
+
+1. Carrega o formulário contendo os dados atuais;
+2. Valida o **ModelState**;
+3. Compara os dados enviados com o estado anterior;
+4. Salva as alterações caso sejam válidas.
+
+### Inativação da Medição (UC70)
+
+Quando uma leitura incorreta ou inválida é identificada, o administrador pode desativar o registro.
+
+A operação é realizada por meio de uma requisição **HTTP POST** protegida por **ValidateAntiForgeryToken**.
+
+O sistema:
+
+1. Valida o registro solicitado;
+2. Verifica possíveis dependências;
+3. Atualiza o status da medição para **Inativa (Status = false)** na coleção operacional do **Firestore**.
+
+---
+
+# Gestão de Perfis (Cadastro, Permissões e Inativação)
+
+<p align="center">
+  <img src="./Imagens/Etapa_Perfis_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão perfis" />
+</p>
+
+Este fluxo descreve o gerenciamento dos perfis de acesso da aplicação, permitindo controlar permissões, cadastrar novos perfis, editar privilégios e realizar a inativação segura quando necessário.
+
+## 1. Consulta, Filtros e Listagem (Interface Web)
+
+### Carregamento da Lista (UC36)
+
+O Administrador Gestor acessa a tela de perfis através de uma requisição **HTTP GET** para `Index`.
+
+O sistema consulta os perfis cadastrados no **Firestore**.
+
+### Exibição dos Dados
+
+Após recuperar os registros, o sistema aplica filtros utilizando:
+
+- Nome do perfil;
+- Descrição;
+- Status.
+
+Os resultados são organizados em uma listagem paginada contendo:
+
+- Nome do perfil;
+- Descrição;
+- Quantidade de permissões associadas;
+- Status atual do perfil.
+
+---
+
+## 2. Cadastro de Novo Perfil
+
+### Abertura do Formulário (UC37 e UC41)
+
+Ao selecionar **"Novo Perfil"**, o sistema envia uma requisição **HTTP GET** para `Create`.
+
+É apresentado um formulário contendo:
+
+- Campos para identificação do perfil;
+- Tooltips explicativas;
+- Lista de permissões disponíveis por meio de caixas de seleção.
+
+### Validação e Persistência
+
+Ao enviar o formulário (**HTTP POST Create**), o sistema executa:
+
+- Validação do **ModelState**;
+- Verificação dos dados obrigatórios.
+
+Caso todas as validações sejam aprovadas:
+
+1. O perfil é salvo no **Firestore**;
+2. Um **Log Operacional** é registrado;
+3. Uma mensagem de sucesso é armazenada em **TempData**.
+
+---
+
+## 3. Visualização de Detalhes e Edição
+
+### Visualização Completa (UC39)
+
+Ao solicitar os detalhes de um perfil, o sistema executa uma requisição **HTTP GET** para `Details(id)`.
+
+São realizadas as seguintes etapas:
+
+1. Validação do ID informado;
+2. Consulta ao Firestore;
+3. Exibição das informações do perfil e das permissões associadas.
+
+O acesso também gera um **Log Operacional** para auditoria.
+
+### Alteração de Permissões (UC38 e UC41)
+
+Ao editar um perfil (**HTTP GET Edit**), o sistema carrega:
+
+- Campos de entrada;
+- Checkboxes das permissões atualmente atribuídas.
+
+Após o envio (**HTTP POST Edit**), o sistema:
+
+1. Valida o formulário;
+2. Normaliza os dados recebidos;
+3. Verifica se houve alterações em relação ao estado anterior;
+4. Atualiza o perfil e suas permissões no **Firestore**;
+5. Registra um **Log Operacional** documentando a alteração.
+
+---
+
+## 4. Inativação de Perfis
+
+### Alteração do Status (UC40, UC51 e UC52)
+
+O administrador pode alterar rapidamente o status de um perfil utilizando a opção de alternância disponível na listagem.
+
+A operação é realizada por uma requisição **HTTP POST** protegida por mecanismos de antifalsificação.
+
+### Verificação de Dependências (UC40)
+
+Antes de concluir a inativação, o sistema verifica se existem usuários ativos associados ao perfil.
+
+O fluxo segue duas possibilidades:
+
+- **Se existirem usuários vinculados:**
+  - A operação é interrompida;
+  - Uma exceção é tratada e a inativação é cancelada por motivos de segurança.
+
+- **Se não houver dependências:**
+  1. O status do perfil é alterado para **Inativo (Status = false)**;
+  2. O repositório salva as alterações no **Firestore**;
+  3. A base operacional de segurança da aplicação é atualizada com o novo estado do perfil.
+
+---
+
+# Gestão de Notificações (Listagem, Filtros, Resumo e Ações)
+
+<p align="center">
+  <img src="./Imagens/Etapa_Notificacoes_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa nnotificações" />
+</p>
+
+Este fluxo descreve o gerenciamento das notificações geradas pelo sistema, permitindo o monitoramento de alertas, o recebimento automático de eventos provenientes do Kinect e a confirmação de coletas em tempo real por meio do SignalR.
+
+## 1. Consulta e Monitoramento de Alertas (Interface Web)
+
+### Listagem Geral (UC100)
+
+O usuário autorizado acessa a tela de notificações por meio de uma requisição **HTTP GET** para `Index`.
+
+O sistema consulta o **Firestore**, recuperando o histórico de notificações e os parceiros relacionados.
+
+Após a consulta, são apresentados **Cards de Métricas**, contendo indicadores consolidados como:
+
+- Total de notificações;
+- Notificações processadas com sucesso;
+- Notificações com erro;
+- Notificações pendentes.
+
+### Listagem e Filtros (UC101 e UC107)
+
+As notificações são exibidas em uma tabela contendo informações como:
+
+- Data;
+- Parceiro ou destinatário;
+- Empresa;
+- Tipo da notificação;
+- Mensagem;
+- Volume associado.
+
+Cada registro apresenta uma identificação visual por meio de **badges de status**, indicando situações como:
+
+- Success;
+- Warning;
+- Danger;
+- Ack Warning.
+
+O usuário pode utilizar filtros para localizar registros específicos, incluindo:
+
+- Data inicial;
+- Data final;
+- Tipo da notificação;
+- Status.
+
+Após a aplicação dos filtros, os resultados são ordenados em ordem decrescente e paginados para facilitar a navegação.
+
+---
+
+## 2. Geração Automática e Integração em Tempo Real
+
+### Processamento da Coleta (UC69 e UC103)
+
+O sistema recebe automaticamente eventos enviados pela aplicação de notificações do Kinect através de uma requisição **HTTP POST** para `AceitarColeta`.
+
+Ao receber a solicitação, são realizadas validações para garantir a integridade das informações recebidas.
+
+### Geração e Distribuição da Notificação (UC104)
+
+Após a validação dos dados, o sistema:
+
+1. Persiste a medição original no **Firestore**;
+2. Executa a rotina de geração da notificação;
+3. Registra as informações necessárias para auditoria.
+
+Na sequência, a nova notificação é publicada no **NotificacaoHub**, utilizando **SignalR**, permitindo que todos os operadores conectados recebam o alerta instantaneamente.
+
+---
+
+## 3. Configuração de Regras e Confirmação da Coleta
+
+### Criação e Edição de Regras (UC67, UC71 e UC88)
+
+Para cadastrar ou alterar regras de notificação, o sistema disponibiliza formulários específicos.
+
+Durante o envio das informações, são executadas as seguintes validações:
+
+- Validação do **ModelState**;
+- Verificação da consistência dos dados;
+- Comparação entre os dados existentes e as alterações realizadas.
+
+Após a validação, o sistema calcula estatísticas relacionadas às notificações e salva as novas configurações na coleção correspondente do **Firestore**.
+
+### Confirmação da Coleta (UC103)
+
+Quando a atualização do banco de dados é concluída com sucesso, o sistema responde à requisição por meio de um **HTTP POST Aceitar**, retornando um objeto **Success (JSON)**.
+
+Em seguida:
+
+1. O novo status da coleta é persistido no **Firestore**;
+2. Os clientes conectados recebem a atualização em tempo real através do **SignalR**;
+3. O operador visualiza imediatamente a confirmação da coleta na interface;
+4. Um **Log Operacional** é registrado, encerrando o ciclo de auditoria da notificação.
+
+---
+# Gestão de Parâmetros do Sistema (Configurações Gerais e Kinect)
+
+<p align="center">
+  <img src="./Imagens/Etapa_Parametros_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa parâmetros" />
+</p>
+
+Este fluxo descreve o gerenciamento das configurações globais da aplicação, permitindo administrar parâmetros operacionais do sistema, configurações do sensor Kinect, regras de notificações e rotinas de calibração, garantindo a consistência das configurações e a integridade da operação.
+
+## 1. Consulta e Exibição de Configurações
+
+### Carregamento das Configurações (UC200)
+
+O usuário com permissão para administrar configurações acessa a tela por meio de uma requisição **HTTP GET** para `Index`.
+
+O sistema consulta o **Firestore**, recuperando os parâmetros gerais da aplicação.
+
+### Painel de Configurações
+
+Após a consulta, as informações são organizadas em blocos distintos na interface.
+
+#### Card 1 – Configurações do Sistema
+
+São apresentados parâmetros relacionados ao funcionamento geral da aplicação, incluindo:
+
+- Capacidade máxima do estoque;
+- Capacidade mínima;
+- Configurações do sensor Kinect;
+- Parâmetros operacionais.
+
+#### Card 2 – Configurações de Notificações
+
+O sistema disponibiliza configurações referentes ao processo de envio de notificações, como:
+
+- Templates de mensagens;
+- Canais de comunicação ativos;
+- Regras de escalonamento de alertas.
+
+#### Bloco de Pré-visualização
+
+A interface apresenta uma visualização em tempo real da mensagem que será enviada aos usuários.
+
+A prévia utiliza variáveis dinâmicas, como:
+
+- Identificador do sensor;
+- Percentual de ocupação;
+- Data e hora;
+- Links da aplicação.
+
+---
+
+## 2. Alteração de Configurações e Regras de Negócio
+
+### Salvamento das Alterações (UC201)
+
+Após modificar os parâmetros desejados, o usuário seleciona a opção **"Salvar Alterações"**.
+
+O sistema envia uma requisição **HTTP POST** para `Salvar`, contendo o objeto `ModelConfiguracoes`.
+
+### Validação dos Dados
+
+Antes da persistência, o sistema executa diversas validações.
+
+Inicialmente, é realizada a validação do **ModelState**, verificando:
+
+- Campos obrigatórios;
+- Tipos de dados;
+- Formatos permitidos.
+
+Em seguida, são aplicadas as regras de negócio da aplicação.
+
+Entre elas:
+
+- Verificar se a capacidade mínima é inferior à capacidade máxima;
+- Validar limites permitidos para os parâmetros do Kinect;
+- Garantir a consistência das configurações de notificações.
+
+Caso alguma regra seja violada, a operação é interrompida e o sistema retorna um **StatusCode 500**, informando que a configuração não pôde ser processada.
+
+### Persistência das Configurações
+
+Se todas as validações forem aprovadas, o sistema:
+
+1. Compara os novos valores com a configuração atual;
+2. Verifica se houve alteração efetiva dos dados;
+3. Atualiza os parâmetros no **Firestore**;
+4. Registra um **Log Operacional** contendo as modificações realizadas;
+5. Exibe uma mensagem de sucesso utilizando **TempData**.
+
+---
+
+## 3. Calibração do Sensor Kinect e Restauração de Configurações
+
+### Calibração do Sensor (UC202)
+
+Quando necessário, o operador pode iniciar uma nova calibração do sensor Kinect selecionando a opção **"Iniciar Calibração"**.
+
+Essa ação envia uma requisição **HTTP POST** para `IniciarCalibracao`.
+
+O sistema realiza as seguintes etapas:
+
+1. Valida o identificador do dispositivo;
+2. Verifica se o sensor está apto para iniciar a operação;
+3. Ativa o modo de calibração (**Status = true**);
+4. Inicia a rotina de calibração do equipamento.
+
+Caso ocorra alguma falha durante o processo, o sistema utiliza os parâmetros globais de segurança previamente configurados para preservar a integridade da operação.
+
+### Restauração dos Padrões do Sistema
+
+Se alterações manuais comprometerem o funcionamento da aplicação, o administrador pode selecionar a opção **"Restaurar Padrões"**.
+
+O sistema então:
+
+1. Recupera as configurações padrão da aplicação;
+2. Valida as permissões e dependências do perfil responsável pela operação;
+3. Restaura os parâmetros originais no **Firestore**;
+4. Registra um **Log Operacional** contendo todas as alterações realizadas durante a restauração;
+5. Atualiza a aplicação com as configurações restauradas.
+---
 
 # Diagrama de Sequência do Módulo Kinect (MVVM)
 
@@ -2891,39 +3443,122 @@ Essa representação evidencia o comportamento temporal dos componentes envolvid
 
 ## Diagrama de Sequência
 
-<p align="center">
-  <img src="./Imagens/DiagramaSequencia.png" width="600" alt="Diagrama de Sequência" />
-</p>
+# Etapa 1 – Login e Autenticação (Token OTP)
 
-### Detalhamento do Fluxo de Sequência
+Esta etapa representa o ponto de entrada seguro da aplicação, garantindo que apenas usuários autorizados tenham acesso ao sistema.
 
-Este diagrama detalha o ciclo de vida transacional de uma medição, garantindo a integridade dos dados desde a captura Http até a persistência em nuvem e a interação proativa no *Dashboard*.
+## Como funciona
 
-#### Etapa 1: Inicialização e Setup de Hardware
-* **Ação:** O operador executa o `UCK04` (Ligar Kinect) e `UCK06` (Verificar Conectividade).
-* **Diagnóstico (`UCK07`):** O sistema realiza um *Self-Test* do hardware. Se houver falha, o fluxo é abortado via exceção, bloqueando preventivamente o acesso ao *dashboard* local para evitar leituras corrompidas.
-* **Calibração de Referência (`UCK08`):** O sistema executa o *include* de `[Validar Calibração]` e `[Criar Mapa Referência]`. A `BaselineMatrix` gerada é persistida em `D1/D2` (SQLite), garantindo que, após reinicializações, o sistema retenha a referência volumétrica de estado "zero" sem necessidade de reconfiguração manual.
+O operador informa seu endereço de e-mail na tela de login.
 
-#### Etapa 2: Pipeline de Visão e Cálculo Volumétrico 
-* **Captura e Pré-processamento (`UCK11`, `UCK12`):** O Kinect envia o *stream* de dados. O sistema aplica o *include* de `[Aplicar Filtros / Remover Ruídos]` (conforme `UCK15`), assegurando que o dado tratado possua a qualidade exigida para cálculos volumétricos.
-* **Motor de Cálculo (`UCK13`, `UCK14`):** O sistema realiza a operação matricial (*Delta*) entre o *Frame* Atual e a `BaselineMatrix`.
-* **Conversão e Normalização:** O volume é convertido de $cm^3$ para $m^3$ com precisão de 3 casas decimais, filtrando ruídos abaixo de uma margem mínima estipulada pelo `UCC31` (Ajustar Regras).
+O sistema realiza as seguintes validações:
 
-#### Etapa 3: Persistência de Integridade (Resiliência Local)
-* **Escrita no Buffer (`UCK16`):** A medição (ID, Timestamp, Volume, SequenceID) é persistida no `SQLite` (`D1`) com o status `PENDING`.
-* **Buffer de Resiliência:** Esta etapa atende ao `UCK21` (Operar Offline). Ao persistir localmente antes de qualquer tentativa de transmissão, o sistema garante que nenhum dado seja perdido durante falhas de rede, isolando a falha de comunicação da operação de medição.
+- Verifica se o e-mail está cadastrado;
+- Confirma se a conta do usuário está ativa.
 
-#### Etapa 4: Camada de Integração e Sincronização (Hub)
-* **Envio Assíncrono (`UCI01`, `UCK10`):** O `SyncService` monitora o `UCI05` (Gerenciar Conexões). Ao restaurar o link, ele executa o `UCK20` (Sincronizar SignalR), enviando o *payload*.
-* **Controle de Consistência (`SequenceID`):** O `MedicaoHub` (MVC) recebe o pacote e verifica o `SequenceID`.
-    * **Prevenção de Replay:** Se o ID já existir em `D9`, o MVC descarta o pacote automaticamente.
-    * **Persistência Cloud:** Se novo, o MVC valida o JWT (`UC57`), criptografa (`UC59`) e persiste no `Firestore`.
+Se todas as validações forem aprovadas, o sistema:
 
-#### Etapa 5: Gestão, Alerta e Broadcast (MVC)
-* **Validação de Negócio (`P11`, `P12`, `UC30`, `UC34`):** O `BusinessRuleEngine` compara o volume recebido contra os limites definidos em `D7` (ParametrosSistema).
-* **Lógica de Threshold:** $$\left( \frac{\text{VolumeAtual}}{\text{CapacidadeMaxima}} \right) \times 100 > \text{ParametroAlerta}$$
+1. Gera um **Token OTP** (senha temporária);
+2. Envia o código para o e-mail do operador.
 
-* **Broadcast e UX:** Se exceder o limite, o `NotificacaoHub` dispara um evento via SignalR (`UC14`). O *dashboard* força a exibição de um *Modal Overlay*. O operador deve realizar o `UC13` (Aceitar Coleta). O sistema registra a confirmação no Firestore, alterando o status da notificação para `ACKNOWLEDGED` (Confirmado), vinculado ao `UserID` e `Timestamp`.
+O usuário copia o token recebido, informa o código na tela de validação e o sistema verifica sua autenticidade.
+
+Após a validação do token:
+
+- Uma sessão segura é criada;
+- O acesso ao Dashboard é liberado.
+
+---
+
+# Etapa 2 – Gestão de Medições (Filtros e Recebimento)
+
+Esta etapa é responsável pelo gerenciamento do histórico de medições do estoque e pelo processamento das novas leituras enviadas pelo sensor Kinect.
+
+## Como funciona
+
+Quando um usuário autorizado acessa a tela de medições, o sistema consulta o **Firestore**, recuperando os registros armazenados.
+
+Durante esse processo, são aplicados automaticamente:
+
+- Filtros de pesquisa;
+- Ordenação;
+- Paginação dos resultados.
+
+Paralelamente, o sensor Kinect envia continuamente novas leituras de profundidade.
+
+Para cada leitura recebida, o sistema:
+
+1. Valida o identificador da medição;
+2. Converte a leitura física para volume em metros cúbicos ($m^3$);
+3. Armazena a medição no banco de dados;
+4. Atualiza automaticamente os gráficos e os Cards de Métricas.
+
+Toda a atualização ocorre em tempo real por meio do **SignalR**, sem necessidade de recarregar a página.
+
+---
+
+# Etapa 3 – Gestão de Parceiros (Cadastro, Edição e Status)
+
+Esta etapa é responsável pelo gerenciamento das empresas e parceiros comerciais cadastrados na aplicação.
+
+## Como funciona
+
+Ao acessar a tela de parceiros, o administrador solicita a listagem dos registros.
+
+O sistema recupera os parceiros cadastrados e aplica automaticamente as regras de paginação.
+
+Durante o cadastro de um novo parceiro, o formulário passa pelas seguintes validações:
+
+- Validação dos campos obrigatórios;
+- Proteção contra ataques de falsificação (**ValidateAntiForgeryToken**).
+
+Quando uma exclusão é solicitada, o sistema realiza uma verificação de integridade.
+
+Caso o parceiro possua notificações ou outras dependências relacionadas, a exclusão é cancelada e uma mensagem de erro é apresentada ao administrador, preservando a consistência dos dados.
+
+---
+
+# Etapa 4 – Medição Local (Manual ou Automática)
+
+Esta etapa representa o processamento realizado localmente pelo sensor Kinect para calcular o volume do estoque.
+
+## Como funciona
+
+A medição pode ser iniciada manualmente pelo operador ou automaticamente por um temporizador.
+
+Ao iniciar o processo, o sensor captura a profundidade atual do ambiente.
+
+Antes de calcular o volume, o sistema executa diversas validações, incluindo:
+
+- Verificação da conexão com o Kinect;
+- Confirmação de que o ambiente foi previamente calibrado;
+- Validação de que o volume calculado é maior que zero.
+
+Após todas as verificações:
+
+1. O volume é calculado em centímetros cúbicos ($cm^3$);
+2. O resultado é apresentado na interface local;
+3. A medição é armazenada temporariamente para posterior sincronização.
+
+---
+
+# Etapa 5 – Persistência e Envio (Conexão e Sincronização)
+
+Esta etapa garante que as medições realizadas localmente sejam transmitidas com segurança ao servidor central.
+
+## Como funciona
+
+Antes do envio das informações, o sistema do Kinect verifica a conexão com o servidor principal.
+
+Se a conexão estiver disponível:
+
+1. O volume calculado é enviado ao servidor;
+2. O servidor processa a informação recebida;
+3. Uma confirmação de recebimento é retornada ao dispositivo.
+
+Caso ocorra uma falha de comunicação, o sistema entra automaticamente em um fluxo alternativo de recuperação.
+
+Nesse cenário, são executadas tentativas automáticas de reconexão, garantindo que nenhuma medição seja perdida durante o processo de sincronização.
 ---
 
 ## MODELAGEM DO BANCO DE DADOS
