@@ -2539,7 +2539,6 @@ Após o recebimento do token, o operador realiza sua inserção na aplicação d
 
 Essa etapa garante a autenticação segura entre os módulos Desktop e Web, além de assegurar que todas as medições realizadas posteriormente sejam vinculadas ao usuário e à empresa corretos.
 
----
 
 ### Conexão e Preparação do Sensor
 
@@ -2555,7 +2554,7 @@ Durante toda essa etapa, o operador pode interromper ou reiniciar a captura caso
 
 Essa etapa garante que o sensor esteja operando adequadamente antes da realização das medições, reduzindo a possibilidade de erros decorrentes de falhas de hardware.
 
----
+
 
 ### Calibração e Configuração
 
@@ -2571,7 +2570,6 @@ Após a calibração, o operador define a região que será utilizada para o cá
 
 Essa etapa é fundamental para garantir que os cálculos realizados posteriormente representem corretamente a ocupação volumétrica do espaço monitorado.
 
----
 
 ### Captura e Processamento da Medição
 
@@ -2587,12 +2585,12 @@ Além do cálculo volumétrico, o sistema compara continuamente os valores obtid
 
 Essa etapa representa o núcleo funcional do sistema, sendo responsável pela aquisição, processamento e armazenamento das medições realizadas pelo Kinect.
 
----
+
 
 ### Envio e Sincronização com o MVC
 
 <p align="center">
-  <img src="./Imagens/DiagramaFluxoMVVM_Etapa05.jpeg" width="900" alt="Digrama de Fluxo MVVM Kinect - Etapa 5 - Envio e Sincronização com o MVC" />
+  <img src="./Imagens/DigramaFluxoMVVM_Etapa05.jpeg" width="900" alt="Digrama de Fluxo MVVM Kinect - Etapa 5 - Envio e Sincronização com o MVC" />
 </p>
 
 Após o registro local da medição, inicia-se o processo de sincronização com a aplicação Web MVC por meio do protocolo SignalR. Inicialmente é verificado se a conexão com o servidor permanece ativa. Em caso positivo, as medições são transmitidas ao servidor juntamente com informações que identificam sua origem e a empresa responsável.
@@ -2603,12 +2601,11 @@ Caso ocorra perda de conexão durante o envio, o sistema registra a falha em log
 
 Essa etapa garante a sincronização contínua entre o módulo Desktop e a aplicação Web, preservando a integridade e disponibilidade das informações monitoradas.
 
----
 
 ### Histórico, Logs e Encerramento
 
 <p align="center">
-  <img src="./Imagens/DiagramaFluxoMVVM_Etapa06.jpeg" width="900" alt="Digrama de Fluxo MVVM Kinect - Etapa 6 - Histórico, Logs e Encerramento" />
+  <img src="./Imagens/DigramaFluxoMVVM_Etapa06.jpeg" width="900" alt="Digrama de Fluxo MVVM Kinect - Etapa 6 - Histórico, Logs e Encerramento" />
 </p>
 
 A última etapa contempla os mecanismos de rastreabilidade e encerramento da operação. O sistema disponibiliza ao operador o histórico local das medições registradas, permitindo consultas mesmo quando não há comunicação com o servidor Web.
@@ -2707,6 +2704,136 @@ Esta tabela relaciona as etapas do ciclo de vida da medição com os Casos de Us
 > **Nota:** A rastreabilidade apresentada assegura que cada transição de estado seja auditável, permitindo a verificação de *logs* em caso de falha de comunicação entre o HTTP e a Nuvem.  
 
 ---
+
+
+# Diagrama de Sequência do Módulo Kinect (MVVM)
+
+O Diagrama de Sequência do módulo Kinect apresenta o comportamento dinâmico da aplicação durante a execução das principais funcionalidades do sistema. Diferentemente do Diagrama de Casos de Uso, que demonstra as funcionalidades disponíveis ao usuário, o Diagrama de Sequência evidencia a ordem cronológica das mensagens trocadas entre os componentes internos do sistema, permitindo compreender como ocorre o fluxo completo de autenticação, inicialização do hardware, calibração, processamento das medições, persistência local e sincronização com o módulo MVC.
+
+Para facilitar a leitura e reduzir a complexidade visual, o fluxo foi dividido em seis etapas principais, cada uma representando uma fase específica da operação do sistema.
+
+
+# Autenticação e Criação da Sessão
+
+<p align="center">
+  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa01.png" width="900" alt="Etapa 01 - Autenticação" />
+</p>
+
+A primeira etapa representa o processo de autenticação do operador no módulo Kinect MVVM. Inicialmente, o usuário informa o endereço de e-mail previamente cadastrado no sistema MVC. A aplicação Kinect encaminha essa informação ao servidor MVC, que realiza a geração de um token temporário de autenticação e o envia para o e-mail informado.
+
+Após receber o código, o operador informa o token na aplicação Kinect. O sistema realiza uma nova comunicação com o MVC para validar sua autenticidade, verificando se o token existe, ainda está dentro do período de validade e não foi utilizado anteriormente.
+
+Quando todas as validações são aprovadas, o sistema cria uma sessão operacional local contendo as informações do usuário autenticado, empresa vinculada, e-mail e token utilizado. Em seguida, o monitor de medição é liberado para utilização.
+
+Caso o token seja inválido, expirado ou já tenha sido utilizado anteriormente, a autenticação é bloqueada e o operador deverá solicitar um novo código de acesso.
+
+### Objetivo da Etapa
+
+Garantir que apenas usuários devidamente autenticados possam acessar o módulo Kinect e iniciar o monitoramento volumétrico.
+
+
+
+# Inicialização do Kinect e Conexão ao SignalR
+
+<p align="center">
+  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa02.png" width="900" alt="Etapa 02 - Inicialização do Kinect" />
+</p>
+
+Após a autenticação bem-sucedida, inicia-se o processo de preparação do ambiente de monitoramento. O operador solicita a inicialização do Kinect e o sistema ativa os sensores RGB e de profundidade responsáveis pela captura das informações do ambiente físico.
+
+Paralelamente à inicialização do hardware, a aplicação estabelece comunicação com o servidor SignalR hospedado no módulo MVC. Essa conexão será responsável pela transmissão das medições realizadas localmente para o sistema Web em tempo real.
+
+Após a confirmação da conexão, a interface é atualizada indicando que tanto o Kinect quanto o SignalR encontram-se disponíveis, permitindo o prosseguimento para a etapa de calibração.
+
+### Objetivo da Etapa
+
+Preparar o hardware de captura e estabelecer a comunicação em tempo real entre o módulo Kinect e o sistema MVC.
+
+
+
+# Calibração do Ambiente e Configuração do Espaço
+
+<p align="center">
+  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa03.png" width="900" alt="Etapa 03 - Calibração" />
+</p>
+
+Nesta etapa é realizada a calibração do ambiente que será monitorado. O Kinect captura a imagem de profundidade do espaço vazio e processa essas informações para gerar uma referência volumétrica utilizada como base para todas as medições futuras.
+
+Após a conclusão da calibração, o operador informa os parâmetros necessários para configuração do ambiente monitorado, como nome do espaço e limite máximo de ocupação.
+
+O sistema valida essas informações, marca o espaço como configurado e habilita o temporizador responsável pelas medições automáticas. A partir desse momento, o ambiente encontra-se preparado para iniciar o monitoramento contínuo.
+
+Caso alguma validação não seja atendida, como ausência de calibração ou parâmetros obrigatórios não informados, o sistema impede o início das medições até que todas as configurações sejam concluídas.
+
+### Objetivo da Etapa
+
+Estabelecer a referência espacial utilizada pelo sistema para realizar os cálculos volumétricos de forma precisa e consistente.
+
+
+# Medição Local e Armazenamento
+
+<p align="center">
+  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa04.png" width="900" alt="Etapa 04 - Medição" />
+</p>
+
+Após a configuração do ambiente, o sistema inicia o ciclo de monitoramento, que pode ocorrer manualmente por solicitação do operador ou automaticamente por meio do temporizador interno da aplicação.
+
+Antes da captura de qualquer medição são realizadas diversas validações para garantir a integridade dos dados processados. O sistema verifica se o Kinect permanece conectado, se o ambiente foi calibrado corretamente, se o espaço monitorado encontra-se salvo e se existem dados válidos para processamento.
+
+Em seguida, o sensor captura uma nova imagem de profundidade, calcula o volume ocupado utilizando a referência obtida durante a calibração e atualiza a interface com o volume atual, percentual de ocupação e status da medição.
+
+Após o processamento, a medição é armazenada no banco de dados SQLite local, permitindo que o sistema continue funcionando normalmente mesmo em situações de indisponibilidade da conexão com o servidor.
+
+### Objetivo da Etapa
+
+Realizar a captura das informações do ambiente, calcular o volume ocupado e garantir a persistência local das medições para assegurar a continuidade da operação.
+
+
+# Envio da Medição ao MVC e Atualização do Status
+
+<p align="center">
+  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa05.png" width="900" alt="Etapa 05 - Sincronização" />
+</p>
+
+Após o armazenamento local da medição, o sistema verifica o estado da conexão com o servidor SignalR. Caso a comunicação esteja disponível, a aplicação transmite a medição ao módulo MVC utilizando o Hub responsável pela integração em tempo real.
+
+O servidor confirma o recebimento da informação e a aplicação atualiza o status da sincronização na interface do operador.
+
+Caso ocorra qualquer falha de comunicação, a medição permanece armazenada localmente no banco SQLite e o sistema inicia automaticamente tentativas de reconexão até que a comunicação seja restabelecida. Dessa forma, evita-se a perda de informações durante interrupções temporárias da rede.
+
+### Objetivo da Etapa
+
+Sincronizar as medições locais com o sistema MVC, mantendo a consistência dos dados e garantindo tolerância a falhas de comunicação.
+
+
+# Histórico, Logs e Encerramento
+
+<p align="center">
+  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa06.png" width="900" alt="Etapa 06 - Histórico e Encerramento" />
+</p>
+
+A etapa final contempla as funcionalidades relacionadas ao histórico operacional e ao encerramento da sessão de monitoramento.
+
+Durante a operação, o operador pode consultar o histórico de medições armazenadas localmente no banco SQLite, bem como visualizar os registros de acesso, leituras realizadas e erros registrados pelo sistema.
+
+Ao finalizar o monitoramento, a aplicação interrompe a captura das imagens de profundidade, encerra a comunicação com o Kinect, finaliza a conexão com o servidor SignalR e registra os eventos de encerramento no banco de dados local.
+
+Por fim, a interface é atualizada, os estados internos da aplicação são reinicializados e o sistema permanece preparado para uma nova sessão de monitoramento.
+
+### Objetivo da Etapa
+
+Garantir a rastreabilidade das operações realizadas durante o monitoramento, preservar o histórico operacional e realizar o encerramento seguro da aplicação, liberando corretamente os recursos utilizados pelo sistema.
+
+
+
+# Considerações
+
+O Diagrama de Sequência demonstra a interação entre o operador, o módulo Kinect, o banco de dados SQLite local e o sistema MVC durante toda a execução da aplicação. A divisão do fluxo em seis etapas permitiu representar de forma organizada os processos de autenticação, inicialização do hardware, calibração, captura das medições, sincronização com o servidor e encerramento da operação.
+
+Essa representação evidencia o comportamento temporal dos componentes envolvidos, facilitando a compreensão da arquitetura do sistema e demonstrando como os dados percorrem todas as camadas da aplicação, desde a aquisição pelo sensor Kinect até a persistência local e sincronização com o módulo Web.
+
+---
+
 
 ## Diagrama de Sequência
 
