@@ -3533,7 +3533,7 @@ Caso o parceiro possua notificações ou outras dependências relacionadas, a ex
 # Etapa 4 – Medição Local (Manual ou Automática)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Parceiro_MVC.png" width="900" alt="Etapa de gestão de parceiros" />
+  <img src="./Imagens/Diagrama_Medicao_Local_MVC.png" width="900" alt="Etapa de medicão local" />
 </p>
 
 Esta etapa representa o processamento realizado localmente pelo sensor Kinect para calcular o volume do estoque.
