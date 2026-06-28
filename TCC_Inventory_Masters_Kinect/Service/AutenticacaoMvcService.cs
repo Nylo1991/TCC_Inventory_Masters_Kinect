@@ -10,12 +10,15 @@ namespace TCC_Inventory_Masters_Kinect.Service
 {
     public class AutenticacaoMvcService
     {
+        /// <summary>
+        /// HttpClient utilizado para realizar requisições HTTP ao MVC, 
+        /// configurado para não usar proxy e com timeout de 15 segundos.
+        /// </summary>
         private readonly HttpClient _httpClient;
 
         public AutenticacaoMvcService()
         {
-            /// A chamada é local; não deve depender de proxy corporativo/
-            /// configurado no Windows.
+           
             var handler = new HttpClientHandler
             {
                 UseProxy = false
@@ -27,6 +30,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
             };
         }
 
+        /// <summary>
+        /// Solicita um token de acesso ao MVC para o e-mail fornecido.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public async Task<TokenSolicitadoResultado> SolicitarTokenAsync(string email)
         {
             try
@@ -53,8 +61,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     "application/json"
                 );
 
-                /// O Kinect apenas solicita; quem gera e registra o token continua 
-                /// sendo o MVC.
+   
                 var resposta = await _httpClient.PostAsync(
                     KinectConfig.UrlSolicitarTokenMvc,
                     conteudo
@@ -98,7 +105,12 @@ namespace TCC_Inventory_Masters_Kinect.Service
                 };
             }
         }
-
+        /// <summary>
+        /// Valida o token de acesso fornecido junto ao MVC, retornando informações sobre a validade 
+        /// do token e se o e-mail foi validado.
+        /// </summary>
+        /// <param name="token">Token de acesso a ser validado.</param>
+        /// <returns>Resultado da validação do token.</returns>
         public async Task<ValidacaoTokenResultado> ValidarTokenAsync(string token)
         {
             try

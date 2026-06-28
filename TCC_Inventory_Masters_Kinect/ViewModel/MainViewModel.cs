@@ -208,30 +208,26 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         public ICommand MedirCommand { get; }
         public ICommand SalvarEspacoCommand { get; }
 
-        public MainViewModel()
-            : this(new SessaoUsuario
-            {
-                Usuario = "Administrador",
-                Empresa = "Empresa Teste",
-                Email = "teste@inventorymasters.com",
-                Token = "DEV"
-            })
-        {
-        }
-
-        public MainViewModel(string usuarioLogado)
-            : this(new SessaoUsuario
-            {
-                Usuario = usuarioLogado,
-                Empresa = "Empresa Teste",
-                Email = "teste@inventorymasters.com",
-                Token = "DEV"
-            })
-        {
-        }
-
+        /// <summary>
+        /// Inicializa o monitor somente com uma sessao validada pelo MVC.
+        /// </summary>
         public MainViewModel(SessaoUsuario sessao)
         {
+            if (sessao == null)
+            {
+                throw new ArgumentNullException(nameof(sessao));
+            }
+
+            if (string.IsNullOrWhiteSpace(sessao.Usuario) ||
+                string.IsNullOrWhiteSpace(sessao.Empresa) ||
+                string.IsNullOrWhiteSpace(sessao.Email) ||
+                string.IsNullOrWhiteSpace(sessao.Token) ||
+                string.Equals(sessao.Token, "DEV", StringComparison.OrdinalIgnoreCase))
+            {
+                LoggerService.LogWarning("Tentativa de iniciar o monitor sem sessao valida do MVC.");
+                throw new InvalidOperationException("O acesso ao monitor exige uma sessao validada pelo MVC.");
+            }
+
             _sessao = sessao;
 
             UsuarioLogado = sessao.Usuario;
