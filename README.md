@@ -228,6 +228,350 @@ O operador do sistema interage com um *dashboard* responsivo e intuitivo, que of
 
 ---
 
+#  Estrutura do Projeto
+
+O **Inventory Masters** é composto por duas aplicações integradas:
+
+- **MVC InventoryMasters** (ASP.NET Core MVC)
+- **TCC Inventory Masters Kinect** (WPF .NET Framework)
+
+---
+
+# Estrutura de Pastas
+
+```text
+InventoryMasters/
+│
+├── MVC_InventoryMasters/
+│   ├── Controllers/
+│   ├── Filters/
+│   ├── Hubs/
+│   ├── Models/
+│   ├── Repositories/
+│   ├── Services/
+│   ├── ViewModels/
+│   ├── Views/
+│   ├── wwwroot/
+│   ├── Config/
+│   ├── Program.cs
+│   └── appsettings.json
+│
+├── TCC_Inventory_Masters_Kinect/
+│   ├── Command/
+│   ├── ConfigKinect/
+│   ├── Data/
+│   ├── Logs/
+│   ├── Model/
+│   ├── Repository/
+│   ├── Service/
+│   ├── View/
+│   ├── ViewModel/
+│   ├── Videos/
+│   ├── App.xaml
+│   └── App.config
+│
+└── packages/
+```
+
+---
+
+#  Aplicação MVC
+
+## Controllers
+
+```text
+Controllers/
+│
+├── AcessoController.cs
+├── DashboardController.cs
+├── HomeController.cs
+├── KinectApiController.cs
+├── MedicoesController.cs
+├── NotificacoesController.cs
+├── ParametrosController.cs
+├── ParceirosController.cs
+├── PerfisController.cs
+└── UsuariosController.cs
+```
+
+| Controller | Responsabilidade |
+|------------|------------------|
+| AcessoController | Login por e-mail, geração e validação do token |
+| KinectApiController | Comunicação de autenticação com o Kinect |
+| DashboardController | Dashboard em tempo real |
+| MedicoesController | Histórico, filtros, paginação e resumo |
+| NotificacoesController | Notificações e respostas |
+| ParametrosController | Configurações da empresa |
+| UsuariosController | Cadastro de usuários |
+| ParceirosController | Cadastro de parceiros |
+| PerfisController | Perfis e permissões |
+
+---
+
+## Models
+
+```text
+Models/
+│
+├── Empresa.cs
+├── LogSistema.cs
+├── MedicaoVolume.cs
+├── Notificacao.cs
+├── ParametrosSistema.cs
+├── Parceiro.cs
+├── Perfil.cs
+├── PermissoesSistema.cs
+├── TokenAcessoKinect.cs
+└── Usuario.cs
+```
+
+Representam as entidades persistidas no **Google Cloud Firestore**.
+
+---
+
+## Repositories
+
+```text
+Repositories/
+│
+├── EmpresasRepository.cs
+├── LogsSistemaRepository.cs
+├── MedicaoVolumeRepository.cs
+├── NotificacaoRepository.cs
+├── ParametrosSistemaRepository.cs
+├── ParceirosRepository.cs
+├── PerfisRepository.cs
+├── TokensAcessoKinectRepository.cs
+└── UsuariosRepository.cs
+```
+
+Responsáveis por toda comunicação com o **Google Cloud Firestore**.
+
+- Consultas
+- Cadastros
+- Atualizações
+- Inativações
+- Paginação
+- Filtros
+
+---
+
+## Services
+
+```text
+Services/
+│
+├── ContextoUsuarioService.cs
+├── EmailTokenService.cs
+├── FirebaseService.cs
+├── PermissaoService.cs
+└── TokenAcessoKinectService.cs
+```
+
+| Serviço | Função |
+|----------|--------|
+| ContextoUsuarioService | Identifica empresa, usuário e perfil |
+| EmailTokenService | Envia tokens por SMTP |
+| FirebaseService | Inicializa Firestore |
+| PermissaoService | Controle de permissões |
+| TokenAcessoKinectService | Geração e validação dos tokens |
+
+---
+
+## SignalR
+
+```text
+Hubs/
+│
+├── MedicaoHub.cs
+└── NotificacaoHub.cs
+```
+
+| Hub | Responsabilidade |
+|------|------------------|
+| MedicaoHub | Atualização do Dashboard em tempo real |
+| NotificacaoHub | Distribuição de notificações |
+
+---
+
+## Views
+
+```text
+Views/
+│
+├── Acesso/
+├── Dashboard/
+├── Medicoes/
+├── Notificacoes/
+├── Parametros/
+├── Parceiros/
+├── Perfis/
+├── Shared/
+└── Usuarios/
+```
+
+---
+
+# 🖥 Aplicação Kinect
+
+## Models
+
+```text
+Model/
+│
+├── CalibrationProgress.cs
+├── CalibrationResult.cs
+├── HistoricoOcupacao.cs
+├── Log.cs
+├── MedicaoVolume.cs
+├── SessaoUsuario.cs
+├── TokenSolicitadoResultado.cs
+├── UsuarioAcesso.cs
+├── ValidacaoTokenResultado.cs
+└── Point3DData.cs
+```
+
+---
+
+## Services
+
+```text
+Service/
+│
+├── AutenticacaoMvcService.cs
+├── KinectService.cs
+├── KinectService.Calibration.cs
+├── KinectService.Camera.cs
+├── KinectService.Volume.cs
+└── SignalRService.cs
+```
+
+| Serviço | Responsabilidade |
+|----------|------------------|
+| AutenticacaoMvcService | Solicita e valida token |
+| KinectService | Gerencia todo o ciclo do Kinect |
+| KinectService.Calibration | Calibração |
+| KinectService.Camera | RGB + Profundidade |
+| KinectService.Volume | Processamento volumétrico |
+| SignalRService | Comunicação com o MVC |
+
+---
+
+## ViewModels
+
+```text
+ViewModel/
+│
+├── BaseViewModel.cs
+├── MainViewModel.cs
+├── MainViewModel.Espaco.cs
+├── MainViewModel.Historico.cs
+├── MainViewModel.Kinect.cs
+└── MainViewModel.Volume.cs
+```
+
+A **MainViewModel** utiliza **classes parciais**, separando responsabilidades em módulos menores.
+
+---
+
+## Views
+
+```text
+View/
+│
+├── KinectLogin.xaml
+├── KinectLogin.xaml.cs
+├── KinectMonitorWindow.xaml
+├── KinectMonitorWindow.xaml.cs
+├── HistoricoMedicoesWindow.xaml
+└── HistoricoMedicoesWindow.xaml.cs
+```
+
+| Tela | Função |
+|------|---------|
+| KinectLogin | Login via Token |
+| KinectMonitorWindow | Monitoramento em tempo real |
+| HistoricoMedicoesWindow | Histórico local |
+
+---
+
+# Fluxo entre as Aplicações
+
+```text
+             Kinect Sensor
+                   │
+                   ▼
+            KinectService
+                   │
+                   ▼
+            MainViewModel
+             │           │
+             │           ▼
+             │      SQLite Local
+             │
+             ▼
+        SignalRService
+             │
+             ▼
+         MedicaoHub
+             │
+             ▼
+     Google Firestore
+             │
+             ▼
+      Dashboard MVC
+```
+
+---
+
+#  Resumo da Arquitetura
+
+```text
+                MVC (Web)
+
+ Login
+ Usuários
+ Empresas
+ Perfis
+ Parceiros
+ Configurações
+ Dashboard
+ Medições
+ Notificações
+ Logs
+
+        ▲
+        │ SignalR
+        ▼
+
+          Kinect
+
+ Login por Token
+ Captura RGB
+ Captura Profundidade
+ Calibração
+ Processamento
+ Volume
+ SQLite
+ Envio das medições
+```
+
+---
+
+#  Arquitetura Utilizada
+
+- ASP.NET Core MVC
+- WPF (.NET Framework)
+- MVVM
+- Repository Pattern
+- Service Layer
+- SignalR
+- Google Cloud Firestore
+- SQLite
+- Kinect SDK 1.8
+
+-----
+
 ## REGRA DE NEGÓCIO
 
 As regras de negócio definem o comportamento esperado do sistema, garantindo a precisão das medições, a integridade dos dados, a operação correta do hardware Kinect, a comunicação em tempo real com a aplicação MVC e o apoio à tomada de decisão logística.
