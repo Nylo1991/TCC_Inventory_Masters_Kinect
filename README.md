@@ -239,6 +239,7 @@ O **Inventory Masters** é composto por duas aplicações integradas:
 <p align="center">
   <img src="./Imagens/estruturação de pasta.png" width="600" alt="Logo Inventory Masters" />
 </p>
+
 ---
 
 # Estrutura de Pastas
@@ -416,7 +417,7 @@ Views/
 
 ---
 
-# 🖥 Aplicação Kinect
+#  Aplicação Kinect
 
 ## Models
 
