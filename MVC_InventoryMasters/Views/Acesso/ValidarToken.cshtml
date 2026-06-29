@@ -1,7 +1,8 @@
 @model MVC_InventoryMasters.ViewModels.ValidarTokenViewModel
 
 @{
-    ViewData["Title"] = "Validar Token";
+    Layout = "_login";
+    ViewData["Title"] = "Acesso ao Sistema";
 }
 
 <div class="container-fluid">
@@ -41,7 +42,7 @@
 
                     <form asp-action="ValidarToken" method="post">
                         @Html.AntiForgeryToken()
-
+                       
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <div class="mb-3">
