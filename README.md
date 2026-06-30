@@ -604,7 +604,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 - 🟡 **Regras técnicas/operacionais:** Descrevem controles necessários para execução, rastreabilidade, configuração, cálculo e estabilidade.
 - **Funcionalidades em evolução:** WhatsApp, escalonamento e canais de alerta permanecem como funcionalidades parametrizadas, pois o código já possui configurações para esses recursos.
 
-### Regras de Negócio - MVC
+### Regras de Negócio - MVC/Web
 ---
 
 #### 🔵 RN001 - Solicitação de token por e-mail
@@ -770,7 +770,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** A métrica de ocupação deve ser derivada da relação entre o dado de medição mais recente e a capacidade total definida, garantindo precisão nos indicadores do dashboard.
 ---
 
-### Regras de Negócio Kinect
+### Regras de Negócio - Kinect/Desktop
 ---
 
 #### 🔵 RNK001 - Solicitação de token pelo Kinect
@@ -1290,7 +1290,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** A implementação de tokens Antiforgery é obrigatória em todas as ações de escrita (CUD) para mitigar ataques de Cross-Site Request Forgery (CSRF).
 ---
 
-### Regras de Validação Kinect/Desktop
+### Regras de Validação - Kinect/Desktop
 ---
 
 #### 🔴 RNK002 - E-mail obrigatório para solicitar token
@@ -1554,7 +1554,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** A higienização da interface ao alternar entre modos de entrada evita confusões semânticas, assegurando que o feedback fornecido seja relevante apenas para o estado atual da aplicação.
 ---
 
-### Regras de Integração MVC/Web
+### Regras de Integração - MVC/Web
 ---
 
 #### 🟢 RN072 - Recebimento de medição em tempo real
@@ -1771,6 +1771,9 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 | O MVC executa funcionalidades de cadastros, medições, parâmetros e notificações. | Serviços e repositórios devem estar registrados para injeção de dependência. | O sistema permite que controllers acessem regras, dados e integrações necessárias. |
 
 > **Regra:** Configura o ciclo de vida dos componentes do sistema (como *Scoped*, *Transient* ou *Singleton*) no container de Injeção de Dependência (DI) nativo do .NET, garantindo o desacoplamento e a testabilidade do código.
+---
+
+### Regras de Integração - Kinect/Desktop
 ---
 
 #### 🟢 RNK003 - Comunicação com MVC para solicitar token
@@ -2244,7 +2247,8 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** Configura o middleware de roteamento padrão do ASP.NET Core (`{controller=Home}/{action=Index}/{id?}`), permitindo o mapeamento correto de URLs amigáveis para os endpoints da aplicação.
 ---
 
-###  Regras de Integração Kinect/Desktop
+###  Regras de Integração - Kinect/Desktop
+---
 
 #### 🟡 RNK018 - Captura múltipla na calibração
 
@@ -2496,10 +2500,11 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 | Ocorre falha ao salvar ou consultar medições locais. | A falha deve ser rastreável. | O Kinect registra erro no log local. |
 
 > **Regra:** Intercepta exceções de infraestrutura de dados (`SqliteException`), capturando a mensagem de falha, o código do erro e o *stack trace*, gravando-os em arquivo de diagnóstico local para evitar perda de rastreabilidade.
-
 ---
+
 ## REQUISITOS DO SISTEMA
 ---
+
 Os requisitos do sistema foram organizados conforme o modelo de comparação entre requisito funcional e requisito não funcional.
 
 Os **requisitos funcionais (RF)** descrevem o que o sistema deve fazer, ou seja, as funcionalidades esperadas pelos usuários e pelos módulos do sistema, como autenticação por token, cadastro de usuários e parceiros, controle de permissões, configuração de parâmetros, dashboard, medições volumétricas, notificações e integração com o Kinect.
