@@ -2841,247 +2841,154 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 ---
 
-#### Casos de Uso da Aplicação MVC
+####  Acesso ao MVC
 
-| ID | Nome da Funcionalidade | Perfil | Descrição |
-| :--- | :--- | :--- | :--- |
-| UC01 | Exibir tela de login | Usuário | Apresenta a tela para informar o e-mail cadastrado. |
-| UC02 | Validar formato de e-mail | Sistema | Impede o envio da solicitação com e-mail vazio ou inválido. |
-| UC03 | Localizar usuário por e-mail | Sistema | Consulta o usuário cadastrado no Firestore. |
-| UC04 | Recusar usuário inativo | Sistema | Não gera token para usuário inexistente ou inativo. |
-| UC05 | Gerar token de acesso | Sistema | Cria token numérico temporário para acesso ao Kinect. |
-| UC06 | Armazenar hash do token | Sistema | Salva somente o hash do token, validade e dados de contexto. |
-| UC07 | Enviar token por e-mail | Sistema | Envia o token ao e-mail cadastrado do usuário. |
-| UC08 | Registrar solicitação de token | Sistema | Registra em log a solicitação do token. |
-| UC09 | Registrar envio de token | Sistema | Registra em log o envio do token. |
-| UC10 | Validar token | Sistema | Verifica se o token existe e corresponde ao hash armazenado. |
-| UC11 | Validar expiração do token | Sistema | Recusa tokens utilizados após o prazo de validade. |
-| UC12 | Validar uso único do token | Sistema | Recusa token já utilizado anteriormente. |
-| UC13 | Marcar token como utilizado | Sistema | Marca token validado para impedir nova utilização. |
-| UC14 | Criar sessão autenticada | Sistema | Cria cookie de sessão e claims do usuário validado. |
-| UC15 | Encerrar sessão | Usuário | Realiza logout do sistema MVC. |
-| UC16 | Exibir acesso negado | Sistema | Informa ao usuário que seu perfil não possui permissão. |
-| UC17 | Controlar permissão por perfil | Sistema | Autoriza ou bloqueia funcionalidades conforme o perfil. |
-| UC18 | Exibir Dashboard | Usuário autorizado | Exibe o painel principal da empresa logada. |
-| UC19 | Exibir indicadores do Dashboard | Usuário autorizado | Exibe total de parceiros, usuários, medições e alertas. |
-| UC20 | Exibir gráfico de volume | Usuário autorizado | Mostra histórico recente das medições. |
-| UC21 | Exibir percentual de ocupação | Usuário autorizado | Calcula ocupação com base no volume e capacidade máxima. |
-| UC22 | Exibir últimas notificações | Usuário autorizado | Mostra notificações mais recentes da empresa. |
-| UC23 | Atualizar Dashboard em tempo real | Sistema | Atualiza dados recebidos pelos hubs SignalR. |
-| UC24 | Listar usuários | Administrador | Exibe usuários da empresa com paginação. |
-| UC25 | Filtrar usuários por nome | Administrador | Pesquisa usuários pelo nome. |
-| UC26 | Filtrar usuários por e-mail | Administrador | Pesquisa usuários pelo e-mail. |
-| UC27 | Filtrar usuários por perfil | Administrador | Filtra usuários pelo perfil de acesso. |
-| UC28 | Filtrar usuários por empresa | Administrador | Filtra usuários pela empresa vinculada. |
-| UC29 | Filtrar usuários por status | Administrador | Filtra usuários ativos ou inativos. |
-| UC30 | Cadastrar usuário | Administrador | Inclui usuário com nome, e-mail, perfil e empresa. |
-| UC31 | Visualizar usuário | Administrador | Exibe os detalhes de um usuário. |
-| UC32 | Editar usuário | Administrador | Atualiza dados cadastrais do usuário. |
-| UC33 | Ativar usuário | Administrador | Torna um usuário apto a acessar o sistema. |
-| UC34 | Inativar usuário | Administrador | Impede novo acesso de um usuário. |
-| UC35 | Excluir usuário | Administrador | Remove usuário quando permitido pela regra do negócio. |
-| UC36 | Listar perfis | Administrador | Exibe os perfis cadastrados para a empresa. |
-| UC37 | Cadastrar perfil | Administrador | Cria um perfil de acesso. |
-| UC38 | Editar perfil | Administrador | Altera nome, descrição e permissões do perfil. |
-| UC39 | Visualizar perfil | Administrador | Exibe permissões configuradas no perfil. |
-| UC40 | Inativar perfil | Administrador | Impede associação de novos usuários ao perfil. |
-| UC41 | Definir permissões do perfil | Administrador | Vincula funcionalidades permitidas a cada perfil. |
-| UC42 | Listar parceiros | Administrador/Gestor | Exibe parceiros cadastrados da empresa. |
-| UC43 | Filtrar parceiros por nome | Administrador/Gestor | Pesquisa parceiros pelo nome. |
-| UC44 | Filtrar parceiros por e-mail | Administrador/Gestor | Pesquisa parceiros pelo e-mail. |
-| UC45 | Filtrar parceiros por empresa | Administrador/Gestor | Pesquisa parceiros pela empresa. |
-| UC46 | Filtrar parceiros por período | Administrador/Gestor | Filtra parceiros por data de cadastro. |
-| UC47 | Filtrar parceiros por status | Administrador/Gestor | Filtra parceiros ativos ou inativos. |
-| UC48 | Cadastrar parceiro | Administrador/Gestor | Inclui parceiro com dados de contato. |
-| UC49 | Visualizar parceiro | Administrador/Gestor | Exibe detalhes do parceiro. |
-| UC50 | Editar parceiro | Administrador/Gestor | Atualiza dados cadastrais do parceiro. |
-| UC51 | Ativar parceiro | Administrador/Gestor | Habilita parceiro para operação. |
-| UC52 | Inativar parceiro | Administrador/Gestor | Desabilita parceiro sem apagar histórico. |
-| UC53 | Excluir parceiro | Administrador | Remove parceiro quando não houver dependência. |
-| UC54 | Exibir configurações | Administrador | Exibe parâmetros operacionais da empresa. |
-| UC55 | Configurar capacidade máxima | Administrador | Define a capacidade máxima do espaço. |
-| UC56 | Configurar capacidade mínima | Administrador | Define o limite mínimo operacional. |
-| UC57 | Configurar percentual de alerta | Administrador | Define o percentual que dispara alertas. |
-| UC58 | Configurar notificação automática | Administrador | Ativa ou desativa alertas automáticos. |
-| UC59 | Configurar canais de notificação | Administrador | Define canais de e-mail, WhatsApp e Dashboard. |
-| UC60 | Configurar parâmetros Kinect | Administrador | Define raio, taxa de amostragem e duração de medição. |
-| UC61 | Iniciar calibração | Administrador | Registra a solicitação de calibração do ambiente. |
-| UC62 | Restaurar padrões | Administrador | Restaura parâmetros padrão da empresa. |
-| UC63 | Listar medições | Usuário autorizado | Exibe medições em ordem decrescente de data. |
-| UC64 | Filtrar medições por data | Usuário autorizado | Filtra medições por data inicial e final. |
-| UC65 | Filtrar medições por origem | Usuário autorizado | Filtra leituras conforme a origem. |
-| UC66 | Filtrar medições por status | Usuário autorizado | Filtra medições por status da leitura. |
-| UC67 | Paginar medições | Usuário autorizado | Exibe no máximo dez registros por página. |
-| UC68 | Exibir resumo de medições | Usuário autorizado | Exibe total, média, máximo e mínimo de volume. |
-| UC69 | Receber medição via SignalR | Sistema | Recebe volume enviado pelo aplicativo Kinect. |
-| UC70 | Persistir medição | Sistema | Armazena medição com empresa, data, origem e status. |
-| UC71 | Calcular ocupação | Sistema | Calcula percentual em relação à capacidade máxima. |
-| UC72 | Gerar notificação automática | Sistema | Cria alerta quando o limite configurado for atingido. |
-| UC73 | Evitar alerta duplicado | Sistema | Verifica notificação pendente antes de gerar novo alerta. |
-| UC74 | Listar notificações | Usuário autorizado | Exibe histórico de notificações. |
-| UC75 | Filtrar notificações por período | Usuário autorizado | Filtra notificações por data inicial e final. |
-| UC76 | Filtrar notificações por parceiro | Usuário autorizado | Filtra notificações pelo parceiro vinculado. |
-| UC77 | Filtrar notificações por tipo | Usuário autorizado | Filtra notificações por tipo de alerta. |
-| UC78 | Filtrar notificações por status | Usuário autorizado | Filtra notificações por pendente, aceito, erro ou resolvido. |
-| UC79 | Paginar notificações | Usuário autorizado | Exibe notificações em páginas. |
-| UC80 | Aceitar coleta | Usuário autorizado | Atualiza uma notificação pendente para aceita. |
-| UC81 | Notificar clientes conectados | Sistema | Comunica atualizações de notificação via SignalR. |
-| UC82 | Registrar logs operacionais | Sistema | Registra login, token, configuração, erro e eventos relevantes. |
-| UC83 | Isolar dados por empresa | Sistema | Restringe consultas e operações à empresa do usuário. |
-| UC84 | Solicitar token pela API Kinect | Aplicação Kinect | Recebe e-mail do Kinect e inicia a geração do token. |
-| UC85 | Validar token pela API Kinect | Aplicação Kinect | Valida token recebido do Kinect e retorna usuário/empresa. |
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC01 | Acessar tela de login | Usuário | Abre a página de autenticação do sistema. |
+| UC02 | Solicitar token por e-mail | Usuário | Informa o e-mail cadastrado e solicita um código temporário. |
+| UC03 | Consultar token recebido | Usuário | Consulta sua caixa de e-mail para obter o código enviado. |
+| UC04 | Informar token de acesso | Usuário | Digita o código recebido para confirmar sua identidade. |
+| UC05 | Acessar o sistema | Usuário | Entra no ambiente permitido para seu perfil e empresa. |
+| UC06 | Encerrar sessão | Usuário | Solicita a saída segura do sistema. |
 
 ---
 
-#### Casos de Uso da Aplicação Kinect
+####  Dashboard
 
-| ID | Nome da Funcionalidade | Perfil | Descrição |
-| :--- | :--- | :--- | :--- |
-| UC86 | Exibir tela de acesso | Operador | Apresenta as abas de entrada e solicitação de token. |
-| UC87 | Informar e-mail cadastrado | Operador | Informa o e-mail associado ao usuário no MVC. |
-| UC88 | Solicitar token ao MVC | Operador | Solicita que o MVC gere e envie o token por e-mail. |
-| UC89 | Exibir resultado da solicitação | Sistema Kinect | Mostra sucesso ou falha da solicitação de token. |
-| UC90 | Receber token por e-mail | Operador | Consulta o e-mail e obtém o código temporário. |
-| UC91 | Informar token de acesso | Operador | Digita o token numérico recebido. |
-| UC92 | Validar token no MVC | Sistema Kinect | Envia o token ao MVC para validação. |
-| UC93 | Bloquear token inválido | Sistema Kinect | Mantém acesso bloqueado para token inválido, expirado ou usado. |
-| UC94 | Criar sessão operacional | Sistema Kinect | Guarda usuário, e-mail e empresa após validação. |
-| UC95 | Liberar monitoramento | Sistema Kinect | Abre a tela do monitoramento após validação positiva. |
-| UC96 | Conectar ao Kinect físico | Operador | Inicializa comunicação com o sensor Kinect. |
-| UC97 | Verificar disponibilidade do sensor | Sistema Kinect | Informa quando o dispositivo não está conectado ou disponível. |
-| UC98 | Iniciar captura de profundidade | Operador | Inicia coleta de dados de profundidade. |
-| UC99 | Interromper captura | Operador | Interrompe a coleta de dados do sensor. |
-| UC100 | Calibrar ambiente | Operador | Executa calibração do espaço de medição. |
-| UC101 | Ajustar ângulo do sensor | Operador | Ajusta inclinação do Kinect quando aplicável. |
-| UC102 | Definir área de leitura | Operador | Delimita área utilizada no cálculo do volume. |
-| UC103 | Capturar leitura de profundidade | Kinect | Obtém os dados de distância do ambiente. |
-| UC104 | Filtrar ruídos da leitura | Sistema Kinect | Ignora dados fora da faixa confiável do sensor. |
-| UC105 | Calcular volume ocupado | Sistema Kinect | Processa profundidade e área para obter o volume. |
-| UC106 | Converter centímetros cúbicos para metros cúbicos | Sistema Kinect | Converte a unidade de volume antes do envio. |
-| UC107 | Exibir volume atual | Operador | Mostra o volume calculado em tempo real. |
-| UC108 | Exibir status da medição | Operador | Informa se leitura está normal, em alerta ou com erro. |
-| UC109 | Atualizar gráfico local | Sistema Kinect | Atualiza indicadores visuais de volume durante a leitura. |
-| UC110 | Registrar medição local | Sistema Kinect | Armazena medição em base local para apoio operacional. |
-| UC111 | Consultar histórico local | Operador | Exibe histórico local de medições. |
-| UC112 | Enviar medição ao MVC | Sistema Kinect | Envia volume ao hub SignalR do MVC. |
-| UC113 | Enviar origem da leitura | Sistema Kinect | Identifica a origem da medição como Kinect. |
-| UC114 | Associar medição à empresa | Sistema Kinect | Usa contexto do usuário validado para associar empresa. |
-| UC115 | Tratar falha de conexão com MVC | Sistema Kinect | Exibe mensagem quando o MVC não estiver acessível. |
-| UC116 | Tentar reconectar ao SignalR | Sistema Kinect | Tenta restabelecer conexão em caso de perda. |
-| UC117 | Registrar log de acesso | Sistema Kinect | Registra solicitação e validação de token localmente. |
-| UC118 | Registrar log de leitura | Sistema Kinect | Registra início, parada e resultado de medições. |
-| UC119 | Registrar log de erro | Sistema Kinect | Registra falhas de sensor, rede, calibração e envio. |
-| UC120 | Encerrar monitoramento | Operador | Finaliza a sessão operacional do Kinect. |
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC07 | Visualizar Dashboard | Todos os perfis | Acessa a visão geral da empresa. |
+| UC08 | Consultar indicadores | Todos os perfis | Consulta totais de parceiros, usuários, medições e alertas. |
+| UC09 | Consultar movimentação do estoque | Todos os perfis | Analisa entradas, saídas e histórico de volume no gráfico. |
+| UC10 | Consultar ocupação do estoque | Todos os perfis | Visualiza o percentual ocupado e sua faixa de alerta. |
+| UC11 | Consultar últimas notificações | Todos os perfis | Visualiza as notificações mais recentes da empresa. |
+| UC12 | Acompanhar atualizações em tempo real | Todos os perfis | Mantém o painel aberto para acompanhar novos dados sem recarregar a página. |
 
 ---
 
-#### Casos de Uso Incluídos (<<include>>)
+####  Usuários
 
-| Caso Principal | Caso Incluído |
-| :--- | :--- |
-| UC01 - Exibir tela de login | UC02 - Validar formato de e-mail |
-| UC03 - Localizar usuário por e-mail | UC04 - Recusar usuário inativo |
-| UC05 - Gerar token de acesso | UC06 - Armazenar hash do token |
-| UC05 - Gerar token de acesso | UC07 - Enviar token por e-mail |
-| UC05 - Gerar token de acesso | UC08 - Registrar solicitação de token |
-| UC07 - Enviar token por e-mail | UC09 - Registrar envio de token |
-| UC10 - Validar token | UC11 - Validar expiração do token |
-| UC10 - Validar token | UC12 - Validar uso único do token |
-| UC10 - Validar token | UC13 - Marcar token como utilizado |
-| UC10 - Validar token | UC14 - Criar sessão autenticada |
-| UC18 - Exibir Dashboard | UC19 - Exibir indicadores do Dashboard |
-| UC18 - Exibir Dashboard | UC20 - Exibir gráfico de volume |
-| UC18 - Exibir Dashboard | UC21 - Exibir percentual de ocupação |
-| UC18 - Exibir Dashboard | UC22 - Exibir últimas notificações |
-| UC23 - Atualizar Dashboard em tempo real | UC69 - Receber medição via SignalR |
-| UC30 - Cadastrar usuário | UC17 - Controlar permissão por perfil |
-| UC38 - Editar perfil | UC41 - Definir permissões do perfil |
-| UC54 - Exibir configurações | UC55 - Configurar capacidade máxima |
-| UC54 - Exibir configurações | UC56 - Configurar capacidade mínima |
-| UC54 - Exibir configurações | UC57 - Configurar percentual de alerta |
-| UC54 - Exibir configurações | UC58 - Configurar notificação automática |
-| UC54 - Exibir configurações | UC59 - Configurar canais de notificação |
-| UC54 - Exibir configurações | UC60 - Configurar parâmetros Kinect |
-| UC63 - Listar medições | UC67 - Paginar medições |
-| UC63 - Listar medições | UC68 - Exibir resumo de medições |
-| UC69 - Receber medição via SignalR | UC70 - Persistir medição |
-| UC70 - Persistir medição | UC71 - Calcular ocupação |
-| UC71 - Calcular ocupação | UC72 - Gerar notificação automática |
-| UC72 - Gerar notificação automática | UC73 - Evitar alerta duplicado |
-| UC74 - Listar notificações | UC79 - Paginar notificações |
-| UC80 - Aceitar coleta | UC81 - Notificar clientes conectados |
-| UC84 - Solicitar token pela API Kinect | UC05 - Gerar token de acesso |
-| UC85 - Validar token pela API Kinect | UC10 - Validar token |
-| UC88 - Solicitar token ao MVC | UC84 - Solicitar token pela API Kinect |
-| UC92 - Validar token no MVC | UC85 - Validar token pela API Kinect |
-| UC96 - Conectar ao Kinect físico | UC97 - Verificar disponibilidade do sensor |
-| UC98 - Iniciar captura de profundidade | UC103 - Capturar leitura de profundidade |
-| UC100 - Calibrar ambiente | UC101 - Ajustar ângulo do sensor |
-| UC100 - Calibrar ambiente | UC102 - Definir área de leitura |
-| UC103 - Capturar leitura de profundidade | UC104 - Filtrar ruídos da leitura |
-| UC104 - Filtrar ruídos da leitura | UC105 - Calcular volume ocupado |
-| UC105 - Calcular volume ocupado | UC106 - Converter centímetros cúbicos para metros cúbicos |
-| UC112 - Enviar medição ao MVC | UC113 - Enviar origem da leitura |
-| UC112 - Enviar medição ao MVC | UC114 - Associar medição à empresa |
-
-> **Nota:** Os casos de uso incluídos representam funcionalidades internas ou obrigatórias executadas durante a realização de um caso de uso principal.
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC13 | Listar usuários | Administrador | Consulta os usuários vinculados à sua empresa. |
+| UC14 | Abrir filtros avançados de usuários | Administrador | Expande a área de filtros da listagem. |
+| UC15 | Filtrar usuários | Administrador | Pesquisa por nome, e-mail, perfil, empresa ou status. |
+| UC16 | Navegar entre páginas de usuários | Administrador | Avança ou retorna entre páginas de até dez registros. |
+| UC17 | Cadastrar usuário | Administrador | Informa dados, empresa, perfil e situação do novo usuário. |
+| UC18 | Visualizar usuário | Administrador | Consulta os detalhes cadastrais e de acesso. |
+| UC19 | Editar usuário | Administrador | Altera os dados permitidos do usuário. |
+| UC20 | Ativar usuário | Administrador | Libera o usuário para novos acessos. |
+| UC21 | Inativar usuário | Administrador | Bloqueia novos acessos sem apagar o histórico. |
 
 ---
 
-#### Casos de Uso Extendidos (<<extend>>)
+#### Perfis e Permissões
 
-| ID(s) | Nome da Funcionalidade | Perfil | Descrição |
-| :--- | :--- | :--- | :--- |
-| UC04 | Recusar usuário inativo | Sistema | Estende a localização do usuário quando o cadastro estiver inexistente ou inativo. |
-| UC11, UC12 | Validações do Token | Sistema | Estendem a validação do token quando houver expiração ou tentativa de reutilização. |
-| UC16 | Exibir acesso negado | Sistema | Estende o controle de permissões quando o usuário não possuir acesso à funcionalidade. |
-| UC23 | Atualizar Dashboard em tempo real | Sistema | Estende o Dashboard quando novas medições ou notificações forem recebidas. |
-| UC33, UC34 | Ativação/Inativação de usuário | Administrador | Estendem a manutenção de usuários conforme necessidade administrativa. |
-| UC51, UC52 | Ativação/Inativação de parceiro | Administrador/Gestor | Estendem a manutenção de parceiros sem apagar o histórico. |
-| UC61 | Iniciar calibração | Administrador | Estende as configurações quando for necessário solicitar calibração do ambiente. |
-| UC62 | Restaurar padrões | Administrador | Estende as configurações quando os parâmetros precisarem retornar aos valores padrão. |
-| UC72, UC73 | Geração e controle de alertas | Sistema | Estendem o cálculo de ocupação quando o limite configurado for atingido. |
-| UC80 | Aceitar coleta | Usuário autorizado | Estende o fluxo de notificações quando uma coleta pendente for aceita. |
-| UC89 | Exibir resultado da solicitação | Sistema Kinect | Estende a solicitação de token informando sucesso ou falha ao operador. |
-| UC93 | Bloquear token inválido | Sistema Kinect | Estende a validação do token quando o código estiver inválido, expirado ou utilizado. |
-| UC95 | Liberar monitoramento | Sistema Kinect | Estende a criação da sessão operacional após validação positiva. |
-| UC115, UC116 | Tratamento e reconexão SignalR | Sistema Kinect | Estendem o envio de medição quando houver falha de conexão com o MVC. |
-| UC117, UC118, UC119 | Logs locais do Kinect | Sistema Kinect | Estendem os processos operacionais registrando acesso, leitura e erros. |
-
-> **Nota:** Os casos de uso extendidos representam comportamentos condicionais ou complementares executados conforme o resultado do fluxo principal.
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC22 | Listar perfis | Administrador | Consulta os perfis da empresa. |
+| UC23 | Filtrar perfis | Administrador | Pesquisa perfis por nome ou situação. |
+| UC24 | Cadastrar perfil | Administrador | Cria um perfil vinculado à empresa. |
+| UC25 | Visualizar perfil | Administrador | Consulta descrição, situação e permissões. |
+| UC26 | Editar perfil | Administrador | Altera os dados e as permissões do perfil. |
+| UC27 | Definir permissões | Administrador | Seleciona as funcionalidades permitidas ao perfil. |
+| UC28 | Inativar perfil | Administrador | Impede novas vinculações ao perfil preservando o histórico. |
 
 ---
 
-#### Casos de Uso de Integração
+#### Parceiros
 
-| ID | Nome da Funcionalidade | Perfil | Descrição |
-| :--- | :--- | :--- | :--- |
-| UCI01 | Solicitar token via API | Aplicação Kinect | O Kinect envia o e-mail informado para a API MVC solicitar o token. |
-| UCI02 | Gerar token no MVC | Sistema MVC | O MVC valida o usuário, gera o token e envia por e-mail. |
-| UCI03 | Validar token via API | Aplicação Kinect | O Kinect envia o token informado para validação no MVC. |
-| UCI04 | Retornar usuário e empresa | Sistema MVC | O MVC retorna os dados do usuário e da empresa após validação do token. |
-| UCI05 | Enviar medição via SignalR | Sistema Kinect | O Kinect envia as medições processadas para o hub SignalR do MVC. |
-| UCI06 | Receber medição no MVC | Sistema MVC | O MVC recebe o volume enviado pelo Kinect. |
-| UCI07 | Persistir medição integrada | Sistema MVC | O MVC armazena a medição vinculada à empresa. |
-| UCI08 | Atualizar Dashboard em tempo real | Sistema MVC | O Dashboard é atualizado automaticamente após o recebimento da medição. |
-| UCI09 | Gerar notificação automática | Sistema MVC | O MVC gera alerta quando a ocupação atinge o limite configurado. |
-| UCI10 | Notificar clientes conectados | Sistema MVC | O MVC comunica dashboards e usuários conectados via SignalR. |
-| UCI11 | Tratar falha de conexão | Sistema Kinect | O Kinect identifica indisponibilidade do MVC durante o envio. |
-| UCI12 | Tentar reconexão SignalR | Sistema Kinect | O Kinect tenta restabelecer a comunicação com o MVC. |
-| UCI13 | Registrar logs de integração | Sistema | Registra eventos de token, conexão, envio, erro e sincronização. |
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC29 | Listar parceiros | Administrador / Gestor | Consulta os parceiros da empresa. |
+| UC30 | Abrir filtros avançados de parceiros | Administrador / Gestor | Expande a área de filtros. |
+| UC31 | Filtrar parceiros | Administrador / Gestor | Pesquisa por nome, e-mail, empresa, período ou status. |
+| UC32 | Navegar entre páginas de parceiros | Administrador / Gestor | Percorre páginas de até dez registros. |
+| UC33 | Cadastrar parceiro | Administrador | Registra os dados de contato e empresa do parceiro. |
+| UC34 | Visualizar parceiro | Administrador / Gestor | Consulta os detalhes do parceiro. |
+| UC35 | Editar parceiro | Administrador | Atualiza os dados cadastrais. |
+| UC36 | Ativar parceiro | Administrador | Habilita o parceiro para operações e notificações. |
+| UC37 | Inativar parceiro | Administrador | Suspende o parceiro sem apagar seu histórico. |
 
 ---
 
-#### Relação entre as Aplicações
+#### Histórico de Medições
 
-1. O operador abre a aplicação Kinect e solicita token usando o e-mail cadastrado.
-2. O Kinect chama a API do MVC.
-3. O MVC valida o usuário, gera token, registra o evento e envia e-mail.
-4. O operador informa o token no Kinect.
-5. O Kinect chama a API do MVC para validar o token.
-6. O MVC marca o token como utilizado e retorna usuário e empresa.
-7. O Kinect libera o monitoramento e envia medições pelo SignalR.
-8. O MVC persiste as medições, atualiza o Dashboard e gera alertas quando necessário.
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC38 | Consultar histórico de medições | Usuário autorizado | Visualiza as medições por ordem de data. |
+| UC39 | Abrir filtros avançados de medições | Usuário autorizado | Expande os controles de pesquisa. |
+| UC40 | Filtrar medições por período | Usuário autorizado | Informa data inicial e final. |
+| UC41 | Filtrar medições por origem | Usuário autorizado | Seleciona a origem da leitura. |
+| UC42 | Filtrar medições por status | Usuário autorizado | Seleciona a situação da medição. |
+| UC43 | Limpar filtros de medições | Usuário autorizado | Retorna a listagem ao estado inicial. |
+| UC44 | Navegar entre páginas de medições | Usuário autorizado | Percorre páginas com até dez registros. |
+| UC45 | Consultar resumo das medições | Usuário autorizado | Consulta total, média, maior, menor, última medição e alertas. |
+
+---
+
+#### Notificações
+
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC46 | Consultar histórico de notificações | Usuário autorizado | Visualiza as notificações da empresa. |
+| UC47 | Abrir filtros avançados de notificações | Usuário autorizado | Expande os controles de pesquisa. |
+| UC48 | Filtrar notificações por período | Usuário autorizado | Define data inicial e final. |
+| UC49 | Filtrar notificações por parceiro | Usuário autorizado | Seleciona o destinatário relacionado. |
+| UC50 | Filtrar notificações por tipo | Usuário autorizado | Seleciona Informativo, Alerta ou Crítico. |
+| UC51 | Filtrar notificações por status | Usuário autorizado | Seleciona envio ou resposta desejada. |
+| UC52 | Navegar entre páginas de notificações | Usuário autorizado | Percorre páginas com até dez registros. |
+| UC53 | Consultar detalhes da notificação | Usuário autorizado | Visualiza mensagem, volume, empresa, canal, envio e resposta. |
+| UC54 | Responder solicitação de coleta | Parceiro | Informa aceite ou negativa pelo canal disponibilizado. |
+| UC55 | Acompanhar resposta do parceiro | Administrador / Gestor | Consulta a resposta atualizada no histórico e Dashboard. |
+
+---
+
+#### Configurações
+
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC56 | Consultar configurações | Administrador | Abre as configurações da empresa. |
+| UC57 | Habilitar configuração manual | Administrador | Libera a edição dos parâmetros controlados pelo MVC. |
+| UC58 | Configurar capacidade do estoque | Administrador | Define capacidades máxima e mínima. |
+| UC59 | Configurar limite de alerta | Administrador | Define o percentual que caracteriza o alerta. |
+| UC60 | Configurar tipo de alerta | Administrador | Seleciona Informativo, Alerta ou Crítico. |
+| UC61 | Configurar template da mensagem | Administrador | Edita a mensagem utilizando tags disponíveis. |
+| UC62 | Configurar canais de envio | Administrador | Habilita e-mail e/ou WhatsApp. |
+| UC63 | Configurar regra de envio | Administrador | Define intervalo em minutos ou horas. |
+| UC64 | Selecionar modo de disparo | Administrador | Escolhe envio automático ou manual. |
+| UC65 | Habilitar calibração pelo MVC | Administrador | Autoriza calibração via sistema Web. |
+| UC66 | Iniciar calibração pelo MVC | Administrador | Solicita a calibração quando habilitada. |
+| UC67 | Salvar configurações | Administrador | Confirma as alterações realizadas. |
+
+---
+
+#### Logs e Auditoria
+
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC68 | Consultar logs | Administrador | Visualiza os eventos registrados. |
+| UC69 | Filtrar logs | Administrador | Pesquisa por período, usuário, nível ou tipo. |
+| UC70 | Consultar detalhes do log | Administrador | Visualiza data, responsável, evento, nível e descrição. |
+
+---
+
+#### Aplicação Kinect
+
+| Código | Caso de Uso | Ator | Interação |
+|:------:|-------------|------|-----------|
+| UC71 | Abrir tela de acesso ao Kinect | Operador | Inicia a aplicação. |
+| UC72 | Solicitar token pelo Kinect | Operador | Solicita token utilizando o e-mail. |
+| UC73 | Informar token no Kinect | Operador | Digita o código recebido. |
+| UC74 | Acessar monitoramento do Kinect | Operador | Entra na área operacional após validação. |
+| UC75 | Conectar sensor Kinect | Operador | Inicializa a comunicação com o Kinect. |
+| UC76 | Calibrar ambiente | Operador | Executa a calibração do ambiente. |
+| UC77 | Iniciar medição | Operador | Inicia a captura do volume. |
+| UC78 | Acompanhar medição em tempo real | Operador | Visualiza indicadores durante a captura. |
+| UC79 | Interromper medição | Operador | Finaliza a captura atual. |
+| UC80 | Consultar histórico local | Operador | Visualiza medições armazenadas no SQLite. |
+| UC81 | Encerrar monitoramento | Operador | Finaliza a sessão do Kinect. |
 
 ---
 
