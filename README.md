@@ -1938,7 +1938,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** Garante o encerramento limpo do ciclo de vida da conexão invocando os métodos de descarte apropriados (`StopAsync` e `DisposeAsync`), liberando os recursos de rede e memória do lado do cliente desktop e do servidor central.
 ---
 
-#### Regras Técnicas/Operacionais - MVC/Web
+### Regras Técnicas/Operacionais - MVC/Web
 ---
 
 #### 🟡 RN006 - Armazenamento seguro do token
