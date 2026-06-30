@@ -583,8 +583,8 @@ As regras de negócio definem o comportamento esperado do sistema, garantindo a 
 
 As regras do sistema **Inventory Masters** foram divididas em cinco grupos: 
 
-> * Regras de negócio do MVC
-> * Regras de negócio do Kinect
+> * Regras de negócio do MVC/Web
+> * Regras de negócio do Kinect/Desktop
 > * Regras de validação
 > * Regras de integração
 > * Regras técnicas/operacionais
@@ -604,7 +604,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 - 🟡 **Regras técnicas/operacionais:** Descrevem controles necessários para execução, rastreabilidade, configuração, cálculo e estabilidade.
 - **Funcionalidades em evolução:** WhatsApp, escalonamento e canais de alerta permanecem como funcionalidades parametrizadas, pois o código já possui configurações para esses recursos.
 
-### Regras de Negócio MVC
+### Regras de Negócio - MVC
 ---
 
 #### 🔵 RN001 - Solicitação de token por e-mail
@@ -836,7 +836,8 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** O processo automatizado de medição segue as mesmas premissas de validação que o modo manual, garantindo consistência nos dados coletados pelo sistema.
 ---
 
-### Regras de Validação MVC/Web
+### Regras de Validação - MVC/Web
+---
 
 #### 🔴 RN002 - Bloqueio de e-mail em formato inválido
 
@@ -987,7 +988,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 
 | Condição | Restrição | Ação |
 | :--- | :--- | :--- |
-| O administrador confirma exclusão de usuário. | O ID do usuário deve ser informado e existir. | O sistema remove o documento correspondente no Firestore. |
+| O administrador confirma exclusão de usuário. | O ID do usuário deve ser informado e existir. | O sistema remove o documento correspondente no Firebase. |
 
 > **Regra:** A exclusão definitiva de registros no Firebase é condicionada à validação prévia da existência do ID, evitando operações em referências nulas ou incorretas.
 ---
@@ -1253,11 +1254,11 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** A falha no canal de comunicação SignalR deve ser documentada via log, permitindo a auditabilidade de eventos de notificação não entregues.
 ---
 
-#### 🔴 RN109 - Falha de comunicação com Firestore
+#### 🔴 RN109 - Falha de comunicação com Firebase
 
 | Condição | Restrição | Ação |
 | :--- | :--- | :--- |
-| O sistema tenta acessar o Firestore e ocorre erro. | A falha não deve interromper toda a aplicação. | O MVC registra o erro e retorna mensagem adequada ou lista vazia. |
+| O sistema tenta acessar o Firebase e ocorre erro. | A falha não deve interromper toda a aplicação. | O MVC registra o erro e retorna mensagem adequada ou lista vazia. |
 
 > **Regra:** O isolamento de falhas de persistência é obrigatório; a indisponibilidade temporária do Firestore deve degradar o serviço de forma controlada, mantendo o sistema operante.
 ---
@@ -1677,12 +1678,12 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 
 | Condição | Restrição | Ação |
 | :--- | :--- | :--- |
-| O MVC precisa persistir dados operacionais. | Usuários, parceiros, perfis, parâmetros, medições, tokens, logs e notificações devem ser gravados no Firestore. | O sistema utiliza o Firebase como banco principal web. |
+| O MVC precisa persistir dados operacionais. | Usuários, parceiros, perfis, parâmetros, medições, tokens, logs e notificações devem ser gravados no Firebase. | O sistema utiliza o Firebase como banco principal web. |
 
-> **Regra:** Centraliza toda a camada de persistência da aplicação Web no ecossistema NoSQL do Google Cloud Firestore.
+> **Regra:** Centraliza toda a camada de persistência da aplicação Web no ecossistema NoSQL do Google Cloud Firebase.
 ---
 
-#### 🟢 RN108 - Coleções separadas no Firestore
+#### 🟢 RN108 - Coleções separadas no Firebase
 
 | Condição | Restrição | Ação |
 | :--- | :--- | :--- |
@@ -1742,7 +1743,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 | :--- | :--- | :--- |
 | O MVC precisa acessar dados persistidos. | A conexão com o Firebase Firestore deve estar configurada antes das consultas e gravações. | O sistema utiliza o serviço Firebase como fonte de dados do módulo web. |
 
-> **Regra:** Estabelece a inicialização obrigatória do SDK do Firebase (`FirestoreDb`) durante o bootstrap da aplicação no `Program.cs`.
+> **Regra:** Estabelece a inicialização obrigatória do SDK do Firebase (`FirebaseDb`) durante o bootstrap da aplicação no `Program.cs`.
 ---
 
 #### 🟢 RN123 - Configuração dos Hubs SignalR
