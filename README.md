@@ -2243,235 +2243,262 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** Configura o middleware de roteamento padrão do ASP.NET Core (`{controller=Home}/{action=Index}/{id?}`), permitindo o mapeamento correto de URLs amigáveis para os endpoints da aplicação.
 ---
 
-##### Kinect/Desktop
+###  Regras de Integração Kinect/Desktop
 
-**RNK018 - Captura múltipla na calibração**
+#### 🟡 RNK018 - Captura múltipla na calibração
 
-**Condição:** O sistema calibra o ambiente.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema calibra o ambiente. | A referência deve ser formada por múltiplos frames válidos. | O Kinect calcula média de profundidade para reduzir ruído. |
 
-**Restrição:** A referência deve ser formada por múltiplos frames válidos.<br>
+> **Regra:** Mitiga flutuações e ruídos ópticos do sensor de profundidade por meio de empilhamento de quadros (*frame averaging*), gerando uma matriz de referência estável.
+---
 
-**Ação:** O Kinect calcula média de profundidade para reduzir ruído.<br>
+#### 🟡 RNK021 - Estado calibrado
 
-**RNK021 - Estado calibrado**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| A calibração é concluída com sucesso. | Mapa de referência e volume máximo precisam estar válidos. | O sistema altera o estado para calibrado. |
 
-**Condição:** A calibração é concluída com sucesso.<br>
+> **Regra:** Valida os metadados gerados pela rotina de calibração antes de chavear a flag de estado global da aplicação desktop, habilitando o módulo de volumetria.
+---
 
-**Restrição:** Mapa de referência e volume máximo precisam estar válidos.<br>
+#### 🟡 RNK022 - Estado não calibrado em falha
 
-**Ação:** O sistema altera o estado para calibrado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| A calibração falha ou é cancelada. | O sistema não pode usar referência incompleta. | O Kinect permanece marcado como não calibrado. |
 
-**RNK022 - Estado não calibrado em falha**
+> **Regra:** Bloqueia o uso de dados parciais ou corrompidos de ambiente, forçando o sistema a manter o estado de segurança "Não Calibrado" e impedindo falsas leituras.
+---
 
-**Condição:** A calibração falha ou é cancelada.<br>
+#### 🟡 RNK023 - Movimento seguro do motor
 
-**Restrição:** O sistema não pode usar referência incompleta.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect adjusts o ângulo durante a calibração. | O ângulo deve permanecer dentro do intervalo permitido. | O sistema limita o movimento ao ângulo mínimo e máximo. |
 
-**Ação:** O Kinect permanece marcado como não calibrado.<br>
+> **Regra:** Protege os componentes mecânicos e engrenagens do sensor de inclinação (*tilt motor*), aplicando travas de software que barram comandos fora da faixa física suportada (ex: -27° a 27°).
+---
 
-**RNK023 - Movimento seguro do motor**
+#### 🟡 RNK024 - Restauração do ângulo original
 
-**Condição:** O Kinect ajusta o ângulo durante a calibração.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| A calibração termina, falha ou é cancelada. | O sensor deve retornar à posição anterior sempre que possível. | O sistema tenta restaurar o ângulo original do Kinect. |
 
-**Restrição:** O ângulo deve permanecer dentro do intervalo permitido.<br>
+> **Regra:** Armazena o ângulo de inclinação inicial em memória antes de iniciar o processo técnico e tenta reverter para este valor de origem no encerramento ou interrupção do ciclo.
+---
 
-**Ação:** O sistema limita o movimento ao ângulo mínimo e máximo.<br>
+#### 🟡 RNK025 - Reset da suavização após calibração
 
-**RNK024 - Restauração do ângulo original**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um novo mapa calibrado é capturado. | Histórico de volumes anteriores não pode influenciar a nova referência. | O sistema limpa o histórico de suavização. |
 
-**Condição:** A calibração termina, falha ou é cancelada.<br>
+> **Regra:** Esvazia os buffers ou filas de médias móveis (*smoothing historical data*) no momento em que o ambiente físico é redefinido, evitando distorções nos cálculos subsequentes.
+---
 
-**Restrição:** O sensor deve retornar à posição anterior sempre que possível.<br>
+#### 🟡 RNK031 - Timer fixo de medição automática
 
-**Ação:** O sistema tenta restaurar o ângulo original do Kinect.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O espaço é salvo com sucesso. | A medição automática deve ocorrer em intervalo fixo local. | O sistema inicia timer de 60 segundos. |
 
-**RNK025 - Reset da suavização após calibração**
+> **Regra:** Inicializa um temporizador de thread síncrono local de 60 segundos (`System.Timers.Timer`), automatizando o ciclo contínuo de escaneamento e processamento de dados do hardware.
+---
 
-**Condição:** Um novo mapa calibrado é capturado.<br>
+#### 🟡 RNK042 - Cálculo do volume
 
-**Restrição:** Histórico de volumes anteriores não pode influenciar a nova referência.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect possui mapa calibrado e leitura atual. | O cálculo deve comparar profundidade atual com a referência calibrada. | O sistema calcula o volume ocupado em cm³. |
 
-**Ação:** O sistema limpa o histórico de suavização.<br>
+> **Regra:** Realiza a subtração matricial entre o mapa de profundidade em tempo real e a matriz de referência gerada na calibração para isolar os objetos e cubicar a volumetria.
+---
 
-**RNK031 - Timer fixo de medição automática**
+#### 🟡 RNK043 - Estabilização da leitura
 
-**Condição:** O espaço é salvo com sucesso.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O volume é calculado pelo Kinect. | A leitura pode oscilar por ruído do sensor. | O sistema aplica média móvel e suavização antes de exibir. |
 
-**Restrição:** A medição automática deve ocorrer em intervalo fixo local.<br>
+> **Regra:** Implementa um filtro digital de média móvel (*Moving Average Filter*) sobre o histórico recente de leituras para suavizar picos espúrios causados por oscilações nativas do hardware.
+---
 
-**Ação:** O sistema inicia timer de 60 segundos.<br>
+#### 🟡 RNK045 - Conversão local de volume
 
-**RNK042 - Cálculo do volume**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect exibe volume ou espaço livre. | O cálculo interno usa cm³, mas a interface deve mostrar m³. | O sistema divide por 1.000.000 e exibe com três casas decimais. |
 
-**Condição:** Kinect possui mapa calibrado e leitura atual.<br>
+> **Regra:** Padroniza a exibição de dados para o usuário final convertendo a unidade métrica interna ($1\text{ m}^3 = 1.000.000\text{ cm}^3$) e aplicando formatação numérica estrita com precisão flutuante fixada em 3 casas (`F3`).
+---
 
-**Restrição:** O cálculo deve comparar profundidade atual com a referência calibrada.<br>
+#### 🟡 RNK049 - Salvamento local da medição
 
-**Ação:** O sistema calcula o volume ocupado em cm3.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Medição válida é realizada. | A medição deve conter volume, data, usuário, empresa, espaço e status. | O sistema salva a medição no SQLite. |
 
-**RNK043 - Estabilização da leitura**
+> **Regra:** Consolida os dados e metadados operacionais da leitura em uma transação ACID local, garantindo a integridade transacional antes do disparo de sincronização com o servidor.
+---
 
-**Condição:** O volume é calculado pelo Kinect.<br>
+#### 🟡 RNK050 - Status da medição local
 
-**Restrição:** A leitura pode oscilar por ruído do sensor.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição é realizada. | O status deve indicar se a medição foi manual ou automática. | O SQLite registra `Medição manual` ou `Medição automática`. |
 
-**Ação:** O sistema aplica média móvel e suavização antes de exibir.<br>
+> **Regra:** Carimba a origem do gatilho de leitura na tabela local do SQLite, permitindo diferenciar análises históricas entre inspeções sob demanda e varreduras automatizadas do timer.
+---
 
-**RNK045 - Conversão local de volume**
+#### 🟡 RNK051 - Registro do usuário na medição
 
-**Condição:** O Kinect exibe volume ou espaço livre.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição é salva no SQLite. | A medição deve indicar quem realizou a operação. | O sistema salva o usuário da sessão. |
 
-**Restrição:** O cálculo interno usa cm3, mas a interface deve mostrar m3.<br>
+> **Regra:** Garante a rastreabilidade da operação associando o identificador do operador autenticado no contexto atual da aplicação à chave estrangeira do registro de auditoria local.
+---
 
-**Ação:** O sistema divide por 1.000.000 e exibe com três casas decimais.<br>
+#### 🟡 RNK052 - Registro da empresa na medição
 
-**RNK049 - Salvamento local da medição**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição é salva no SQLite. | A medição deve estar vinculada à empresa autenticada. | O sistema salva a empresa da sessão. |
 
-**Condição:** Medição válida é realizada.<br>
+> **Regra:** Assegura o princípio de isolamento lógico de dados (*Multi-Tenancy*) na camada local, carimbando o ID da empresa ativa para blindar consultas futuras contra vazamento de informações.
+---
 
-**Restrição:** A medição deve conter volume, data, usuário, empresa, espaço e status.<br>
+#### 🟡 RNK053 - Registro do nome do espaço
 
-**Ação:** O sistema salva a medição no SQLite.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição válida é salva. | A medição precisa identificar o espaço monitorado. | O sistema salva o nome do espaço. |
 
-**RNK050 - Status da medição local**
+> **Regra:** Captura e desnormaliza o nome do espaço físico/armazém no momento exato da leitura, garantindo a integridade histórica do registro mesmo se o cadastro do espaço for alterado no futuro.
+---
 
-**Condição:** Uma medição é realizada.<br>
+#### 🟡 RNK054 - Registro do limite de ocupação
 
-**Restrição:** O status deve indicar se a medição foi manual ou automática.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição válida é salva. | O limite configurado para o espaço deve ser preservado. | O sistema salva o percentual de alerta junto da medição. |
 
-**Ação:** O SQLite registra `Medição manual` ou `Medição automática`.<br>
+> **Regra:** Grava uma fotografia (*snapshot*) do parâmetro de tolerância de ocupação ativo no momento da medição, permitindo auditorias precisas sobre disparos de alertas retroativos.
+---
 
-**RNK051 - Registro do usuário na medição**
+#### 🟡 RNK055 - Registro do estado do Kinect
 
-**Condição:** Uma medição é salva no SQLite.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição válida é salva. | Deve ser possível saber se o Kinect estava ligado. | O sistema grava o campo `KinectLigado`. |
 
-**Restrição:** A medição deve indicar quem realizou a operação.<br>
+> **Regra:** Registra uma flag booleana de telemetria de hardware para atestar a integridade do barramento USB e o fornecimento de energia do periférico no instante da coleta.
+---
 
-**Ação:** O sistema salva o usuário da sessão.<br>
+#### 🟡 RNK056 - Registro do estado de calibração
 
-**RNK052 - Registro da empresa na medição**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição válida é salva. | Deve ser possível saber se a medição ocorreu com ambiente calibrado. | O sistema grava o campo `Calibrado`. |
 
-**Condição:** Uma medição é salva no SQLite.<br>
+> **Regra:** Armazena o estado de calibração do ciclo para rotular a confiabilidade do dado, servindo como indicador de qualidade para auditorias de volumetria.
+---
 
-**Restrição:** A medição deve estar vinculada à empresa autenticada.<br>
+#### 🟡 RNK058 - Histórico local limitado
 
-**Ação:** O sistema salva a empresa da sessão.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect carrega histórico local. | A tela não deve carregar registros ilimitados. | O sistema recupera até 100 medições recentes. |
 
-**RNK053 - Registro do nome do espaço**
+> **Regra:** Aplica uma restrição de paginação superior (`Take(100)`) na query local do SQLite, controlando o consumo de memória RAM da aplicação desktop e acelerando a renderização na interface WPF.
+---
 
-**Condição:** Uma medição válida é salva.<br>
+#### 🟡 RNK059 - Consulta de histórico por empresa
 
-**Restrição:** A medição precisa identificar o espaço monitorado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Medições são consultadas no SQLite. | Dados de empresas diferentes não devem ser misturados. | O sistema filtra os registros pela empresa autenticada. |
 
-**Ação:** O sistema salva o nome do espaço.<br>
+> **Regra:** Impõe uma cláusula de filtro estrita `WHERE EmpresaId == Sessao.EmpresaId` em qualquer instrução de seleção de histórico, impedindo a visualização cruzada de dados locais.
+---
 
-**RNK054 - Registro do limite de ocupação**
+#### 🟡 RNK060 - Salvamento de histórico de ocupação
 
-**Condição:** Uma medição válida é salva.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema gera histórico de ocupação. | O histórico deve conter espaço, volume atual, volume máximo, espaço livre, percentual e empresa. | O Kinect salva o histórico no SQLite. |
 
-**Restrição:** O limite configurado para o espaço deve ser preservado.<br>
+> **Regra:** Estrutura e consolida o registro completo de balanço volumétrico calculado na borda, persistindo todas as variáveis derivadas na tabela histórica local.
+---
 
-**Ação:** O sistema salva o percentual de alerta junto da medição.<br>
+#### 🟡 RNK061 - Consulta de histórico por espaço
 
-**RNK055 - Registro do estado do Kinect**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário consulta histórico de um espaço específico. | Devem retornar apenas registros daquele espaço e da empresa atual. | O sistema filtra histórico por espaço e empresa. |
 
-**Condição:** Uma medição válida é salva.<br>
+> **Regra:** Aplica um filtro combinado indexado (`EspacioId` e `EmpresaId`) na cláusula de seleção do banco local, refinando a busca e isolando estritamente os dados correspondentes.
+---
 
-**Restrição:** Deve ser possível saber se o Kinect estava ligado.<br>
+#### 🟡 RNK062 - Consulta dos últimos históricos
 
-**Ação:** O sistema grava o campo `KinectLigado`.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário consulta históricos recentes. | A consulta deve respeitar a empresa da sessão. | O sistema retorna os últimos históricos autorizados. |
 
-**RNK056 - Registro do estado de calibração**
+> **Regra:** Garante que a query de amostragem rápida na interface desktop do Kinect seja blindada pelo identificador do *tenant* (empresa), limitando o escopo de visualização aos registros autorizados.
+---
 
-**Condição:** Uma medição válida é salva.<br>
+#### 🟡 RNK078 - Log de acesso liberado ao Kinect
 
-**Restrição:** Deve ser possível saber se a medição ocorreu com ambiente calibrado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Token é validado com sucesso. | O acesso ao módulo físico deve ser rastreável. | O sistema registra log de acesso liberado. |
 
-**Ação:** O sistema grava o campo `Calibrado`.<br>
+> **Regra:** Registra uma entrada de auditoria de segurança de nível informativo (*Information Log*) indicando que o terminal físico foi desbloqueado, associando o timestamp e a identidade confirmada.
+---
 
-**RNK058 - Histórico local limitado**
+#### 🟡 RNK079 - Log de tentativa inválida de acesso
 
-**Condição:** O Kinect carrega histórico local.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário informa token inválido no Kinect. | Tentativas recusadas precisam ser rastreadas. | O sistema registra aviso de tentativa inválida. |
 
-**Restrição:** A tela não deve carregar registros ilimitados.<br>
+> **Regra:** Emite um alerta de segurança em log de nível de aviso (*Warning Log*) para capturar comportamentos suspeitos ou erros repetitivos de digitação na interface do hardware.
+---
 
-**Ação:** O sistema recupera até 100 medições recentes.<br>
+#### 🟡 RNK080 - Log de token solicitado pelo Kinect
 
-**RNK059 - Consulta de histórico por empresa**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário solicita token pelo aplicativo Kinect. | A solicitação deve ser rastreável. | O sistema registra log informando que o token foi solicitado ao MVC. |
 
-**Condição:** Medições são consultadas no SQLite.<br>
+> **Regra:** Mapeia a intenção inicial de autenticação na borda, criando uma trilha de telemetria da requisição de saída gerada pelo cliente desktop em direção ao barramento web.
+---
 
-**Restrição:** Dados de empresas diferentes não devem ser misturados.<br>
+#### 🟡 RNK081 - Log de eventos operacionais do Kinect
 
-**Ação:** O sistema filtra os registros pela empresa autenticada.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Ocorre calibração, medição, erro ou falha de envio. | Eventos operacionais precisam ser rastreáveis. | O sistema registra logs locais. |
 
-**RNK060 - Salvamento de histórico de ocupação**
+> **Regra:** Implementa um mecanismo autônomo de logging em arquivo local ou SQLite (*Rolling File Logger*) para registrar ciclos de vida de calibração, hardware e falhas de infraestrutura de rede.
+---
 
-**Condição:** O sistema gera histórico de ocupação.<br>
+#### 🟡 RNK082 - Log de erro no SQLite
 
-**Restrição:** O histórico deve conter espaço, volume atual, volume máximo, espaço livre, percentual e empresa.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Ocorre falha ao salvar ou consultar medições locais. | A falha deve ser rastreável. | O Kinect registra erro no log local. |
 
-**Ação:** O Kinect salva o histórico no SQLite.<br>
-
-**RNK061 - Consulta de histórico por espaço**
-
-**Condição:** Usuário consulta histórico de um espaço específico.<br>
-
-**Restrição:** Devem retornar apenas registros daquele espaço e da empresa atual.<br>
-
-**Ação:** O sistema filtra histórico por espaço e empresa.<br>
-
-**RNK062 - Consulta dos últimos históricos**
-
-**Condição:** Usuário consulta históricos recentes.<br>
-
-**Restrição:** A consulta deve respeitar a empresa da sessão.<br>
-
-**Ação:** O sistema retorna os últimos históricos autorizados.<br>
-
-**RNK078 - Log de acesso liberado ao Kinect**
-
-**Condição:** Token é validado com sucesso.<br>
-
-**Restrição:** O acesso ao módulo físico deve ser rastreável.<br>
-
-**Ação:** O sistema registra log de acesso liberado.<br>
-
-**RNK079 - Log de tentativa inválida de acesso**
-
-**Condição:** Usuário informa token inválido no Kinect.<br>
-
-**Restrição:** Tentativas recusadas precisam ser rastreadas.<br>
-
-**Ação:** O sistema registra aviso de tentativa inválida.<br>
-
-**RNK080 - Log de token solicitado pelo Kinect**
-
-**Condição:** Usuário solicita token pelo aplicativo Kinect.<br>
-
-**Restrição:** A solicitação deve ser rastreável.<br>
-
-**Ação:** O sistema registra log informando que o token foi solicitado ao MVC.<br>
-
-**RNK081 - Log de eventos operacionais do Kinect**
-
-**Condição:** Ocorre calibração, medição, erro ou falha de envio.<br>
-
-**Restrição:** Eventos operacionais precisam ser rastreáveis.<br>
-
-**Ação:** O sistema registra logs locais.<br>
-
-**RNK082 - Log de erro no SQLite**
-
-**Condição:** Ocorre falha ao salvar ou consultar medições locais.<br>
-
-**Restrição:** A falha deve ser rastreável.<br>
-
-**Ação:** O Kinect registra erro no log local.<br>
+> **Regra:** Intercepta exceções de infraestrutura de dados (`SqliteException`), capturando a mensagem de falha, o código do erro e o *stack trace*, gravando-os em arquivo de diagnóstico local para evitar perda de rastreabilidade.
 
 ---
 ## REQUISITOS DO SISTEMA
-
+---
 Os requisitos do sistema foram organizados conforme o modelo de comparação entre requisito funcional e requisito não funcional.
 
 Os **requisitos funcionais (RF)** descrevem o que o sistema deve fazer, ou seja, as funcionalidades esperadas pelos usuários e pelos módulos do sistema, como autenticação por token, cadastro de usuários e parceiros, controle de permissões, configuração de parâmetros, dashboard, medições volumétricas, notificações e integração com o Kinect.
