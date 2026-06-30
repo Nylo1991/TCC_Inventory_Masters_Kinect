@@ -581,169 +581,196 @@ View/
 
 As regras de negócio definem o comportamento esperado do sistema, garantindo a precisão das medições, a integridade dos dados, a operação correta do hardware Kinect, a comunicação em tempo real com a aplicação MVC e o apoio à tomada de decisão logística.
 
-As regras do sistema **Inventory Masters** em cinco grupos: regras de negócio do MVC, regras de negócio do Kinect, regras de validação, regras de integração e regras técnicas/operacionais.
+As regras do sistema **Inventory Masters** foram divididas em cinco grupos: 
 
-- Condição: o gatilho ou cenário em que a regra acontece.
-- Restrição: o limite, validação ou decisão aplicada.
-- Ação: o resultado esperado pelo sistema.
+> * Regras de negócio do MVC
+> * Regras de negócio do Kinect
+> * Regras de validação
+> * Regras de integração
+> * Regras técnicas/operacionais
 
-Critério de organização:
+#### Especificação das Regras
+- **Condição:** O gatilho ou cenário em que a regra acontece.
+- **Restrição:** O limite, validação ou decisão aplicada.
+- **Ação:** O resultado esperado pelo sistema.
 
-- `RN` identifica regras relacionadas ao módulo MVC/Web.
-- `RNK` identifica regras relacionadas ao módulo Kinect/Desktop.
-- Regras de negócio descrevem decisões do domínio, fluxos de uso e comportamentos esperados pelo usuário.
-- Regras de validação descrevem campos obrigatórios, formatos, limites, bloqueios e consistência de dados.
-- Regras de integração descrevem comunicação entre módulos, Firebase, SQLite e SignalR/Hub.
-- Regras técnicas/operacionais descrevem controles necessários para execução, rastreabilidade, configuração, cálculo e estabilidade.
-- WhatsApp, escalonamento e canais de alerta permanecem como funcionalidades parametrizadas/preparadas para evolução, pois o código já possui configurações para esses recursos.
+#### Critério de organização
 
-#### Regras de Negócio MVC
+- `RN`: Identifica regras relacionadas ao módulo MVC/Web.
+- `RNK`: Identifica regras relacionadas ao módulo Kinect/Desktop.
+- 🔵 **Regras de negócio:** Descrevem decisões do domínio, fluxos de uso e comportamentos esperados pelo usuário.
+- **Regras de validação:** Descrevem campos obrigatórios, formatos, limites, bloqueios e consistência de dados.
+- **Regras de integração:** Descrevem comunicação entre módulos, Firebase, SQLite e SignalR/Hub.
+- **Regras técnicas/operacionais:** Descrevem controles necessários para execução, rastreabilidade, configuração, cálculo e estabilidade.
+- **Funcionalidades em evolução:** WhatsApp, escalonamento e canais de alerta permanecem como funcionalidades parametrizadas, pois o código já possui configurações para esses recursos.
 
-**RN001 - Solicitação de token por e-mail**
+### Regras de Negócio MVC
+---
 
-**Condição:** O cliente informa o e-mail na tela de login do MVC.<br>
+#### 🔵 RN001 - Solicitação de token por e-mail
 
-**Restrição:** O e-mail deve possuir formato válido e estar cadastrado para um usuário ativo.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O cliente informa o e-mail na tela de login do MVC. | O e-mail deve possuir formato válido e estar cadastrado para um usuário ativo. | O MVC gera um token numérico e envia para o e-mail cadastrado. |
 
-**Ação:** O MVC gera um token numérico e envia para o e-mail cadastrado.<br>
+> **Regra:** O sistema deve validar a existência e a integridade dos dados antes de disparar qualquer comunicação de segurança.
+---
 
-**RN009 - Envio do token por e-mail**
+#### 🔵 RN009 - Envio do token por e-mail
 
-**Condição:** O token é gerado com sucesso.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O token é gerado com sucesso. | O envio deve ocorrer para o e-mail cadastrado do usuário. | O MVC envia o token e informa sucesso na tela. |
 
-**Restrição:** O envio deve ocorrer para o e-mail cadastrado do usuário.<br>
+> **Regra:** O envio da comunicação deve ser direcionado exclusivamente ao endereço eletrônico vinculado ao usuário após a validação do processamento.
+---
 
-**Ação:** O MVC envia o token e informa sucesso na tela.<br>
+#### 🔵 RN014 - Login autorizado
 
-**RN014 - Login autorizado**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário informa token válido, ativo e dentro do prazo. | O usuário vinculado ao token deve existir e estar ativo. | O sistema autentica o usuário e libera o dashboard. |
 
-**Condição:** O usuário informa token válido, ativo e dentro do prazo.<br>
+> **Regra:** A autenticação do usuário depende estritamente da validade, vigência e vinculação correta do token de acesso ao cadastro do usuário.
+---
 
-**Restrição:** O usuário vinculado ao token deve existir e estar ativo.<br>
+#### 🔵 RN018 - Controle de acesso por perfil
 
-**Ação:** O sistema autentica o usuário e libera o dashboard.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário autenticado acessa uma funcionalidade. | O perfil deve possuir a permissão exigida. | O sistema libera ou bloqueia o acesso. |
 
-**RN018 - Controle de acesso por perfil**
+> **Regra:** O acesso às funcionalidades do sistema é condicionado pela verificação das permissões ativas atribuídas ao perfil do usuário.
+---
 
-**Condição:** Usuário autenticado acessa uma funcionalidade.<br>
+#### 🔵 RN020 - Permissões do perfil Administrador
 
-**Restrição:** O perfil deve possuir a permissão exigida.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário possui perfil Administrador. | Esse perfil representa controle total do sistema. | O sistema concede privilégios de acesso irrestrito ao usuário. |
 
-**Ação:** O sistema libera ou bloqueia o acesso.<br>
+> **Regra:** O perfil de Administrador confere privilégios de acesso irrestrito, sendo necessário garantir a gestão segura destas permissões.
+---
 
-**RN020 - Permissões do perfil Administrador**
+#### 🔵 RN021 - Permissões do perfil Gestor
 
-**Condição:** O usuário possui perfil Administrador.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário possui perfil Gestor. | O gestor deve acompanhar dados gerenciais sem administrar todo o sistema. | O sistema libera dashboard, medições, notificações e parceiros. |
 
-**Restrição:** Esse perfil representa controle total do sistema.<br>
+> **Regra:** O acesso do gestor é limitado à supervisão de indicadores e parceiros, garantindo monitoramento sem privilégios administrativos.
+---
 
-**Ação:** O sistema libera todas as permissões.<br>
+#### 🔵 RN022 - Permissões do perfil Operador
 
-**RN021 - Permissões do perfil Gestor**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário possui perfil Operador. | O operador atua nas atividades operacionais. | O sistema libera dashboard, medições e acesso ao Kinect. |
 
-**Condição:** O usuário possui perfil Gestor.<br>
+> **Regra:** O perfil de operador é restrito às funcionalidades necessárias para a execução das atividades operacionais diárias.
+---
 
-**Restrição:** O gestor deve acompanhar dados gerenciais sem administrar todo o sistema.<br>
+#### 🔵 RN023 - Permissões do perfil Visualizador
 
-**Ação:** O sistema libera dashboard, medições, notificações e parceiros.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário possui perfil Visualizador. | Esse perfil não deve alterar cadastros. | O sistema permite visualizar dashboard, medições e notificações. |
 
-**RN022 - Permissões do perfil Operador**
+> **Regra:** O acesso do visualizador é estritamente de leitura, sendo vedada qualquer permissão de alteração ou manipulação de dados.
+---
 
-**Condição:** O usuário possui perfil Operador.<br>
+#### 🔵 RN024 - Cadastro de perfil
 
-**Restrição:** O operador atua nas atividades operacionais.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador cadastra um perfil. | O perfil deve possuir nome, status e permissões da lista oficial. | O sistema salva o perfil para uso no controle de acesso. |
 
-**Ação:** O sistema libera dashboard, medições e acesso ao Kinect.<br>
+> **Regra:** O cadastro de novos perfis deve respeitar a estrutura de permissões predefinida pelo sistema para garantir a integridade do controle de acesso.
+---
 
-**RN023 - Permissões do perfil Visualizador**
+#### 🔵 RN025 - Edição de perfil
 
-**Condição:** O usuário possui perfil Visualizador.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador edita um perfil. | As permissões devem continuar vinculadas à lista oficial do sistema. | O sistema atualiza o perfil e suas permissões. |
 
-**Restrição:** Esse perfil não deve alterar cadastros.<br>
+> **Regra:** Qualquer alteração em perfis existentes deve manter a conformidade com as regras e permissões estipuladas na lista oficial.
+---
 
-**Ação:** O sistema permite visualizar dashboard, medições e notificações.<br>
+#### 🔵 RN026 - Inativação de perfil
 
-**RN024 - Cadastro de perfil**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador inativa um perfil. | O perfil deixa de representar uma opção ativa para operação. | O sistema marca o perfil como inativo. |
 
-**Condição:** O administrador cadastra um perfil.<br>
+> **Regra:** A inativação de um perfil deve impedir seu uso imediato em novas operações ou autenticações no sistema.
+---
 
-**Restrição:** O perfil deve possuir nome, status e permissões selecionadas da lista oficial.<br>
+#### 🔵 RN027 - Cadastro de usuário
 
-**Ação:** O sistema salva o perfil para uso no controle de acesso.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador cadastra um usuário. | Nome, e-mail, perfil e senha são obrigatórios. | O sistema salva o usuário vinculado à empresa atual. |
 
-**RN025 - Edição de perfil**
+> **Regra:** A criação de usuários exige o preenchimento de todos os dados obrigatórios e a vinculação necessária à organização correspondente.
+---
 
-**Condição:** O administrador edita um perfil.<br>
 
-**Restrição:** As permissões devem continuar vinculadas à lista oficial do sistema.<br>
+#### 🔵 RN038 - Cadastro de parceiro
 
-**Ação:** O sistema atualiza o perfil e suas permissões.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário autorizado cadastra um parceiro. | Nome, e-mail, telefone, empresa e endereço são obrigatórios. | O sistema salva o parceiro vinculado à empresa atual. |
 
-**RN026 - Inativação de perfil**
+> **Regra:** O cadastro de parceiros exige a conformidade de todos os campos obrigatórios para garantir a integridade das informações vinculadas à organização.
+---
 
-**Condição:** O administrador inativa um perfil.<br>
+#### 🔵 RN040 - Edição de parceiro somente com alteração real
 
-**Restrição:** O perfil deixa de representar uma opção ativa para operação.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário autorizado edita um parceiro. | O sistema deve identificar mudanças reais nos dados, inclusive telefone normalizado. | O sistema atualiza o parceiro ou informa que nada foi alterado. |
 
-**Ação:** O sistema marca o perfil como inativo.<br>
+> **Regra:** A persistência de dados de edição ocorre apenas mediante a detecção de alterações efetivas, evitando processamentos desnecessários.
+---
 
-**RN027 - Cadastro de usuário**
+#### 🔵 RN047 - Configuração de parâmetros do sistema
 
-**Condição:** O administrador cadastra um usuário.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário autorizado altera configurações operacionais. | Apenas perfis com permissão podem gerenciar configurações. | O sistema salva os parâmetros da empresa. |
 
-**Restrição:** Nome, e-mail, perfil e senha são obrigatórios.<br>
+> **Regra:** O gerenciamento das configurações operacionais é restrito a perfis com privilégios específicos, assegurando a governança do sistema.
+---
 
-**Ação:** O sistema salva o usuário vinculado à empresa atual.<br>
+#### 🔵 RN055 - Calibração acionada pelo MVC
 
-**RN038 - Cadastro de parceiro**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário autorizado aciona nova calibração nos parâmetros. | O parâmetro de calibração deve ser ativado. | O MVC marca `AtivarSistemaCalibracao` como verdadeiro. |
 
-**Condição:** Usuário autorizado cadastra um parceiro.<br>
+> **Regra:** O acionamento da calibração via MVC requer a ativação prévia do parâmetro correspondente para validar a operação.
+---
 
-**Restrição:** Nome, e-mail, telefone, empresa e endereço são obrigatórios.<br>
+#### 🔵 RN068 - Dashboard consolidado por empresa
 
-**Ação:** O sistema salva o parceiro vinculado à empresa atual.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário acessa o dashboard. | Devem ser considerados parceiros, usuários, medições, alertas e parâmetros da empresa. | O sistema monta uma visão consolidada para tomada de decisão. |
 
-**RN040 - Edição de parceiro somente com alteração real**
+> **Regra:** O dashboard deve refletir uma visão integrada de todos os ativos e dados críticos da empresa, otimizando o suporte à decisão.
+---
 
-**Condição:** Usuário autorizado edita um parceiro.<br>
+#### 🔵 RN069 - Cálculo de ocupação no dashboard
 
-**Restrição:** O sistema deve identificar mudanças reais nos dados, inclusive telefone normalizado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Existe medição e capacidade máxima configurada. | O percentual deve usar a última medição dividida pela capacidade máxima. | O sistema calcula o percentual de ocupação. |
 
-**Ação:** O sistema atualiza o parceiro ou informa que nada foi alterado.<br>
+> **Regra:** A métrica de ocupação deve ser derivada da relação entre o dado de medição mais recente e a capacidade total definida, garantindo precisão nos indicadores do dashboard.
+---
 
-**RN047 - Configuração de parâmetros do sistema**
-
-**Condição:** Usuário autorizado altera configurações operacionais.<br>
-
-**Restrição:** Apenas perfis com permissão podem gerenciar configurações.<br>
-
-**Ação:** O sistema salva os parâmetros da empresa.<br>
-
-**RN055 - Calibração acionada pelo MVC**
-
-**Condição:** Usuário autorizado aciona nova calibração nos parâmetros.<br>
-
-**Restrição:** O parâmetro de calibração deve ser ativado.<br>
-
-**Ação:** O MVC marca `AtivarSistemaCalibracao` como verdadeiro.<br>
-
-**RN068 - Dashboard consolidado por empresa**
-
-**Condição:** Usuário acessa o dashboard.<br>
-
-**Restrição:** Devem ser considerados parceiros, usuários, medições, alertas e parâmetros da empresa.<br>
-
-**Ação:** O sistema monta uma visão consolidada para tomada de decisão.<br>
-
-**RN069 - Cálculo de ocupação no dashboard**
-
-**Condição:** Existe medição e capacidade máxima configurada.<br>
-
-**Restrição:** O percentual deve usar a última medição dividida pela capacidade máxima.<br>
-
-**Ação:** O sistema calcula o percentual de ocupação.<br>
-
-#### Regras de Negócio Kinect
+### Regras de Negócio Kinect
 
 **RNK001 - Solicitação de token pelo Kinect**
 
