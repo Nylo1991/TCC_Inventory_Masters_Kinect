@@ -599,7 +599,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 - `RN`: Identifica regras relacionadas ao módulo MVC/Web.
 - `RNK`: Identifica regras relacionadas ao módulo Kinect/Desktop.
 - 🔵 **Regras de negócio:** Descrevem decisões do domínio, fluxos de uso e comportamentos esperados pelo usuário.
-- **Regras de validação:** Descrevem campos obrigatórios, formatos, limites, bloqueios e consistência de dados.
+- 🔴 **Regras de validação:** Descrevem campos obrigatórios, formatos, limites, bloqueios e consistência de dados.
 - **Regras de integração:** Descrevem comunicação entre módulos, Firebase, SQLite e SignalR/Hub.
 - **Regras técnicas/operacionais:** Descrevem controles necessários para execução, rastreabilidade, configuração, cálculo e estabilidade.
 - **Funcionalidades em evolução:** WhatsApp, escalonamento e canais de alerta permanecem como funcionalidades parametrizadas, pois o código já possui configurações para esses recursos.
@@ -1289,239 +1289,269 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** A implementação de tokens Antiforgery é obrigatória em todas as ações de escrita (CUD) para mitigar ataques de Cross-Site Request Forgery (CSRF).
 ---
 
-#### Kinect/Desktop
+### Regras de Validação Kinect/Desktop
+---
 
-**RNK002 - E-mail obrigatório para solicitar token**
+#### 🔴 RNK002 - E-mail obrigatório para solicitar token
 
-**Condição:** Usuário tenta solicitar token no Kinect.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta solicitar token no Kinect. | O e-mail é obrigatório. | O sistema informa que o e-mail cadastrado deve ser preenchido. |
 
-**Restrição:** O e-mail é obrigatório.<br>
+> **Regra:** A identificação do usuário via e-mail é o gatilho inicial obrigatório para o fluxo de autenticação no hardware Kinect.
+---
 
-**Ação:** O sistema informa que o e-mail cadastrado deve ser preenchido.<br>
+#### 🔴 RNK005 - Token obrigatório no Kinect
 
-**RNK005 - Token obrigatório no Kinect**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta entrar no Kinect. | O token de acesso é obrigatório. | O sistema informa que o token deve ser preenchido. |
 
-**Condição:** Usuário tenta entrar no Kinect.<br>
+> **Regra:** O preenchimento do token é requisito de segurança indispensável para validar a entrada no sistema de monitoramento via Kinect.
+---
 
-**Restrição:** O token de acesso é obrigatório.<br>
+#### 🔴 RNK007 - Bloqueio por token inválido
 
-**Ação:** O sistema informa que o token deve ser preenchido.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta acessar o Kinect com token inválido. | O token não pode estar expirado, inexistente ou já utilizado. | O Kinect bloqueia o acesso e exibe mensagem de erro. |
 
-**RNK007 - Bloqueio por token inválido**
+> **Regra:** O acesso é estritamente negado caso as credenciais (tokens) falhem na verificação de integridade, validade ou reutilização.
+---
 
-**Condição:** Usuário tenta acessar o Kinect com token inválido.<br>
+#### 🔴 RNK014 - Kinect conectado para medir
 
-**Restrição:** O token não pode estar expirado, inexistente ou já utilizado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário solicita uma medição. | O sensor Kinect deve estar conectado. | O sistema permite a medição somente com o sensor ativo. |
 
-**Ação:** O Kinect bloqueia o acesso e exibe mensagem de erro.<br>
+> **Regra:** A operação de medição depende diretamente da disponibilidade física e da conectividade estável do hardware Kinect.
+---
 
-**RNK014 - Kinect conectado para medir**
+#### 🔴 RNK015 - Leitura de profundidade obrigatória
 
-**Condição:** Usuário solicita uma medição.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect tenta calcular volume. | O fluxo de profundidade deve estar disponível. | O sistema retorna volume zero se a leitura de profundidade estiver indisponível. |
 
-**Restrição:** O sensor Kinect deve estar conectado.<br>
+> **Regra:** O processamento de volume requer o fluxo constante de profundidade; a indisponibilidade deste dado impede o cálculo, resultando em leitura nula.
+---
 
-**Ação:** O sistema permite a medição somente com o sensor ativo.<br>
+#### 🔴 RNK016 - Calibração obrigatória
 
-**RNK015 - Leitura de profundidade obrigatória**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário deseja medir o volume. | O ambiente precisa estar calibrado previamente. | O sistema bloqueia a medição até a calibração ser concluída. |
 
-**Condição:** Kinect tenta calcular volume.<br>
+> **Regra:** A calibração é um passo crítico para a precisão espacial; nenhuma medição deve ser executada sem a definição prévia do mapa de referência do ambiente.
+---
 
-**Restrição:** O fluxo de profundidade deve estar disponível.<br>
+#### 🔴 RNK019 - Quantidade mínima de pontos na calibração
 
-**Ação:** O sistema retorna volume zero se a leitura de profundidade estiver indisponível.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect captura o mapa calibrado. | Deve existir quantidade suficiente de pontos válidos. | O sistema cancela a calibração se os dados forem insuficientes. |
 
-**RNK016 - Calibração obrigatória**
+> **Regra:** A precisão do mapa de referência é dependente da densidade de pontos capturados; a insuficiência destes invalida o processo de calibração.
+---
 
-**Condição:** Usuário deseja medir o volume.<br>
+#### 🔴 RNK020 - Volume máximo de referência
 
-**Restrição:** O ambiente precisa estar calibrado previamente.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| A calibração captura o ambiente vazio. | O volume de referência deve ser maior que zero. | O sistema só marca o ambiente como calibrado se o volume máximo for válido. |
 
-**Ação:** O sistema bloqueia a medição até a calibração ser concluída.<br>
+> **Regra:** Um ambiente vazio deve resultar em um volume de referência positivo; valores nulos indicam falha na leitura espacial ou no hardware.
+---
 
-**RNK019 - Quantidade mínima de pontos na calibração**
+#### 🔴 RNK026 - Nome do espaço obrigatório
 
-**Condição:** Kinect captura o mapa calibrado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário deseja salvar o espaço monitorado. | O nome do espaço deve ser informado. | O sistema bloqueia o salvamento se o nome estiver vazio. |
 
-**Restrição:** Deve existir quantidade suficiente de pontos válidos.<br>
+> **Regra:** A identificação nominal de cada espaço monitorado é obrigatória para assegurar a organização e a correta associação dos dados em banco.
+---
 
-**Ação:** O sistema cancela a calibração se os dados forem insuficientes.<br>
+#### 🔴 RNK027 - Limite de ocupação obrigatório
 
-**RNK020 - Volume máximo de referência**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário salva o espaço monitorado. | O limite de ocupação deve ser informado. | O sistema bloqueia o salvamento se o limite estiver vazio. |
 
-**Condição:** A calibração captura o ambiente vazio.<br>
+> **Regra:** A configuração de um limiar de ocupação é essencial para o funcionamento dos alertas operacionais, sendo um campo de preenchimento obrigatório.
+---
 
-**Restrição:** O volume de referência deve ser maior que zero.<br>
+#### 🔴 RNK028 - Limite de ocupação válido
 
-**Ação:** O sistema só marca o ambiente como calibrado se o volume máximo for válido.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário salva o espaço monitorado. | O limite deve ser numérico e estar entre 1% e 100%. | O sistema salva o espaço somente com limite válido. |
 
-**RNK026 - Nome do espaço obrigatório**
+> **Regra:** A validação do percentual de ocupação garante que os limites configurados estejam dentro de um intervalo lógico (1-100%), evitando falhas nos cálculos de status.
+---
 
-**Condição:** Usuário deseja salvar o espaço monitorado.<br>
+#### 🔴 RNK029 - Espaço salvo somente após calibração
 
-**Restrição:** O nome do espaço deve ser informado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta salvar o espaço monitorado. | O volume máximo calibrado deve ser maior que zero. | O sistema solicita calibração antes de salvar o espaço. |
 
-**Ação:** O sistema bloqueia o salvamento se o nome estiver vazio.<br>
+> **Regra:** A persistência de uma configuração de espaço está estritamente condicionada à existência de um processo de calibração bem-sucedido.
+---
 
-**RNK027 - Limite de ocupação obrigatório**
+#### 🔴 RNK030 - Espaço salvo antes da medição
 
-**Condição:** Usuário salva o espaço monitorado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta medir o volume. | O espaço monitorado precisa estar salvo. | O sistema bloqueia a medição até o espaço ser salvo. |
 
-**Restrição:** O limite de ocupação deve ser informado.<br>
+> **Regra:** A persistência prévia da configuração do espaço é indispensável para que o sistema possua os metadados necessários para realizar o cálculo de ocupação.
+---
 
-**Ação:** O sistema bloqueia o salvamento se o limite estiver vazio.<br>
+#### 🔴 RNK034 - Frame atual obrigatório
 
-**RNK028 - Limite de ocupação válido**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição é solicitada. | O sensor deve entregar frame de profundidade válido. | O sistema retorna volume zero se nenhum frame for capturado. |
 
-**Condição:** Usuário salva o espaço monitorado.<br>
+> **Regra:** O cálculo volumétrico é dependente de dados em tempo real; a ausência de um frame de profundidade válido interrompe o processamento, resultando em leitura nula.
+---
 
-**Restrição:** O limite deve ser numérico e estar entre 1% e 100%.<br>
+#### 🔴 RNK035 - Mapa calibrado compatível
 
-**Ação:** O sistema salva o espaço somente com limite válido.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema compara ambiente calibrado e leitura atual. | Os dois mapas devem possuir o mesmo tamanho. | O sistema cancela o cálculo em caso de incompatibilidade. |
 
-**RNK029 - Espaço salvo somente após calibração**
+> **Regra:** A paridade nas dimensões entre o mapa de referência (calibrado) e o stream atual é obrigatória para que a subtração volumétrica seja matematicamente precisa.
+---
 
-**Condição:** Usuário tenta salvar o espaço monitorado.<br>
+#### 🔴 RNK036 - Profundidade mínima válida
 
-**Restrição:** O volume máximo calibrado deve ser maior que zero.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect analisa pontos de profundidade. | Pontos abaixo da profundidade mínima configurada são inválidos. | O sistema ignora esses pontos no cálculo volumétrico. |
 
-**Ação:** O sistema solicita calibração antes de salvar o espaço.<br>
+> **Regra:** O descarte de pontos que estão muito próximos ao sensor previne ruídos e leituras incorretas (dead zone do Kinect), garantindo a precisão da medição.
+---
 
-**RNK030 - Espaço salvo antes da medição**
+#### 🔴 RNK037 - Profundidade máxima válida
 
-**Condição:** Usuário tenta medir o volume.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect analisa pontos de profundidade. | Pontos acima da profundidade máxima configurada são inválidos. | O sistema descarta esses pontos da medição. |
 
-**Restrição:** O espaço monitorado precisa estar salvo.<br>
+> **Regra:** A delimitação de um alcance máximo de leitura filtra interferências externas e objetos fora da área de interesse, assegurando que o volume calculado reflita apenas a zona monitorada.
+---
 
-**Ação:** O sistema bloqueia a medição até o espaço ser salvo.<br>
+#### 🔴 RNK038 - Altura mínima do objeto
 
-**RNK034 - Frame atual obrigatório**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema compara profundidade base e atual. | Diferenças menores que a altura mínima não representam objeto relevante. | O sistema ignora pequenas variações. |
 
-**Condição:** Uma medição é solicitada.<br>
+> **Regra:** A filtragem de variações abaixo da altura mínima é essencial para desconsiderar ruídos de sensor ou pequenas irregularidades superficiais que não constituem um volume relevante.
+---
 
-**Restrição:** O sensor deve entregar frame de profundidade válido.<br>
+#### 🔴 RNK039 - Altura máxima do objeto
 
-**Ação:** O sistema retorna volume zero se nenhum frame for capturado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema calcula altura do objeto detectado. | Alturas acima do limite máximo são inconsistentes. | O sistema descarta o ponto da medição. |
 
-**RNK035 - Mapa calibrado compatível**
+> **Regra:** Pontos que excedem a altura máxima esperada são tratados como erros de leitura ou interferências, sendo removidos para não comprometer a precisão do cálculo volumétrico.
+---
 
-**Condição:** O sistema compara ambiente calibrado e leitura atual.<br>
+#### 🔴 RNK040 - Quantidade mínima de pontos válidos
 
-**Restrição:** Os dois mapas devem possuir o mesmo tamanho.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect calcula volume. | Deve existir quantidade suficiente de pontos válidos. | O sistema descarta a leitura se houver poucos pontos confiáveis. |
 
-**Ação:** O sistema cancela o cálculo em caso de incompatibilidade.<br>
+> **Regra:** A confiabilidade da medição está atrelada a uma densidade mínima de pontos; leituras com poucos dados válidos são consideradas inconclusivas e descartadas.
+---
 
-**RNK036 - Profundidade mínima válida**
+#### 🔴 RNK041 - Margem de leitura do sensor
 
-**Condição:** Kinect analisa pontos de profundidade.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect percorre o frame de profundidade. | As bordas do frame são menos confiáveis. | O sistema ignora margens laterais, superiores e inferiores. |
 
-**Restrição:** Pontos abaixo da profundidade mínima configurada são inválidos.<br>
+> **Regra:** O recorte das bordas do frame (margem de segurança) evita distorções geométricas comuns nas extremidades das lentes do Kinect, garantindo que apenas dados de alta fidelidade sejam processados.
+---
 
-**Ação:** O sistema ignora esses pontos no cálculo volumétrico.<br>
+#### 🔴 RNK044 - Volume não detectado
 
-**RNK037 - Profundidade máxima válida**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect realiza uma leitura. | O volume calculado deve ser maior que zero. | O sistema não salva nem envia medições sem volume detectado. |
 
-**Condição:** Kinect analisa pontos de profundidade.<br>
+> **Regra:** A persistência de dados só ocorre quando há volume efetivo detectado, evitando a geração de registros nulos que não agregam valor à inteligência logística do sistema.
+---
 
-**Restrição:** Pontos acima da profundidade máxima configurada são inválidos.<br>
+#### 🔴 RNK046 - Percentual local limitado
 
-**Ação:** O sistema descarta esses pontos da medição.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect calcula percentual de ocupação. | O percentual exibido deve ficar entre 0% e 100%. | O sistema limita o valor antes de exibir. |
 
-**RNK038 - Altura mínima do objeto**
+> **Regra:** A normalização do percentual de ocupação entre os limites de 0 a 100% é obrigatória para manter a integridade visual da interface, evitando valores negativos ou superiores à capacidade total.
+---
 
-**Condição:** O sistema compara profundidade base e atual.<br>
+#### 🔴 RNK047 - Espaço livre não negativo
 
-**Restrição:** Diferenças menores que a altura mínima não representam objeto relevante.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect calcula espaço livre. | O espaço livre não pode ficar abaixo de zero. | O sistema limita o espaço livre mínimo a zero. |
 
-**Ação:** O sistema ignora pequenas variações.<br>
+> **Regra:** O cálculo de espaço livre deve respeitar o limite físico de zero, garantindo que o valor apresentado sempre represente um volume real disponível.
+---
 
-**RNK039 - Altura máxima do objeto**
+#### 🔴 RNK048 - Alerta local de limite
 
-**Condição:** O sistema calcula altura do objeto detectado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Percentual de ocupação é calculado. | O percentual deve ser comparado ao limite configurado para o espaço. | O sistema exibe status `Limite` ou `Normal`. |
 
-**Restrição:** Alturas acima do limite máximo são inconsistentes.<br>
+> **Regra:** A avaliação do status operacional (Limite/Normal) é baseada na comparação constante entre o valor medido em tempo real e o parâmetro configurado pelo usuário.
+---
 
-**Ação:** O sistema descarta o ponto da medição.<br>
+#### 🔴 RNK074 - Mensagem para medição sem calibração
 
-**RNK040 - Quantidade mínima de pontos válidos**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta medir sem volume máximo calibrado. | O sistema não pode calcular ocupação sem referência. | O Kinect informa que o espaço deve ser calibrado antes de medir. |
 
-**Condição:** O Kinect calcula volume.<br>
+> **Regra:** A notificação de falta de calibração orienta o usuário sobre o fluxo de trabalho necessário, bloqueando operações que carecem de base de referência (volume zero).
+---
 
-**Restrição:** Deve existir quantidade suficiente de pontos válidos.<br>
+#### 🔴 RNK075 - Mensagem para espaço não salvo
 
-**Ação:** O sistema descarta a leitura se houver poucos pontos confiáveis.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta medir antes de salvar o espaço. | Toda medição deve estar associada a um espaço. | O sistema informa que o espaço deve ser salvo. |
 
-**RNK041 - Margem de leitura do sensor**
+> **Regra:** A obrigatoriedade do salvamento do espaço garante que os dados de medição sejam devidamente atribuídos a um registro, mantendo a consistência do banco.
+---
 
-**Condição:** O Kinect percorre o frame de profundidade.<br>
+#### 🔴 RNK076 - Mensagem para Kinect desconectado
 
-**Restrição:** As bordas do frame são menos confiáveis.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta medir com Kinect desconectado. | O sensor é obrigatório para capturar profundidade. | O sistema informa que o Kinect não está conectado. |
 
-**Ação:** O sistema ignora margens laterais, superiores e inferiores.<br>
+> **Regra:** A detecção imediata da desconexão do hardware é necessária para interromper o fluxo de medição e informar o usuário sobre a necessidade de reparo ou reconexão física.
+---
 
-**RNK044 - Volume não detectado**
+#### 🔴 RNK077 - Limpeza de mensagem ao alternar login
 
-**Condição:** Kinect realiza uma leitura.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário alterna entre solicitar token e entrar. | Mensagens antigas não devem confundir o usuário. | O Kinect limpa mensagens da tela ao alternar modo. |
 
-**Restrição:** O volume calculado deve ser maior que zero.<br>
-
-**Ação:** O sistema não salva nem envia medições sem volume detectado.<br>
-
-**RNK046 - Percentual local limitado**
-
-**Condição:** O Kinect calcula percentual de ocupação.<br>
-
-**Restrição:** O percentual exibido deve ficar entre 0% e 100%.<br>
-
-**Ação:** O sistema limita o valor antes de exibir.<br>
-
-**RNK047 - Espaço livre não negativo**
-
-**Condição:** O Kinect calcula espaço livre.<br>
-
-**Restrição:** O espaço livre não pode ficar abaixo de zero.<br>
-
-**Ação:** O sistema limita o espaço livre mínimo a zero.<br>
-
-**RNK048 - Alerta local de limite**
-
-**Condição:** Percentual de ocupação é calculado.<br>
-
-**Restrição:** O percentual deve ser comparado ao limite configurado para o espaço.<br>
-
-**Ação:** O sistema exibe status `Limite` ou `Normal`.<br>
-
-**RNK074 - Mensagem para medição sem calibração**
-
-**Condição:** Usuário tenta medir sem volume máximo calibrado.<br>
-
-**Restrição:** O sistema não pode calcular ocupação sem referência.<br>
-
-**Ação:** O Kinect informa que o espaço deve ser calibrado antes de medir.<br>
-
-**RNK075 - Mensagem para espaço não salvo**
-
-**Condição:** Usuário tenta medir antes de salvar o espaço.<br>
-
-**Restrição:** Toda medição deve estar associada a um espaço.<br>
-
-**Ação:** O sistema informa que o espaço deve ser salvo.<br>
-
-**RNK076 - Mensagem para Kinect desconectado**
-
-**Condição:** Usuário tenta medir com Kinect desconectado.<br>
-
-**Restrição:** O sensor é obrigatório para capturar profundidade.<br>
-
-**Ação:** O sistema informa que o Kinect não está conectado.<br>
-
-**RNK077 - Limpeza de mensagem ao alternar login**
-
-**Condição:** Usuário alterna entre solicitar token e entrar.<br>
-
-**Restrição:** Mensagens antigas não devem confundir o usuário.<br>
-
-**Ação:** O Kinect limpa mensagens da tela ao alternar modo.<br>
+> **Regra:** A higienização da interface ao alternar entre modos de entrada evita confusões semânticas, assegurando que o feedback fornecido seja relevante apenas para o estado atual da aplicação.
+---
 
 #### Regras de Integração
 
