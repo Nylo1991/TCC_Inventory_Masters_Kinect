@@ -771,466 +771,523 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 ---
 
 ### Regras de Negócio Kinect
+---
 
-**RNK001 - Solicitação de token pelo Kinect**
+#### 🔵 RNK001 - Solicitação de token pelo Kinect
 
-**Condição:** Usuário informa e-mail no módulo Kinect.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário informa e-mail no módulo Kinect. | O e-mail deve estar cadastrado e ativo no MVC. | O Kinect solicita ao MVC o envio do token. |
 
-**Restrição:** O e-mail deve estar cadastrado e ativo no MVC.<br>
+> **Regra:** A solicitação de token via módulo Kinect exige a validação prévia da existência e status ativo do e-mail do usuário no sistema central.
+---
 
-**Ação:** O Kinect solicita ao MVC o envio do token.<br>
+#### 🔵 RNK004 - Validação de token no Kinect
 
-**RNK004 - Validação de token no Kinect**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário informa token no módulo Kinect. | O token deve ser validado pelo MVC. | O Kinect libera o monitor somente se o token for válido. |
 
-**Condição:** Usuário informa token no módulo Kinect.<br>
+> **Regra:** O acesso ao monitoramento via Kinect é condicionado pela validação do token informada pelo usuário, garantindo a autenticidade do acesso.
+---
 
-**Restrição:** O token deve ser validado pelo MVC.<br>
+#### 🔵 RNK012 - Criação da sessão local
 
-**Ação:** O Kinect libera o monitor somente se o token for válido.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| MVC retorna token válido ao Kinect. | A sessão local deve guardar usuário, empresa, e-mail e token. | O sistema cria a sessão do usuário. |
 
-**RNK012 - Criação da sessão local**
+> **Regra:** Após a confirmação da autenticidade, deve ser estabelecida uma sessão local persistente que armazene as informações essenciais para a continuidade da operação.
+---
 
-**Condição:** MVC retorna token válido ao Kinect.<br>
+#### 🔵 RNK013 - Abertura do monitor somente após autenticação
 
-**Restrição:** A sessão local deve guardar usuário, empresa, e-mail e token.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta acessar o monitor Kinect. | É necessário possuir sessão validada pelo MVC. | O sistema abre o monitor somente após token validado. |
 
-**Ação:** O sistema cria a sessão do usuário.<br>
+> **Regra:** O monitoramento através do Kinect é bloqueado até que a sessão do usuário seja devidamente validada pelo sistema MVC, assegurando o controle de acesso.
+---
 
-**RNK013 - Abertura do monitor somente após autenticação**
+#### 🔵 RNK017 - Ambiente vazio na calibração
 
-**Condição:** Usuário tenta acessar o monitor Kinect.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário inicia a calibração. | A área monitorada deve estar vazia. | O Kinect captura o mapa de referência do ambiente vazio. |
 
-**Restrição:** É necessário possuir sessão validada pelo MVC.<br>
+> **Regra:** A calibração precisa de um mapa de referência limpo; portanto, é imperativo que o ambiente esteja desocupado durante a captura inicial.
+---
 
-**Ação:** O sistema abre o monitor somente após token validado.<br>
+#### 🔵 RNK032 - Medição manual
 
-**RNK017 - Ambiente vazio na calibração**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário aciona uma medição manual. | Kinect conectado, espaço calibrado e espaço salvo são obrigatórios. | O sistema calcula, salva e envia a medição. |
 
-**Condição:** Usuário inicia a calibração.<br>
+> **Regra:** A execução de medições manuais depende da integridade do hardware e da configuração prévia do espaço de monitoramento.
+---
 
-**Restrição:** A área monitorada deve estar vazia.<br>
+#### 🔵 RNK033 - Medição automática
 
-**Ação:** O Kinect captura o mapa de referência do ambiente vazio.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O timer de medição automática é executado. | As mesmas validações da medição manual devem ser respeitadas. | O sistema realiza a medição automática. |
 
-**RNK032 - Medição manual**
+> **Regra:** O processo automatizado de medição segue as mesmas premissas de validação que o modo manual, garantindo consistência nos dados coletados pelo sistema.
+---
 
-**Condição:** Usuário aciona uma medição manual.<br>
+### Regras de Validação MVC/Web
 
-**Restrição:** Kinect conectado, espaço calibrado e espaço salvo são obrigatórios.<br>
+#### 🔴 RN002 - Bloqueio de e-mail em formato inválido
 
-**Ação:** O sistema calcula, salva e envia a medição.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O cliente informa um e-mail na tela de login. | O e-mail deve seguir o formato nome@dominio.com. | O sistema exibe mensagem de e-mail inválido e não envia token. |
 
-**RNK033 - Medição automática**
+> **Regra:** A validação sintática do endereço de e-mail é obrigatória para impedir tentativas de comunicação para destinos inexistentes ou mal formatados.
+---
 
-**Condição:** O timer de medição automática é executado.<br>
+#### 🔴 RN003 - Bloqueio de e-mail não cadastrado
 
-**Restrição:** As mesmas validações da medição manual devem ser respeitadas.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O cliente solicita token com um e-mail em formato válido. | O e-mail precisa existir na base de usuários. | O sistema recusa a solicitação e informa que o e-mail não foi encontrado ou o usuário está inativo. |
 
-**Ação:** O sistema realiza a medição automática.<br>
+> **Regra:** A autenticação de existência na base de dados é pré-requisito para o processamento de qualquer solicitação de acesso, garantindo segurança contra acessos não autorizados.
+---
 
-#### Regras de Validação
+#### 🔴 RN004 - Bloqueio de usuário inativo
 
-### MVC/Web
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O cliente solicita token com e-mail cadastrado. | O usuário vinculado ao e-mail deve estar ativo. | O sistema bloqueia o envio do token e registra a tentativa. |
 
-**RN002 - Bloqueio de e-mail em formato inválido**
+> **Regra:** Usuários com status inativo devem ter seu acesso permanentemente bloqueado, sendo necessário o registro da tentativa para fins de auditoria.
+---
 
-**Condição:** O cliente informa um e-mail na tela de login.<br>
+#### 🔴 RN005 - Geração de token numérico
 
-**Restrição:** O e-mail deve seguir o formato nome@dominio.com.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| A solicitação de acesso é aceita. | O token deve ser numérico e possuir seis dígitos. | O MVC gera um código entre 100000 e 999999. |
 
-**Ação:** O sistema exibe mensagem de e-mail inválido e não envia token.<br>
+> **Regra:** A padronização do token em formato numérico de seis dígitos garante a previsibilidade e conformidade necessária para o sistema de verificação.
+---
 
-**RN003 - Bloqueio de e-mail não cadastrado**
+#### 🔴 RN010 - Validação de token vazio
 
-**Condição:** O cliente solicita token com um e-mail em formato válido.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário tenta validar acesso sem informar token. | Token vazio não pode liberar acesso. | O sistema informa que o token deve ser preenchido. |
 
-**Restrição:** O e-mail precisa existir na base de usuários.<br>
+> **Regra:** O preenchimento do campo token é obrigatório; o sistema não deve permitir submissões nulas ou em branco.
 
-**Ação:** O sistema recusa a solicitação e informa que o e-mail não foi encontrado ou o usuário está inativo.<br>
+---
 
-**RN004 - Bloqueio de usuário inativo**
+#### 🔴 RN011 - Validação de token inexistente
 
-**Condição:** O cliente solicita token com e-mail cadastrado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário informa um token. | O hash informado deve corresponder a um token ativo salvo. | O sistema retorna token inválido quando não encontrar correspondência. |
 
-**Restrição:** O usuário vinculado ao e-mail deve estar ativo.<br>
+> **Regra:** A integridade da correspondência entre o hash informado e o registro armazenado é vital para evitar acessos por tokens forjados.
+---
 
-**Ação:** O sistema bloqueia o envio do token e registra a tentativa.<br>
+#### 🔴 RN012 - Bloqueio de token expirado
 
-**RN005 - Geração de token numérico**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário informa um token existente. | A data/hora atual não pode ser maior que a data de expiração. | O sistema nega o acesso e informa que o token expirou. |
 
-**Condição:** A solicitação de acesso é aceita.<br>
+> **Regra:** A validade temporal do token é um mecanismo de segurança para limitar a janela de oportunidade de uso, expirando-o automaticamente após o tempo limite.
+---
 
-**Restrição:** O token deve ser numérico e possuir seis dígitos.<br>
+#### 🔴 RN013 - Uso único do token
 
-**Ação:** O MVC gera um código entre 100000 e 999999.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um token válido é utilizado com sucesso. | O mesmo token não pode liberar novo acesso. | O sistema marca o token como utilizado. |
 
-**RN010 - Validação de token vazio**
+> **Regra:** A imutabilidade do status do token após o primeiro uso bem-sucedido impede ataques de repetição e garante que cada token seja de uso exclusivo.
+---
 
-**Condição:** O usuário tenta validar acesso sem informar token.<br>
+#### 🔴 RN017 - Proteção de telas autenticadas
 
-**Restrição:** Token vazio não pode liberar acesso.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um usuário tenta acessar tela protegida. | O usuário precisa estar autenticado. | O sistema solicita autenticação ou bloqueia o acesso. |
 
-**Ação:** O sistema informa que o token deve ser preenchido.<br>
+> **Regra:** O acesso a áreas restritas é condicionado pela verificação da sessão ativa, garantindo que usuários não autenticados sejam barrados ou redirecionados para o login.
+---
 
-**RN011 - Validação de token inexistente**
+#### 🔴 RN019 - Acesso negado por falta de permissão
 
-**Condição:** O usuário informa um token.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário tenta acessar uma funcionalidade sem permissão. | A permissão necessária não pertence ao perfil do usuário. | O sistema redireciona para a tela de acesso negado. |
 
-**Restrição:** O hash informado deve corresponder a um token ativo salvo.<br>
+> **Regra:** A validação de permissão de acesso é mandatória para cada funcionalidade, prevenindo o acesso indevido por usuários com perfil insuficiente.
+---
 
-**Ação:** O sistema retorna token inválido quando não encontrar correspondência.<br>
+#### 🔴 RN028 - Validação de senha do usuário
 
-**RN012 - Bloqueio de token expirado**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um usuário é cadastrado. | A senha deve possuir entre 6 e 20 caracteres. | O sistema aceita o cadastro somente quando a senha estiver dentro do padrão. |
 
-**Condição:** O usuário informa um token existente.<br>
+> **Regra:** A definição de um comprimento mínimo e máximo para a senha reforça a segurança da conta e padroniza as credenciais de acesso.
+---
 
-**Restrição:** A data/hora atual não pode ser maior que a data de expiração.<br>
+#### 🔴 RN029 - Validação de e-mail do usuário
 
-**Ação:** O sistema nega o acesso e informa que o token expirou.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um usuário é cadastrado ou editado. | O e-mail deve seguir formato válido. | O sistema valida o e-mail antes de salvar. |
 
-**RN013 - Uso único do token**
+> **Regra:** A garantia de um formato de e-mail válido no momento da persistência assegura a integridade das comunicações enviadas pelo sistema.
+---
 
-**Condição:** Um token válido é utilizado com sucesso.<br>
+#### 🔴 RN030 - Busca de usuário por e-mail normalizado
 
-**Restrição:** O mesmo token não pode liberar novo acesso.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema valida login ou token. | A comparação não deve depender de maiúsculas, minúsculas ou espaços extras. | O sistema normaliza o e-mail antes da busca. |
 
-**Ação:** O sistema marca o token como utilizado.<br>
+> **Regra:** A normalização de e-mails para busca elimina inconsistências causadas por digitação variada, assegurando a precisão na localização de registros.
+---
 
-**RN017 - Proteção de telas autenticadas**
+#### 🔴 RN032 - Preservação da senha na edição do usuário
 
-**Condição:** Um usuário tenta acessar tela protegida.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador edita dados gerais de um usuário. | A senha não deve ser alterada nessa edição padrão. | O sistema preserva a senha cadastrada. |
 
-**Restrição:** O usuário precisa estar autenticado.<br>
+> **Regra:** A preservação da senha durante edições administrativas de dados gerais previne alterações acidentais e mantém a segurança da conta do usuário.
+---
 
-**Ação:** O sistema solicita autenticação ou bloqueia o acesso.<br>
+#### 🔴 RN033 - Preservação da data de cadastro do usuário
 
-**RN019 - Acesso negado por falta de permissão**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um usuário é editado. | A data original de cadastro não deve ser substituída. | O sistema mantém a data original. |
 
-**Condição:** O usuário tenta acessar uma funcionalidade sem permissão.<br>
+> **Regra:** A integridade da data de criação é essencial para fins de auditoria e histórico, devendo ser imutável durante o processo de edição de dados cadastrais.
+---
 
-**Restrição:** A permissão necessária não pertence ao perfil do usuário.<br>
+#### 🔴 RN034 - Ativação e inativação de usuário
 
-**Ação:** O sistema redireciona para a tela de acesso negado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador altera o status de um usuário. | Usuário inativo não pode acessar o sistema nem receber token. | O sistema alterna o status entre ativo e inativo. |
 
-**RN028 - Validação de senha do usuário**
+> **Regra:** O controle de status deve restringir imediatamente o acesso e as operações de qualquer usuário inativado, garantindo a conformidade da segurança.
+---
 
-**Condição:** Um usuário é cadastrado.<br>
+#### 🔴 RN035 - Exclusão de usuário
 
-**Restrição:** A senha deve possuir entre 6 e 20 caracteres.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador confirma exclusão de usuário. | O ID do usuário deve ser informado e existir. | O sistema remove o documento correspondente no Firestore. |
 
-**Ação:** O sistema aceita o cadastro somente quando a senha estiver dentro do padrão.<br>
+> **Regra:** A exclusão definitiva de registros no Firebase é condicionada à validação prévia da existência do ID, evitando operações em referências nulas ou incorretas.
+---
 
-**RN029 - Validação de e-mail do usuário**
+#### 🔴 RN036 - Consulta de usuário inexistente
 
-**Condição:** Um usuário é cadastrado ou editado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador tenta editar, excluir ou detalhar usuário. | O usuário precisa existir. | O sistema retorna não encontrado se o usuário não existir. |
 
-**Restrição:** O e-mail deve seguir formato válido.<br>
+> **Regra:** O sistema deve validar a existência do registro em operações de gerenciamento, fornecendo feedback claro e preciso caso o recurso solicitado esteja ausente.
+---
 
-**Ação:** O sistema valida o e-mail antes de salvar.<br>
+#### 🔴 RN039 - Validação de telefone do parceiro
 
-**RN030 - Busca de usuário por e-mail normalizado**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Parceiro é cadastrado ou editado. | O telefone deve seguir o padrão (31) 9 9999-9999. | O sistema bloqueia o salvamento se o formato for inválido. |
 
-**Condição:** O sistema valida login ou token.<br>
+> **Regra:** A padronização estrita do campo telefone é obrigatória para assegurar a consistência dos dados de contato dos parceiros no sistema.
+---
 
-**Restrição:** A comparação não deve depender de maiúsculas, minúsculas ou espaços extras.<br>
+#### 🔴 RN041 - Preservação da data de cadastro do parceiro
 
-**Ação:** O sistema normaliza o e-mail antes da busca.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um parceiro é editado. | A data original de cadastro não deve ser substituída. | O sistema mantém a data original. |
 
-**RN032 - Preservação da senha na edição do usuário**
+> **Regra:** A data de criação do registro de parceiro é um dado histórico e deve permanecer imutável durante qualquer processo de edição de informações.
+---
 
-**Condição:** O administrador edita dados gerais de um usuário.<br>
+#### 🔴 RN042 - Ativação e inativação de parceiro
 
-**Restrição:** A senha não deve ser alterada nessa edição padrão.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário altera o status de um parceiro. | O parceiro pode estar ativo ou inativo. | O sistema atualiza o status do parceiro. |
 
-**Ação:** O sistema preserva a senha cadastrada.<br>
+> **Regra:** O status operacional do parceiro deve ser gerenciável, permitindo a alternância de estado para controlar a disponibilidade do parceiro nas operações do sistema.
+---
 
-**RN033 - Preservação da data de cadastro do usuário**
+#### 🔴 RN043 - Exclusão de parceiro
 
-**Condição:** Um usuário é editado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário autorizado confirma exclusão de parceiro. | O ID do parceiro deve ser informado e existir. | O sistema remove o parceiro do Firestore ou informa falha. |
 
-**Restrição:** A data original de cadastro não deve ser substituída.<br>
+> **Regra:** A exclusão física de um parceiro é uma operação sensível que requer a validação prévia da existência do registro antes da execução no Firebase.
+---
 
-**Ação:** O sistema mantém a data original.<br>
+#### 🔴 RN044 - Consulta de parceiro inexistente
 
-**RN034 - Ativação e inativação de usuário**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário tenta editar, excluir ou detalhar parceiro. | O parceiro precisa existir. | O sistema retorna não encontrado se o parceiro não existir. |
 
-**Condição:** O administrador altera o status de um usuário.<br>
+> **Regra:** Toda tentativa de interação com um registro de parceiro deve ser validada pela existência do mesmo na base de dados, garantindo tratamento adequado para casos de inexistência.
+---
 
-**Restrição:** Usuário inativo não pode acessar o sistema nem receber token.<br>
+#### 🔴 RN048 - Capacidade máxima válida
 
-**Ação:** O sistema alterna o status entre ativo e inativo.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário configura a capacidade máxima. | A capacidade máxima deve ser maior que zero. | O sistema aceita o valor para cálculo de ocupação. |
 
-**RN035 - Exclusão de usuário**
+> **Regra:** O parâmetro de capacidade máxima é crítico para os cálculos de ocupação e deve ser estritamente positivo para garantir a validade dos indicadores.
+---
 
-**Condição:** O administrador confirma exclusão de usuário.<br>
+#### 🔴 RN049 - Capacidade mínima válida
 
-**Restrição:** O ID do usuário deve ser informado e existir.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário configura capacidade mínima e máxima. | A capacidade mínima deve ser menor que a capacidade máxima. | O sistema salva somente se a relação for válida. |
 
-**Ação:** O sistema remove o documento correspondente no Firestore.<br>
+> **Regra:** A coerência matemática entre os limites de capacidade é essencial para a integridade das regras de monitoramento, invalidando configurações onde o mínimo ultrapasse o máximo.
+---
 
-**RN036 - Consulta de usuário inexistente**
+#### 🔴 RN050 - Percentual de alerta válido
 
-**Condição:** O administrador tenta editar, excluir ou detalhar usuário.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário configura percentual de alerta. | O percentual deve estar entre 1% e 100%. | O sistema usa esse valor para alertas de ocupação. |
 
-**Restrição:** O usuário precisa existir.<br>
+> **Regra:** A validação do percentual de alerta é fundamental para garantir que os gatilhos de notificação estejam dentro de uma faixa operacional lógica e utilizável.
+---
 
-**Ação:** O sistema retorna não encontrado se o usuário não existir.<br>
+#### 🔴 RN051 - Taxa de amostragem válida
 
-**RN039 - Validação de telefone do parceiro**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário define a taxa de amostragem de volume. | O valor deve estar entre 1 e 1440 minutos. | O sistema salva a taxa se estiver válida. |
 
-**Condição:** Parceiro é cadastrado ou editado.<br>
+> **Regra:** O intervalo de amostragem deve respeitar limites de tempo (1 minuto a 24 horas) para evitar a sobrecarga do sistema ou a coleta insuficiente de dados.
+---
 
-**Restrição:** O telefone deve seguir o padrão `(31) 9 9999-9999`.<br>
+#### 🔴 RN052 - Duração máxima de medição válida
 
-**Ação:** O sistema bloqueia o salvamento se o formato for inválido.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário define duração máxima da medição. | O valor deve estar entre 1 e 86400 segundos. | O sistema salva a duração se estiver válida. |
 
-**RN041 - Preservação da data de cadastro do parceiro**
+> **Regra:** A imposição de limites para a duração da medição garante a estabilidade do hardware durante longos períodos de monitoramento contínuo.
+---
 
-**Condição:** Um parceiro é editado.<br>
+#### 🔴 RN053 - Raio de detecção válido
 
-**Restrição:** A data original de cadastro não deve ser substituída.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário informa raio de detecção do Kinect. | O valor deve estar entre 0 e 100 metros. | O sistema salva o raio se estiver válido. |
 
-**Ação:** O sistema mantém a data original.<br>
+> **Regra:** O raio de detecção deve ser configurado dentro dos limites operacionais do dispositivo para assegurar a precisão e a confiabilidade na captura do volume.
+---
 
-**RN042 - Ativação e inativação de parceiro**
+#### 🔴 RN054 - Configuração de zona de exclusão
 
-**Condição:** Usuário altera o status de um parceiro.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário configura parâmetros do Kinect no MVC. | A zona de exclusão pode estar habilitada ou desabilitada. | O sistema salva a decisão nos parâmetros. |
 
-**Restrição:** O parceiro pode estar ativo ou inativo.<br>
+> **Regra:** A flexibilidade para habilitar ou desabilitar a zona de exclusão permite a adaptação do Kinect a diferentes cenários e necessidades de monitoramento do ambiente.
+---
 
-**Ação:** O sistema atualiza o status do parceiro.<br>
+#### 🔴 RN056 - Atualização de parâmetros somente com alteração real
 
-**RN043 - Exclusão de parceiro**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário salva parâmetros. | Se nenhum campo foi alterado, não deve haver gravação desnecessária. | O sistema informa que nenhuma alteração foi realizada. |
 
-**Condição:** Usuário autorizado confirma exclusão de parceiro.<br>
+> **Regra:** Otimização de I/O de dados: gravações no banco devem ocorrer estritamente mediante a detecção de alterações nos valores dos parâmetros.
+---
 
-**Restrição:** O ID do parceiro deve ser informado e existir.<br>
+#### 🔴 RN057 - Data de atualização dos parâmetros
 
-**Ação:** O sistema remove o parceiro do Firestore ou informa falha.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Parâmetros são salvos. | Toda alteração deve ser rastreável. | O sistema atualiza `DataAtualizacao` em UTC. |
 
-**RN044 - Consulta de parceiro inexistente**
+> **Regra:** A persistência da data de atualização em padrão UTC é obrigatória para garantir o rastreio temporal preciso e a sincronia global dos logs de alteração.
+---
 
-**Condição:** Usuário tenta editar, excluir ou detalhar parceiro.<br>
+#### 🔴 RN062 - Template de mensagem
 
-**Restrição:** O parceiro precisa existir.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário configura mensagem padrão de alerta. | O texto deve possuir no máximo 1000 caracteres. | O sistema salva o template para uso nas comunicações. |
 
-**Ação:** O sistema retorna não encontrado se o parceiro não existir.<br>
+> **Regra:** O limite de caracteres no template de mensagem assegura que as notificações sejam otimizadas para leitura rápida e compatibilidade com diferentes canais de comunicação.
+---
 
-**RN048 - Capacidade máxima válida**
+#### 🔴 RN064 - Nome do remetente WhatsApp
 
-**Condição:** Usuário configura a capacidade máxima.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário configura remetente para WhatsApp. | O nome deve possuir no máximo 80 caracteres. | O sistema aceita o remetente somente dentro do limite. |
 
-**Restrição:** A capacidade máxima deve ser maior que zero.<br>
+> **Regra:** A limitação de caracteres no campo de remetente previne erros de formatação nos envios via API do WhatsApp, mantendo a padronização das mensagens.
+---
 
-**Ação:** O sistema aceita o valor para cálculo de ocupação.<br>
+#### 🔴 RN065 - Escalonamento de alerta
 
-**RN049 - Capacidade mínima válida**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma notificação permanece pendente. | O tempo de escalonamento deve estar entre 1 e 1440 minutos. | O sistema mantém o tempo e o canal configurados para escalonamento. |
 
-**Condição:** Usuário configura capacidade mínima e máxima.<br>
+> **Regra:** O intervalo de escalonamento é configurado para garantir a reatividade operacional em casos de notificações não atendidas, respeitando o limite de até 24 horas.
+---
 
-**Restrição:** A capacidade mínima deve ser menor que a capacidade máxima.<br>
+#### 🔴 RN066 - Dias sem coleta para alerta
 
-**Ação:** O sistema salva somente se a relação for válida.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema controla ausência de coleta. | O limite configurável deve estar entre 1 e 365 dias. | O sistema mantém esse parâmetro para alerta operacional. |
 
-**RN050 - Percentual de alerta válido**
+> **Regra:** A janela de monitoramento de ausência de dados deve ser definida em um período de até um ano, garantindo que o alerta operacional seja disparado caso a inatividade ultrapasse o limite configurado.
+---
 
-**Condição:** Usuário configura percentual de alerta.<br>
+#### 🔴 RN071 - Limite visual do percentual
 
-**Restrição:** O percentual deve estar entre 1% e 100%.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O percentual calculado ultrapassa 100%. | A exibição do dashboard não deve passar de 100%. | O sistema limita o percentual exibido. |
 
-**Ação:** O sistema usa esse valor para alertas de ocupação.<br>
+> **Regra:** O truncamento visual em 100% é obrigatório para evitar distorções na interface do usuário (UI) do dashboard, mantendo a clareza e a legibilidade dos indicadores de ocupação.
+---
 
-**RN051 - Taxa de amostragem válida**
+#### 🔴 RN080 - Erro no processamento da medição pelo Hub
 
-**Condição:** Usuário define a taxa de amostragem de volume.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Ocorre erro ao processar medição recebida. | O erro não pode gerar dado inconsistente nem derrubar a aplicação. | O MVC registra o erro e envia mensagem de falha ao cliente chamador. |
 
-**Restrição:** O valor deve estar entre 1 e 1440 minutos.<br>
+> **Regra:** A resiliência do sistema é prioritária; erros no processamento de medições via Hub devem ser tratados de forma isolada, evitando a corrupção de dados ou a indisponibilidade do serviço.
+---
 
-**Ação:** O sistema salva a taxa se estiver válida.<br>
+#### 🔴 RN084 - Bloqueio de alerta sem capacidade válida
 
-**RN052 - Duração máxima de medição válida**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema verifica alertas automáticos. | A capacidade máxima deve ser maior que zero. | O sistema não gera alerta se a capacidade estiver inválida. |
 
-**Condição:** Usuário define duração máxima da medição.<br>
+> **Regra:** O disparo de alertas automáticos exige uma premissa matemática válida (capacidade máxima > 0); na ausência desta, o sistema deve omitir o alerta para evitar falsos positivos.
+---
 
-**Restrição:** O valor deve estar entre 1 e 86400 segundos.<br>
+#### 🔴 RN085 - Não geração de alerta abaixo do limite
 
-**Ação:** O sistema salva a duração se estiver válida.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição é recebida. | O percentual calculado está abaixo do percentual de alerta. | O sistema não cria notificação automática. |
 
-**RN053 - Raio de detecção válido**
+> **Regra:** Notificações automáticas são emitidas exclusivamente quando os limiares de ocupação configurados são atingidos, preservando o fluxo de comunicações para situações críticas.
+---
 
-**Condição:** Usuário informa raio de detecção do Kinect.<br>
+#### 🔴 RN089 - Listagem paginada de medições
 
-**Restrição:** O valor deve estar entre 0 e 100 metros.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário acessa o histórico de medições. | A listagem deve exibir 10 registros por página. | O sistema pagina as medições. |
 
-**Ação:** O sistema salva o raio se estiver válido.<br>
+> **Regra:** A paginação dos dados de histórico em blocos de 10 registros garante a performance da interface e a facilidade de navegação para o usuário final.
+---
 
-**RN054 - Configuração de zona de exclusão**
+#### 🔴 RN092 - Normalização da página de medições
 
-**Condição:** Usuário configura parâmetros do Kinect no MVC.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário informa uma página inválida. | A página não pode ser menor que 1 nem maior que o total disponível. | O sistema ajusta a página para valor válido. |
 
-**Restrição:** A zona de exclusão pode estar habilitada ou desabilitada.<br>
+> **Regra:** A sanitização dos parâmetros de paginação é necessária para prevenir erros de requisição e garantir que a navegação do usuário permaneça dentro dos limites reais do conjunto de dados.
+---
 
-**Ação:** O sistema salva a decisão nos parâmetros.<br>
+#### 🔴 RN102 - Aceite de coleta com ID obrigatório
 
-**RN056 - Atualização de parâmetros somente com alteração real**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Parceiro aceita uma coleta. | O ID da notificação deve ser informado. | O sistema rejeita a operação se o ID estiver vazio. |
 
-**Condição:** Usuário salva parâmetros.<br>
+> **Regra:** O fornecimento de um identificador (ID) único para a notificação de coleta é indispensável para garantir a precisão e a rastreabilidade da operação no banco de dados.
+---
 
-**Restrição:** Se nenhum campo foi alterado, não deve haver gravação desnecessária.<br>
+#### 🔴 RN103 - Atualização da coleta antes da comunicação
 
-**Ação:** O sistema informa que nenhuma alteração foi realizada.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma coleta é aceita. | O status deve ser atualizado no banco antes de avisar os clientes. | O sistema só envia aviso após sucesso na atualização. |
 
-**RN057 - Data de atualização dos parâmetros**
+> **Regra:** A consistência entre o estado do banco de dados e as comunicações enviadas deve ser mantida, garantindo que o status "Aceito" seja persistido com sucesso antes de disparar qualquer notificação externa.
+---
 
-**Condição:** Parâmetros são salvos.<br>
+#### 🔴 RN104 - Status de notificação aceita
 
-**Restrição:** Toda alteração deve ser rastreável.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Parceiro aceita a solicitação de coleta. | O registro deve refletir a nova situação. | O sistema altera o status para `Aceito`. |
 
-**Ação:** O sistema atualiza `DataAtualizacao` em UTC.<br>
+> **Regra:** O registro de solicitação deve ser atualizado precisamente para o estado `Aceito`, assegurando que o ciclo de vida da coleta seja corretamente representado para todos os módulos do sistema.
+---
 
-**RN062 - Template de mensagem**
+#### 🔴 RN106 - Falha no envio de notificação SignalR
 
-**Condição:** O usuário configura mensagem padrão de alerta.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O MVC tenta avisar os clientes conectados. | Falhas de comunicação devem ser rastreadas. | O sistema registra erro caso o envio falhe. |
 
-**Restrição:** O texto deve possuir no máximo 1000 caracteres.<br>
+> **Regra:** A falha no canal de comunicação SignalR deve ser documentada via log, permitindo a auditabilidade de eventos de notificação não entregues.
+---
 
-**Ação:** O sistema salva o template para uso nas comunicações.<br>
+#### 🔴 RN109 - Falha de comunicação com Firestore
 
-**RN064 - Nome do remetente WhatsApp**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema tenta acessar o Firestore e ocorre erro. | A falha não deve interromper toda a aplicação. | O MVC registra o erro e retorna mensagem adequada ou lista vazia. |
 
-**Condição:** O usuário configura remetente para WhatsApp.<br>
+> **Regra:** O isolamento de falhas de persistência é obrigatório; a indisponibilidade temporária do Firestore deve degradar o serviço de forma controlada, mantendo o sistema operante.
+---
 
-**Restrição:** O nome deve possuir no máximo 80 caracteres.<br>
+#### 🔴 RN111 - Consulta global para dados antigos
 
-**Ação:** O sistema aceita o remetente somente dentro do limite.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema consulta dados por empresa. | Registros antigos sem EmpresaId ainda precisam ser acessíveis no contexto global. | O MVC exibe registros sem empresa apenas quando o contexto for global. |
 
-**RN065 - Escalonamento de alerta**
+> **Regra:** A retrocompatibilidade de dados é garantida ao permitir o acesso a registros legados exclusivamente sob a consulta de contexto global, protegendo a integridade do escopo empresarial.
+---
 
-**Condição:** Uma notificação permanece pendente.<br>
+#### 🔴 RN115 - Resposta do MVC para token inválido
 
-**Restrição:** O tempo de escalonamento deve estar entre 1 e 1440 minutos.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect envia token inválido, expirado ou inexistente. | O acesso ao Kinect não pode ser liberado. | O MVC retorna resposta de recusa da validação. |
 
-**Ação:** O sistema mantém o tempo e o canal configurados para escalonamento.<br>
+> **Regra:** Qualquer token que não cumpra os requisitos de validade, expiração ou existência deve resultar em uma negação explícita de acesso ao hardware Kinect.
+---
 
-**RN066 - Dias sem coleta para alerta**
+#### 🔴 RN118 - Proteção antifalsificação em formulários
 
-**Condição:** O sistema controla ausência de coleta.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário envia formulário de criação, edição, exclusão ou configuração. | A requisição deve conter token antiforgery válido. | O MVC aceita a operação somente após validação. |
 
-**Restrição:** O limite configurável deve estar entre 1 e 365 dias.<br>
-
-**Ação:** O sistema mantém esse parâmetro para alerta operacional.<br>
-
-**RN071 - Limite visual do percentual**
-
-**Condição:** O percentual calculado ultrapassa 100%.<br>
-
-**Restrição:** A exibição do dashboard não deve passar de 100%.<br>
-
-**Ação:** O sistema limita o percentual exibido.<br>
-
-**RN080 - Erro no processamento da medição pelo Hub**
-
-**Condição:** Ocorre erro ao processar medição recebida.<br>
-
-**Restrição:** O erro não pode gerar dado inconsistente nem derrubar a aplicação.<br>
-
-**Ação:** O MVC registra o erro e envia mensagem de falha ao cliente chamador.<br>
-
-**RN084 - Bloqueio de alerta sem capacidade válida**
-
-**Condição:** O sistema verifica alertas automáticos.<br>
-
-**Restrição:** A capacidade máxima deve ser maior que zero.<br>
-
-**Ação:** O sistema não gera alerta se a capacidade estiver inválida.<br>
-
-**RN085 - Não geração de alerta abaixo do limite**
-
-**Condição:** Uma medição é recebida.<br>
-
-**Restrição:** O percentual calculado está abaixo do percentual de alerta.<br>
-
-**Ação:** O sistema não cria notificação automática.<br>
-
-**RN089 - Listagem paginada de medições**
-
-**Condição:** Usuário acessa o histórico de medições.<br>
-
-**Restrição:** A listagem deve exibir 10 registros por página.<br>
-
-**Ação:** O sistema pagina as medições.<br>
-
-**RN092 - Normalização da página de medições**
-
-**Condição:** Usuário informa uma página inválida.<br>
-
-**Restrição:** A página não pode ser menor que 1 nem maior que o total disponível.<br>
-
-**Ação:** O sistema ajusta a página para valor válido.<br>
-
-**RN102 - Aceite de coleta com ID obrigatório**
-
-**Condição:** Parceiro aceita uma coleta.<br>
-
-**Restrição:** O ID da notificação deve ser informado.<br>
-
-**Ação:** O sistema rejeita a operação se o ID estiver vazio.<br>
-
-**RN103 - Atualização da coleta antes da comunicação**
-
-**Condição:** Uma coleta é aceita.<br>
-
-**Restrição:** O status deve ser atualizado no banco antes de avisar os clientes.<br>
-
-**Ação:** O sistema só envia aviso após sucesso na atualização.<br>
-
-**RN104 - Status de notificação aceita**
-
-**Condição:** Parceiro aceita a solicitação de coleta.<br>
-
-**Restrição:** O registro deve refletir a nova situação.<br>
-
-**Ação:** O sistema altera o status para `Aceito`.<br>
-
-**RN106 - Falha no envio de notificação SignalR**
-
-**Condição:** O MVC tenta avisar os clientes conectados.<br>
-
-**Restrição:** Falhas de comunicação devem ser rastreadas.<br>
-
-**Ação:** O sistema registra erro caso o envio falhe.<br>
-
-**RN109 - Falha de comunicação com Firestore**
-
-**Condição:** O sistema tenta acessar o Firestore e ocorre erro.<br>
-
-**Restrição:** A falha não deve interromper toda a aplicação.<br>
-
-**Ação:** O MVC registra o erro e retorna mensagem adequada ou lista vazia.<br>
-
-**RN111 - Consulta global para dados antigos**
-
-**Condição:** O sistema consulta dados por empresa.<br>
-
-**Restrição:** Registros antigos sem `EmpresaId` ainda precisam ser acessíveis no contexto global.<br>
-
-**Ação:** O MVC exibe registros sem empresa apenas quando o contexto for `global`.<br>
-
-**RN115 - Resposta do MVC para token inválido**
-
-**Condição:** O Kinect envia token inválido, expirado ou inexistente.<br>
-
-**Restrição:** O acesso ao Kinect não pode ser liberado.<br>
-
-**Ação:** O MVC retorna resposta de recusa da validação.<br>
-
-**RN118 - Proteção antifalsificação em formulários**
-
-**Condição:** Usuário envia formulário de criação, edição, exclusão ou configuração.<br>
-
-**Restrição:** A requisição deve conter token antiforgery válido.<br>
-
-**Ação:** O MVC aceita a operação somente após validação.<br>
+> **Regra:** A implementação de tokens Antiforgery é obrigatória em todas as ações de escrita (CUD) para mitigar ataques de Cross-Site Request Forgery (CSRF).
+---
 
 #### Kinect/Desktop
 
