@@ -589,8 +589,8 @@ As regras do sistema **Inventory Masters** em cinco grupos: regras de negócio d
 
 Critério de organização:
 
-- `RN` identifica regras relacionadas ao m?dulo MVC/Web.
-- `RNK` identifica regras relacionadas ao m?dulo Kinect/Desktop.
+- `RN` identifica regras relacionadas ao módulo MVC/Web.
+- `RNK` identifica regras relacionadas ao módulo Kinect/Desktop.
 - Regras de negócio descrevem decisões do domínio, fluxos de uso e comportamentos esperados pelo usuário.
 - Regras de validação descrevem campos obrigatórios, formatos, limites, bloqueios e consistência de dados.
 - Regras de integração descrevem comunicação entre módulos, Firebase, SQLite e SignalR/Hub.
