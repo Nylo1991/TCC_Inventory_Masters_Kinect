@@ -600,8 +600,8 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 - `RNK`: Identifica regras relacionadas ao módulo Kinect/Desktop.
 - 🔵 **Regras de negócio:** Descrevem decisões do domínio, fluxos de uso e comportamentos esperados pelo usuário.
 - 🔴 **Regras de validação:** Descrevem campos obrigatórios, formatos, limites, bloqueios e consistência de dados.
-- **Regras de integração:** Descrevem comunicação entre módulos, Firebase, SQLite e SignalR/Hub.
-- **Regras técnicas/operacionais:** Descrevem controles necessários para execução, rastreabilidade, configuração, cálculo e estabilidade.
+- 🟢 **Regras de integração:** Descrevem comunicação entre módulos, Firebase, SQLite e SignalR/Hub.
+- 🟡 **Regras técnicas/operacionais:** Descrevem controles necessários para execução, rastreabilidade, configuração, cálculo e estabilidade.
 - **Funcionalidades em evolução:** WhatsApp, escalonamento e canais de alerta permanecem como funcionalidades parametrizadas, pois o código já possui configurações para esses recursos.
 
 ### Regras de Negócio MVC
@@ -1553,625 +1553,695 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 > **Regra:** A higienização da interface ao alternar entre modos de entrada evita confusões semânticas, assegurando que o feedback fornecido seja relevante apenas para o estado atual da aplicação.
 ---
 
-#### Regras de Integração
+### Regras de Integração MVC/Web
+---
 
-##### MVC/Web
+#### 🟢 RN072 - Recebimento de medição em tempo real
 
-**RN072 - Recebimento de medição em tempo real**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect envia volume ao MVC via SignalR. | O volume recebido deve representar uma leitura válida em cm³. | O `MedicaoHub` recebe e processa a medição. |
 
-**Condição:** O Kinect envia volume ao MVC via SignalR.<br>
+> **Regra:** A integridade da comunicação via SignalR é assegurada pela validação da unidade de medida e do tipo de dado, garantindo que o `MedicaoHub` processe apenas informações fidedignas enviadas pelo hardware.
+---
 
-**Restrição:** O volume recebido deve representar uma leitura válida em cm3.<br>
+#### 🟢 RN073 - Conversão do volume recebido
 
-**Ação:** O `MedicaoHub` recebe e processa a medição.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O MVC recebe volume em cm³. | O módulo web trabalha com volume em m³. | O sistema divide o volume por 1.000.000 antes de salvar e exibir. |
 
-**RN073 - Conversão do volume recebido**
+> **Regra:** A conversão de unidades (centímetros cúbicos para metros cúbicos) é mandatória para padronizar o armazenamento e a visualização dos dados, alinhando a entrada bruta ao padrão do sistema.
+---
 
-**Condição:** O MVC recebe volume em cm3.<br>
+#### 🟢 RN074 - Registro da origem da medição
 
-**Restrição:** O módulo web trabalha com volume em m3.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição é recebida pelo Hub. | Toda medição automática deve indicar sua origem. | O sistema registra a origem como `Kinect`. |
 
-**Ação:** O sistema divide o volume por 1.000.000 antes de salvar e exibir.<br>
+> **Regra:** A rastreabilidade da origem do dado é essencial para a auditoria do sistema, permitindo identificar que o registro foi gerado por um dispositivo de hardware específico.
+---
 
-**RN074 - Registro da origem da medição**
+#### 🟢 RN075 - Status inicial da medição recebida
 
-**Condição:** Uma medição é recebida pelo Hub.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição é processada com sucesso. | Medição recebida sem erro operacional deve iniciar como normal. | O sistema salva a medição com status `Normal`. |
 
-**Restrição:** Toda medição automática deve indicar sua origem.<br>
+> **Regra:** O estado inicial das medições processadas deve ser definido como `Normal`, garantindo que apenas exceções ou alertas sejam tratados posteriormente de forma diferenciada.
+---
 
-**Ação:** O sistema registra a origem como `Kinect`.<br>
+#### 🟢 RN076 - Persistência da medição no Firebase
 
-**RN075 - Status inicial da medição recebida**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Hub processa uma medição válida. | A medição deve ser armazenada na coleção `Medicoes`. | O MVC salva volume, origem, status, empresa e data/hora. |
 
-**Condição:** Uma medição é processada com sucesso.<br>
+> **Regra:** A persistência dos dados no Firebase deve contemplar todos os metadados necessários para a consulta histórica, garantindo a integridade e a contextualização de cada registro.
+---
 
-**Restrição:** Medição recebida sem erro operacional deve iniciar como normal.<br>
+#### 🟢 RN077 - Data e hora da medição no MVC
 
-**Ação:** O sistema salva a medição com status `Normal`.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição é registrada. | O horário deve representar o momento do recebimento no MVC. | O sistema grava data/hora atual em UTC. |
 
-**RN076 - Persistência da medição no Firestore**
+> **Regra:** O uso do padrão UTC para o registro de data e hora evita discrepâncias de fuso horário, assegurando uma linha do tempo única e confiável para todas as medições globais.
+---
 
-**Condição:** O Hub processa uma medição válida.<br>
+#### 🟢 RN078 - Atualização em tempo real do dashboard
 
-**Restrição:** A medição deve ser armazenada na coleção `Medicoes`.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma medição é salva com sucesso. | Clientes conectados ao Hub devem receber atualização. | O sistema envia o evento `NovaMedicao`. |
 
-**Ação:** O MVC salva volume, origem, status, empresa e data/hora.<br>
+> **Regra:** A reatividade da interface é garantida pelo disparo de eventos via SignalR, assegurando que o dashboard do usuário reflita instantaneamente as novas leituras do sensor.
+---
 
-**RN077 - Data e hora da medição no MVC**
+#### 🟢 RN079 - Formatação da data/hora no Hub
 
-**Condição:** Uma medição é registrada.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Hub envia nova medição aos clientes. | A data/hora deve ser legível ao usuário. | O sistema envia a data no formato `dd/MM/yyyy HH:mm:ss`. |
 
-**Restrição:** O horário deve representar o momento do recebimento no MVC.<br>
+> **Regra:** A padronização da saída de data no formato local brasileiro é obrigatória para assegurar a clareza e a legibilidade da informação exibida na interface do usuário.
+---
 
-**Ação:** O sistema grava data/hora atual em UTC.<br>
+#### 🟢 RN083 - Verificação automática de alerta
 
-**RN078 - Atualização em tempo real do dashboard**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma nova medição é recebida pelo Hub. | A medição deve ser comparada aos parâmetros da empresa. | O sistema verifica se o percentual atingiu o limite de alerta. |
 
-**Condição:** Uma medição é salva com sucesso.<br>
+> **Regra:** O processamento em tempo real inclui a validação lógica entre a medição recebida e as regras de negócio parametrizadas para a unidade empresarial específica.
+---
 
-**Restrição:** Clientes conectados ao Hub devem receber atualização.<br>
+#### 🟢 RN086 - Notificação automática por capacidade
 
-**Ação:** O sistema envia o evento `NovaMedicao`.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O percentual atinge ou ultrapassa o limite de alerta. | Não pode existir outra notificação pendente para a empresa. | O sistema cria notificação automática de capacidade com status `Pendente`. |
 
-**RN079 - Formatação da data/hora no Hub**
+> **Regra:** A prevenção de redundância de alertas garante que cada incidente de ocupação limite seja tratado de forma única, evitando o envio de notificações em duplicidade para um mesmo evento pendente.
+---
 
-**Condição:** O Hub envia nova medição aos clientes.<br>
+#### 🟢 RN087 - Dados da notificação automática
 
-**Restrição:** A data/hora deve ser legível ao usuário.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema cria uma notificação por capacidade. | A notificação deve conter volume, tipo, status, mensagem, empresa e data/hora. | O sistema salva a notificação como automática. |
 
-**Ação:** O sistema envia a data no formato `dd/MM/yyyy HH:mm:ss`.<br>
+> **Regra:** A estruturação completa do registro de notificação permite a rastreabilidade total do evento, facilitando a análise posterior e o histórico de alertas.
+---
 
-**RN083 - Verificação automática de alerta**
+#### 🟢 RN088 - Mensagem automática de alerta
 
-**Condição:** Uma nova medição é recebida pelo Hub.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma notificação automática é criada. | A mensagem deve informar o percentual atingido. | O sistema gera texto indicando a ocupação da capacidade máxima. |
 
-**Restrição:** A medição deve ser comparada aos parâmetros da empresa.<br>
+> **Regra:** O conteúdo da mensagem de alerta deve ser informativo e preciso, comunicando claramente ao operador o nível crítico de ocupação que desencadeou a notificação.
+---
 
-**Ação:** O sistema verifica se o percentual atingiu o limite de alerta.<br>
+#### 🟢 RN105 - Comunicação em tempo real de coleta aceita
 
-**RN086 - Notificação automática por capacidade**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| A coleta é aceita com sucesso. | Todos os clientes conectados devem ser comunicados. | O MVC envia mensagem via SignalR. |
 
-**Condição:** O percentual atinge ou ultrapassa o limite de alerta.<br>
+> **Regra:** Garante a sincronização instantânea da interface visual de todos os operadores ativos assim que uma nova coleta for integrada com sucesso.
+---
 
-**Restrição:** Não pode existir outra notificação pendente para a empresa.<br>
+#### 🟢 RN107 - Firebase como banco principal do MVC
 
-**Ação:** O sistema cria notificação automática de capacidade com status `Pendente`.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O MVC precisa persistir dados operacionais. | Usuários, parceiros, perfis, parâmetros, medições, tokens, logs e notificações devem ser gravados no Firestore. | O sistema utiliza o Firebase como banco principal web. |
 
-**RN087 - Dados da notificação automática**
+> **Regra:** Centraliza toda a camada de persistência da aplicação Web no ecossistema NoSQL do Google Cloud Firestore.
+---
 
-**Condição:** O sistema cria uma notificação por capacidade.<br>
+#### 🟢 RN108 - Coleções separadas no Firestore
 
-**Restrição:** A notificação deve conter volume, tipo, status, mensagem, empresa e data/hora.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O MVC salva dados no Firebase. | Cada entidade deve ser gravada em sua coleção correspondente. | O sistema organiza os documentos por tipo de informação. |
 
-**Ação:** O sistema salva a notificação como automática.<br>
+> **Regra:** Mantém a consistência, a organização e a performance de indexação estruturando os documentos lógicos em coleções isoladas.
+---
 
-**RN088 - Mensagem automática de alerta**
+#### 🟢 RN110 - Isolamento de dados por empresa
 
-**Condição:** Uma notificação automática é criada.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário acessa dados do sistema. | Usuários, parceiros, medições, parâmetros e notificações pertencem à empresa logada. | O sistema impede visualização de dados de outras empresas. |
 
-**Restrição:** A mensagem deve informar o percentual atingido.<br>
+> **Regra:** Mecanismo rigoroso de *Multi-Tenancy* para garantir que nenhuma empresa tenha visibilidade ou acesso a registros de terceiros.
+---
 
-**Ação:** O sistema gera texto indicando a ocupação da capacidade máxima.<br>
+#### 🟢 RN112 - Empresa padrão para usuário sem empresa
 
-**RN105 - Comunicação em tempo real de coleta aceita**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário autenticado não possui empresa vinculada. | O sistema precisa manter compatibilidade operacional. | O MVC usa a empresa padrão `global`. |
 
-**Condição:** A coleta é aceita com sucesso.<br>
+> **Regra:** Evita quebras de execução ou exceções de referência nula (*NullReferenceException*) para contas administrativas ou globais do sistema.
+---
 
-**Restrição:** Todos os clientes conectados devem ser comunicados.<br>
+#### 🟢 RN113 - Filtro por cabeçalho de empresa
 
-**Ação:** O MVC envia mensagem via SignalR.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Uma requisição informa `X-Empresa-Id`. | O contexto da empresa pode vir do cabeçalho quando não houver claim. | O sistema usa esse identificador para filtrar dados. |
 
-**RN107 - Firebase como banco principal do MVC**
+> **Regra:** Permite flexibilidade de integração, capturando o identificador diretamente do *header* HTTP para delimitar o escopo da consulta quando necessário.
+---
 
-**Condição:** O MVC precisa persistir dados operacionais.<br>
+#### 🟢 RN114 - Validação de token do Kinect pelo MVC
 
-**Restrição:** Usuários, parceiros, perfis, parâmetros, medições, tokens, logs e notificações devem ser gravados no Firestore.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O módulo Kinect envia token para validação pelo MVC. | O token deve ser validado pelo mesmo serviço usado no MVC. | O MVC retorna validação positiva para token válido ou recusa para token inválido. |
 
-**Ação:** O sistema utiliza o Firebase como banco principal web.<br>
+> **Regra:** Unifica o serviço de identidade, garantindo que o hardware periférico (Kinect) obedeça às mesmas diretrizes de segurança aplicadas à interface web.
+---
 
-**RN108 - Coleções separadas no Firestore**
+#### 🟢 RN121 - Configuração de autenticação do MVC
 
-**Condição:** O MVC salva dados no Firebase.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema MVC é iniciado. | A autenticação por cookie deve estar configurada para manter a sessão do usuário. | O MVC habilita login, sessão autenticada e logout do usuário. |
 
-**Restrição:** Cada entidade deve ser gravada em sua coleção correspondente.<br>
+> **Regra:** Define o ciclo de vida e o estado de segurança da sessão do operador web por meio do middleware nativo de Cookies do ASP.NET Core.
+---
 
-**Ação:** O sistema organiza os documentos por tipo de informação.<br>
+#### 🟢 RN122 - Configuração do Firebase no MVC
 
-**RN110 - Isolamento de dados por empresa**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O MVC precisa acessar dados persistidos. | A conexão com o Firebase Firestore deve estar configurada antes das consultas e gravações. | O sistema utiliza o serviço Firebase como fonte de dados do módulo web. |
 
-**Condição:** Usuário acessa dados do sistema.<br>
+> **Regra:** Estabelece a inicialização obrigatória do SDK do Firebase (`FirestoreDb`) durante o bootstrap da aplicação no `Program.cs`.
+---
 
-**Restrição:** Usuários, parceiros, medições, parâmetros e notificações pertencem à empresa logada.<br>
+#### 🟢 RN123 - Configuração dos Hubs SignalR
 
-**Ação:** O sistema impede visualização de dados de outras empresas.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema precisa operar comunicação em tempo real. | Os hubs de medição e notificação devem estar registrados na aplicação MVC. | O MVC disponibiliza os canais SignalR para receber medições e enviar atualizações aos clientes. |
 
-**RN112 - Empresa padrão para usuário sem empresa**
+> **Regra:** Mapeia os endpoints dos Hubs específicos no pipeline de middleware da aplicação, habilitando o tráfego de dados bidirecional via WebSockets.
+---
 
-**Condição:** Usuário autenticado não possui empresa vinculada.<br>
+#### 🟢 RN124 - Configuração da validade do token
 
-**Restrição:** O sistema precisa manter compatibilidade operacional.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O MVC gera token de acesso para o usuário. | O tempo de validade deve vir da configuração do sistema ou assumir o padrão de 15 minutos. | O sistema define o prazo de expiração usado na autenticação por token. |
 
-**Ação:** O MVC usa a empresa padrão `global`.<br>
+> **Regra:** Controla o tempo de vida das credenciais temporárias do usuário, buscando o valor dinamicamente no arquivo de configuração (`appsettings.json`) ou aplicando o *fallback* de segurança de 15 minutos.
+---
 
-**RN113 - Filtro por cabeçalho de empresa**
+#### 🟢 RN126 - Configuração dos serviços e repositórios
 
-**Condição:** Uma requisição informa `X-Empresa-Id`.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O MVC executa funcionalidades de cadastros, medições, parâmetros e notificações. | Serviços e repositórios devem estar registrados para injeção de dependência. | O sistema permite que controllers acessem regras, dados e integrações necessárias. |
 
-**Restrição:** O contexto da empresa pode vir do cabeçalho quando não houver claim.<br>
+> **Regra:** Configura o ciclo de vida dos componentes do sistema (como *Scoped*, *Transient* ou *Singleton*) no container de Injeção de Dependência (DI) nativo do .NET, garantindo o desacoplamento e a testabilidade do código.
+---
 
-**Ação:** O sistema usa esse identificador para filtrar dados.<br>
+#### 🟢 RNK003 - Comunicação com MVC para solicitar token
 
-**RN114 - Validação de token do Kinect pelo MVC**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário solicita token pelo Kinect. | O endereço do serviço MVC responsável pela solicitação de token deve estar configurado e acessível. | O Kinect solicita ao MVC a geração e envio do token. |
 
-**Condição:** O módulo Kinect envia token para validação pelo MVC.<br>
+> **Regra:** Estabelece o canal inicial de comunicação de hardware para requisitar credenciais dinâmicas ao servidor web centralizador.
+---
 
-**Restrição:** O token deve ser validado pelo mesmo serviço usado no MVC.<br>
+#### 🟢 RNK006 - Comunicação com MVC para validar token
 
-**Ação:** O MVC retorna validação positiva para token válido ou recusa para token inválido.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário informa token no Kinect. | O endereço do serviço MVC responsável pela validação do token deve estar configurado e acessível. | O Kinect solicita ao MVC a validação do token informado. |
 
-**RN121 - Configuração de autenticação do MVC**
+> **Regra:** Submete o token de acesso inserido ou capturado na interface desktop do Kinect para auditoria e aprovação dos serviços de autenticação do MVC.
+---
 
-**Condição:** O sistema MVC é iniciado.<br>
+#### 🟢 RNK008 - Timeout na autenticação MVC
 
-**Restrição:** A autenticação por cookie deve estar configurada para manter a sessão do usuário.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect solicita ou valida token no MVC. | A resposta deve ocorrer dentro do tempo limite de 15 segundos. | O sistema informa tempo esgotado se o MVC não responder. |
 
-**Ação:** O MVC habilita login, sessão autenticada e logout do usuário.<br>
+> **Regra:** Implementa uma política rigorosa de *timeout* de 15 segundos em chamadas síncronas HTTP, evitando o travamento (*freeze*) da aplicação cliente desktop.
+---
 
-**RN122 - Configuração do Firebase no MVC**
+#### 🟢 RNK009 - Erro de conexão com MVC na autenticação
 
-**Condição:** O MVC precisa acessar dados persistidos.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect tenta solicitar ou validar token. | O MVC pode estar indisponível. | O sistema informa que não foi possível conectar ao MVC. |
 
-**Restrição:** A conexão com o Firebase Firestore deve estar configurada antes das consultas e gravações.<br>
+> **Regra:** Trata de forma resiliente as exceções de rede e indisponibilidades completas de servidor (*sockets*, erros 5xx), exibindo uma mensagem amigável e clara para o usuário final no terminal do Kinect.
+---
 
-**Ação:** O sistema utiliza o serviço Firebase como fonte de dados do módulo web.<br>
+#### 🟢 RNK010 - Resposta inválida do MVC
 
-**RN123 - Configuração dos Hubs SignalR**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect recebe retorno do MVC. | A resposta precisa estar no formato esperado. | O sistema bloqueia o acesso se a resposta for inválida. |
 
-**Condição:** O sistema precisa operar comunicação em tempo real.<br>
+> **Regra:** Valida a integridade do contrato de dados recebido (JSON/Texto). Caso a estrutura esteja corrompida ou malformada, o sistema aborta a operação por segurança.
+---
 
-**Restrição:** Os hubs de medição e notificação devem estar registrados na aplicação MVC.<br>
+#### 🟢 RNK011 - Chamada local sem proxy
 
-**Ação:** O MVC disponibiliza os canais SignalR para receber medições e enviar atualizações aos clientes.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect se comunica com serviços locais do MVC. | A chamada local não deve depender de proxy configurado no Windows. | O sistema usa cliente HTTP sem proxy. |
 
-**RN124 - Configuração da validade do token**
+> **Regra:** Ignora as diretivas globais de proxy do sistema operacional para requisições de *loopback* ou redes locais, prevenindo latência ou falhas de rota artificiais.
+---
 
-**Condição:** O MVC gera token de acesso para o usuário.<br>
+#### 🟢 RNK057 - Banco SQLite por empresa
 
-**Restrição:** O tempo de validade deve vir da configuração do sistema ou assumir o padrão de 15 minutos.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect salva medições locais. | Os dados operacionais devem ficar isolados por empresa. | O sistema usa contexto SQLite associado à empresa da sessão. |
 
-**Ação:** O sistema define o prazo de expiração usado na autenticação por token.<br>
+> **Regra:** Garante o isolamento de dados (*Multi-Tenancy*) na camada *offline* de borda (desktop), direcionando a persistência local para arquivos ou contextos SQLite específicos da empresa autenticada.
+---
 
-**RN126 - Configuração dos serviços e repositórios**
+#### 🟢 RNK063 - URL do SignalR obrigatória
 
-**Condição:** O MVC executa funcionalidades de cadastros, medições, parâmetros e notificações.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect tenta conectar ao MVC. | A URL do SignalR deve estar configurada. | O sistema não inicia conexão e informa erro se a URL estiver vazia. |
 
-**Restrição:** Serviços e repositórios devem estar registrados para injeção de dependência.<br>
+> **Regra:** Bloqueia a inicialização do módulo de comunicação em tempo real caso o parâmetro de endpoint do Hub não tenha sido fornecido nas configurações da aplicação desktop.
+---
 
-**Ação:** O sistema permite que controllers acessem regras, dados e integrações necessárias.<br>
+#### 🟢 RNK064 - Evitar múltiplas conexões SignalR
 
-#### Regras de Negócio do Kinect/Desktop
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect solicita conexão ao SignalR. | Não deve existir conexão já conectada, conectando ou reconectando. | O sistema evita abrir conexão duplicada. |
 
-##### Kinect/Desktop
+> **Regra:** Avalia o estado atual da conexão (`HubConnectionState`) antes de invocar um novo início, prevenindo vazamentos de memória e concorrência por conexões redundantes.
+---
 
-**RNK003 - Comunicação com MVC para solicitar token**
+#### 🟢 RNK065 - Reconexão automática ao MVC
 
-**Condição:** Usuário solicita token pelo Kinect.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| A conexão SignalR cai temporariamente. | O sistema deve tentar restabelecer a comunicação. | O Kinect usa reconexão automática. |
 
-**Restrição:** O endereço do serviço MVC responsável pela solicitação de token deve estar configurado e acessível.<br>
+> **Regra:** Ativa a política nativa de resiliência e tentativas de reconexão do cliente SignalR (`WithAutomaticReconnect`), mantendo o hardware tentando restabelecer o canal de escuta sem intervenção manual do operador.
+---
 
-**Ação:** O Kinect solicita ao MVC a geração e envio do token.<br>
+#### 🟢 RNK066 - Tempo limite da conexão SignalR
 
-**RNK006 - Comunicação com MVC para validar token**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect está conectado ao MVC. | A conexão precisa detectar inatividade ou falha. | O sistema usa controle de tempo limite e verificação periódica da conexão. |
 
-**Condição:** Usuário informa token no Kinect.<br>
+> **Regra:** Configura as propriedades de *Keep-Alive* e *ServerTimeout* no cliente SignalR para identificar quedas silenciosas de conexão e disparar os gatilhos de reconexão.
+---
 
-**Restrição:** O endereço do serviço MVC responsável pela validação do token deve estar configurado e acessível.<br>
+#### 🟢 RNK067 - Envio apenas com conexão saudável
 
-**Ação:** O Kinect solicita ao MVC a validação do token informado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O Kinect tenta enviar volume ao MVC. | A conexão SignalR deve estar no estado `Connected`. | O sistema envia o volume somente com conexão ativa. |
 
-**RNK008 - Timeout na autenticação MVC**
+> **Regra:** Atua como uma trava de segurança que valida o estado exato do ciclo de vida da conexão, impedindo chamadas de métodos do Hub quando o canal estiver instável.
+---
 
-**Condição:** Kinect solicita ou valida token no MVC.<br>
+#### 🟢 RNK068 - Envio da medição ao MVC
 
-**Restrição:** A resposta deve ocorrer dentro do tempo limite de 15 segundos.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Medição válida foi salva localmente. | A conexão SignalR deve estar ativa. | O Kinect envia o volume ao MVC em tempo real. |
 
-**Ação:** O sistema informa tempo esgotado se o MVC não responder.<br>
+> **Regra:** Aciona o gatilho de transmissão imediata para a nuvem assim que o dado operacional é consolidado e protegido na base de dados de borda local.
+---
 
-**RNK009 - Erro de conexão com MVC na autenticação**
+#### 🟢 RNK069 - Falha no envio ao MVC
 
-**Condição:** Kinect tenta solicitar ou validar token.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Medição válida foi realizada. | O SignalR está desconectado ou não inicializado. | O sistema mantém a medição local e informa falha no envio. |
 
-**Restrição:** O MVC pode estar indisponível.<br>
+> **Regra:** Mecanismo de contingência e resiliência *offline*; garante que nenhum dado seja perdido, retendo as medições localmente para posterior sincronização quando a rede reestabelecer.
+---
 
-**Ação:** O sistema informa que não foi possível conectar ao MVC.<br>
+#### 🟢 RNK070 - Status visual da comunicação
 
-**RNK010 - Resposta inválida do MVC**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| A conexão SignalR muda de estado. | O usuário precisa saber se está conectado, reconectando ou desconectado. | O Kinect atualiza a mensagem de status. |
 
-**Condição:** Kinect recebe retorno do MVC.<br>
+> **Regra:** Vincula os eventos de mudança de estado da conexão (`Closed`, `Reconnecting`, `Reconnected`) à camada de interface do usuário, fornecendo *feedback* visual imediato sobre a integridade do link.
+---
 
-**Restrição:** A resposta precisa estar no formato esperado.<br>
+#### 🟢 RNK071 - Envio de status operacional ao MVC
 
-**Ação:** O sistema bloqueia o acesso se a resposta for inválida.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect precisa comunicar uma situação operacional. | A conexão SignalR deve estar ativa. | O sistema envia status ao MVC via Hub. |
 
-**RNK011 - Chamada local sem proxy**
+> **Regra:** Permite o envio de telemetria e diagnósticos de hardware em tempo real para que a central web possa monitorar a saúde e o estado de operação do dispositivo periférico remoto.
+---
 
-**Condição:** Kinect se comunica com serviços locais do MVC.<br>
+#### 🟢 RNK072 - Falha no envio de status
 
-**Restrição:** A chamada local não deve depender de proxy configurado no Windows.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Kinect tenta enviar status ao MVC. | A conexão pode estar nula, desconectada ou falhar. | O sistema registra erro e atualiza a mensagem de comunicação. |
 
-**Ação:** O sistema usa cliente HTTP sem proxy.<br>
+> **Regra:** Protege a aplicação contra falhas de exceção de objeto nulo (*NullReferenceException*) ou de rede ao enviar telemetria, assegurando o registro do log de erro e o alerta visual para o operador.
+---
 
-**RNK057 - Banco SQLite por empresa**
+#### 🟢 RNK073 - Desconexão controlada do SignalR
 
-**Condição:** O Kinect salva medições locais.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O módulo Kinect encerra a comunicação com o MVC. | A conexão deve ser parada e liberada corretamente. | O sistema executa parada e descarte da conexão. |
 
-**Restrição:** Os dados operacionais devem ficar isolados por empresa.<br>
+> **Regra:** Garante o encerramento limpo do ciclo de vida da conexão invocando os métodos de descarte apropriados (`StopAsync` e `DisposeAsync`), liberando os recursos de rede e memória do lado do cliente desktop e do servidor central.
+---
 
-**Ação:** O sistema usa contexto SQLite associado à empresa da sessão.<br>
+#### Regras Técnicas/Operacionais - MVC/Web
+---
 
-**RNK063 - URL do SignalR obrigatória**
+#### 🟡 RN006 - Armazenamento seguro do token
 
-**Condição:** Kinect tenta conectar ao MVC.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um token é gerado. | O token não deve ser armazenado em texto puro. | O sistema salva o token de forma protegida para evitar exposição do código original. |
 
-**Restrição:** A URL do SignalR deve estar configurada.<br>
+> **Regra:** Implementa mecanismos de hash ou criptografia na camada de persistência para assegurar a confidencialidade das credenciais de acesso, prevenindo vazamentos em caso de leitura indevida do banco de dados.
+---
 
-**Ação:** O sistema não inicia conexão e informa erro se a URL estiver vazia.<br>
+#### 🟡 RN007 - Registro de criação e expiração do token
 
-**RNK064 - Evitar múltiplas conexões SignalR**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um token é criado. | O sistema deve saber quando ele foi criado e até quando pode ser usado. | O MVC registra `CriadoEm` e `ExpiraEm`. |
 
-**Condição:** Kinect solicita conexão ao SignalR.<br>
+> **Regra:** Armazena metadados temporais estruturados para viabilizar auditorias de segurança e validações de ciclo de vida do token de forma síncrona.
+---
 
-**Restrição:** Não deve existir conexão já conectada, conectando ou reconectando.<br>
+#### 🟡 RN008 - Validade configurável do token
 
-**Ação:** O sistema evita abrir conexão duplicada.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema define o prazo de uso do token. | A validade deve usar a configuração do sistema ou o padrão de 15 minutos. | O token recebe uma data/hora de expiração. |
 
-**RNK065 - Reconexão automática ao MVC**
+> **Regra:** Aplica regras de expiração dinâmica baseadas no arquivo de configuração do ambiente, garantindo um mecanismo de contingência padrão (*fallback*) de curta duração.
+---
 
-**Condição:** A conexão SignalR cai temporariamente.<br>
+#### 🟡 RN015 - Criação da sessão autenticada
 
-**Restrição:** O sistema deve tentar restabelecer a comunicação.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O login é realizado com sucesso. | A sessão deve conter identificador, nome, e-mail, perfil e empresa. | O MVC cria as claims e autentica o usuário por cookie. |
 
-**Ação:** O Kinect usa reconexão automática.<br>
+> **Regra:** Consolida a identidade do usuário na camada de segurança injetando as propriedades essenciais como declarações (*Claims*), encapsulando o estado na sessão protegida por cookie.
+---
 
-**RNK066 - Tempo limite da conexão SignalR**
+#### 🟡 RN016 - Logout do sistema
 
-**Condição:** Kinect está conectado ao MVC.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário solicita sair do MVC. | A sessão autenticada deve ser encerrada. | O sistema remove a autenticação e retorna para a tela de login. |
 
-**Restrição:** A conexão precisa detectar inatividade ou falha.<br>
+> **Regra:** Limpa os cookies de autenticação do ciclo do navegador e invalida o contexto de segurança atual da sessão no servidor, redirecionando o fluxo com segurança.
+---
 
-**Ação:** O sistema usa controle de tempo limite e verificação periódica da conexão.<br>
+#### 🟡 RN031 - Edição de usuário somente com alteração real
 
-**RNK067 - Envio apenas com conexão saudável**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador edita um usuário. | A alteração só deve ser salva se houver mudança real nos dados. | O sistema atualiza o cadastro ou informa que nada foi alterado. |
 
-**Condição:** O Kinect tenta enviar volume ao MVC.<br>
+> **Regra:** Previne requisições e escritas redundantes no banco de dados através de validações de estado ou comparação estrutural dos dados recebidos versus os dados persistidos.
+---
 
-**Restrição:** A conexão SignalR deve estar no estado `Connected`.<br>
+#### 🟡 RN037 - Listagem e filtro de usuários
 
-**Ação:** O sistema envia o volume somente com conexão ativa.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O administrador consulta usuários. | A busca pode usar termo, perfil, empresa e status. | O sistema retorna usuários compatíveis com os filtros e a empresa atual. |
 
-**RNK068 - Envio da medição ao MVC**
+> **Regra:** Filtra os dados na origem com base nas cláusulas informadas, respeitando estritamente o isolamento de escopo por empresa (*multi-tenancy*) do usuário logado.
+---
 
-**Condição:** Medição válida foi salva localmente.<br>
+#### 🟡 RN045 - Listagem e filtro de parceiros
 
-**Restrição:** A conexão SignalR deve estar ativa.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário consulta parceiros. | A busca pode usar termo, data inicial, data final e status. | O sistema retorna parceiros compatíveis com os filtros e a empresa atual. |
 
-**Ação:** O Kinect envia o volume ao MVC em tempo real.<br>
+> **Regra:** Combina critérios temporais e cadastrais para refinar a pesquisa na camada de dados, assegurando que o resultado seja restrito ao escopo da empresa logada.
+---
 
-**RNK069 - Falha no envio ao MVC**
+#### 🟡 RN046 - Pesquisa textual de parceiros
 
-**Condição:** Medição válida foi realizada.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário pesquisa parceiros por termo. | O termo pode corresponder a ID, nome, e-mail, empresa ou telefone. | O sistema retorna os parceiros encontrados. |
 
-**Restrição:** O SignalR está desconectado ou não inicializado.<br>
+> **Regra:** Implementa uma busca abrangente (*or-like*) que avalia múltiplos campos textuais da entidade a partir de um único argumento de entrada do usuário.
+---
 
-**Ação:** O sistema mantém a medição local e informa falha no envio.<br>
+#### 🟡 RN058 - Restauração de padrões
 
-**RNK070 - Status visual da comunicação**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário solicita restauração de padrões globais. | O sistema deve possuir valores mínimos para operar. | O MVC aplica os parâmetros padrão. |
 
-**Condição:** A conexão SignalR muda de estado.<br>
+> **Regra:** Fornece um mecanismo de reinicialização de segurança (*reset*) que sobrescreve as customizações atuais pelos valores canônicos do sistema.
+---
 
-**Restrição:** O usuário precisa saber se está conectado, reconectando ou desconectado.<br>
+#### 🟡 RN059 - Parâmetros padrão
 
-**Ação:** O Kinect atualiza a mensagem de status.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Não há parâmetros cadastrados ou eles são restaurados. | O sistema precisa operar com valores iniciais. | O MVC usa capacidade máxima 300, alerta 10%, notificações ativas e canais padrão. |
 
-**RNK071 - Envio de status operacional ao MVC**
+> **Regra:** Define a semente (*seed*) operacional estática da aplicação, garantindo parâmetros de limite estáveis para o correto funcionamento do monitoramento e alertas.
+---
 
-**Condição:** Kinect precisa comunicar uma situação operacional.<br>
+#### 🟡 RN060 - Documento de configuração por empresa
 
-**Restrição:** A conexão SignalR deve estar ativa.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema busca parâmetros operacionais. | Cada empresa pode possuir sua própria configuração. | O sistema busca `configuracao_{EmpresaId}` ou `configuracao` no contexto global. |
 
-**Ação:** O sistema envia status ao MVC via Hub.<br>
+> **Regra:** Implementa uma estratégia de herança e substituição de configurações; o sistema tenta ler as propriedades customizadas do *tenant* e, caso não existam, adota as diretivas globais.
+---
 
-**RNK072 - Falha no envio de status**
+#### 🟡 RN061 - Fallback de configuração global
 
-**Condição:** Kinect tenta enviar status ao MVC.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| A empresa não possui configuração própria. | O sistema não pode ficar sem parâmetros básicos. | O MVC utiliza a configuração global como fallback. |
 
-**Restrição:** A conexão pode estar nula, desconectada ou falhar.<br>
+> **Regra:** Garante a resiliência do sistema em arquiteturas *Multi-Tenancy*, agindo como uma camada de proteção que evita falhas de execução ao herdar as diretrizes gerais da plataforma.
+---
 
-**Ação:** O sistema registra erro e atualiza a mensagem de comunicação.<br>
+#### 🟡 RN063 - Canais de notificação
 
-**RNK073 - Desconexão controlada do SignalR**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema prepara notificações. | Os canais e-mail, WhatsApp e dashboard push podem estar ativos ou inativos. | O sistema respeita os canais configurados. |
 
-**Condição:** O módulo Kinect encerra a comunicação com o MVC.<br>
+> **Regra:** Funciona como uma central de despacho dinâmico que filtra a saída dos alertas, roteando as mensagens exclusivamente pelos meios de comunicação que foram previamente homologados e ligados pelo usuário.
+---
 
-**Restrição:** A conexão deve ser parada e liberada corretamente.<br>
+#### 🟡 RN067 - Parceiro padrão para alertas
 
-**Ação:** O sistema executa parada e descarte da conexão.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema possui parceiro padrão configurado. | O parceiro padrão pode ser usado como destinatário operacional das notificações. | O sistema mantém o vínculo nos parâmetros. |
 
-#### Regras Técnicas/Operacionais
+> **Regra:** Define uma conta ou entidade de contingência nos parâmetros do sistema, servindo como o ponto de contato padrão para o recebimento de alertas e relatórios técnicos operacionais.
+---
 
-##### MVC/Web
+#### 🟡 RN070 - Capacidade padrão no dashboard
 
-**RN006 - Armazenamento seguro do token**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O dashboard calcula ocupação sem capacidade configurada. | O cálculo não pode falhar por ausência de valor. | O sistema usa capacidade padrão de 10000 quando necessário. |
 
-**Condição:** Um token é gerado.<br>
+> **Regra:** Previne divisões por zero ou exceções de dados nulos nas fórmulas de renderização do painel visual, aplicando um valor de contingência (*fallback*) estático de 10.000 unidades.
+---
 
-**Restrição:** O token não deve ser armazenado em texto puro.<br>
+#### 🟡 RN081 - Log de conexão ao Hub
 
-**Ação:** O sistema salva o token de forma protegida para evitar exposição do código original.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um cliente se conecta ao Hub de medições. | A conexão em tempo real deve ser rastreável para diagnóstico. | O sistema registra a conexão em log. |
 
-**RN007 - Registro de criação e expiração do token**
+> **Regra:** Rastreia a entrada de novos clientes (desktop ou web) nos canais de comunicação do SignalR, armazenando o ID da conexão para fins de auditoria e telemetria.
+---
 
-**Condição:** Um token é criado.<br>
+#### 🟡 RN082 - Log de desconexão do Hub
 
-**Restrição:** O sistema deve saber quando ele foi criado e até quando pode ser usado.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Um cliente se desconecta do Hub. | Caso exista erro na desconexão, ele deve ser registrado. | O sistema registra desconexão normal ou com erro. |
 
-**Ação:** O MVC registra `CriadoEm` e `ExpiraEm`.<br>
+> **Regra:** Monitora o encerramento dos canais de comunicação em tempo real, capturando a assinatura de exceções caso a desconexão tenha sido causada por instabilidade de rede ou de hardware.
+---
 
-**RN008 - Validade configurável do token**
+#### 🟡 RN090 - Ordenação de medições
 
-**Condição:** O sistema define o prazo de uso do token.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário acessa o histórico de medições. | As medições mais recentes devem aparecer primeiro. | O sistema ordena por data/hora decrescente. |
 
-**Restrição:** A validade deve usar a configuração do sistema ou o padrão de 15 minutos.<br>
+> **Regra:** Aplica um critério de ordenação cronológica decrescente na consulta à base de dados, garantindo que o painel de telemetria exiba os dados em tempo de execução de forma imediata.
+---
 
-**Ação:** O token recebe uma data/hora de expiração.<br>
+#### 🟡 RN091 - Filtros de medições
 
-**RN015 - Criação da sessão autenticada**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário consulta o histórico de medições. | A consulta pode consideração origem, status, data inicial e data final. | O sistema retorna apenas medições compatíveis. |
 
-**Condição:** O login é realizado com sucesso.<br>
+> **Regra:** Disponibiliza uma estrutura de busca combinada sobre a coleção de telemetria para delimitar a análise de dados por período, dispositivo de origem ou gravidade do estado.
+---
 
-**Restrição:** A sessão deve conter identificador, nome, e-mail, perfil e empresa.<br>
+#### 🟡 RN093 - Indicadores estatísticos de medições
 
-**Ação:** O MVC cria as claims e autentica o usuário por cookie.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário solicita resumo das medições. | Devem ser consideradas apenas medições da empresa atual. | O sistema calcula total, média, maior e menor volume. |
 
-**RN016 - Logout do sistema**
+> **Regra:** Consolida os dados agregados para geração de indicadores analíticos em tempo real na camada de negócios, mantendo o isolamento estrito dos registros por *tenant*.
+---
 
-**Condição:** O usuário solicita sair do MVC.<br>
+#### 🟡 RN094 - Contadores de medição por status
 
-**Restrição:** A sessão autenticada deve ser encerrada.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário consulta medições. | O sistema deve diferenciar medições normais e em alerta. | O MVC calcula totais por status. |
 
-**Ação:** O sistema remove a autenticação e retorna para a tela de login.<br>
+> **Regra:** Executa rotinas de contagem agrupada (*group-by*) em cima do estado das medições coletadas, alimentando os cartões informativos do painel de controle principal.
+---
 
-**RN031 - Edição de usuário somente com alteração real**
+#### 🟡 RN095 - Última medição
 
-**Condição:** O administrador edita um usuário.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Existem medições registradas. | A última medição deve ser a mais recente por data/hora. | O sistema exibe a data da última medição. |
 
-**Restrição:** A alteração só deve ser salva se houver mudança real nos dados.<br>
+> **Regra:** Recupera o registro mais recente com base no carimbo de data/hora (*timestamp*) para alimentar o indicador de última atividade do dispositivo na interface.
+---
 
-**Ação:** O sistema atualiza o cadastro ou informa que nada foi alterado.<br>
+#### 🟡 RN096 - Listagem paginada de notificações
 
-**RN037 - Listagem e filtro de usuários**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário acessa notificações. | Devem ser exibidas 10 notificações por página. | O sistema pagina as notificações. |
 
-**Condição:** O administrador consulta usuários.<br>
+> **Regra:** Otimiza o tráfego de dados e a renderização do navegador aplicando paginação com tamanho fixo (*page size*) de 10 registros por requisição.
+---
 
-**Restrição:** A busca pode usar termo, perfil, empresa e status.<br>
+#### 🟡 RN097 - Ordenação de notificações
 
-**Ação:** O sistema retorna usuários compatíveis com os filtros e a empresa atual.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário acessa a lista de notificações. | As notificações mais recentes devem aparecer primeiro. | O sistema ordena por data/hora decrescente. |
 
-**RN045 - Listagem e filtro de parceiros**
+> **Regra:** Exibe os alertas e mensagens de forma cronológica inversa para assegurar que os eventos mais críticos e recentes chamem a atenção imediata do operador.
+---
 
-**Condição:** Usuário consulta parceiros.<br>
+#### 🟡 RN098 - Filtros de notificações
 
-**Restrição:** A busca pode usar termo, data inicial, data final e status.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário pesquisa notificações. | A busca pode usar período, parceiro, status e tipo. | O sistema retorna apenas notificações compatíveis. |
 
-**Ação:** O sistema retorna parceiros compatíveis com os filtros e a empresa atual.<br>
+> **Regra:** Permite o cruzamento de metadados para auditoria de envio de mensagens, aplicando as cláusulas de pesquisa diretamente na camada de busca do repositório.
+---
 
-**RN046 - Pesquisa textual de parceiros**
+#### 🟡 RN099 - Contagem de notificações com sucesso
 
-**Condição:** Usuário pesquisa parceiros por termo.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Tela de notificações calcula indicadores. | Status `Aceito`, `Sucesso` e `Resolvido` representam sucesso operacional. | O sistema agrupa esses status no total de sucesso. |
 
-**Restrição:** O termo pode corresponder a ID, nome, e-mail, empresa ou telefone.<br>
+> **Regra:** Consolida diferentes estados positivos de processamento em uma única métrica agregada para simplificar a visualização da eficiência da operação.
+---
 
-**Ação:** O sistema retorna os parceiros encontrados.<br>
+#### 🟡 RN100 - Contagem de notificações com erro
 
-**RN058 - Restauração de padrões**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Tela de notificações calcula indicadores. | Status `Erro` representa falha de comunicação ou processamento. | O sistema contabiliza essas notificações no total de erro. |
 
-**Condição:** Usuário solicita restauração de padrões globais.<br>
+> **Regra:** Isola os registros com falhas de entrega ou processamento para gerar o índice de erros operacionais no painel analítico.
+---
 
-**Restrição:** O sistema deve possuir valores mínimos para operar.<br>
+#### 🟡 RN101 - Contagem de notificações pendentes
 
-**Ação:** O MVC aplica os parâmetros padrão.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Tela de notificações calcula indicadores. | Status `Pendente` representa ação ainda não atendida. | O sistema contabiliza essas notificações no total de pendências. |
 
-**RN059 - Parâmetros padrão**
+> **Regra:** Isola e quantifica os alertas que ainda exigem triagem ou interação por parte do operador, servindo como indicador de pendências na interface gráfica.
+---
 
-**Condição:** Não há parâmetros cadastrados ou eles são restaurados.<br>
+#### 🟡 RN116 - Inicialização da aplicação MVC
 
-**Restrição:** O sistema precisa operar com valores iniciais.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O sistema MVC é iniciado. | Serviços essenciais devem estar configurados. | O sistema inicializa autenticação, Firebase, repositórios, filtros, SignalR e controllers. 
 
-**Ação:** O MVC usa capacidade máxima 300, alerta 10%, notificações ativas e canais padrão.<br>
+> **Regra:** Orquestra o *bootstrap* global da aplicação no pipeline do .NET, garantindo que nenhum módulo de negócios seja exposto sem suas dependências devidamente resolvidas.
+---
 
-**RN060 - Documento de configuração por empresa**
+#### 🟡 RN117 - Tratamento de erro geral no MVC
 
-**Condição:** O sistema busca parâmetros operacionais.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Ocorre falha inesperada. | O usuário não deve visualizar erro técnico interno. | O sistema redireciona para tela de erro e registra o problema. |
 
-**Restrição:** Cada empresa pode possuir sua própria configuração.<br>
+> **Regra:** Implementa um middleware de exceções globais para interceptar falhas não tratadas, ocultando *stack traces* sensíveis do usuário final e preservando a segurança da informação.
+---
 
-**Ação:** O sistema busca `configuracao_{EmpresaId}` ou `configuracao` no contexto global.<br>
+#### 🟡 RN119 - Registro de logs do sistema
 
-**RN061 - Fallback de configuração global**
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Ocorre ação crítica no sistema. | Login, token, erros e alterações importantes devem ser rastreados. | O sistema registra logs para auditoria. |
 
-**Condição:** A empresa não possui configuração própria.<br>
+> **Regra:** Centraliza a gravação de trilhas de auditoria para operações que afetam a segurança ou o estado crítico do negócio, facilitando diagnósticos retroativos.
+---
 
-**Restrição:** O sistema não pode ficar sem parâmetros básicos.<br>
+#### 🟡 RN120 - Rota inicial e navegação
 
-**Ação:** O MVC utiliza a configuração global como fallback.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| Usuário acessa a aplicação MVC sem rota específica. | A aplicação deve direcionar para uma página inicial válida. | O MVC exibe a tela inicial ou direciona para o fluxo de acesso. |
 
-**RN063 - Canais de notificação**
+> **Regra:** Define a política de roteamento padrão (raiz `/`), avaliando o estado de autenticação do usuário para decidir entre o Dashboard ou a tela de login.
+---
 
-**Condição:** O sistema prepara notificações.<br>
+#### 🟡 RN125 - Configuração das rotas MVC
 
-**Restrição:** Os canais e-mail, WhatsApp e dashboard push podem estar ativos ou inativos.<br>
+| Condição | Restrição | Ação |
+| :--- | :--- | :--- |
+| O usuário navega pelo sistema web. | Controllers e actions precisam estar mapeados para acesso às telas e operações. | O MVC direciona cada requisição para a funcionalidade correspondente. |
 
-**Ação:** O sistema respeita os canais configurados.<br>
-
-**RN067 - Parceiro padrão para alertas**
-
-**Condição:** O sistema possui parceiro padrão configurado.<br>
-
-**Restrição:** O parceiro padrão pode ser usado como destinatário operacional das notificações.<br>
-
-**Ação:** O sistema mantém o vínculo nos parâmetros.<br>
-
-**RN070 - Capacidade padrão no dashboard**
-
-**Condição:** O dashboard calcula ocupação sem capacidade configurada.<br>
-
-**Restrição:** O cálculo não pode falhar por ausência de valor.<br>
-
-**Ação:** O sistema usa capacidade padrão de 10000 quando necessário.<br>
-
-**RN081 - Log de conexão ao Hub**
-
-**Condição:** Um cliente se conecta ao Hub de medições.<br>
-
-**Restrição:** A conexão em tempo real deve ser rastreável para diagnóstico.<br>
-
-**Ação:** O sistema registra a conexão em log.<br>
-
-**RN082 - Log de desconexão do Hub**
-
-**Condição:** Um cliente se desconecta do Hub.<br>
-
-**Restrição:** Caso exista erro na desconexão, ele deve ser registrado.<br>
-
-**Ação:** O sistema registra desconexão normal ou com erro.<br>
-
-**RN090 - Ordenação de medições**
-
-**Condição:** Usuário acessa o histórico de medições.<br>
-
-**Restrição:** As medições mais recentes devem aparecer primeiro.<br>
-
-**Ação:** O sistema ordena por data/hora decrescente.<br>
-
-**RN091 - Filtros de medições**
-
-**Condição:** Usuário consulta o histórico de medições.<br>
-
-**Restrição:** A consulta pode considerar origem, status, data inicial e data final.<br>
-
-**Ação:** O sistema retorna apenas medições compatíveis.<br>
-
-**RN093 - Indicadores estatísticos de medições**
-
-**Condição:** Usuário solicita resumo das medições.<br>
-
-**Restrição:** Devem ser consideradas apenas medições da empresa atual.<br>
-
-**Ação:** O sistema calcula total, média, maior e menor volume.<br>
-
-**RN094 - Contadores de medição por status**
-
-**Condição:** Usuário consulta medições.<br>
-
-**Restrição:** O sistema deve diferenciar medições normais e em alerta.<br>
-
-**Ação:** O MVC calcula totais por status.<br>
-
-**RN095 - Última medição**
-
-**Condição:** Existem medições registradas.<br>
-
-**Restrição:** A última medição deve ser a mais recente por data/hora.<br>
-
-**Ação:** O sistema exibe a data da última medição.<br>
-
-**RN096 - Listagem paginada de notificações**
-
-**Condição:** Usuário acessa notificações.<br>
-
-**Restrição:** Devem ser exibidas 10 notificações por página.<br>
-
-**Ação:** O sistema pagina as notificações.<br>
-
-**RN097 - Ordenação de notificações**
-
-**Condição:** Usuário acessa a lista de notificações.<br>
-
-**Restrição:** As notificações mais recentes devem aparecer primeiro.<br>
-
-**Ação:** O sistema ordena por data/hora decrescente.<br>
-
-**RN098 - Filtros de notificações**
-
-**Condição:** Usuário pesquisa notificações.<br>
-
-**Restrição:** A busca pode usar período, parceiro, status e tipo.<br>
-
-**Ação:** O sistema retorna apenas notificações compatíveis.<br>
-
-**RN099 - Contagem de notificações com sucesso**
-
-**Condição:** Tela de notificações calcula indicadores.<br>
-
-**Restrição:** Status `Aceito`, `Sucesso` e `Resolvido` representam sucesso operacional.<br>
-
-**Ação:** O sistema agrupa esses status no total de sucesso.<br>
-
-**RN100 - Contagem de notificações com erro**
-
-**Condição:** Tela de notificações calcula indicadores.<br>
-
-**Restrição:** Status `Erro` representa falha de comunicação ou processamento.<br>
-
-**Ação:** O sistema contabiliza essas notificações no total de erro.<br>
-
-**RN101 - Contagem de notificações pendentes**
-
-**Condição:** Tela de notificações calcula indicadores.<br>
-
-**Restrição:** Status `Pendente` representa ação ainda não atendida.<br>
-
-**Ação:** O sistema contabiliza essas notificações no total de pendências.<br>
-
-**RN116 - Inicialização da aplicação MVC**
-
-**Condição:** O sistema MVC é iniciado.<br>
-
-**Restrição:** Serviços essenciais devem estar configurados.<br>
-
-**Ação:** O sistema inicializa autenticação, Firebase, repositórios, filtros, SignalR e controllers.<br>
-
-**RN117 - Tratamento de erro geral no MVC**
-
-**Condição:** Ocorre falha inesperada.<br>
-
-**Restrição:** O usuário não deve visualizar erro técnico interno.<br>
-
-**Ação:** O sistema redireciona para tela de erro e registra o problema.<br>
-
-**RN119 - Registro de logs do sistema**
-
-**Condição:** Ocorre ação crítica no sistema.<br>
-
-**Restrição:** Login, token, erros e alterações importantes devem ser rastreados.<br>
-
-**Ação:** O sistema registra logs para auditoria.<br>
-
-**RN120 - Rota inicial e navegação**
-
-**Condição:** Usuário acessa a aplicação MVC sem rota específica.<br>
-
-**Restrição:** A aplicação deve direcionar para uma página inicial válida.<br>
-
-**Ação:** O MVC exibe a tela inicial ou direciona para o fluxo de acesso.<br>
-
-**RN125 - Configuração das rotas MVC**
-
-**Condição:** O usuário navega pelo sistema web.<br>
-
-**Restrição:** Controllers e actions precisam estar mapeados para acesso às telas e operações.<br>
-
-**Ação:** O MVC direciona cada requisição para a funcionalidade correspondente.<br>
+> **Regra:** Configura o middleware de roteamento padrão do ASP.NET Core (`{controller=Home}/{action=Index}/{id?}`), permitindo o mapeamento correto de URLs amigáveis para os endpoints da aplicação.
+---
 
 ##### Kinect/Desktop
 
