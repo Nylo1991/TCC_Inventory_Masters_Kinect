@@ -271,74 +271,28 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
 
 ---
 
-# Estrutura de Pastas
+## Estrutura de Camadas - MVC/Web
 
-```text
-InventoryMasters/
-│
-├── MVC_InventoryMasters/
-│   ├── Controllers/
-│   ├── Filters/
-│   ├── Hubs/
-│   ├── Models/
-│   ├── Repositories/
-│   ├── Services/
-│   ├── ViewModels/
-│   ├── Views/
-│   ├── wwwroot/
-│   ├── Config/
-│   ├── Program.cs
-│   └── appsettings.json
-│
-├── TCC_Inventory_Masters_Kinect/
-│   ├── Command/
-│   ├── ConfigKinect/
-│   ├── Data/
-│   ├── Logs/
-│   ├── Model/
-│   ├── Repository/
-│   ├── Service/
-│   ├── View/
-│   ├── ViewModel/
-│   ├── Videos/
-│   ├── App.xaml
-│   └── App.config
-│
-└── packages/
-```
 
----
 
-#  Aplicação MVC
+#### Camada de Controllers
 
-## Controllers
-
-```text
-Controllers/
-│
-├── AcessoController.cs
-├── DashboardController.cs
-├── HomeController.cs
-├── KinectApiController.cs
-├── MedicoesController.cs
-├── NotificacoesController.cs
-├── ParametrosController.cs
-├── ParceirosController.cs
-├── PerfisController.cs
-└── UsuariosController.cs
-```
+A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel central na orquestração das requisições HTTP e na implementação das regras de negócio que sustentam a plataforma web. A tabela abaixo detalha a responsabilidade de cada componente:
 
 | Controller | Responsabilidade |
-|------------|------------------|
-| AcessoController | Login por e-mail, geração e validação do token |
-| KinectApiController | Comunicação de autenticação com o Kinect |
-| DashboardController | Dashboard em tempo real |
-| MedicoesController | Histórico, filtros, paginação e resumo |
-| NotificacoesController | Notificações e respostas |
-| ParametrosController | Configurações da empresa |
-| UsuariosController | Cadastro de usuários |
-| ParceirosController | Cadastro de parceiros |
-| PerfisController | Perfis e permissões |
+| :--- | :--- |
+| **AcessoController.cs** | Gerencia os fluxos de autenticação, login e controle de acesso dos usuários. |
+| **DashboardController.cs** | Alimenta a interface principal com dados volumétricos e indicadores gerenciais em tempo real. |
+| **HomeController.cs** | Gerencia a página inicial e as rotas básicas de navegação do portal. |
+| **KinectApiController.cs** | Atua como ponto de recepção dos dados enviados pelo módulo Kinect, integrando o hardware à web. |
+| **MedicoesController.cs** | Gerencia a consulta, exibição e processamento do histórico de medições volumétricas. |
+| **NotificacoesController.cs** | Processa e exibe alertas operacionais, como excedentes nos limites de ocupação. |
+| **ParametrosController.cs** | Permite a configuração de limites operacionais e definições personalizadas de monitoramento. |
+| **ParceirosController.cs** | Gerencia o cadastro e a interação com parceiros voltados à economia circular e reaproveitamento. |
+| **PerfisController.cs** | Controla as permissões e níveis de acesso baseados nos perfis de usuário. |
+| **UsuariosController.cs** | Gerencia o cadastro, edição e administração dos usuários do sistema. |
+
+
 
 ---
 
