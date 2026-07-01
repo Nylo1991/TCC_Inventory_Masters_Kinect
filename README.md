@@ -386,10 +386,10 @@ A pasta `ViewModels` contém as classes que estruturam os dados exibidos nas *Vi
 </p>
 
 <p align="center">
-  <img src="./Imagens/Acesso.png" alt="Acesso" width="200" />
-  <img src="./Imagens/Parceiros.png" alt="Parceiros" width="200" />
+  <img src="./Imagens/acesso.png" alt="Acesso" width="200" />
+  <img src="./Imagens/parceiros.png" alt="Parceiros" width="200" />
   <img src="./Imagens/Perfis.png" alt="Perfis" width="200" />
-  <img src="./Imagens/Usuarios.png" alt="Usuarios" width="200" />
+  <img src="./Imagens/usuario.png" alt="Usuarios" width="200" />
 </p>
 
 A pasta `Views` contém os arquivos de interface (Razor Pages) do projeto. Esta camada é responsável pela renderização do HTML que é enviado ao navegador do usuário, refletindo o estado da aplicação e permitindo a interação com o sistema.
