@@ -435,7 +435,12 @@ Para o processamento de dados do hardware **Kinect**, utilizamos o padrão **MVV
 
 ---
 
-### 1. Camada de Model: Entidades de Domínio
+### 1. Módulo Kinect: Camada de Model (Entidades de Domínio)
+
+<p align="center">
+  <img src="./Imagens/Modelk.png" alt="Estrutura de Models" />
+</p>
+
 
 Os `Models` definem a estrutura dos dados que transitam entre o hardware e a aplicação.
 
@@ -453,65 +458,52 @@ Os `Models` definem a estrutura dos dados que transitam entre o hardware e a apl
 
 ---
 
-## Services
+### 2. Módulo Kinect: Camada de Services
 
-```text
-Service/
-│
-├── AutenticacaoMvcService.cs
-├── KinectService.cs
-├── KinectService.Calibration.cs
-├── KinectService.Camera.cs
-├── KinectService.Volume.cs
-└── SignalRService.cs
-```
+<p align="center">
+  <img src="./Imagens/Servicek.png" alt="Estrutura de Services do Kinect" />
+</p>
 
-| Serviço | Responsabilidade |
-|----------|------------------|
-| AutenticacaoMvcService | Solicita e valida token |
-| KinectService | Gerencia todo o ciclo do Kinect |
-| KinectService.Calibration | Calibração |
-| KinectService.Camera | RGB + Profundidade |
-| KinectService.Volume | Processamento volumétrico |
-| SignalRService | Comunicação com o MVC |
+A camada `Service` no módulo Kinect centraliza a inteligência de processamento de hardware. Ela abstrai a complexidade do sensor, permitindo que a camada de apresentação consuma dados prontos para o uso, sem a necessidade de manipular diretamente as bibliotecas de baixo nível do Kinect.
+
+| Service | Responsabilidade |
+| :--- | :--- |
+| **AutenticacaoMvcService.cs** | Gerencia a validação de acesso e sessões entre o módulo desktop e a API Web. |
+| **KinectService.cs** | Serviço base que coordena a inicialização e o ciclo de vida do hardware. |
+| **KinectService.Calibration.cs** | Encapsula algoritmos para calibração precisa do sensor. |
+| **KinectService.Camera.cs** | Gerencia stream de vídeo e captura de quadros da câmera. |
+| **KinectService.Volume.cs** | Implementa algoritmos para cálculo volumétrico de objetos. |
+| **SignalRService.cs** | Coordena o envio de dados processados em tempo real via SignalR. |
 
 ---
 
-## ViewModels
+### 3. Módulo Kinect: Camada de ViewModels
 
-```text
-ViewModel/
-│
-├── BaseViewModel.cs
-├── MainViewModel.cs
-├── MainViewModel.Espaco.cs
-├── MainViewModel.Historico.cs
-├── MainViewModel.Kinect.cs
-└── MainViewModel.Volume.cs
-```
+<p align="center">
+  <img src="./Imagens/ViewModelK.png" alt="Estrutura de ViewModels do Kinect" />
+</p>
 
-A **MainViewModel** utiliza **classes parciais**, separando responsabilidades em módulos menores.
+A camada `ViewModel` atua como o **orquestrador** da interface do Kinect. Ela processa as requisições, gerencia o estado da interface e utiliza *data binding* para refletir as mudanças do sensor na tela em tempo real, mantendo a View leve e desacoplada da lógica de processamento pesado.
+
+| ViewModel | Responsabilidade |
+| :--- | :--- |
+| **BaseViewModel.cs** | Implementa a lógica base para todas as outras ViewModels. |
+| **MainViewModel.cs** | Coordenador principal que orquestra as demais ViewModels. |
+| **MainViewModel.Espaco.cs** | Gerencia a visualização e configuração do espaço monitorado. |
+| **MainViewModel.Historico.cs** | Controla a apresentação de dados históricos e relatórios. |
+| **MainViewModel.Kinect.cs** | Gerencia o estado e status operacional do hardware. |
+| **MainViewModel.Volume.cs** | Processa e formata dados volumétricos para exibição gráfica. |
 
 ---
+### 4. Módulo Kinect: Camada de Views
 
-## Views
+A camada `View` (conforme arquivo image_28a6f9.png) é a camada de apresentação final da aplicação. Ela é responsável por exibir os dados ao usuário e capturar interações, mantendo-se estritamente focada no layout e na estrutura visual, delegando toda a lógica de execução para a `ViewModel` correspondente.
 
-```text
-View/
-│
-├── KinectLogin.xaml
-├── KinectLogin.xaml.cs
-├── KinectMonitorWindow.xaml
-├── KinectMonitorWindow.xaml.cs
-├── HistoricoMedicoesWindow.xaml
-└── HistoricoMedicoesWindow.xaml.cs
-```
-
-| Tela | Função |
-|------|---------|
-| KinectLogin | Login via Token |
-| KinectMonitorWindow | Monitoramento em tempo real |
-| HistoricoMedicoesWindow | Histórico local |
+| View | Responsabilidade |
+| :--- | :--- |
+| **HistoricoMedicoesWindow.xaml** | Interface dedicada à visualização e filtragem do histórico de medições. |
+| **KinectLogin.xaml** | Tela de autenticação e acesso inicial do dispositivo. |
+| **KinectMonitorWindow.xaml** | Interface principal de monitoramento em tempo real do Kinect. |
 
 ---
 
