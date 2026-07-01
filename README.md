@@ -272,7 +272,7 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
 ## Estrutura de Camadas - MVC/Web
 ---
 
-### Camada de Controllers
+### 1. Camada de Controllers
 
 <p align="center">
   <img src="./Imagens/Controller.png" alt="Estrutura de Controllers" />
@@ -295,7 +295,7 @@ A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel ce
 
 ---
 
-### Camada de Models
+### 2. Camada de Models
 
 <p align="center">
   <img src="./Imagens/Models.png" alt="Estrutura de Models" />
@@ -359,19 +359,23 @@ A camada `Services` atua como uma ponte entre os `Controllers` e os `Repositorie
 
 ---
 
-## SignalR
+### 5. Camada de ViewModels
 
-```text
-Hubs/
-│
-├── MedicaoHub.cs
-└── NotificacaoHub.cs
-```
+<p align="center">
+  <img src="./Imagens/ViewModels.png" alt="Estrutura de ViewModels" />
+</p>
 
-| Hub | Responsabilidade |
-|------|------------------|
-| MedicaoHub | Atualização do Dashboard em tempo real |
-| NotificacaoHub | Distribuição de notificações |
+A pasta `ViewModels` contém as classes que estruturam os dados exibidos nas *Views* (telas) da aplicação, servindo como uma camada intermediária que formata as informações para consumo da interface do usuário.
+
+| ViewModel | Responsabilidade |
+| :--- | :--- |
+| **BaseViewModel.cs** | Classe base que fornece funcionalidades comuns a todos os outros viewmodels. |
+| **DashboardViewModel.cs** | Contém os dados necessários para a renderização do painel principal (dashboard). |
+| **LoginEmailViewModel.cs** | Estrutura os dados necessários para o formulário de login por e-mail. |
+| **SolicitarTokenKinectRequest.cs** | Modelo de requisição para solicitar um novo token de acesso ao dispositivo Kinect. |
+| **ValidacaoTokenResultadoViewModel.cs** | Estrutura o retorno do resultado após a tentativa de validação de um token. |
+| **ValidarTokenRequest.cs** | Modelo de requisição contendo os dados para validar um token existente. |
+| **ValidarTokenViewModel.cs** | Estrutura de dados para a interface de validação de tokens do Kinect. |
 
 ---
 
