@@ -273,9 +273,11 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
 
 ## Estrutura de Camadas - MVC/Web
 
-
-
 #### Camada de Controllers
+
+<p align="center">
+  <img src="./Imagens/Controller.png" alt="Estrutura de Controllers" />
+</p>
 
 A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel central na orquestração das requisições HTTP e na implementação das regras de negócio que sustentam a plataforma web. A tabela abaixo detalha a responsabilidade de cada componente:
 
@@ -291,8 +293,6 @@ A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel ce
 | **ParceirosController.cs** | Gerencia o cadastro e a interação com parceiros voltados à economia circular e reaproveitamento. |
 | **PerfisController.cs** | Controla as permissões e níveis de acesso baseados nos perfis de usuário. |
 | **UsuariosController.cs** | Gerencia o cadastro, edição e administração dos usuários do sistema. |
-
-
 
 ---
 
