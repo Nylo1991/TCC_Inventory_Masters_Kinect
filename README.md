@@ -1,5 +1,3 @@
-
-
 # INVENTORY MASTERS - SOLUÇÕES INTELIGENTES EM MAPEAMENTO DE ESTOQUE
 ---
 **Unidade SENAI:** Nova Lima  
@@ -129,13 +127,13 @@ Além dos benefícios operacionais, a solução contribui para práticas de econ
 
 ## OBJETIVOS
 
-#### Objetivo Geral
+### Objetivo Geral
 
 Desenvolver e implementar uma plataforma tecnológica capaz de realizar o monitoramento volumétrico de espaços de armazenamento e apoiar a gestão inteligente de excedentes produtivos por meio da captura, processamento e disponibilização de informações em tempo real.
 
-#### Objetivos Específicos
+### Objetivos Específicos
 
-##### Módulo Kinect
+#### Módulo Kinect
 
 * Integrar o sensor Kinect Xbox 360 ao ambiente de desenvolvimento C# para captura de dados de profundidade e imagens do ambiente monitorado.
 * Desenvolver mecanismos de calibração do espaço físico para obtenção de medições confiáveis.
@@ -144,7 +142,7 @@ Desenvolver e implementar uma plataforma tecnológica capaz de realizar o monito
 * Armazenar localmente as medições realizadas para consulta histórica e rastreabilidade.
 * Disponibilizar as informações coletadas para integração com a aplicação web.
 
-##### Módulo MVC
+#### Módulo MVC
 
 * Desenvolver dashboards para visualização das informações recebidas do módulo Kinect.
 * Permitir o gerenciamento de parceiros e materiais com potencial de reaproveitamento.
@@ -152,7 +150,7 @@ Desenvolver e implementar uma plataforma tecnológica capaz de realizar o monito
 * Implementar mecanismos de notificação e acompanhamento dos excedentes produtivos.
 * Apoiar a tomada de decisão por meio de indicadores operacionais e históricos de ocupação.
 
-##### Integração Entre os Módulos
+#### Integração Entre os Módulos
 
 * Sincronizar as medições realizadas pelo Kinect com a aplicação web utilizando SignalR.
 * Garantir atualização das informações em tempo real.
@@ -233,7 +231,7 @@ O operador do sistema interage com um *dashboard* responsivo e intuitivo, que of
 
 O **Inventory Masters** é uma solução híbrida projetada para alta disponibilidade e rastreabilidade, composta por dois módulos principais:
 
-#### Estrutura dos Módulos
+### Estrutura dos Módulos
 
 <table align="center" width="80%">
   <tr>
@@ -272,8 +270,9 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
 ---
 
 ## Estrutura de Camadas - MVC/Web
+---
 
-#### Camada de Controllers
+### Camada de Controllers
 
 <p align="center">
   <img src="./Imagens/Controller.png" alt="Estrutura de Controllers" />
@@ -296,24 +295,27 @@ A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel ce
 
 ---
 
-## Models
+### Camada de Models
 
-```text
-Models/
-│
-├── Empresa.cs
-├── LogSistema.cs
-├── MedicaoVolume.cs
-├── Notificacao.cs
-├── ParametrosSistema.cs
-├── Parceiro.cs
-├── Perfil.cs
-├── PermissoesSistema.cs
-├── TokenAcessoKinect.cs
-└── Usuario.cs
-```
+<p align="center">
+  <img src="./Imagens/Models.png" alt="Estrutura de Models" />
+</p>
 
-Representam as entidades persistidas no **Google Cloud Firestore**.
+A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que representam as entidades de domínio e as estruturas de dados fundamentais da aplicação. Elas definem o formato dos dados que são persistidos no banco de dados (Firebase Firestore) e transitam entre os diversos componentes do sistema.
+
+| Model | Responsabilidade |
+| :--- | :--- |
+| **Empresa.cs** | Define a estrutura de dados da organização que utiliza o sistema. |
+| **ErrorViewModel.cs** | Modelo utilizado para exibir mensagens de erro personalizadas na interface. |
+| **LogSistema.cs** | Armazena registros de auditoria sobre ações críticas realizadas no sistema. |
+| **MedicaoVolume.cs** | Representa o dado volumétrico capturado pelo Kinect (volume, espaço livre, data). |
+| **Notificacao.cs** | Estrutura os dados de alertas e notificações gerados para o usuário. |
+| **ParametrosSistema.cs** | Define as configurações e limites operacionais do ambiente monitorado. |
+| **Parceiro.cs** | Contém as informações dos parceiros integrados à economia circular. |
+| **Perfil.cs** | Define as categorias de perfis de acesso disponíveis. |
+| **PermissoesSistema.cs** | Mapeia os níveis de acesso e funcionalidades permitidas para cada perfil. |
+| **TokenAcessoKinect.cs** | Estrutura utilizada para a autenticação segura do dispositivo Kinect. |
+| **Usuario.cs** | Representa os dados cadastrais e credenciais dos usuários da plataforma. |
 
 ---
 
