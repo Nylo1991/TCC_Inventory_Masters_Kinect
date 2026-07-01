@@ -412,6 +412,21 @@ A pasta `Views` contém os arquivos de interface (Razor Pages) do projeto. Esta 
 
 ---
 
+### 7. Camada de Hubs (SignalR)
+
+<p align="center">
+  <img src="./Imagens/Hubs.png" alt="Estrutura de Hubs" />
+</p>
+
+A camada `Hubs` contém as classes que estendem `Hub` do SignalR, permitindo a comunicação bidirecional em tempo real entre o servidor e os clientes conectados. É fundamental para o envio imediato de atualizações de medições e alertas sem a necessidade de recarregar a página.
+
+| Hub | Responsabilidade |
+| :--- | :--- |
+| **MedicaoHub.cs** | Gerencia conexões para o envio em tempo real de novas medições volumétricas capturadas pelo Kinect para o Dashboard. |
+| **NotificacaoHub.cs** | Gerencia conexões para o envio imediato de alertas e notificações urgentes para as interfaces dos usuários conectados. |
+
+---
+
 #  Aplicação Kinect
 
 ## Models
