@@ -254,8 +254,8 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
     * **Resiliência:** Persistência local robusta utilizando **SQLite**, garantindo que nenhum dado de medição seja perdido durante quedas de conexão.
     * **Comunicação:** Atua como um *publisher* de dados via **SignalR** para o servidor Web.
 
-#### 2. Módulo Web (Cloud/Gestion): MVC InventoryMasters
-* **Tecnologia:** ASP.NET Core MVC com integração ao **Firebase Firestore**.
+#### 2. Módulo Web (Cloud Firebase): MVC InventoryMasters
+* **Tecnologia:** ASP.NET Core MVC com integração ao **Firebase**.
 * **Responsabilidade:**
     * **Gestão:** Dashboard centralizado para análise de indicadores, histórico de ocupação e gestão de parceiros.
     * **Segurança:** Controle de acesso baseado em sessões (cookies) e autenticação de dispositivos via token.
@@ -265,7 +265,7 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
 1. **Coleta:** O Módulo Kinect processa a profundidade e gera uma nova medição.
 2. **Persistência Local:** O dado é salvo imediatamente no **SQLite** (Garantia de integridade).
 3. **Transmissão:** O **SignalR** transmite o volume processado ao Hub MVC.
-4. **Processamento Web:** O MVC recebe o dado, aplica regras de negócio (limites de alerta, conversão para $m^3$), registra no **Firestore** e atualiza o **Dashboard** para o usuário final.
+4. **Processamento Web:** O MVC recebe o dado, aplica regras de negócio (limites de alerta, conversão para $m^3$), registra no **Firebase** e atualiza o **Dashboard** para o usuário final.
 
 > **Nota:** Esta separação garante que o sistema seja tecnicamente resiliente, mantendo a operação da fábrica (monitoramento do Kinect) independente da disponibilidade da rede ou do servidor web.
 
