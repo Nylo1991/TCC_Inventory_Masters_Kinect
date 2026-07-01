@@ -228,17 +228,46 @@ O operador do sistema interage com um *dashboard* responsivo e intuitivo, que of
 
 ---
 
-#  Estrutura do Projeto
+##  Estrutura do Projeto
+---
 
+O **Inventory Masters** é uma solução híbrida projetada para alta disponibilidade e rastreabilidade, composta por dois módulos principais:
 
-O **Inventory Masters** é composto por duas aplicações integradas:
+#### Estrutura dos Módulos
 
-- **MVC InventoryMasters** (ASP.NET Core MVC)
-- **TCC Inventory Masters Kinect** (WPF .NET Framework)
+<table align="center" width="80%">
+  <tr>
+    <th align="center">Módulo Kinect (WPF)</th>
+    <th align="center">Módulo Web (MVC)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./Imagens/Projeto%20Kinect.png" width="100%"></td>
+    <td align="center"><img src="./Imagens/Projeto%20MVC.png" width="110%"></td>
+  </tr>
+</table>
 
-<p align="center">
-  <img src="./Imagens/estruturação de pasta.png" width="600" alt="Logo Inventory Masters" />
-</p>
+#### 1. Módulo Desktop: TCC Inventory Masters Kinect
+* **Tecnologia:** WPF (.NET Framework) com foco em processamento local de alta performance.
+* **Responsabilidade:**
+    * **Captura:** Integração direta com o sensor Kinect Xbox 360 para mapeamento RGB-D.
+    * **Processamento:** Algoritmos de calibração volumétrica, filtragem de ruído e cálculo de métricas de ocupação em $cm^3$.
+    * **Resiliência:** Persistência local robusta utilizando **SQLite**, garantindo que nenhum dado de medição seja perdido durante quedas de conexão.
+    * **Comunicação:** Atua como um *publisher* de dados via **SignalR** para o servidor Web.
+
+#### 2. Módulo Web (Cloud/Gestion): MVC InventoryMasters
+* **Tecnologia:** ASP.NET Core MVC com integração ao **Firebase Firestore**.
+* **Responsabilidade:**
+    * **Gestão:** Dashboard centralizado para análise de indicadores, histórico de ocupação e gestão de parceiros.
+    * **Segurança:** Controle de acesso baseado em sessões (cookies) e autenticação de dispositivos via token.
+    * **Integração:** Atua como *subscriber* e *hub* de dados, processando os eventos em tempo real enviados pelo Módulo Desktop e persistindo-os na nuvem para auditoria.
+
+#### Fluxo de Dados
+1. **Coleta:** O Módulo Kinect processa a profundidade e gera uma nova medição.
+2. **Persistência Local:** O dado é salvo imediatamente no **SQLite** (Garantia de integridade).
+3. **Transmissão:** O **SignalR** transmite o volume processado ao Hub MVC.
+4. **Processamento Web:** O MVC recebe o dado, aplica regras de negócio (limites de alerta, conversão para $m^3$), registra no **Firestore** e atualiza o **Dashboard** para o usuário final.
+
+> **Nota:** Esta separação garante que o sistema seja tecnicamente resiliente, mantendo a operação da fábrica (monitoramento do Kinect) independente da disponibilidade da rede ou do servidor web.
 
 ---
 
