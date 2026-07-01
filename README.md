@@ -526,6 +526,20 @@ A camada `Repository` encapsula a lógica de persistência de dados. Ela utiliza
 
 ---
 
+### 6. Módulo Kinect: Camada de Commands
+
+<p align="center">
+  <img src="./Imagens/Relayk.png" alt="Estrutura de Repository do Kinect" />
+</p>
+
+A camada `Command` provê a infraestrutura necessária para a comunicação entre a interface e a lógica de aplicação no padrão MVVM.
+
+| Componente | Responsabilidade |
+| :--- | :--- |
+| **RelayCommand.cs** | Implementa a interface `ICommand`, permitindo que controles da interface (View) executem ações definidas na ViewModel. Suporta execução assíncrona (`Func<Task>`) para manter a interface responsiva e validação de estado via `CanExecute`. |
+
+---
+
 # Fluxo entre as Aplicações
 
 ```text
