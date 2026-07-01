@@ -432,6 +432,7 @@ A camada `Hubs` contém as classes que estendem `Hub` do SignalR, permitindo a c
 
 ## Módulo Kinect (MVVM)
 Para o processamento de dados do hardware **Kinect**, utilizamos o padrão **MVVM** (Model-View-ViewModel). Esta abordagem permite que a interface de captura e processamento volumétrico opere com alta performance e responsividade, utilizando o *data binding* para manter a visualização dos dados sempre sincronizada com o sensor, garantindo uma separação limpa entre a lógica de captura e a interface de monitoramento.
+
 ---
 
 ## Models
