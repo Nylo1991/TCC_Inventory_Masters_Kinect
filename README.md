@@ -497,6 +497,10 @@ A camada `ViewModel` atua como o **orquestrador** da interface do Kinect. Ela pr
 ---
 ### 4. Módulo Kinect: Camada de Views
 
+<p align="center">
+  <img src="./Imagens/ViewK.png" alt="Estrutura de ViewModels do Kinect" />
+</p>
+
 A camada `View` (conforme arquivo image_28a6f9.png) é a camada de apresentação final da aplicação. Ela é responsável por exibir os dados ao usuário e capturar interações, mantendo-se estritamente focada no layout e na estrutura visual, delegando toda a lógica de execução para a `ViewModel` correspondente.
 
 | View | Responsabilidade |
