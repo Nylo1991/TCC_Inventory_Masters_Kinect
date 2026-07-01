@@ -545,22 +545,19 @@ A camada `Command` provê a infraestrutura necessária para a comunicação entr
 3. **Persistência de Borda (SQLite Local):** A aplicação desktop persiste as medições localmente, garantindo a integridade dos dados mesmo em caso de oscilações na rede.
 4. **Sincronização (SignalRService):** O serviço de tempo real transmite os dados processados da aplicação desktop para o `MedicaoHub` (parte da aplicação Web).
 5. **Persistência Central (Google Firebase):** O servidor central consolida as informações no **Google Firebase**.
-6. **Visualização (Dashboard MVC):** A aplicação web consome os dados do Firestore e os exibe no dashboard administrativo, finalizando o fluxo.
+6. **Visualização (Dashboard MVC):** A aplicação web consome os dados do Firebase e os exibe no dashboard administrativo, finalizando o fluxo.
 
 ---
 
-#  Arquitetura Utilizada
+## ARQUITETURA UTILIZADA
 
-- ASP.NET Core MVC
-- WPF (.NET Framework)
-- MVVM
-- Repository Pattern
-- Service Layer
-- SignalR
-- Google Cloud Firestore
-- SQLite
-- Kinect SDK 1.8
-
+* **WPF (.NET Framework C#) - MVVM:** Framework de interface gráfica utilizado para o desenvolvimento da aplicação desktop. O padrão **MVVM (Model-View-ViewModel)** garante a separação estrita entre a lógica de processamento e a interface, essencial para manter a estabilidade enquanto o sistema lida com fluxos de vídeo.
+* **Kinect SDK 1.8:** Conjunto de bibliotecas e drivers que permite a interface direta com o hardware Kinect. É responsável pela captura e interpretação dos dados brutos de profundidade e volumetria do ambiente.
+* **SQLite:** Banco de dados relacional leve embutido na aplicação desktop. Funciona como camada de persistência local, garantindo a integridade imediata das medições e a continuidade operacional mesmo em cenários de indisponibilidade de rede.
+* **SignalR:** Biblioteca de comunicação em tempo real que estabelece um canal bidirecional permanente. Permite que a aplicação desktop transmita dados processados ao servidor web de forma assíncrona e instantânea.
+* **ASP.NET Core MVC:** *Framework* web que atua como o servidor central. Recebe o tráfego via SignalR, processa as regras de negócio e gerencia o fluxo de informações entre os dispositivos de ponta e o armazenamento na nuvem.
+* **Firebase (Google Cloud):** Plataforma de banco de dados *NoSQL* em nuvem. É o repositório centralizado onde as medições consolidadas são registradas, servindo de fonte de dados para o dashboard administrativo acessado via interface web.
+  
 -----
 
 ## REGRA DE NEGÓCIO
