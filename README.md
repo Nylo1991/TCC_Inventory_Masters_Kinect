@@ -529,7 +529,7 @@ A camada `Repository` encapsula a lógica de persistência de dados. Ela utiliza
 ### 6. Módulo Kinect: Camada de Commands
 
 <p align="center">
-  <img src="./Imagens/Relayk.png" alt="Estrutura de Repository do Kinect" />
+  <img src="./Imagens/Relayk.png" alt="Estrutura de RelayCommand do Kinect" />
 </p>
 
 A camada `Command` provê a infraestrutura necessária para a comunicação entre a interface e a lógica de aplicação no padrão MVVM.
@@ -540,32 +540,22 @@ A camada `Command` provê a infraestrutura necessária para a comunicação entr
 
 ---
 
-# Fluxo entre as Aplicações
+## FLUXO ENTRE AS APLICAÇÕES
 
-```text
-             Kinect Sensor
-                   │
-                   ▼
-            KinectService
-                   │
-                   ▼
-            MainViewModel
-             │           │
-             │           ▼
-             │      SQLite Local
-             │
-             ▼
-        SignalRService
-             │
-             ▼
-         MedicaoHub
-             │
-             ▼
-     Google Firestore
-             │
-             ▼
-      Dashboard MVC
-```
+<p align="center">
+  <img src="./Imagens/EstruturaFluxo.png" alt="Estrutura do Fluxo de Dados do Sistema" />
+</p>
+
+### Detalhamento do Fluxo de Dados
+
+1. **Captura (Kinect Sensor):** O hardware realiza a leitura volumétrica do ambiente e envia os dados brutos para o `KinectService`.
+2. **Orquestração (MainViewModel):** A camada de apresentação (MVVM) recebe os dados processados e gerencia a interface do usuário em tempo real.
+3. **Persistência de Borda (SQLite Local):** A aplicação desktop persiste as medições localmente, garantindo a integridade dos dados mesmo em caso de oscilações na rede.
+4. **Sincronização (SignalRService):** O serviço de tempo real transmite os dados processados da aplicação desktop para o `MedicaoHub` (parte da aplicação Web).
+5. **Persistência Central (Google Firestore):** O servidor central consolida as informações no **Google Firestore**.
+6. **Visualização (Dashboard MVC):** A aplicação web consome os dados do Firestore e os exibe no dashboard administrativo, finalizando o fluxo.
+
+---
 
 #  Arquitetura Utilizada
 
