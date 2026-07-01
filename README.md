@@ -319,30 +319,25 @@ A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que repr
 
 ---
 
-## Repositories
+### 3. Camada de Repositories
 
-```text
-Repositories/
-│
-├── EmpresasRepository.cs
-├── LogsSistemaRepository.cs
-├── MedicaoVolumeRepository.cs
-├── NotificacaoRepository.cs
-├── ParametrosSistemaRepository.cs
-├── ParceirosRepository.cs
-├── PerfisRepository.cs
-├── TokensAcessoKinectRepository.cs
-└── UsuariosRepository.cs
-```
+<p align="center">
+  <img src="./Imagens/Repositories.png" alt="Estrutura de Repositories" />
+</p>
 
-Responsáveis por toda comunicação com o **Google Cloud Firestore**.
+A pasta `Repositories` do projeto **MVC InventoryMasters** implementa o padrão *Repository*, atuando como a camada de abstração de dados. Sua função principal é isolar a lógica de acesso a dados (CRUD) da lógica de negócio, centralizando as operações de comunicação com o **Firebase**.
 
-- Consultas
-- Cadastros
-- Atualizações
-- Inativações
-- Paginação
-- Filtros
+| Repository | Responsabilidade |
+| :--- | :--- |
+| **EmpresasRepository.cs** | Gerencia as operações de leitura e escrita das entidades de Empresa. |
+| **LogsSistemaRepository.cs** | Manipula a persistência e consulta dos logs de auditoria do sistema. |
+| **MedicaoVolumeRepository.cs** | Gerencia a persistência e o histórico das medições volumétricas capturadas. |
+| **NotificacaoRepository.cs** | Gerencia o armazenamento e recuperação de notificações do sistema. |
+| **ParametrosSistemaRepository.cs** | Realiza a leitura e gravação das configurações e limites operacionais. |
+| **ParceirosRepository.cs** | Gerencia os dados cadastrais dos parceiros de logística e economia circular. |
+| **PerfisRepository.cs** | Controla o acesso às definições de perfis de usuário. |
+| **TokensAcessoKinectRepository.cs**| Gerencia a validação e o armazenamento dos tokens de autenticação do Kinect. |
+| **UsuariosRepository.cs** | Gerencia as operações de persistência relacionadas aos usuários da aplicação. |
 
 ---
 
