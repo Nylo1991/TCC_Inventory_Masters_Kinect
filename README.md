@@ -381,7 +381,7 @@ A pasta `ViewModels` contém as classes que estruturam os dados exibidos nas *Vi
 
 ### 6. Camada de Views
 
-<table>
+<table align="center">
   <tr>
     <th colspan="4" align="center">
       <img src="./Imagens/View1.png" alt="Estrutura de Views" width="150" />
