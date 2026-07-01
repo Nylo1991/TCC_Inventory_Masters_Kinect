@@ -341,25 +341,21 @@ A pasta `Repositories` do projeto **MVC InventoryMasters** implementa o padrão 
 
 ---
 
-## Services
+### 4. Camada de Services
 
-```text
-Services/
-│
-├── ContextoUsuarioService.cs
-├── EmailTokenService.cs
-├── FirebaseService.cs
-├── PermissaoService.cs
-└── TokenAcessoKinectService.cs
-```
+<p align="center">
+  <img src="./Imagens/Services.png" alt="Estrutura de Services" />
+</p>
 
-| Serviço | Função |
-|----------|--------|
-| ContextoUsuarioService | Identifica empresa, usuário e perfil |
-| EmailTokenService | Envia tokens por SMTP |
-| FirebaseService | Inicializa Firestore |
-| PermissaoService | Controle de permissões |
-| TokenAcessoKinectService | Geração e validação dos tokens |
+A camada `Services` atua como uma ponte entre os `Controllers` e os `Repositories`. Ela centraliza regras de negócio específicas, processamento de serviços externos e validações de alto nível, promovendo a reutilização de código e a organização da aplicação.
+
+| Service | Responsabilidade |
+| :--- | :--- |
+| **ContextoUsuarioService.cs** | Gerencia as informações do usuário logado durante a sessão atual. |
+| **EmailTokenService.cs** | Manipula a geração e verificação de tokens enviados via e-mail para segurança/recuperação. |
+| **FirebaseService.cs** | Centraliza a configuração e a comunicação técnica com o banco de dados Firebase. |
+| **PermissaoService.cs** | Implementa as regras de negócio para validação de acesso e permissões de usuários. |
+| **TokenAcessoKinectService.cs** | Coordena a lógica de validação dos tokens de acesso específicos do hardware Kinect. |
 
 ---
 
