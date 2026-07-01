@@ -435,22 +435,21 @@ Para o processamento de dados do hardware **Kinect**, utilizamos o padrão **MVV
 
 ---
 
-## Models
+### 1. Camada de Model: Entidades de Domínio
 
-```text
-Model/
-│
-├── CalibrationProgress.cs
-├── CalibrationResult.cs
-├── HistoricoOcupacao.cs
-├── Log.cs
-├── MedicaoVolume.cs
-├── SessaoUsuario.cs
-├── TokenSolicitadoResultado.cs
-├── UsuarioAcesso.cs
-├── ValidacaoTokenResultado.cs
-└── Point3DData.cs
-```
+Os `Models` definem a estrutura dos dados que transitam entre o hardware e a aplicação.
+
+| Model | Responsabilidade |
+| :--- | :--- |
+| **CalibrationProgress.cs** | Armazena o estado atual do progresso da calibração. |
+| **CalibrationResult.cs** | Define o resultado final da calibração. |
+| **HistoricoOcupacao.cs** | Estrutura dados temporais de ocupação. |
+| **Log.cs** | Gerencia o registro de eventos e erros do sistema. |
+| **MedicaoVolume.cs** | Representa o dado volumétrico bruto capturado. |
+| **SessaoUsuario.cs** | Define o contexto de uma sessão de monitoramento. |
+| **TokenSolicitadoResultado.cs** | Estrutura o retorno de tokens solicitados. |
+| **UsuarioAcesso.cs** | Define a estrutura de dados para controle de acesso do usuário. |
+| **ValidacaoTokenResultado.cs** | Define o resultado da validação de acesso do dispositivo. |
 
 ---
 
