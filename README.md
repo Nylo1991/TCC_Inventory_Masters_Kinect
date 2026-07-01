@@ -226,7 +226,7 @@ O operador do sistema interage com um *dashboard* responsivo e intuitivo, que of
 
 ---
 
-##  Estrutura do Projeto
+##  ESTRUTURA DO PROJETO
 ---
 
 O **Inventory Masters** é uma solução híbrida projetada para alta disponibilidade e rastreabilidade, composta por dois módulos principais:
@@ -258,15 +258,7 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
     * **Gestão:** Dashboard centralizado para análise de indicadores, histórico de ocupação e gestão de parceiros.
     * **Segurança:** Controle de acesso baseado em sessões (cookies) e autenticação de dispositivos via token.
     * **Integração:** Atua como *subscriber* e *hub* de dados, processando os eventos em tempo real enviados pelo Módulo Desktop e persistindo-os na nuvem para auditoria.
-
-#### Fluxo de Dados
-1. **Coleta:** O Módulo Kinect processa a profundidade e gera uma nova medição.
-2. **Persistência Local:** O dado é salvo imediatamente no **SQLite** (Garantia de integridade).
-3. **Transmissão:** O **SignalR** transmite o volume processado ao Hub MVC.
-4. **Processamento Web:** O MVC recebe o dado, aplica regras de negócio (limites de alerta, conversão para $m^3$), registra no **Firebase** e atualiza o **Dashboard** para o usuário final.
-
-> **Nota:** Esta separação garante que o sistema seja tecnicamente resiliente, mantendo a operação da fábrica (monitoramento do Kinect) independente da disponibilidade da rede ou do servidor web.
-
+            
 ---
 
 ## Estrutura de Camadas - MVC/Web
@@ -275,7 +267,7 @@ O **Inventory Masters** adota a arquitetura **MVC** (Model-View-Controller) para
 
 ---
 
-### 1. Camada de Controllers
+### 1. Módulo MVC/Web - Camada de Controllers
 
 <p align="center">
   <img src="./Imagens/Controller.png" alt="Estrutura de Controllers" />
@@ -298,7 +290,7 @@ A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel ce
 
 ---
 
-### 2. Camada de Models
+### 2. Módulo MVC/Web - Camada de Models
 
 <p align="center">
   <img src="./Imagens/Models.png" alt="Estrutura de Models" />
@@ -322,7 +314,7 @@ A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que repr
 
 ---
 
-### 3. Camada de Repositories
+### 3. Módulo MVC/Web - Camada de Repositories
 
 <p align="center">
   <img src="./Imagens/Repositories.png" alt="Estrutura de Repositories" />
@@ -344,7 +336,7 @@ A pasta `Repositories` do projeto **MVC InventoryMasters** implementa o padrão 
 
 ---
 
-### 4. Camada de Services
+### 4. Módulo MVC/Web - Camada de Services
 
 <p align="center">
   <img src="./Imagens/Services.png" alt="Estrutura de Services" />
@@ -362,7 +354,7 @@ A camada `Services` atua como uma ponte entre os `Controllers` e os `Repositorie
 
 ---
 
-### 5. Camada de ViewModels
+### 5. Módulo MVC/Web - Camada de ViewModels
 
 <p align="center">
   <img src="./Imagens/ViewModels.png" alt="Estrutura de ViewModels" />
@@ -382,7 +374,7 @@ A pasta `ViewModels` contém as classes que estruturam os dados exibidos nas *Vi
 
 ---
 
-### 6. Camada de Views
+### 6. Módulo MVC/Web - Camada de Views
 
 <table align="center">
   <tr>
@@ -415,7 +407,7 @@ A pasta `Views` contém os arquivos de interface (Razor Pages) do projeto. Esta 
 
 ---
 
-### 7. Camada de Hubs (SignalR)
+### 7. Módulo MVC/Web - Camada de Hubs (SignalR)
 
 <p align="center">
   <img src="./Imagens/Hubs.png" alt="Estrutura de Hubs" />
@@ -552,7 +544,7 @@ A camada `Command` provê a infraestrutura necessária para a comunicação entr
 2. **Orquestração (MainViewModel):** A camada de apresentação (MVVM) recebe os dados processados e gerencia a interface do usuário em tempo real.
 3. **Persistência de Borda (SQLite Local):** A aplicação desktop persiste as medições localmente, garantindo a integridade dos dados mesmo em caso de oscilações na rede.
 4. **Sincronização (SignalRService):** O serviço de tempo real transmite os dados processados da aplicação desktop para o `MedicaoHub` (parte da aplicação Web).
-5. **Persistência Central (Google Firestore):** O servidor central consolida as informações no **Google Firestore**.
+5. **Persistência Central (Google Firebase):** O servidor central consolida as informações no **Google Firebase**.
 6. **Visualização (Dashboard MVC):** A aplicação web consome os dados do Firestore e os exibe no dashboard administrativo, finalizando o fluxo.
 
 ---
