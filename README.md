@@ -435,12 +435,11 @@ Para o processamento de dados do hardware **Kinect**, utilizamos o padrão **MVV
 
 ---
 
-### 1. Módulo Kinect: Camada de Model (Entidades de Domínio)
+### 1. Módulo Kinect: Camada de Model 
 
 <p align="center">
   <img src="./Imagens/Modelk.png" alt="Estrutura de Models" />
 </p>
-
 
 Os `Models` definem a estrutura dos dados que transitam entre o hardware e a aplicação.
 
@@ -458,7 +457,7 @@ Os `Models` definem a estrutura dos dados que transitam entre o hardware e a apl
 
 ---
 
-### 2. Módulo Kinect: Camada de Services
+### 2. Módulo Kinect: Camada de Service
 
 <p align="center">
   <img src="./Imagens/Servicek.png" alt="Estrutura de Services do Kinect" />
@@ -477,10 +476,10 @@ A camada `Service` no módulo Kinect centraliza a inteligência de processamento
 
 ---
 
-### 3. Módulo Kinect: Camada de ViewModels
+### 3. Módulo Kinect: Camada de ViewModel
 
 <p align="center">
-  <img src="./Imagens/ViewModelK.png" alt="Estrutura de ViewModels do Kinect" />
+  <img src="./Imagens/ViewModelk.png" alt="Estrutura de ViewModels do Kinect" />
 </p>
 
 A camada `ViewModel` atua como o **orquestrador** da interface do Kinect. Ela processa as requisições, gerencia o estado da interface e utiliza *data binding* para refletir as mudanças do sensor na tela em tempo real, mantendo a View leve e desacoplada da lógica de processamento pesado.
@@ -495,19 +494,35 @@ A camada `ViewModel` atua como o **orquestrador** da interface do Kinect. Ela pr
 | **MainViewModel.Volume.cs** | Processa e formata dados volumétricos para exibição gráfica. |
 
 ---
-### 4. Módulo Kinect: Camada de Views
+### 4. Módulo Kinect: Camada de View
 
 <p align="center">
-  <img src="./Imagens/ViewK.png" alt="Estrutura de ViewModels do Kinect" />
+  <img src="./Imagens/Viewk.png" alt="Estrutura de ViewModels do Kinect" />
 </p>
 
-A camada `View` (conforme arquivo image_28a6f9.png) é a camada de apresentação final da aplicação. Ela é responsável por exibir os dados ao usuário e capturar interações, mantendo-se estritamente focada no layout e na estrutura visual, delegando toda a lógica de execução para a `ViewModel` correspondente.
+A camada `View` é a camada de apresentação final da aplicação. Ela é responsável por exibir os dados ao usuário e capturar interações, mantendo-se estritamente focada no layout e na estrutura visual, delegando toda a lógica de execução para a `ViewModel` correspondente.
 
 | View | Responsabilidade |
 | :--- | :--- |
 | **HistoricoMedicoesWindow.xaml** | Interface dedicada à visualização e filtragem do histórico de medições. |
 | **KinectLogin.xaml** | Tela de autenticação e acesso inicial do dispositivo. |
 | **KinectMonitorWindow.xaml** | Interface principal de monitoramento em tempo real do Kinect. |
+
+---
+### 5. Módulo Kinect: Camada de Repository
+
+<p align="center">
+  <img src="./Imagens/Repositoryk.png" alt="Estrutura de Repository do Kinect" />
+</p>
+
+A camada `Repository` encapsula a lógica de persistência de dados. Ela utiliza o padrão *Repository* com **Entity Framework Core** para realizar operações de leitura e escrita no banco de dados local **SQLite**, garantindo que as regras de negócio não dependam diretamente da tecnologia de persistência.
+
+| Componente | Responsabilidade |
+| :--- | :--- |
+| **Interface/IKinectRepository.cs** | Define o contrato de métodos necessários para operações de leitura e escrita. |
+| **KinectRepository.cs** | Implementa a lógica concreta de acesso ao **SQLite**, isolando as consultas e gravações de dados através do `AppDbContext`. |
+
+> **Nota:** Esta arquitetura garante o isolamento dos dados por empresa e permite que, caso a tecnologia de banco de dados precise ser alterada no futuro, as modificações fiquem restritas a esta camada, sem impactar as regras de negócio.
 
 ---
 
@@ -537,42 +552,6 @@ A camada `View` (conforme arquivo image_28a6f9.png) é a camada de apresentaçã
              ▼
       Dashboard MVC
 ```
-
----
-
-#  Resumo da Arquitetura
-
-```text
-                MVC (Web)
-
- Login
- Usuários
- Empresas
- Perfis
- Parceiros
- Configurações
- Dashboard
- Medições
- Notificações
- Logs
-
-        ▲
-        │ SignalR
-        ▼
-
-          Kinect
-
- Login por Token
- Captura RGB
- Captura Profundidade
- Calibração
- Processamento
- Volume
- SQLite
- Envio das medições
-```
-
----
 
 #  Arquitetura Utilizada
 
