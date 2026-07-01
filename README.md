@@ -270,6 +270,9 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
 ---
 
 ## Estrutura de Camadas - MVC/Web
+
+O **Inventory Masters** adota a arquitetura **MVC** (Model-View-Controller) para separar a lógica de negócio, a interface do usuário e o fluxo de dados. Essa estrutura é reforçada por camadas especializadas (**Repositories**, **Services**, **Hubs**), que atuam como camadas de apoio: elas isolam as operações de banco de dados, centralizam regras complexas e garantem a comunicação em tempo real, resultando em um sistema modular, fácil de testar e simples de evoluir.
+
 ---
 
 ### 1. Camada de Controllers
