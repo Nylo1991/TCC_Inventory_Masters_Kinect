@@ -379,21 +379,26 @@ A pasta `ViewModels` contém as classes que estruturam os dados exibidos nas *Vi
 
 ---
 
-## Views
+### 6. Camada de Views
 
-```text
-Views/
-│
-├── Acesso/
-├── Dashboard/
-├── Medicoes/
-├── Notificacoes/
-├── Parametros/
-├── Parceiros/
-├── Perfis/
-├── Shared/
-└── Usuarios/
-```
+<p align="center">
+  <img src="./Imagens/Views.png" alt="Estrutura de Views" />
+</p>
+
+A pasta `Views` contém os arquivos de interface (Razor Pages) do projeto. Esta camada é responsável pela renderização do HTML que é enviado ao navegador do usuário, refletindo o estado da aplicação e permitindo a interação com o sistema.
+
+| Pasta / View | Responsabilidade |
+| :--- | :--- |
+| **Acesso/** | Interfaces de login, autenticação e recuperação de acesso. |
+| **Dashboard/** | Exibição visual do painel de controle e indicadores de estoque. |
+| **Home/** | Renderização da página inicial do sistema. |
+| **Medicoes/** | Listagem e visualização detalhada das medições de volume. |
+| **Notificacoes/** | Exibição de alertas e mensagens operacionais do sistema. |
+| **Parametros/** | Formulários de configuração de limites e variáveis de monitoramento. |
+| **Parceiros/** | Interface de cadastro e gestão de empresas parceiras. |
+| **Perfis/** | Gerenciamento visual das permissões e papéis de usuário. |
+| **Shared/** | Layouts, componentes reutilizáveis e parciais (ex: `_Layout.cshtml`). |
+| **Usuarios/** | Telas de cadastro, edição e administração de usuários. |
 
 ---
 
