@@ -59,7 +59,7 @@
 - [Anexos](#anexos)
 ---
 
-  ## QUEM SOMOS
+## QUEM SOMOS
   
   A Inventory Masters é uma plataforma tecnológica voltada para o monitoramento inteligente de espaços de armazenamento e a gestão estratégica de excedentes produtivos.
   
@@ -76,9 +76,9 @@
     <img src="./Imagens/logo.png" width="600" alt="Logo Inventory Masters" />
   </p>
   
-  -------
+  ---
   
-  ## PROBLEMA 
+## PROBLEMA 
   
   O cenário empresarial atual é caracterizado por elevados níveis de produção e, consequentemente, pela geração contínua de excedentes produtivos. Esses excedentes incluem sobras de matéria-prima, materiais fora dos padrões comerciais, resíduos operacionais e insumos não aproveitados integralmente durante os processos produtivos. Em muitas organizações, esses materiais não são monitorados de forma estratégica, sendo frequentemente tratados apenas como resíduos ou custos inevitáveis.
   
@@ -110,7 +110,7 @@
   
   ---
   
-  ## SOLUÇÃO
+## SOLUÇÃO 
   
   A **Inventory Masters** é uma plataforma tecnológica desenvolvida para apoiar a gestão inteligente de excedentes produtivos por meio do monitoramento volumétrico de espaços de armazenamento e da rastreabilidade de materiais com potencial de reaproveitamento.
   
@@ -128,7 +128,7 @@
     
  ---
 
- ## ÁREA TECNOLÓGICA DA SOLUÇÃO
+## ÁREA TECNOLÓGICA DA SOLUÇÃO
 
 A solução Inventory Masters está inserida no contexto da **Indústria 4.0**, integrando tecnologias de visão computacional, monitoramento volumétrico, processamento de dados e comunicação em tempo real para apoiar a gestão inteligente de excedentes produtivos e ocupação de espaços de armazenamento.
 
@@ -262,7 +262,6 @@ O operador do sistema interage com um *dashboard* responsivo e intuitivo, que of
 ---
 
 ##  ESTRUTURA DO PROJETO
----
 
 O **Inventory Masters** é uma solução híbrida projetada para alta disponibilidade e rastreabilidade, composta por dois módulos principais:
 
@@ -300,7 +299,6 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
 
 O **Inventory Masters** adota a arquitetura **MVC** (Model-View-Controller) para separar a lógica de negócio, a interface do usuário e o fluxo de dados. Essa estrutura é reforçada por camadas especializadas (**Repositories**, **Services**, **Hubs**), que atuam como camadas de apoio: elas isolam as operações de banco de dados, centralizam regras complexas e garantem a comunicação em tempo real, resultando em um sistema modular, fácil de testar e simples de evoluir.
 
----
 
 ### 1. Módulo MVC/Web - Camada de Controllers
 
@@ -323,7 +321,6 @@ A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel ce
 | **PerfisController.cs** | Controla as permissões e níveis de acesso baseados nos perfis de usuário. |
 | **UsuariosController.cs** | Gerencia o cadastro, edição e administração dos usuários do sistema. |
 
----
 
 ### 2. Módulo MVC/Web - Camada de Models
 
@@ -347,7 +344,6 @@ A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que repr
 | **TokenAcessoKinect.cs** | Estrutura utilizada para a autenticação segura do dispositivo Kinect. |
 | **Usuario.cs** | Representa os dados cadastrais e credenciais dos usuários da plataforma. |
 
----
 
 ### 3. Módulo MVC/Web - Camada de Repositories
 
@@ -369,7 +365,6 @@ A pasta `Repositories` do projeto **MVC InventoryMasters** implementa o padrão 
 | **TokensAcessoKinectRepository.cs**| Gerencia a validação e o armazenamento dos tokens de autenticação do Kinect. |
 | **UsuariosRepository.cs** | Gerencia as operações de persistência relacionadas aos usuários da aplicação. |
 
----
 
 ### 4. Módulo MVC/Web - Camada de Services
 
@@ -387,7 +382,6 @@ A camada `Services` atua como uma ponte entre os `Controllers` e os `Repositorie
 | **PermissaoService.cs** | Implementa as regras de negócio para validação de acesso e permissões de usuários. |
 | **TokenAcessoKinectService.cs** | Coordena a lógica de validação dos tokens de acesso específicos do hardware Kinect. |
 
----
 
 ### 5. Módulo MVC/Web - Camada de ViewModels
 
@@ -406,8 +400,6 @@ A pasta `ViewModels` contém as classes que estruturam os dados exibidos nas *Vi
 | **ValidacaoTokenResultadoViewModel.cs** | Estrutura o retorno do resultado após a tentativa de validação de um token. |
 | **ValidarTokenRequest.cs** | Modelo de requisição contendo os dados para validar um token existente. |
 | **ValidarTokenViewModel.cs** | Estrutura de dados para a interface de validação de tokens do Kinect. |
-
----
 
 ### 6. Módulo MVC/Web - Camada de Views
 
@@ -440,8 +432,6 @@ A pasta `Views` contém os arquivos de interface (Razor Pages) do projeto. Esta 
 | **Shared/** | Layouts, componentes reutilizáveis e parciais (ex: `_Layout.cshtml`). |
 | **Usuarios/** | Telas de cadastro, edição e administração de usuários. |
 
----
-
 ### 7. Módulo MVC/Web - Camada de Hubs (SignalR)
 
 <p align="center">
@@ -459,8 +449,6 @@ A camada `Hubs` contém as classes que estendem `Hub` do SignalR, permitindo a c
 
 ## Módulo Kinect (MVVM)
 Para o processamento de dados do hardware **Kinect**, utilizamos o padrão **MVVM** (Model-View-ViewModel). Esta abordagem permite que a interface de captura e processamento volumétrico opere com alta performance e responsividade, utilizando o *data binding* para manter a visualização dos dados sempre sincronizada com o sensor, garantindo uma separação limpa entre a lógica de captura e a interface de monitoramento.
-
----
 
 ### 1. Módulo Kinect: Camada de Model 
 
@@ -482,8 +470,6 @@ Os `Models` definem a estrutura dos dados que transitam entre o hardware e a apl
 | **UsuarioAcesso.cs** | Define a estrutura de dados para controle de acesso do usuário. |
 | **ValidacaoTokenResultado.cs** | Define o resultado da validação de acesso do dispositivo. |
 
----
-
 ### 2. Módulo Kinect: Camada de Service
 
 <p align="center">
@@ -500,8 +486,6 @@ A camada `Service` no módulo Kinect centraliza a inteligência de processamento
 | **KinectService.Camera.cs** | Gerencia stream de vídeo e captura de quadros da câmera. |
 | **KinectService.Volume.cs** | Implementa algoritmos para cálculo volumétrico de objetos. |
 | **SignalRService.cs** | Coordena o envio de dados processados em tempo real via SignalR. |
-
----
 
 ### 3. Módulo Kinect: Camada de ViewModel
 
@@ -520,7 +504,6 @@ A camada `ViewModel` atua como o **orquestrador** da interface do Kinect. Ela pr
 | **MainViewModel.Kinect.cs** | Gerencia o estado e status operacional do hardware. |
 | **MainViewModel.Volume.cs** | Processa e formata dados volumétricos para exibição gráfica. |
 
----
 ### 4. Módulo Kinect: Camada de View
 
 <p align="center">
@@ -535,7 +518,6 @@ A camada `View` é a camada de apresentação final da aplicação. Ela é respo
 | **KinectLogin.xaml** | Tela de autenticação e acesso inicial do dispositivo. |
 | **KinectMonitorWindow.xaml** | Interface principal de monitoramento em tempo real do Kinect. |
 
----
 ### 5. Módulo Kinect: Camada de Repository
 
 <p align="center">
@@ -550,8 +532,6 @@ A camada `Repository` encapsula a lógica de persistência de dados. Ela utiliza
 | **KinectRepository.cs** | Implementa a lógica concreta de acesso ao **SQLite**, isolando as consultas e gravações de dados através do `AppDbContext`. |
 
 > **Nota:** Esta arquitetura garante o isolamento dos dados por empresa e permite que, caso a tecnologia de banco de dados precise ser alterada no futuro, as modificações fiquem restritas a esta camada, sem impactar as regras de negócio.
-
----
 
 ### 6. Módulo Kinect: Camada de Commands
 
