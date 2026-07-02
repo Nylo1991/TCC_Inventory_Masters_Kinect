@@ -23,6 +23,44 @@
 </div>
 
 ---
+## SUMÁRIO
+
+- [Quem Somos](#quem-somos)
+- [Problema](#problema)
+- [Solução](#solucao)
+- [Área Tecnológica da Solução](#area-tecnologica-da-solucao)
+- [Arquitetura Utilizada](#arquitetura-utilizada)
+- [Requisitos do Sistema](#requisitos-do-sistema)
+- [Justificativa](#justificativa)
+- [Objetivos](#objetivos)
+  - [Objetivo Geral](#objetivo-geral)
+  - [Objetivos Específicos](#objetivos-especificos)
+- [Desenvolvimento](#desenvolvimento)
+- [Minimundo](#minimundo)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+  - [Módulo Web (MVC)](#1-modulo-desktop-tcc-inventory-masters-kinect)
+  - [Módulo Kinect (MVVM)](#modulo-kinect-mvvm)
+- [Regra de Negócio](#regra-de-negocio)
+  - [Regras de Negócio (MVC/Web)](#regras-de-negocio---mvcweb)
+  - [Regras de Negócio (Kinect/Desktop)](#regras-de-negocio---kinectdesktop)
+  - [Regras de Validação (MVC/Web)](#regras-de-validacao---mvcweb)
+  - [Regras de Integração](#regras-de-integracao---modulos)
+  - [Regras Técnicas/Operacionais](#regras-tecnicasoperacionais)
+- [Modelagem do Sistema](#modelagem-do-sistema)
+  - [Diagrama de Caso de Uso](#diagrama-de-caso-de-uso)
+  - [Diagrama de Fluxo](#diagrama-de-fluxo)
+  - [Diagrama de Sequência](#diagrama-de-sequencia)
+- [Modelagem do Banco de Dados](#modelagem-do-banco-de-dados)
+  - [Modelagem do Sqlite](#modelagem-do-banco-kinect)
+  - [Modelagem do Firebase](#modelagem-do-banco-firebase)
+- [Viabilidade Técnica](#viabilidade-tecnica)
+- [Viabilidade Econômica](#viabilidade-economica)
+- [Resultados e Conclusão](#resultados-e-conclusao)
+  - [Resultados Alcançados](#resultados-alcancados)
+  - [Conclusão](#conclusao)
+- [Anexos](#anexos)
+    
+---
 
 ## QUEM SOMOS
 
