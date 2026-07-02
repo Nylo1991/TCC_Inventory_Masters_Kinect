@@ -5019,7 +5019,11 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 
 ## ANEXOS
 
-[Relação de Implementação e Manutenção do Sistema](Docs/nome-do-seu-arquivo.extensao)
+### Documentação Técnica
+
+Para consultar as diretrizes detalhadas, acesse: </br>
+
+[Relação de Implementação e Manutenção do Sistema](Docs/Relação%20de%20Implementação%20-%20Manutenção%20do%20Sistema.pdf)
 ---------------------------------------
 
 
