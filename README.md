@@ -2542,17 +2542,17 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 
 #### Parceiros - MVC/Web
 
-| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
-|---|---|---|
-| Cadastrar parceiros | **RF032:** O sistema deve permitir o cadastro de parceiros. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
-| Validar dados obrigatórios do parceiro | **RF033:** O sistema deve validar nome, e-mail, telefone, empresa e endereço no cadastro de parceiro. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
-| Editar parceiros | **RF034:** O sistema deve permitir a edição dos dados de parceiros. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
-| Ativar e inativar parceiros | **RF035:** O sistema deve permitir alterar o status de um parceiro. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
-| Excluir parceiros | **RF036:** O sistema deve permitir excluir parceiros cadastrados. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
-| Detalhar parceiros | **RF037:** O sistema deve permitir visualizar detalhes de um parceiro. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
-| Listar parceiros por empresa | **RF038:** O sistema deve listar parceiros conforme a empresa do usuário autenticado. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
-| Filtrar parceiros | **RF039:** O sistema deve permitir filtrar parceiros por termo, período de cadastro e status. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
-| Pesquisar parceiros por texto | **RF040:** O sistema deve permitir pesquisa por ID, nome, e-mail, empresa ou telefone. | **RNF007:** O sistema deve impedir acesso a dados de outras empresas.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF016:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas.<br>**RNF022:** O sistema deve exibir mensagens compreensíveis para falhas de login, token, cadastro e medição.<br>**RNF029:** O acesso a dados deve ser centralizado em repositórios. |
+| Característica | Requisito Funcional |
+|---|---|
+| Cadastrar parceiros | **RF032:** O sistema deve permitir o cadastro de parceiros. |
+| Validar dados obrigatórios do parceiro | **RF033:** O sistema deve validar nome, e-mail, telefone, empresa e endereço no cadastro de parceiro. | 
+| Editar parceiros | **RF034:** O sistema deve permitir a edição dos dados de parceiros. |
+| Ativar e inativar parceiros | **RF035:** O sistema deve permitir alterar o status de um parceiro. |
+| Excluir parceiros | **RF036:** O sistema deve permitir excluir parceiros cadastrados. | 
+| Detalhar parceiros | **RF037:** O sistema deve permitir visualizar detalhes de um parceiro. | 
+| Listar parceiros por empresa | **RF038:** O sistema deve listar parceiros conforme a empresa do usuário autenticado. |
+| Filtrar parceiros | **RF039:** O sistema deve permitir filtrar parceiros por termo, período de cadastro e status. |
+| Pesquisar parceiros por texto | **RF040:** O sistema deve permitir pesquisa por ID, nome, e-mail, empresa ou telefone. |
 
 #### Parâmetros e Configurações - MVC/Web
 
@@ -2580,15 +2580,15 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 
 #### Dashboard - MVC/Web
 
-| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
-|---|---|---|
-| Exibir dashboard operacional | **RF060:** O sistema deve exibir um dashboard com dados consolidados. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
-| Exibir usuários no dashboard | **RF061:** O sistema deve apresentar usuários vinculados à empresa. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
-| Exibir parceiros no dashboard | **RF062:** O sistema deve apresentar parceiros vinculados à empresa. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
-| Exibir medições no dashboard | **RF063:** O sistema deve apresentar medições registradas. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
-| Exibir alertas no dashboard | **RF064:** O sistema deve apresentar alertas e notificações. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
-| Calcular percentual de ocupação | **RF065:** O sistema deve calcular a ocupação com base na última medição e capacidade máxima. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
-| Limitar percentual exibido | **RF066:** O sistema deve limitar a exibição do percentual de ocupação a 100%. | **RNF019:** Clientes conectados devem receber novas medições sem atualização manual da página.<br>**RNF024:** O Kinect deve exibir volume, percentual, espaço livre e status de ocupação.<br>**RNF026:** Datas exibidas aos clientes devem estar em formato legível.<br>**RNF037:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
+| Característica | Requisito Funcional | 
+|---|---|
+| Exibir dashboard operacional | **RF060:** O sistema deve exibir um dashboard com dados consolidados. | 
+| Exibir usuários no dashboard | **RF061:** O sistema deve apresentar usuários vinculados à empresa. | 
+| Exibir parceiros no dashboard | **RF062:** O sistema deve apresentar parceiros vinculados à empresa. |
+| Exibir medições no dashboard | **RF063:** O sistema deve apresentar medições registradas. | 
+| Exibir alertas no dashboard | **RF064:** O sistema deve apresentar alertas e notificações. | 
+| Calcular percentual de ocupação | **RF065:** O sistema deve calcular a ocupação com base na última medição e capacidade máxima. |
+| Limitar percentual exibido | **RF066:** O sistema deve limitar a exibição do percentual de ocupação a 100%. | 
 
 #### Medições - MVC/Web
 
@@ -2636,7 +2636,7 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 
 | Característica | Requisito Funcional | 
 |---|---|
-| Persistir dados no Firestore | **RF094:** O sistema deve persistir dados do MVC no Firebase. | 
+| Persistir dados no Firebase | **RF094:** O sistema deve persistir dados do MVC no Firebase. | 
 | Separar dados por coleções | **RF095:** O sistema deve organizar usuários, perfis, parceiros, parâmetros, medições, notificações, tokens e logs em coleções. | 
 | Consultar dados por empresa | **RF096:** O sistema deve filtrar dados conforme a empresa do usuário autenticado. |
 | Usar configuração global como fallback | **RF097:** O sistema deve usar configuração global quando a empresa não possuir configuração própria. | 
@@ -2644,11 +2644,11 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 
 #### Logs - MVC/Web
 
-| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
-|---|---|---|
-| Registrar logs de autenticação | **RF099:** O sistema deve registrar eventos de solicitação de token, validação de token e login. | **RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF049:** O sistema deve registrar eventos de solicitação, envio, validação e uso de token.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
-| Registrar logs de erro | **RF100:** O sistema deve registrar falhas críticas e erros operacionais. | **RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF049:** O sistema deve registrar eventos de solicitação, envio, validação e uso de token.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
-| Registrar logs de operações relevantes | **RF101:** O sistema deve registrar eventos importantes para rastreabilidade. | **RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF049:** O sistema deve registrar eventos de solicitação, envio, validação e uso de token.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
+| Característica | Requisito Funcional |
+|---|---|
+| Registrar logs de autenticação | **RF099:** O sistema deve registrar eventos de solicitação de token, validação de token e login. | 
+| Registrar logs de erro | **RF100:** O sistema deve registrar falhas críticas e erros operacionais. | 
+| Registrar logs de operações relevantes | **RF101:** O sistema deve registrar eventos importantes para rastreabilidade. |
 
 #### Autenticação - Kinect/Desktop
 
@@ -2734,12 +2734,12 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 
 #### Logs - Kinect/Desktop
 
-| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
-|---|---|---|
-| Registrar logs locais do Kinect | **RF154:** O sistema Kinect deve registrar eventos operacionais locais. | **RNF010:** O módulo Kinect deve tratar falhas de sensor, calibração, medição e comunicação.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF051:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
-| Registrar falhas de medição | **RF155:** O sistema Kinect deve registrar falhas durante medição. | **RNF010:** O módulo Kinect deve tratar falhas de sensor, calibração, medição e comunicação.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF051:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
-| Registrar falhas de calibração | **RF156:** O sistema Kinect deve registrar falhas durante calibração. | **RNF010:** O módulo Kinect deve tratar falhas de sensor, calibração, medição e comunicação.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF051:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
-| Registrar falhas de comunicação | **RF157:** O sistema Kinect deve registrar falhas de comunicação com o MVC. | **RNF010:** O módulo Kinect deve tratar falhas de sensor, calibração, medição e comunicação.<br>**RNF013:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico.<br>**RNF050:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC.<br>**RNF051:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect.<br>**RNF052:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
+| Característica | Requisito Funcional |
+|---|---|
+| Registrar logs locais do Kinect | **RF154:** O sistema Kinect deve registrar eventos operacionais locais. |
+| Registrar falhas de medição | **RF155:** O sistema Kinect deve registrar falhas durante medição. |
+| Registrar falhas de calibração | **RF156:** O sistema Kinect deve registrar falhas durante calibração. |
+| Registrar falhas de comunicação | **RF157:** O sistema Kinect deve registrar falhas de comunicação com o MVC. |
 
 #### Requisitos Não Funcionais
 
@@ -2759,7 +2759,7 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 | Confiabilidade | **RNF012 - Reconexão automática SignalR:** A comunicação SignalR deve tentar reconectar em caso de queda. |
 | Confiabilidade | **RNF013 - Logs para rastreabilidade:** O sistema deve registrar eventos relevantes para auditoria e diagnóstico. |
 | Confiabilidade | **RNF014 - Fallback de configuração global:** O sistema deve usar configuração global quando não houver configuração por empresa. |
-| Confiabilidade | **RNF015 - Não interrupção por falha de Firestore:** Falhas no Firestore devem ser tratadas sem derrubar toda a aplicação. |
+| Confiabilidade | **RNF015 - Não interrupção por falha de Firebase:** Falhas no Firebase devem ser tratadas sem derrubar toda a aplicação. |
 | Desempenho e Eficiência | **RNF016 - Paginação de listagens:** Listagens de usuários, parceiros, medições e notificações devem ser paginadas. |
 | Desempenho e Eficiência | **RNF017 - Limitação do histórico local:** O Kinect deve limitar a quantidade de medições carregadas na tela. |
 | Desempenho e Eficiência | **RNF018 - Processamento de medição em tempo real:** O sistema deve processar medições recebidas pelo Hub em tempo real. |
@@ -2779,7 +2779,7 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 | Manutenibilidade | **RNF032 - Parâmetros centralizados:** Configurações operacionais devem ser mantidas em estrutura própria de parâmetros. |
 | Manutenibilidade | **RNF033 - Código dividido por responsabilidade:** Funcionalidades do Kinect devem ser separadas por câmera, calibração, volume, histórico e comunicação. |
 | Interoperabilidade | **RNF034 - Comunicação em tempo real por SignalR:** O sistema deve usar SignalR/Hub para comunicação entre Kinect, MVC e clientes conectados. |
-| Interoperabilidade | **RNF035 - Integração com Firebase Firestore:** O MVC deve integrar-se ao Firebase Firestore para persistência principal. |
+| Interoperabilidade | **RNF035 - Integração com Firebase:** O MVC deve integrar-se ao Firebase para persistência principal. |
 | Interoperabilidade | **RNF036 - Integração com SQLite:** O Kinect deve integrar-se ao SQLite para persistência local. |
 | Interoperabilidade | **RNF037 - Compatibilidade entre unidades de medida:** O sistema deve converter corretamente cm3 para m3 entre Kinect e MVC. |
 | Interoperabilidade | **RNF038 - Configuração de URLs de comunicação:** Endereços de comunicação entre Kinect e MVC devem ser configuráveis. |
