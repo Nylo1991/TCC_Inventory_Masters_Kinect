@@ -4927,7 +4927,7 @@ A combinação entre Kinect, SQLite, SignalR e ASP.NET MVC demonstrou ser adequa
 
 ---
 
-## VIABILIDADE ECONÔMICA
+## VIABILIDADE ECONOMICA
 
 #### Custos Estimados de Implantação
 
@@ -4986,7 +4986,7 @@ Além do baixo investimento inicial, a plataforma oferece ganhos operacionais re
 
 ---
 
-# RESULTADOS E CONCLUSÃO
+## RESULTADOS E CONCLUSÃO
 
 #### Resultados Alcançados
 
