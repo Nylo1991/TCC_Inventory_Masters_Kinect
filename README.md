@@ -4070,29 +4070,6 @@ Essa abordagem elimina a necessidade de relacionamentos complexos e operações 
 
 ---
 
-## Arquitetura de Persistência de Dados
-
-### Módulo Kinect (MVVM)
-- Banco Local: SQLite;
-- Responsável por:
-  - armazenamento temporário das medições;
-  - persistência dos parâmetros do sensor;
-  - funcionamento offline;
-  - processamento local das leituras do Kinect.
-
-### Aplicação MVC Web
-- Banco em Nuvem: Firebase Firestore;
-- Responsável por:
-  - autenticação de usuários;
-  - gerenciamento de parceiros;
-  - dashboard operacional;
-  - envio de notificações;
-  - mensageria;
-  - armazenamento centralizado das medições;
-  - sincronização em tempo real.
-
----
-
 ## Modelagem NoSQL Firebase Firestore (MVC)
 
 <p align="center">
@@ -4418,103 +4395,10 @@ Responsável pelo controle de autenticação do módulo Kinect.
   "Utilizado": false,
   "Revogado": false
 }
+
 ```
 
----
-
-# Relacionamentos Entre Coleções
-
-```text
-Empresas
-│
-├── Usuarios (EmpresaId)
-├── Perfis (EmpresaId)
-├── Parceiros (EmpresaId)
-├── Medicoes (EmpresaId)
-├── Notificacoes (EmpresaId)
-├── ParametrosSistema (EmpresaId)
-├── LogsSistema (EmpresaId)
-└── TokenAcessoKinect (EmpresaId)
-
-Usuarios
-│
-├── PerfilId → Perfis
-├── EmpresaId → Empresas
-├── LogsSistema
-└── TokenAcessoKinect
-
-Perfis
-│
-└── Utilizados pelos Usuarios
-
-Parceiros
-│
-└── Utilizados pelas Notificacoes
-
-Medicoes
-│
-└── Geram Notificacoes automáticas
-
-ParametrosSistema
-│
-├── Define capacidade máxima
-├── Define percentual de alerta
-├── Configura canais de comunicação
-└── Configura parâmetros do Kinect
-
-LogsSistema
-│
-└── Auditoria das ações dos Usuarios
-
-TokenAcessoKinect
-│
-└── Controla autenticação entre o Kinect e o sistema MVC
-```
-
----
-
-# Considerações Arquiteturais
-
-A modelagem atual do Firebase Firestore foi estruturada para suportar um ambiente **multiempresa (multi-tenant)**, permitindo que diversas organizações utilizem a mesma plataforma de forma isolada por meio do campo **EmpresaId** presente nas principais coleções.
-
-Além disso, a arquitetura incorpora:
-
-- Controle de acesso baseado em perfis e permissões;
-- Autenticação segura do módulo Kinect por meio de tokens temporários;
-- Auditoria completa das operações através da coleção **LogsSistema**;
-- Configuração dinâmica dos parâmetros operacionais por empresa;
-- Geração automática de notificações baseada nas medições recebidas;
-- Sincronização em tempo real utilizando Firebase Firestore e SignalR.
-
-O fluxo principal da aplicação é representado por:
-
-```text
-Kinect
-   │
-   ▼
-TokenAcessoKinect
-   │
-   ▼
-SignalR Hub
-   │
-   ▼
-Firestore
-   │
-   ├── Medicoes
-   ├── Notificacoes
-   ├── LogsSistema
-   └── ParametrosSistema
-   │
-   ▼
-MVC Inventory Masters
-   │
-   ▼
-Dashboard • Alertas • Administração
-```
-
-Essa modelagem representa a estrutura atual implementada no **Inventory Masters**, oferecendo escalabilidade, rastreabilidade, segurança e suporte ao gerenciamento de múltiplas empresas em uma única plataforma.
-
-# Modelo Conceitual — MVVM Kinect
+### Modelagem Conceitual - Kinect Sqlite
 
 O modelo conceitual do módulo MVVM Kinect representa as principais entidades responsáveis pelo armazenamento das informações utilizadas durante o funcionamento da aplicação desktop. Essas entidades contemplam o registro das medições volumétricas capturadas pelo sensor Kinect, o histórico de ocupação dos espaços monitorados, o controle de usuários locais, as sessões de autenticação e os registros operacionais da aplicação.
 
@@ -4524,7 +4408,7 @@ Além das entidades persistidas, o módulo utiliza modelos auxiliares responsáv
   <img src="./Imagens/ModeloConceitualMVVM.png" width="1000" alt="Modelo Conceitual MVVM Kinect" />
 </p>
 
-## Entidades
+#### Entidades
 
 | Entidade | Finalidade |
 |-----------|------------|
@@ -4536,7 +4420,7 @@ Além das entidades persistidas, o módulo utiliza modelos auxiliares responsáv
 
 ---
 
-## Relacionamentos
+#### Relacionamentos
 
 | Relacionamento | Cardinalidade | Descrição |
 |----------------|---------------|-----------|
@@ -4546,7 +4430,7 @@ Além das entidades persistidas, o módulo utiliza modelos auxiliares responsáv
 
 ---
 
-# Modelo Lógico — MVVM Kinect
+### Modelo Lógico — MVVM Kinect
 
 O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceitual, definindo as tabelas, atributos, tipos de dados, chaves primárias e chaves estrangeiras necessárias para garantir a organização e a integridade dos dados armazenados no banco SQLite local.
 
@@ -4554,7 +4438,7 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
   <img src="./Imagens/ModeloLogicoMVVM.png" width="1000" alt="Modelo Lógico MVVM Kinect" />
 </p>
 
-## Estrutura Relacional
+#### Estrutura Relacional
 
 | Tabela | Descrição |
 |---------|-----------|
@@ -4566,7 +4450,7 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
 
 ---
 
-## Tabela: UsuarioAcesso
+#### Tabela: UsuarioAcesso
 
 | Campo | Tipo | Descrição |
 |---------|---------|-----------|
@@ -4581,7 +4465,7 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
 
 ---
 
-## Tabela: MedicaoVolume
+#### Tabela: MedicaoVolume
 
 | Campo | Tipo | Descrição |
 |---------|---------|-----------|
@@ -4598,7 +4482,7 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
 
 ---
 
-## Tabela: HistoricoOcupacao
+#### Tabela: HistoricoOcupacao
 
 | Campo | Tipo | Descrição |
 |---------|---------|-----------|
@@ -4617,7 +4501,7 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
 
 ---
 
-## Tabela: SessaoUsuario
+#### Tabela: SessaoUsuario
 
 | Campo | Tipo | Descrição |
 |---------|---------|-----------|
@@ -4630,7 +4514,7 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
 
 ---
 
-## Tabela: Log
+#### Tabela: Log
 
 | Campo | Tipo | Descrição |
 |---------|---------|-----------|
@@ -4641,7 +4525,7 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
 
 ---
 
-# Modelo Físico — MVVM Kinect
+### Modelo Físico — MVVM Kinect
 
 O modelo físico do módulo **MVVM Kinect** foi implementado utilizando o banco de dados **SQLite**, por meio do **Entity Framework 6**, responsável pelo mapeamento objeto-relacional entre as classes do domínio e as tabelas persistidas no banco de dados local.
 
@@ -4655,109 +4539,6 @@ Nesse contexto, o banco **SQLite** foi adotado por ser uma solução leve, embar
 
 ---
 
-## Estrutura
-
-A estrutura física contempla as seguintes tabelas:
-
-- UsuarioAcesso
-- MedicaoVolume
-- HistoricoOcupacao
-- SessaoUsuario
-- Log
-
-Foram utilizadas chaves primárias do tipo **INTEGER AUTOINCREMENT** e chaves estrangeiras para garantir a integridade referencial entre as tabelas. :contentReference[oaicite:5]{index=5}
-
----
-
-# Arquitetura de Persistência Local
-
-```text
-                 MVVM Kinect
-
-                  MainViewModel
-                         │
-                         ▼
-                KinectRepository
-                         │
-                         ▼
-                  Entity Framework 6
-                         │
-                         ▼
-                      SQLite
-                         │
-     ┌───────────────────┼────────────────────┐
-     │                   │                    │
-     ▼                   ▼                    ▼
-MedicaoVolume   HistoricoOcupacao   UsuarioAcesso
-                         │
-                         ▼
-                  SessaoUsuario
-                         │
-                         ▼
-                        Log
-```
-
----
-
-# Considerações
-
-A modelagem adotada permite organizar de forma eficiente os dados gerados pelo sensor Kinect, garantindo:
-
-- Persistência local das medições;
-- Histórico de ocupação dos espaços monitorados;
-- Controle de acesso dos usuários;
-- Registro das sessões ativas;
-- Rastreabilidade das operações realizadas;
-- Funcionamento offline do módulo MVVM.
-
-A utilização do SQLite proporciona baixo consumo de recursos computacionais, rápida recuperação das informações e integração transparente com o Entity Framework, atendendo aos requisitos do módulo **Inventory Masters Kinect**.
-
-## Tecnologias Utilizadas
-
-- SQLite
-- Entity Framework 6
-- .NET Framework 4.8
-- Arquitetura MVVM
-- Kinect SDK 1.8
-
----
-
-# Models Persistidas no SQLite
-
-As models persistidas representam as entidades armazenadas fisicamente no banco de dados **SQLite** local. Essas entidades são mapeadas pelo **Entity Framework 6** por meio do **AppDbContext**, sendo responsáveis pela persistência das informações operacionais geradas durante a execução do módulo MVVM Kinect.
-
-Cada model corresponde a uma tabela do banco de dados e armazena informações relacionadas às medições volumétricas, histórico de ocupação, autenticação de usuários, sessões ativas e registros operacionais da aplicação.
-
-| Model | Descrição |
-|---------|-----------|
-| **UsuarioAcesso** | Entidade responsável pelo armazenamento dos usuários locais e suas informações de autenticação. |
-| **MedicaoVolume** | Entidade responsável pelo armazenamento das medições volumétricas capturadas pelo sensor Kinect. |
-| **HistoricoOcupacao** | Entidade responsável pelo registro do histórico de ocupação dos espaços monitorados. |
-| **SessaoUsuario** | Entidade responsável pelo controle da sessão autenticada durante a execução da aplicação. |
-| **Log** | Entidade responsável pelo armazenamento de mensagens informativas, avisos e erros registrados pelo sistema. |
-
-Todas essas entidades são gerenciadas automaticamente pelo **Entity Framework 6** através do **AppDbContext**, que realiza as operações de criação, leitura, atualização e exclusão dos registros persistidos no banco SQLite.
-
----
-
-# Models de Controle em Memória
-
-Além das entidades persistidas, o módulo MVVM utiliza modelos auxiliares que não são armazenados no banco de dados. Essas classes existem apenas durante a execução da aplicação e são responsáveis por controlar o processo de calibração do sensor Kinect.
-
-| Model | Finalidade |
-|---------|-----------|
-| **CalibrationResult** | Armazena o resultado final obtido durante a calibração do Kinect. |
-| **CalibrationProgress** | Controla o progresso da calibração em tempo real, permitindo atualizar a interface do usuário durante o processo. |
-
----
-
-## Observação Sobre o Armazenamento por Empresa
-
-O módulo MVVM realiza a segregação lógica das informações através do atributo **Empresa**, presente nas principais entidades persistidas.
-
-Essa abordagem garante que medições volumétricas, históricos de ocupação, sessões de autenticação e registros de log permaneçam associados à empresa do usuário autenticado, proporcionando maior organização, rastreabilidade e isolamento dos dados operacionais do sistema.
-
----
 ## VIABILIDADE TÉCNICA
 
 #### Introdução
