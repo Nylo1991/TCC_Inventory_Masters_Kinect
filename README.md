@@ -2488,7 +2488,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 ## REQUISITOS DO SISTEMA
 ---
 
-Os requisitos do sistema foram organizados conforme o modelo de comparação entre requisito funcional e requisito não funcional.
+Os requisitos do sistema foram organizados entre requisito funcional e requisito não funcional.
 
 Os **requisitos funcionais (RF)** descrevem o que o sistema deve fazer, ou seja, as funcionalidades esperadas pelos usuários e pelos módulos do sistema, como autenticação por token, cadastro de usuários e parceiros, controle de permissões, configuração de parâmetros, dashboard, medições volumétricas, notificações e integração com o Kinect.
 
@@ -2505,49 +2505,49 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 
 #### Autenticação e Acesso - MVC/Web
 
-| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+| Característica | Requisito Funcional |
 |---|---|---|
-| Solicitar token de acesso por e-mail | **RF001:** O sistema deve permitir que o usuário solicite um token informando seu e-mail na tela de login. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Validar e-mail informado no login | **RF002:** O sistema deve validar o formato do e-mail informado antes de solicitar o token. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Verificar cadastro do usuário pelo e-mail | **RF003:** O sistema deve consultar se o e-mail informado pertence a um usuário cadastrado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Verificar status ativo do usuário | **RF004:** O sistema deve permitir solicitação de token apenas para usuários ativos. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Gerar token de acesso | **RF005:** O sistema deve gerar um token numérico para autenticação do usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Enviar token por e-mail | **RF006:** O sistema deve enviar o token gerado para o e-mail cadastrado do usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Validar token informado pelo usuário | **RF007:** O sistema deve validar o token informado na tela de validação. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Bloquear token inválido, expirado ou já utilizado | **RF008:** O sistema deve impedir o acesso quando o token não for válido. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Autenticar usuário com token válido | **RF009:** O sistema deve autenticar o usuário quando o token for válido e dentro do prazo. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Criar sessão autenticada | **RF010:** O sistema deve criar uma sessão contendo identificador, nome, e-mail, perfil e empresa do usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Encerrar sessão do usuário | **RF011:** O sistema deve permitir logout e encerrar a sessão autenticada. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Redirecionar usuário sem permissão | **RF012:** O sistema deve redirecionar usuários sem permissão para a tela de acesso negado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Solicitar token de acesso por e-mail | **RF001:** O sistema deve permitir que o usuário solicite um token informando seu e-mail na tela de login. |
+| Validar e-mail informado no login | **RF002:** O sistema deve validar o formato do e-mail informado antes de solicitar o token. | 
+| Verificar cadastro do usuário pelo e-mail | **RF003:** O sistema deve consultar se o e-mail informado pertence a um usuário cadastrado. | 
+| Verificar status ativo do usuário | **RF004:** O sistema deve permitir solicitação de token apenas para usuários ativos. |
+| Gerar token de acesso | **RF005:** O sistema deve gerar um token numérico para autenticação do usuário. |
+| Enviar token por e-mail | **RF006:** O sistema deve enviar o token gerado para o e-mail cadastrado do usuário. | 
+| Validar token informado pelo usuário | **RF007:** O sistema deve validar o token informado na tela de validação. | 
+| Bloquear token inválido, expirado ou já utilizado | **RF008:** O sistema deve impedir o acesso quando o token não for válido. |
+| Autenticar usuário com token válido | **RF009:** O sistema deve autenticar o usuário quando o token for válido e dentro do prazo. | 
+| Criar sessão autenticada | **RF010:** O sistema deve criar uma sessão contendo identificador, nome, e-mail, perfil e empresa do usuário. |
+| Encerrar sessão do usuário | **RF011:** O sistema deve permitir logout e encerrar a sessão autenticada. | 
+| Redirecionar usuário sem permissão | **RF012:** O sistema deve redirecionar usuários sem permissão para a tela de acesso negado. |
 
 #### Perfis e Permissões - MVC/Web
 
-| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+| Característica | Requisito Funcional |
 |---|---|---|
-| Controlar acesso por perfil | **RF013:** O sistema deve controlar o acesso às funcionalidades com base no perfil do usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Aplicar permissões do perfil Administrador | **RF014:** O sistema deve permitir que o perfil Administrador acesse todas as funcionalidades. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Aplicar permissões do perfil Gestor | **RF015:** O sistema deve permitir que o perfil Gestor acesse dashboard, medições, notificações e parceiros. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Aplicar permissões do perfil Operador | **RF016:** O sistema deve permitir que o perfil Operador acesse dashboard, medições e Kinect. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Aplicar permissões do perfil Visualizador | **RF017:** O sistema deve permitir que o perfil Visualizador acesse dashboard, medições e notificações. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Cadastrar perfis | **RF018:** O sistema deve permitir o cadastro de perfis com permissões selecionadas. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Editar perfis | **RF019:** O sistema deve permitir a alteração dos dados e permissões de um perfil. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Inativar perfis | **RF020:** O sistema deve permitir a inativação de perfis. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Listar perfis | **RF021:** O sistema deve listar perfis cadastrados. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Filtrar perfis | **RF022:** O sistema deve permitir busca de perfis por termo e status. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Controlar acesso por perfil | **RF013:** O sistema deve controlar o acesso às funcionalidades com base no perfil do usuário. |
+| Aplicar permissões do perfil Administrador | **RF014:** O sistema deve permitir que o perfil Administrador acesse todas as funcionalidades. | 
+| Aplicar permissões do perfil Gestor | **RF015:** O sistema deve permitir que o perfil Gestor acesse dashboard, medições, notificações e parceiros. |
+| Aplicar permissões do perfil Operador | **RF016:** O sistema deve permitir que o perfil Operador acesse dashboard, medições e Kinect. | 
+| Aplicar permissões do perfil Visualizador | **RF017:** O sistema deve permitir que o perfil Visualizador acesse dashboard, medições e notificações. |
+| Cadastrar perfis | **RF018:** O sistema deve permitir o cadastro de perfis com permissões selecionadas. |
+| Editar perfis | **RF019:** O sistema deve permitir a alteração dos dados e permissões de um perfil. |
+| Inativar perfis | **RF020:** O sistema deve permitir a inativação de perfis. | 
+| Listar perfis | **RF021:** O sistema deve listar perfis cadastrados. |
+| Filtrar perfis | **RF022:** O sistema deve permitir busca de perfis por termo e status. | 
 
 #### Usuários - MVC/Web
 
-| Característica | Requisito Funcional | Requisito Não Funcional relacionado |
+| Característica | Requisito Funcional | 
 |---|---|---|
-| Cadastrar usuários | **RF023:** O sistema deve permitir o cadastro de usuários. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Validar dados obrigatórios do usuário | **RF024:** O sistema deve validar nome, e-mail, perfil e senha no cadastro de usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Editar usuários | **RF025:** O sistema deve permitir a edição de dados de usuários cadastrados. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Preservar senha na edição padrão do usuário | **RF026:** O sistema deve manter a senha existente quando a edição não tratar troca de senha. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Ativar e inativar usuários | **RF027:** O sistema deve permitir alterar o status de um usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Excluir usuários | **RF028:** O sistema deve permitir excluir usuários cadastrados. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Detalhar usuários | **RF029:** O sistema deve permitir visualizar detalhes de um usuário. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Listar usuários por empresa | **RF030:** O sistema deve listar usuários conforme a empresa do usuário autenticado. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
-| Filtrar usuários | **RF031:** O sistema deve permitir filtrar usuários por termo, perfil, empresa e status. | Qualidade associada ao funcionamento correto, seguro e rastreável da funcionalidade. |
+| Cadastrar usuários | **RF023:** O sistema deve permitir o cadastro de usuários. |
+| Validar dados obrigatórios do usuário | **RF024:** O sistema deve validar nome, e-mail, perfil e senha no cadastro de usuário. |
+| Editar usuários | **RF025:** O sistema deve permitir a edição de dados de usuários cadastrados. |
+| Preservar senha na edição padrão do usuário | **RF026:** O sistema deve manter a senha existente quando a edição não tratar troca de senha. | 
+| Ativar e inativar usuários | **RF027:** O sistema deve permitir alterar o status de um usuário. |
+| Excluir usuários | **RF028:** O sistema deve permitir excluir usuários cadastrados. | 
+| Detalhar usuários | **RF029:** O sistema deve permitir visualizar detalhes de um usuário. | 
+| Listar usuários por empresa | **RF030:** O sistema deve listar usuários conforme a empresa do usuário autenticado. | 
+| Filtrar usuários | **RF031:** O sistema deve permitir filtrar usuários por termo, perfil, empresa e status. | 
 
 #### Parceiros - MVC/Web
 
