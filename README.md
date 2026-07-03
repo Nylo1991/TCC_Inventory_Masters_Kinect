@@ -4805,6 +4805,7 @@ Para acessar as documentações técnicas e diretrizes de manutenção do sistem
 | Documento | Descrição | Link de Acesso |
 | :--- | :--- | :--- |
 | **Manual Técnico** | Diretrizes de Implementação e Manutenção | [Acessar PDF](Docs/Relação%20de%20Implementação%20-%20Manutenção%20do%20Sistema.pdf) |
+| **Manual Técnico** | Guia de Configuração do ambiente (Kinect + SQLite) | [Acessar PDF](Docs/Guia%20de%20Ambiente%20-%20kinect%20SQLite.pdf) |
 ---------------------------------------
 
 
