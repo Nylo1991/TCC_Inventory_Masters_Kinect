@@ -4800,11 +4800,11 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 
 ## ANEXOS
 
-### Documentação Técnica
+Para acessar as documentações técnicas e diretrizes de manutenção do sistema, utilize a tabela abaixo:
 
-Para consultar as diretrizes detalhadas, acesse: </br>
-
-[Relação de Implementação e Manutenção do Sistema](Docs/Relação%20de%20Implementação%20-%20Manutenção%20do%20Sistema.pdf)
+| Documento | Descrição | Link de Acesso |
+| :--- | :--- | :--- |
+| **Manual Técnico** | Diretrizes de Implementação e Manutenção | [Acessar PDF](Docs/Relação%20de%20Implementação%20-%20Manutenção%20do%20Sistema.pdf) |
 ---------------------------------------
 
 
