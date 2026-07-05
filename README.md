@@ -2998,7 +2998,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 #### Logs e Auditoria
 
 <p align="center">
-  <img src="./Imagens/Acesso.png" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/LOG.jpeg" alt="Estrutura de RelayCommand do Kinect" />
 </p>
 
 | Código | Caso de Uso | Ator | Interação |
