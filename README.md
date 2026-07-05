@@ -2850,7 +2850,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 
 <p align="center">
-  <img src="./Imagens/Acesso.png" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Dashboard.jpeg" alt="Estrutura de RelayCommand do Kinect" />
 </p>
 
 
