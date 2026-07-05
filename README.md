@@ -2890,7 +2890,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 #### Perfis e Permissões
 
 <p align="center">
-  <img src="./Imagens/Acesso.png" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Permissões.jpeg" alt="Estrutura de RelayCommand do Kinect" />
 </p>
 
 
