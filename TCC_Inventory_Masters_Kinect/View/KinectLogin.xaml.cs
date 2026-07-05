@@ -18,7 +18,7 @@ namespace TCC_Inventory_Masters_Kinect.View
         {
             InitializeComponent();
             MensagemTextBlock.Text = string.Empty;
-            MostrarLogin();
+            MostrarSolicitacaoToken();
         }
         /// <summary>
         /// Evento de clique do botão "Entrar". Exibe o painel de login, ocultando o painel de 
@@ -86,10 +86,12 @@ namespace TCC_Inventory_Masters_Kinect.View
             {
                 string token = LoginUsuarioTextBox.Text?.Trim();
 
-                if (string.IsNullOrWhiteSpace(token))
+                if (!System.Text.RegularExpressions.Regex.IsMatch(
+                    token ?? string.Empty,
+                    @"^\d{6}$"))
                 {
                     MensagemTextBlock.Foreground = System.Windows.Media.Brushes.Red;
-                    MensagemTextBlock.Text = "Informe o token de acesso.";
+                    MensagemTextBlock.Text = "Informe os seis numeros do token de acesso.";
                     return;
                 }
 
@@ -122,6 +124,59 @@ namespace TCC_Inventory_Masters_Kinect.View
                 LoggerService.Erro("Erro ao validar token pelo o sistema.");
             }
         }
+        /// <summary>
+        /// Impede a digitacao de letras, sinais e espacos no campo de token.
+        /// </summary>
+        private void SomenteNumeros_PreviewTextInput(
+            object sender,
+            System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !System.Text.RegularExpressions.Regex.IsMatch(e.Text, @"^\d+$");
+        }
+
+        /// <summary>
+        /// Permite colar somente um token numerico de ate seis digitos.
+        /// </summary>
+        private void TokenTextBox_Pasting(
+            object sender,
+            System.Windows.DataObjectPastingEventArgs e)
+        {
+            if (!e.SourceDataObject.GetDataPresent(System.Windows.DataFormats.Text, true))
+            {
+                e.CancelCommand();
+                return;
+            }
+
+            string texto = e.SourceDataObject.GetData(System.Windows.DataFormats.Text) as string
+                ?? string.Empty;
+            var campo = sender as System.Windows.Controls.TextBox;
+            int tamanhoFinal = (campo?.Text?.Length ?? 0)
+                - (campo?.SelectionLength ?? 0)
+                + texto.Length;
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(texto, @"^\d+$") ||
+                tamanhoFinal > 6)
+            {
+                e.CancelCommand();
+            }
+        }
+
+        /// <summary>
+        /// Exibe o marcador 000000 somente enquanto o campo estiver vazio.
+        /// </summary>
+        private void LoginUsuarioTextBox_TextChanged(
+            object sender,
+            System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (TokenPlaceholderTextBlock != null)
+            {
+                TokenPlaceholderTextBlock.Visibility =
+                    string.IsNullOrEmpty(LoginUsuarioTextBox.Text)
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+            }
+        }
+
         /// <summary>
         /// Evento de clique do botão "Cadastrar". Solicita um token ao MVC para o e-mail informado pelo usuário.
         /// </summary>

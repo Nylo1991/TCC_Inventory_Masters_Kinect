@@ -6,8 +6,8 @@ using TCC_Inventory_Masters_Kinect.ViewModel;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
-using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Logs;
+using TCC_Inventory_Masters_Kinect.Service;
 
 namespace TCC_Inventory_Masters_Kinect.View
 {
@@ -21,6 +21,7 @@ namespace TCC_Inventory_Masters_Kinect.View
 
         private readonly DispatcherTimer _inatividadeTimer;
         private readonly TimeSpan _tempoLimiteInatividade = TimeSpan.FromMinutes(20);
+        private readonly SessaoUsuario _sessao;
         private bool _sessaoBloqueada;
 
         /// <summary>
@@ -40,6 +41,8 @@ namespace TCC_Inventory_Masters_Kinect.View
             }
 
             InitializeComponent();
+
+            _sessao = sessao;
 
             /// separação da lógica de calibração e monitoramento em um ViewModel
             /// dedicado a busca de dados dentro da mainviewmodel
@@ -118,9 +121,11 @@ namespace TCC_Inventory_Masters_Kinect.View
             _sessaoBloqueada = true;
 
             TelaBloqueioInatividade.Visibility = Visibility.Visible;
-            SenhaDesbloqueioPasswordBox.Password = string.Empty;
-            MensagemBloqueioTextBlock.Text = string.Empty;
-            SenhaDesbloqueioPasswordBox.Focus();
+            EmailSessaoTextBlock.Text = _sessao.Email;
+            TokenDesbloqueioPasswordBox.Password = string.Empty;
+            MensagemBloqueioTextBlock.Text =
+                "Solicite um novo token para desbloquear esta sessao.";
+            TokenDesbloqueioPasswordBox.Focus();
 
             LoggerService.LogWarning("Sessao bloqueada por inatividade. Monitoramento Kinect continua ativo.");
         }
@@ -130,9 +135,9 @@ namespace TCC_Inventory_Masters_Kinect.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DesbloquearSessao_Click(object sender, RoutedEventArgs e)
+        private async void DesbloquearSessao_Click(object sender, RoutedEventArgs e)
         {
-            DesbloquearSessao();
+            await DesbloquearSessaoAsync();
         }
 
         /// <summary>
@@ -141,11 +146,45 @@ namespace TCC_Inventory_Masters_Kinect.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SenhaDesbloqueioPasswordBox_KeyDown(object sender, KeyEventArgs e)
+        private async void TokenDesbloqueioPasswordBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                DesbloquearSessao();
+                await DesbloquearSessaoAsync();
+            }
+        }
+
+        /// <summary>
+        /// Solicita ao MVC um novo token para o e-mail da sessao bloqueada.
+        /// </summary>
+        private async void SolicitarNovoToken_Click(object sender, RoutedEventArgs e)
+        {
+            SolicitarNovoTokenButton.IsEnabled = false;
+            MensagemBloqueioTextBlock.Text = "Solicitando novo token...";
+
+            try
+            {
+                var autenticacaoService = new AutenticacaoMvcService();
+                var resultado = await autenticacaoService.SolicitarTokenAsync(_sessao.Email);
+
+                MensagemBloqueioTextBlock.Text = resultado != null && resultado.Sucesso
+                    ? "Token enviado. Consulte seu e-mail e informe o codigo recebido."
+                    : resultado?.Mensagem ?? "Nao foi possivel solicitar um novo token.";
+
+                if (resultado != null && resultado.Sucesso)
+                {
+                    TokenDesbloqueioPasswordBox.Focus();
+                    LoggerService.Info("Novo token solicitado para desbloqueio por inatividade.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MensagemBloqueioTextBlock.Text = "Erro ao solicitar o token de desbloqueio.";
+                LoggerService.Erro("Erro ao solicitar token de desbloqueio: " + ex.Message);
+            }
+            finally
+            {
+                SolicitarNovoTokenButton.IsEnabled = true;
             }
         }
         /// <summary>
@@ -153,47 +192,54 @@ namespace TCC_Inventory_Masters_Kinect.View
         /// e volta a tela apos o bloqueio por inatividade , garantindo que apenas usuários autorizados possam 
         /// acessar a interface após um período de inatividade,
         /// </summary>
-        private void DesbloquearSessao()
+        private async System.Threading.Tasks.Task DesbloquearSessaoAsync()
         {
+            DesbloquearButton.IsEnabled = false;
+
             try
             {
-                string senha = SenhaDesbloqueioPasswordBox.Password?.Trim();
+                string token = TokenDesbloqueioPasswordBox.Password?.Trim();
 
-                if (string.IsNullOrWhiteSpace(senha))
+                if (string.IsNullOrWhiteSpace(token))
                 {
-                    MensagemBloqueioTextBlock.Text = "Informe a senha para desbloquear.";
+                    MensagemBloqueioTextBlock.Text = "Informe o token para desbloquear.";
                     return;
                 }
 
-                using (var db = new AppDbContext())
-                {
-                    var usuario = db.UsuariosAcesso.FirstOrDefault(x =>
-                        x.Usuario == _viewModel.UsuarioLogado &&
-                        x.Senha == senha &&
-                        x.Ativo);
+                var autenticacaoService = new AutenticacaoMvcService();
+                var resultado = await autenticacaoService.ValidarTokenAsync(token);
 
-                    if (usuario == null)
-                    {
-                        MensagemBloqueioTextBlock.Text = "Senha invalida.";
-                        LoggerService.LogWarning("Tentativa invalida de desbloqueio por inatividade.");
-                        return;
-                    }
+                bool mesmaSessao = resultado != null &&
+                    resultado.TokenValido &&
+                    string.Equals(resultado.Email, _sessao.Email, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(resultado.Empresa, _sessao.Empresa, StringComparison.OrdinalIgnoreCase);
+
+                if (!mesmaSessao)
+                {
+                    MensagemBloqueioTextBlock.Text = resultado?.Mensagem ??
+                        "Token invalido, expirado ou pertencente a outro usuario.";
+                    LoggerService.LogWarning("Tentativa invalida de desbloqueio por token.");
+                    return;
                 }
 
                 _sessaoBloqueada = false;
 
                 TelaBloqueioInatividade.Visibility = Visibility.Collapsed;
-                SenhaDesbloqueioPasswordBox.Password = string.Empty;
+                TokenDesbloqueioPasswordBox.Password = string.Empty;
                 MensagemBloqueioTextBlock.Text = string.Empty;
 
                 ReiniciarTimerInatividade();
 
                 LoggerService.Info("Sessao desbloqueada apos inatividade.");
             }
-            catch
+            catch (Exception ex)
             {
                 MensagemBloqueioTextBlock.Text = "Erro ao desbloquear sessao.";
-                LoggerService.Erro("Erro ao desbloquear sessao por inatividade.");
+                LoggerService.Erro("Erro ao desbloquear sessao por inatividade: " + ex.Message);
+            }
+            finally
+            {
+                DesbloquearButton.IsEnabled = true;
             }
         }
 

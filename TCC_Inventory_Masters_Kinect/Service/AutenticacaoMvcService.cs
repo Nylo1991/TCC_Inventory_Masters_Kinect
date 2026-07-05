@@ -11,20 +11,18 @@ namespace TCC_Inventory_Masters_Kinect.Service
     public class AutenticacaoMvcService
     {
         /// <summary>
-        /// HttpClient utilizado para realizar requisições HTTP ao MVC, 
-        /// configurado para não usar proxy e com timeout de 15 segundos.
+        /// HttpClient utilizado para realizar requisições HTTPS ao MVC,
+        /// respeitando a configuração de rede do Windows.
         /// </summary>
         private readonly HttpClient _httpClient;
 
         public AutenticacaoMvcService()
         {
-           
-            var handler = new HttpClientHandler
-            {
-                UseProxy = false
-            };
+            // Mantem o proxy padrao do Windows e garante compatibilidade com o HTTPS publicado.
+            System.Net.ServicePointManager.SecurityProtocol |=
+                System.Net.SecurityProtocolType.Tls12;
 
-            _httpClient = new HttpClient(handler)
+            _httpClient = new HttpClient()
             {
                 Timeout = System.TimeSpan.FromSeconds(15)
             };
@@ -61,7 +59,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     "application/json"
                 );
 
-   
+
                 var resposta = await _httpClient.PostAsync(
                     KinectConfig.UrlSolicitarTokenMvc,
                     conteudo
@@ -86,7 +84,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
             catch (HttpRequestException ex)
             {
-                LoggerService.Erro("Erro de conexao ao solicitar token no MVC: " + ex.Message);
+                LoggerService.Erro(
+                    "Erro de conexao ao solicitar token no MVC: " +
+                    ObterDetalhesErro(ex));
 
                 return new TokenSolicitadoResultado
                 {
@@ -175,7 +175,9 @@ namespace TCC_Inventory_Masters_Kinect.Service
             }
             catch (HttpRequestException ex)
             {
-                LoggerService.Erro("Erro de conexao ao validar token no MVC: " + ex.Message);
+                LoggerService.Erro(
+                    "Erro de conexao ao validar token no MVC: " +
+                    ObterDetalhesErro(ex));
 
                 return new ValidacaoTokenResultado
                 {
@@ -206,6 +208,26 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     Mensagem = "Nao foi possivel validar o token no MVC: " + ex.Message
                 };
             }
+        }
+
+        /// <summary>
+        /// Registra a cadeia de exceções para diferenciar falhas de DNS, TLS, proxy e servidor.
+        /// </summary>
+        private static string ObterDetalhesErro(System.Exception ex)
+        {
+            var mensagens = new System.Collections.Generic.List<string>();
+
+            while (ex != null)
+            {
+                if (!string.IsNullOrWhiteSpace(ex.Message))
+                {
+                    mensagens.Add(ex.Message);
+                }
+
+                ex = ex.InnerException;
+            }
+
+            return string.Join(" | ", mensagens);
         }
     }
 }

@@ -32,20 +32,21 @@
         /// URL do Hub SignalR responsável por receber as medições volumétricas.
         /// </summary>
         public const string UrlSignalR =
-            "http://localhost:5212/medicaoHub";
+            "http://inventorymasters.runasp.net/medicaoHub";
 
         /// <summary>
         /// Conexão local com o MVC para validação do token.
         /// Use a mesma origem exibida no terminal do MVC.
         /// </summary>
+
         public const string UrlValidarTokenMvc =
-            "http://localhost:5212/api/kinect/validar-token";
+            "http://inventorymasters.runasp.net/api/kinect/validar-token";
 
         /// <summary>
         /// Endpoint do MVC usado pelo aplicativo Kinect para solicitar um token por e-mail.
         /// </summary>
         public const string UrlSolicitarTokenMvc =
-            "http://localhost:5212/api/kinect/solicitar-token";
+            "http://inventorymasters.runasp.net/api/kinect/solicitar-token";
 
         /// <summary>
         /// Intervalo, em segundos, para envio periódico do volume ao sistema web.
