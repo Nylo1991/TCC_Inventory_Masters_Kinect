@@ -2824,13 +2824,15 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 * **Módulo Kinect:** Responsável pelo acesso operacional, captura, calibração, processamento volumétrico, armazenamento local e envio das medições.
 * **Módulo de Integração:** Responsável pela comunicação entre o Kinect e a aplicação MVC por meio de API e SignalR.
 
-<p align="center">
-  <img src="./Imagens/casos de uso.png" width="800" alt="Diagrama de Caso de Uso" />
-</p>
-
 ---
 
 ####  Acesso ao MVC
+
+
+<p align="center">
+  <img src="./Imagens/Acesso.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
 
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
@@ -2843,7 +2845,14 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 ---
 
+
 ####  Dashboard
+
+
+<p align="center">
+  <img src="./Imagens/Dashboard.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
 
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
@@ -2857,6 +2866,12 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 ---
 
 ####  Usuários
+
+
+<p align="center">
+  <img src="./Imagens/Usuario.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
 
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
@@ -2874,6 +2889,11 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 #### Perfis e Permissões
 
+<p align="center">
+  <img src="./Imagens/Permissões.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
+
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
 | UC22 | Listar perfis | Administrador | Consulta os perfis da empresa. |
@@ -2887,6 +2907,11 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 ---
 
 #### Parceiros
+
+<p align="center">
+  <img src="./Imagens/Parceiros.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
 
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
@@ -2904,6 +2929,12 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 #### Histórico de Medições
 
+
+<p align="center">
+  <img src="./Imagens/Historico.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
+
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
 | UC38 | Consultar histórico de medições | Usuário autorizado | Visualiza as medições por ordem de data. |
@@ -2919,6 +2950,13 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 #### Notificações
 
+
+<p align="center">
+  <img src="./Imagens/Notificação.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
+
+
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
 | UC46 | Consultar histórico de notificações | Usuário autorizado | Visualiza as notificações da empresa. |
@@ -2933,8 +2971,12 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 | UC55 | Acompanhar resposta do parceiro | Administrador / Gestor | Consulta a resposta atualizada no histórico e Dashboard. |
 
 ---
-
 #### Configurações
+
+<p align="center">
+  <img src="./Imagens/Configuração.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
 
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
@@ -2955,6 +2997,10 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 #### Logs e Auditoria
 
+<p align="center">
+  <img src="./Imagens/LOG.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
 | UC68 | Consultar logs | Administrador | Visualiza os eventos registrados. |
@@ -2964,6 +3010,12 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 ---
 
 #### Aplicação Kinect
+
+
+<p align="center">
+  <img src="./Imagens/Aplicação kinect.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+</p>
+
 
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
