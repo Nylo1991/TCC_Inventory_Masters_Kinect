@@ -87,7 +87,6 @@ namespace TCC_Inventory_Masters_Kinect.Data
         /// </summary>
         public DbSet<MedicaoVolume> MedicaoVolumes { get; set; }
         public DbSet<HistoricoOcupacao> HistoricosOcupacao { get; set; }
-        public DbSet<UsuarioAcesso> UsuariosAcesso { get; set; }
         public DbSet<Log> Logs { get; set; }
 
         /// <summary>
@@ -100,7 +99,6 @@ namespace TCC_Inventory_Masters_Kinect.Data
 
             modelBuilder.Entity<MedicaoVolume>().ToTable("MedicaoVolumes");
             modelBuilder.Entity<HistoricoOcupacao>().ToTable("HistoricosOcupacao");
-            modelBuilder.Entity<UsuarioAcesso>().ToTable("UsuariosAcesso");
             modelBuilder.Entity<Log>().ToTable("Logs");
         }
 
@@ -128,7 +126,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         Empresa TEXT,
                         Usuario TEXT,
                         NomeEspaco TEXT,
-                        LimiteOcupacaoPercentual REAL
+                        LimiteOcupacaoPercentual REAL NOT NULL DEFAULT 0
                     );
 
                     CREATE TABLE IF NOT EXISTS HistoricosOcupacao (
@@ -152,16 +150,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
                         Mensagem TEXT NOT NULL
                     );
 
-                    CREATE TABLE IF NOT EXISTS UsuariosAcesso (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Usuario TEXT NOT NULL,
-                        Empresa TEXT,
-                        Email TEXT NOT NULL,
-                        Senha TEXT NOT NULL,
-                        Perfil TEXT NOT NULL,
-                        CriadoEm TEXT NOT NULL,
-                        Ativo INTEGER NOT NULL
-                    );
+                  
                 ";
 
                 using (var cmd = new SQLiteCommand(sql, conn))
@@ -169,22 +158,35 @@ namespace TCC_Inventory_Masters_Kinect.Data
                     cmd.ExecuteNonQuery();
                 }
 
-                GarantirColuna(conn, "UsuariosAcesso", "Empresa", "TEXT");
-                GarantirColuna(conn, "UsuariosAcesso", "Email", "TEXT");
-                GarantirColuna(conn, "UsuariosAcesso", "Perfil", "TEXT");
-                GarantirColuna(conn, "UsuariosAcesso", "CriadoEm", "TEXT");
-                GarantirColuna(conn, "UsuariosAcesso", "Ativo", "INTEGER");
 
                 GarantirColuna(conn, "MedicaoVolumes", "Empresa", "TEXT");
                 GarantirColuna(conn, "MedicaoVolumes", "Usuario", "TEXT");
                 GarantirColuna(conn, "MedicaoVolumes", "NomeEspaco", "TEXT");
-                GarantirColuna(conn, "MedicaoVolumes", "LimiteOcupacaoPercentual", "REAL");
 
-                // Garante a existência da coluna Empresa na tabela de históricos de ocupação,
-                // permitindo o isolamento dos dados entre diferentes empresas.
-                GarantirColuna(conn, "HistoricosOcupacao", "Empresa", "TEXT");
+                GarantirColuna(
+                    conn,
+                    "MedicaoVolumes",
+                    "LimiteOcupacaoPercentual",
+                    "REAL NOT NULL DEFAULT 0");
+
+                // Corrige registros de bancos antigos que ainda possuem valor nulo.
+                using (var atualizar = new SQLiteCommand(@"
+                    UPDATE MedicaoVolumes
+                    SET LimiteOcupacaoPercentual = 0
+                    WHERE LimiteOcupacaoPercentual IS NULL;
+                      ", conn))
+                 {
+                    atualizar.ExecuteNonQuery();
+                 }
+
+                GarantirColuna(
+                    conn,
+                    "HistoricosOcupacao",
+                    "Empresa",
+                    "TEXT");
             }
         }
+
 
         /// <summary>
         /// Verifica se uma coluna existe em determinada tabela.

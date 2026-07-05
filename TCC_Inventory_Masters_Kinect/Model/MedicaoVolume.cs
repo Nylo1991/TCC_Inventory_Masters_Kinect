@@ -1,9 +1,10 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TCC_Inventory_Masters_Kinect.Model
 {
     /// <summary>
-    /// Modelo de dados para representar uma medição volumétrica realizada pelo Kinect.
+    /// Representa uma medição volumétrica realizada pelo Kinect.
     /// </summary>
     public class MedicaoVolume
     {
@@ -11,26 +12,24 @@ namespace TCC_Inventory_Masters_Kinect.Model
 
         public double VolumeCm3 { get; set; }
 
-        public double VolumeM3
-        {
-            get { return VolumeCm3 / 1000000.0; }
-        }
+        [NotMapped]
+        public double VolumeM3 => VolumeCm3 / 1000000.0;
 
         public DateTime DataHora { get; set; }
 
         public bool KinectLigado { get; set; }
 
-        public string KinectTexto
-        {
-            get { return KinectLigado ? "Ligado" : "Desligado"; }
-        }
+        [NotMapped]
+        public string KinectTexto => KinectLigado
+            ? "Ligado"
+            : "Desligado";
 
         public bool Calibrado { get; set; }
 
-        public string CalibradoTexto
-        {
-            get { return Calibrado ? "Sim" : "Nao"; }
-        }
+        [NotMapped]
+        public string CalibradoTexto => Calibrado
+            ? "Sim"
+            : "Não";
 
         public string Status { get; set; }
 
