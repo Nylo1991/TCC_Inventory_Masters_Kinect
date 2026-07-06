@@ -3035,25 +3035,23 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 ## Diagrama de Fluxo — MVVM Kinect
 
-Esta seção apresenta o fluxo operacional do módulo **MVVM Kinect**, responsável pelo monitoramento volumétrico utilizando o sensor Kinect. O diagrama foi dividido em seis etapas principais para facilitar a compreensão do processo, evitando a concentração de muitas informações em uma única imagem.
+Esta seção apresenta o fluxo operacional do módulo **MVVM Kinect**, responsável pelo monitoramento volumétrico de espaços utilizando o sensor Kinect. Para facilitar a compreensão do processo e evitar a concentração excessiva de informações em um único diagrama, o fluxo foi organizado em seis etapas principais e sequenciais.
 
-O fluxo contempla desde o acesso inicial do operador ao módulo Kinect/Desktop até a conexão do sensor, calibração do ambiente, configuração do espaço monitorado, execução da medição volumétrica, persistência local das informações e integração com a aplicação Web MVC por meio do SignalR.
+O processo contempla desde o acesso e a autenticação do operador no módulo Kinect/Desktop até a inicialização do sensor, o estabelecimento da comunicação com a aplicação Web MVC, a calibração do ambiente, a configuração do espaço monitorado, a execução da medição volumétrica, a persistência local das informações, a consulta ao histórico e a integração em tempo real por meio do SignalR.
 
-Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **aplicação Kinect/MVVM**, pelo **sensor Kinect** e pela **aplicação Web MVC**, além das validações, decisões, exceções e regras aplicadas durante a execução do sistema.
+Os diagramas representam o fluxo principal de funcionamento do sistema e seus principais caminhos alternativos. São apresentadas as ações executadas pelo operador e pelos componentes da aplicação, além das validações, decisões, mensagens de alerta, retornos para correção e mecanismos de continuidade operacional utilizados durante o monitoramento.
 
 ---
 
-## MVVM Kinect
-
-#### Acesso e Autenticação do Kinect
+### Acesso e Autenticação do Kinect
 
 <p align="center">
   <img src="./Imagens/DigramaFluxoMVVM_Etapa01.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 1 - Acesso e Autenticação do Kinect" />
 </p>
 
-> **Nota:** A Etapa 1 garante que somente operadores autorizados possam acessar o módulo Kinect/Desktop. O fluxo valida o e-mail informado, solicita a geração de token ao MVC, envia o código ao e-mail cadastrado e libera o monitoramento somente após a validação do token. Após a autenticação bem-sucedida, o sistema cria a sessão local do operador, mantendo o controle de acesso e a rastreabilidade das operações.
+> **Nota:** A Etapa 1 controla o acesso ao módulo Kinect/Desktop e garante que somente operadores autorizados possam acessar o monitoramento. O operador solicita o token de autenticação pelo Kinect, enquanto o sistema verifica se o e-mail informado é válido e se o usuário está ativo. Quando essas condições são atendidas, o MVC envia o token por e-mail. O operador informa o código recebido e o MVC realiza sua validação. Em caso de e-mail inválido, usuário inativo ou token inválido, o sistema informa o problema e direciona o fluxo para uma nova tentativa. Após a validação bem-sucedida, a aplicação cria a sessão local do operador e libera o acesso ao monitoramento do Kinect.
 
-
+---
 
 ### Conexão do Kinect e Comunicação SignalR
 
@@ -3061,9 +3059,9 @@ Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **
   <img src="./Imagens/DigramaFluxoMVVM_Etapa02.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 2 - Conexão do Kinect e Comunicação SignalR" />
 </p>
 
-> **Nota:** A Etapa 2 garante que o sensor Kinect esteja conectado, disponível e apto para iniciar as operações do sistema. Além da validação do hardware, a aplicação também estabelece comunicação em tempo real com o MVC por meio do SignalR. Caso o sensor esteja indisponível ou ocorra falha na comunicação, o sistema informa o operador, registra o status e mantém a operação local quando possível.
+> **Nota:** A Etapa 2 inicializa o sensor Kinect e verifica sua disponibilidade antes da execução das funcionalidades de monitoramento. Caso o sensor esteja desconectado ou indisponível, o sistema informa a falha e direciona o fluxo para uma nova tentativa de inicialização. Com o Kinect disponível, a aplicação inicia a comunicação SignalR com o MVC e verifica o estado da conexão. Quando a comunicação está ativa, o status é atualizado e o canal de comunicação em tempo real é disponibilizado. Caso o MVC esteja indisponível, a operação local é mantida, o estado da comunicação é atualizado e as tentativas de conexão ou reconexão permanecem em segundo plano. A calibração do ambiente pode ser liberada sem interromper a operação local.
 
-
+---
 
 ### Calibração do Ambiente
 
@@ -3071,19 +3069,19 @@ Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **
   <img src="./Imagens/DigramaFluxoMVVM_Etapa03.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 3 - Calibração do Ambiente" />
 </p>
 
-> **Nota:** A Etapa 3 garante que o ambiente vazio seja capturado como referência antes da realização das medições volumétricas. O sistema valida a conexão do Kinect, a disponibilidade da leitura de profundidade, a qualidade dos dados, a quantidade de pontos capturados e o volume máximo calculado. A calibração somente é concluída quando o volume máximo de referência é maior que zero, assegurando maior precisão nas medições seguintes.
+> **Nota:** A Etapa 3 estabelece a referência necessária para o cálculo das medições volumétricas. Inicialmente, o sistema valida os pré-requisitos da calibração, incluindo a disponibilidade do Kinect, a leitura de profundidade e as condições adequadas do ambiente vazio. Em seguida, são capturados múltiplos frames de profundidade, que passam por processamento, filtragem de ruídos e validação da quantidade de pontos disponíveis. Caso os dados sejam insuficientes, o sistema solicita a correção das condições de captura e realiza uma nova aquisição. Com dados válidos, o volume máximo do ambiente é calculado. Se o resultado for igual a zero, o ambiente permanece não calibrado e o procedimento deve ser reiniciado. Quando o volume máximo é válido, o mapa de referência e os dados da calibração são registrados, a calibração é concluída e a configuração do espaço monitorado é liberada.
 
+---
 
-
-### Configuração e Liberação do Espaço Monitorado
+### Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="./Imagens/DigramaFluxoMVVM_Etapa04.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração e Liberação do Espaço Monitorado" />
+  <img src="./Imagens/DigramaFluxoMVVM_Etapa04.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração do Espaço Monitorado" />
 </p>
 
-> **Nota:** A Etapa 4 garante que o espaço monitorado seja corretamente identificado e configurado antes da medição. O operador informa o nome do espaço e define o limite percentual de ocupação, enquanto o sistema valida os dados preenchidos e verifica se a calibração do ambiente está válida. Somente após essas validações o espaço é liberado para iniciar o monitoramento volumétrico.
+> **Nota:** A Etapa 4 configura as informações necessárias para a operação do espaço monitorado. O operador informa o nome do espaço e define o limite percentual de ocupação. A aplicação valida os dados preenchidos e direciona o operador ao campo correspondente quando alguma informação estiver ausente ou inválida. O nome do espaço deve estar preenchido e o limite de ocupação deve possuir um valor válido entre 1% e 100%. Antes da liberação da operação, o sistema também verifica se o ambiente possui uma calibração válida. Caso essa condição não seja atendida, o fluxo retorna à Etapa 3. Após todas as validações, a configuração do espaço e do limite de ocupação é confirmada e a medição volumétrica e o histórico são liberados.
 
-
+---
 
 ### Medição Volumétrica
 
@@ -3091,9 +3089,9 @@ Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **
   <img src="./Imagens/DigramaFluxoMVVM_Etapa05.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 5 - Medição Volumétrica" />
 </p>
 
-> **Nota:** A Etapa 5 representa a execução principal da medição volumétrica. O sistema acompanha a medição em tempo real, valida os pré-requisitos operacionais, solicita o frame de profundidade ao Kinect, processa os dados capturados, filtra ruídos e verifica se o frame possui pontos suficientes. Quando a leitura é válida, o sistema calcula o volume ocupado, o percentual de ocupação, o espaço livre e o status do ambiente, preparando os dados para persistência e integração.
+> **Nota:** A Etapa 5 representa o processamento principal da medição volumétrica. Após o início da medição, o sistema acompanha a operação em tempo real e valida os pré-requisitos necessários: Kinect conectado, calibração válida e espaço monitorado liberado. Caso alguma condição não seja atendida, o operador é informado e o fluxo retorna à validação dos pré-requisitos. Com as condições operacionais atendidas, a aplicação solicita e captura o frame de profundidade, processa os dados, filtra ruídos e valida a quantidade de pontos disponíveis. Frames inválidos ou com pontos insuficientes são descartados e o sistema solicita uma nova leitura. Quando os dados são válidos, são calculados o volume ocupado, o percentual de ocupação e o espaço livre. Em seguida, o sistema define o status operacional do espaço, exibe os resultados em tempo real ao operador e prepara os dados para a etapa de persistência, histórico e integração com o MVC.
 
-
+---
 
 ### Persistência, Histórico e Integração com MVC
 
@@ -3101,14 +3099,31 @@ Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **
   <img src="./Imagens/DigramaFluxoMVVM_Etapa06.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 6 - Persistência, Histórico e Integração com MVC" />
 </p>
 
-> **Nota:** A Etapa 6 garante que os dados gerados pela medição sejam registrados e mantidos de forma rastreável. As medições são salvas localmente no SQLite e, quando houver conexão SignalR ativa, são enviadas ao MVC para atualização do Dashboard em tempo real. Caso a comunicação esteja indisponível, os dados permanecem armazenados localmente, evitando perda de informações e permitindo consulta posterior ao histórico.
-
-### Considerações sobre o Diagrama
-
-A divisão do fluxo em etapas reduz a complexidade visual e facilita a análise do comportamento do sistema. Cada diagrama apresenta uma parte específica do processo operacional, permitindo identificar com clareza as responsabilidades de cada componente, as decisões tomadas pelo sistema, os pontos de validação e os tratamentos de falha.
+> **Nota:** A Etapa 6 recebe os dados preparados pela medição volumétrica, salva a medição localmente no SQLite e atualiza o histórico disponível para consulta. Após a persistência local, o sistema verifica o estado da conexão SignalR. Quando a comunicação está disponível, o volume e o status operacional são enviados ao MVC e, em caso de sucesso, o Dashboard é atualizado em tempo real. Quando o SignalR está indisponível ou ocorre falha durante o envio, a medição permanece armazenada localmente, a operação continua funcionando e o sistema registra a falha, mantendo o acompanhamento da reconexão automática. O histórico local permanece disponível independentemente da condição da comunicação com o MVC. O operador pode consultar as medições e informações de ocupação armazenadas e, ao retornar à operação, decidir entre manter o monitoramento em execução ou solicitar seu encerramento. Caso a operação continue, o fluxo retorna ao recebimento de novos dados provenientes da Etapa 5. Quando o encerramento é solicitado, o sistema finaliza o monitoramento de forma controlada.
 
 ---
-## MVC
+
+#### Considerações sobre os Diagramas fluxo MVVM
+
+A divisão do fluxo operacional em seis etapas reduz a complexidade visual e facilita a compreensão do comportamento do sistema. Cada diagrama representa uma responsabilidade específica do módulo MVVM Kinect e evidencia os principais pontos de interação, validação, decisão, tratamento de falhas e continuidade operacional.
+
+A sequência das etapas demonstra a dependência lógica existente entre os processos:
+
+1. autenticação do operador;
+2. inicialização do Kinect e gerenciamento da comunicação SignalR;
+3. calibração do ambiente;
+4. configuração e liberação do espaço monitorado;
+5. captura, processamento e cálculo da medição volumétrica;
+6. persistência local, consulta ao histórico e integração com a aplicação Web MVC.
+
+Os caminhos alternativos representados nos diagramas permitem visualizar como o sistema reage às principais condições de exceção. Falhas relacionadas ao sensor, dados inválidos, calibração inadequada, frames insuficientes e indisponibilidade da comunicação são tratadas por meio de alertas e retornos específicos, evitando a continuidade do fluxo em condições inválidas.
+
+A arquitetura também prioriza a continuidade da operação local. As medições são mantidas no armazenamento local e o histórico permanece disponível mesmo quando a comunicação com o MVC está indisponível. Dessa forma, o módulo Kinect mantém suas funcionalidades essenciais e acompanha o restabelecimento da conexão SignalR sem interromper desnecessariamente o monitoramento local.
+
+Em conjunto, os seis diagramas representam o ciclo operacional completo do módulo MVVM Kinect, desde a autenticação inicial até a medição, persistência dos dados, disponibilização do histórico, integração com o MVC e encerramento controlado da operação.
+
+---
+## Diagrama de Fluxo - MVC
 
 # Login e Acesso Seguro
 
