@@ -228,7 +228,7 @@ Nesta etapa foram implementados:
 * Configuração de parâmetros;
 * Sistema de notificações;
 * Relatórios e consultas históricas;
-* Integração com Firebase Firestore.
+* Integração com Firebase.
 
 #### 4. Integração Entre os Módulos
 
