@@ -3952,7 +3952,7 @@ Essa representação evidencia o comportamento temporal dos componentes envolvid
 # Etapa 1 – Login e Autenticação (Token OTP)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Login_MVC.png" width="900" alt="Etapa de login Diagrama de Sequência" />
+  <img src="./Imagens/Diagrama_Sequencia_Login.png" width="900" alt="Etapa de login Diagrama de Sequência" />
 </p>
 
 Esta etapa representa o ponto de entrada seguro da aplicação, garantindo que apenas usuários autorizados tenham acesso ao sistema.
@@ -3983,7 +3983,7 @@ Após a validação do token:
 # Etapa 2 – Gestão de Medições (Filtros e Recebimento)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Medicoes_MVC.png" width="900" alt="Etapa de gestão de medições" />
+  <img src="./Imagens/Diagrama_Sequencia_Medicao_gestao.png" width="900" alt="Etapa de gestão de medições" />
 </p>
 
 Esta etapa é responsável pelo gerenciamento do histórico de medições do estoque e pelo processamento das novas leituras enviadas pelo sensor Kinect.
@@ -4014,7 +4014,7 @@ Toda a atualização ocorre em tempo real por meio do **SignalR**, sem necessida
 # Etapa 3 – Gestão de Parceiros (Cadastro, Edição e Status)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Parceiro_MVC.png" width="900" alt="Etapa de gestão de parceiros" />
+  <img src="./Imagens/Diagrama_Sequencia_Parceiro.png" width="900" alt="Etapa de gestão de parceiros" />
 </p>
 
 Esta etapa é responsável pelo gerenciamento das empresas e parceiros comerciais cadastrados na aplicação.
@@ -4039,7 +4039,7 @@ Caso o parceiro possua notificações ou outras dependências relacionadas, a ex
 # Etapa 4 – Medição Local (Manual ou Automática)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Medicao_Local_MVC.png" width="900" alt="Etapa de medicão local" />
+  <img src="./Imagens/Diagrama_Sequencial_Medicao.png" width="900" alt="Etapa de medicão local" />
 </p>
 
 Esta etapa representa o processamento realizado localmente pelo sensor Kinect para calcular o volume do estoque.
@@ -4067,7 +4067,7 @@ Após todas as verificações:
 # Etapa 5 – Persistência e Envio (Conexão e Sincronização)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_percistencia_MVC.png" width="900" alt="Etapa de persistência" />
+  <img src="./Imagens/Diagrama_Sequencia_Percistencia.png" width="900" alt="Etapa de persistência" />
 </p>
 
 Esta etapa garante que as medições realizadas localmente sejam transmitidas com segurança ao servidor central.
@@ -4090,7 +4090,7 @@ Nesse cenário, são executadas tentativas automáticas de reconexão, garantind
 # Etapa 6 – Histórico, Logs e Encerramento
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Historico_MVC.png" width="900" alt="Etapa de Historico" />
+  <img src="./Imagens/Diagrama_Sequencia_log.png" width="900" alt="Etapa de Historico" />
 </p>
 
 Esta etapa representa o encerramento do ciclo de monitoramento, garantindo que todas as informações geradas durante a operação sejam registradas com segurança antes da finalização do processo.
