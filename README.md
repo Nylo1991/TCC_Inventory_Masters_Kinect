@@ -328,7 +328,7 @@ A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel ce
   <img src="./Imagens/Models.png" alt="Estrutura de Models" />
 </p>
 
-A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que representam as entidades de domínio e as estruturas de dados fundamentais da aplicação. Elas definem o formato dos dados que são persistidos no banco de dados (Firebase Firestore) e transitam entre os diversos componentes do sistema.
+A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que representam as entidades de domínio e as estruturas de dados fundamentais da aplicação. Elas definem o formato dos dados que são persistidos no banco de dados (Firebase) e transitam entre os diversos componentes do sistema.
 
 | Model | Responsabilidade |
 | :--- | :--- |
