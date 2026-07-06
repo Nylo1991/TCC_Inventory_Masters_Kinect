@@ -1031,7 +1031,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 
 | Condição | Restrição | Ação |
 | :--- | :--- | :--- |
-| Usuário autorizado confirma exclusão de parceiro. | O ID do parceiro deve ser informado e existir. | O sistema remove o parceiro do Firestore ou informa falha. |
+| Usuário autorizado confirma exclusão de parceiro. | O ID do parceiro deve ser informado e existir. | O sistema remove o parceiro do Firebase ou informa falha. |
 
 > **Regra:** A exclusão física de um parceiro é uma operação sensível que requer a validação prévia da existência do registro antes da execução no Firebase.
 ---
