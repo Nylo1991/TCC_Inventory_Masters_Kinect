@@ -3128,7 +3128,7 @@ Em conjunto, os seis diagramas representam o ciclo operacional completo do módu
 # Login e Acesso Seguro
 
 <p align="center">
-  <img src="./Imagens/Fluxo_Perfis.drawio" width="900" alt="Digrama de Fluxo MVC - Etapa login e acesso ao sistema" />
+  <img src="./Imagens/Etapa_Login_Token_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa login e acesso ao sistema" />
 </p>
 
 Este fluxo garante que apenas usuários validados e com as permissões corretas consigam entrar no sistema e visualizar o painel principal.
