@@ -3128,7 +3128,7 @@ Em conjunto, os seis diagramas representam o ciclo operacional completo do módu
 # Login e Acesso Seguro
 
 <p align="center">
-  <img src="./Imagens/Etapa_Login_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa login e acesso ao sistema" />
+  <img src="./Imagens/Fluxo_Perfis.drawio" width="900" alt="Digrama de Fluxo MVC - Etapa login e acesso ao sistema" />
 </p>
 
 Este fluxo garante que apenas usuários validados e com as permissões corretas consigam entrar no sistema e visualizar o painel principal.
@@ -3183,7 +3183,7 @@ Se o usuário possuir autorização para acessar o Dashboard, ele é redireciona
 # Gestão de Usuários (Visualização de Detalhes e Exclusão)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Usuario_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão usuario" />
+  <img src="./Imagens/Fluxo_Usuario_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão usuario" />
 </p>
 
 Este fluxo descreve o processo de governança de contas de usuários, permitindo que administradores consultem informações detalhadas e realizem a exclusão segura de usuários, mantendo registros para auditoria.
@@ -3250,7 +3250,7 @@ Após a exclusão, o sistema executa as seguintes ações:
 # Gestão de Parceiros (Cadastro, Edição, Exclusão e Controle de Status)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Parceiro_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão parceiros" />
+  <img src="./Imagens/Fluxo_Parceiro_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão parceiros" />
 </p>
 
 Este fluxo descreve todo o ciclo de vida da gestão de parceiros comerciais no sistema, abrangendo a consulta, o cadastro, a edição, a alteração de status e a exclusão segura dos registros, com mecanismos de validação e auditoria.
@@ -3390,7 +3390,7 @@ O fluxo segue duas possibilidades:
 # Gestão de Medições (Listagem, Filtros e Recebimento via Kinect)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Medicoes_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa Medições" />
+  <img src="./Imagens/Fluxo_Medicao_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa Medições" />
 </p>
 
 Este fluxo descreve o gerenciamento das medições de volumetria do estoque, integrando a consulta histórica realizada pelos usuários com o recebimento automático de dados em tempo real enviados pelo sensor Kinect.
@@ -3487,7 +3487,7 @@ O sistema:
 # Gestão de Perfis (Cadastro, Permissões e Inativação)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Perfis_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão perfis" />
+  <img src="./Imagens/Fluxo_Perfis.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão perfis" />
 </p>
 
 Este fluxo descreve o gerenciamento dos perfis de acesso da aplicação, permitindo controlar permissões, cadastrar novos perfis, editar privilégios e realizar a inativação segura quando necessário.
@@ -3603,7 +3603,7 @@ O fluxo segue duas possibilidades:
 # Gestão de Notificações (Listagem, Filtros, Resumo e Ações)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Notificacoes_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa nnotificações" />
+  <img src="./Imagens/Fluxo_Noticacões_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa nnotificações" />
 </p>
 
 Este fluxo descreve o gerenciamento das notificações geradas pelo sistema, permitindo o monitoramento de alertas, o recebimento automático de eventos provenientes do Kinect e a confirmação de coletas em tempo real por meio do SignalR.
@@ -3701,7 +3701,7 @@ Em seguida:
 # Gestão de Parâmetros do Sistema (Configurações Gerais e Kinect)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Parametros_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa parâmetros" />
+  <img src="./Imagens/Cópia do Fluxo_Configuracao_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa parâmetros" />
 </p>
 
 Este fluxo descreve o gerenciamento das configurações globais da aplicação, permitindo administrar parâmetros operacionais do sistema, configurações do sensor Kinect, regras de notificações e rotinas de calibração, garantindo a consistência das configurações e a integridade da operação.
