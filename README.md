@@ -3261,7 +3261,7 @@ Este fluxo descreve todo o ciclo de vida da gestão de parceiros comerciais no s
 
 O Administrador ou Gestor acessa a tela de parceiros por meio de uma requisição **HTTP GET** para `Index`.
 
-O sistema consulta o **Firestore**, recuperando todos os parceiros vinculados à empresa do usuário autenticado.
+O sistema consulta o **Firebase**, recuperando todos os parceiros vinculados à empresa do usuário autenticado.
 
 ### Tratamento dos Resultados
 
@@ -3313,7 +3313,7 @@ Após as validações:
 
 - Se o formulário possuir erros, os campos inválidos são destacados e as mensagens de erro são exibidas.
 - Caso todas as validações sejam aprovadas:
-  1. O parceiro é salvo no **Firestore**;
+  1. O parceiro é salvo no **Firebase**;
   2. Um **Log Operacional** é registrado;
   3. Uma mensagem de sucesso é exibida ao usuário utilizando **TempData**.
 
@@ -3350,7 +3350,7 @@ O sistema então:
 
 1. Valida os dados recebidos;
 2. Verifica se houve alguma modificação em relação aos dados originais;
-3. Atualiza o registro no **Firestore**, caso existam alterações válidas;
+3. Atualiza o registro no **Firebase**, caso existam alterações válidas;
 4. Registra um **Log Operacional** informando a edição realizada com sucesso.
 
 ---
@@ -3382,7 +3382,7 @@ O fluxo segue duas possibilidades:
   - O sistema apresenta uma mensagem informando que não foi possível excluir o parceiro devido às dependências existentes.
 
 - **Se não houver impedimentos:**
-  1. O parceiro é removido definitivamente do **Firestore**;
+  1. O parceiro é removido definitivamente do **Firebase**;
   2. Um **Log Operacional** registra a exclusão realizada;
   3. A listagem de parceiros é recarregada;
   4. Uma mensagem de sucesso é exibida ao usuário.
@@ -3401,7 +3401,7 @@ Este fluxo descreve o gerenciamento das medições de volumetria do estoque, int
 
 O usuário autorizado acessa a tela de medições por meio de uma requisição **HTTP GET** para `Index`.
 
-O sistema consulta a coleção de medições armazenadas no **Firestore**.
+O sistema consulta a coleção de medições armazenadas no **Firebase**.
 
 ### Tratamento dos Resultados
 
@@ -3444,7 +3444,7 @@ Ao receber uma nova leitura, o sistema valida a integridade do identificador (**
 Após a validação, o sistema:
 
 1. Monta o objeto contendo os dados da medição;
-2. Persiste o registro no **Firestore**.
+2. Persiste o registro no **Firebase**.
 
 Na sequência, são executados os cálculos estatísticos da aplicação, incluindo:
 
@@ -3480,7 +3480,7 @@ O sistema:
 
 1. Valida o registro solicitado;
 2. Verifica possíveis dependências;
-3. Atualiza o status da medição para **Inativa (Status = false)** na coleção operacional do **Firestore**.
+3. Atualiza o status da medição para **Inativa (Status = false)** na coleção operacional do **Firebase**.
 
 ---
 
@@ -3498,7 +3498,7 @@ Este fluxo descreve o gerenciamento dos perfis de acesso da aplicação, permiti
 
 O Administrador Gestor acessa a tela de perfis através de uma requisição **HTTP GET** para `Index`.
 
-O sistema consulta os perfis cadastrados no **Firestore**.
+O sistema consulta os perfis cadastrados no **Firebase**.
 
 ### Exibição dos Dados
 
@@ -3538,7 +3538,7 @@ Ao enviar o formulário (**HTTP POST Create**), o sistema executa:
 
 Caso todas as validações sejam aprovadas:
 
-1. O perfil é salvo no **Firestore**;
+1. O perfil é salvo no **Firebase**;
 2. Um **Log Operacional** é registrado;
 3. Uma mensagem de sucesso é armazenada em **TempData**.
 
@@ -3570,7 +3570,7 @@ Após o envio (**HTTP POST Edit**), o sistema:
 1. Valida o formulário;
 2. Normaliza os dados recebidos;
 3. Verifica se houve alterações em relação ao estado anterior;
-4. Atualiza o perfil e suas permissões no **Firestore**;
+4. Atualiza o perfil e suas permissões no **Firebase**;
 5. Registra um **Log Operacional** documentando a alteração.
 
 ---
@@ -3595,7 +3595,7 @@ O fluxo segue duas possibilidades:
 
 - **Se não houver dependências:**
   1. O status do perfil é alterado para **Inativo (Status = false)**;
-  2. O repositório salva as alterações no **Firestore**;
+  2. O repositório salva as alterações no **Firebase**;
   3. A base operacional de segurança da aplicação é atualizada com o novo estado do perfil.
 
 ---
@@ -3614,7 +3614,7 @@ Este fluxo descreve o gerenciamento das notificações geradas pelo sistema, per
 
 O usuário autorizado acessa a tela de notificações por meio de uma requisição **HTTP GET** para `Index`.
 
-O sistema consulta o **Firestore**, recuperando o histórico de notificações e os parceiros relacionados.
+O sistema consulta o **Firebase**, recuperando o histórico de notificações e os parceiros relacionados.
 
 Após a consulta, são apresentados **Cards de Métricas**, contendo indicadores consolidados como:
 
@@ -3664,7 +3664,7 @@ Ao receber a solicitação, são realizadas validações para garantir a integri
 
 Após a validação dos dados, o sistema:
 
-1. Persiste a medição original no **Firestore**;
+1. Persiste a medição original no **Firebase**;
 2. Executa a rotina de geração da notificação;
 3. Registra as informações necessárias para auditoria.
 
@@ -3684,7 +3684,7 @@ Durante o envio das informações, são executadas as seguintes validações:
 - Verificação da consistência dos dados;
 - Comparação entre os dados existentes e as alterações realizadas.
 
-Após a validação, o sistema calcula estatísticas relacionadas às notificações e salva as novas configurações na coleção correspondente do **Firestore**.
+Após a validação, o sistema calcula estatísticas relacionadas às notificações e salva as novas configurações na coleção correspondente do **Firebase**.
 
 ### Confirmação da Coleta (UC103)
 
@@ -3692,7 +3692,7 @@ Quando a atualização do banco de dados é concluída com sucesso, o sistema re
 
 Em seguida:
 
-1. O novo status da coleta é persistido no **Firestore**;
+1. O novo status da coleta é persistido no **Firebase**;
 2. Os clientes conectados recebem a atualização em tempo real através do **SignalR**;
 3. O operador visualiza imediatamente a confirmação da coleta na interface;
 4. Um **Log Operacional** é registrado, encerrando o ciclo de auditoria da notificação.
@@ -3782,7 +3782,7 @@ Se todas as validações forem aprovadas, o sistema:
 
 1. Compara os novos valores com a configuração atual;
 2. Verifica se houve alteração efetiva dos dados;
-3. Atualiza os parâmetros no **Firestore**;
+3. Atualiza os parâmetros no **Firebase**;
 4. Registra um **Log Operacional** contendo as modificações realizadas;
 5. Exibe uma mensagem de sucesso utilizando **TempData**.
 
@@ -3813,7 +3813,7 @@ O sistema então:
 
 1. Recupera as configurações padrão da aplicação;
 2. Valida as permissões e dependências do perfil responsável pela operação;
-3. Restaura os parâmetros originais no **Firestore**;
+3. Restaura os parâmetros originais no **Firebase**;
 4. Registra um **Log Operacional** contendo todas as alterações realizadas durante a restauração;
 5. Atualiza a aplicação com as configurações restauradas.
 ---
