@@ -4686,7 +4686,7 @@ Para a execução estável do sistema foi definida a seguinte configuração mí
 - Razor Pages
 - Bootstrap
 - SignalR
-- Firebase Firestore
+- Firebase 
 
 #### Tecnologias de Integração
 
