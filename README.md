@@ -1739,7 +1739,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 
 | Condição | Restrição | Ação |
 | :--- | :--- | :--- |
-| O MVC precisa acessar dados persistidos. | A conexão com o Firebase Firestore deve estar configurada antes das consultas e gravações. | O sistema utiliza o serviço Firebase como fonte de dados do módulo web. |
+| O MVC precisa acessar dados persistidos. | A conexão com o Firebase deve estar configurada antes das consultas e gravações. | O sistema utiliza o serviço Firebase como fonte de dados do módulo web. |
 
 > **Regra:** Estabelece a inicialização obrigatória do SDK do Firebase (`FirebaseDb`) durante o bootstrap da aplicação no `Program.cs`.
 ---
