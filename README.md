@@ -3201,7 +3201,7 @@ O sistema realiza as seguintes validações:
 
 ### Consulta ao Banco de Dados
 
-Após validar o ID, o sistema consulta o **UsuariosRepository**, que busca o registro correspondente nas coleções do **Firestore**.
+Após validar o ID, o sistema consulta o **UsuariosRepository**, que busca o registro correspondente nas coleções do **Firebase**.
 
 - Se o usuário não for encontrado, uma mensagem de erro (**NotFound**) é exibida utilizando **TempData**.
 - Se o usuário existir, o sistema valida as permissões de acesso do administrador e carrega os dados em modo de leitura.
@@ -3234,7 +3234,7 @@ Ao confirmar a operação, o sistema envia uma requisição **HTTP POST** para `
 
 ### Remoção Definitiva (UC35)
 
-Após todas as validações serem aprovadas, o sistema estabelece conexão com o **Firestore** e remove permanentemente o registro do usuário da coleção.
+Após todas as validações serem aprovadas, o sistema estabelece conexão com o **Firebase** e remove permanentemente o registro do usuário da coleção.
 
 ### Encerramento do Processo
 
