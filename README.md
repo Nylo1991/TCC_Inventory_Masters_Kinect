@@ -140,7 +140,7 @@ As principais áreas tecnológicas envolvidas são:
 
 * **Internet das Coisas (IoT):** Integração entre hardware e software para coleta automática de dados e monitoramento contínuo dos espaços físicos.
 
-* **Sistemas de Informação:** Processamento, armazenamento e disponibilização das informações por meio de aplicações desenvolvidas em C#, WPF, ASP.NET Core, SQLite e Firebase Firestore.
+* **Sistemas de Informação:** Processamento, armazenamento e disponibilização das informações por meio de aplicações desenvolvidas em C#, WPF, ASP.NET Core, SQLite e Firebase.
 
 * **Comunicação em Tempo Real:** Utilização do SignalR para sincronização das medições realizadas pelo módulo Kinect com os dashboards da aplicação web.
 
@@ -228,7 +228,7 @@ Nesta etapa foram implementados:
 * Configuração de parâmetros;
 * Sistema de notificações;
 * Relatórios e consultas históricas;
-* Integração com Firebase Firestore.
+* Integração com Firebase.
 
 #### 4. Integração Entre os Módulos
 
@@ -328,7 +328,7 @@ A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel ce
   <img src="./Imagens/Models.png" alt="Estrutura de Models" />
 </p>
 
-A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que representam as entidades de domínio e as estruturas de dados fundamentais da aplicação. Elas definem o formato dos dados que são persistidos no banco de dados (Firebase Firestore) e transitam entre os diversos componentes do sistema.
+A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que representam as entidades de domínio e as estruturas de dados fundamentais da aplicação. Elas definem o formato dos dados que são persistidos no banco de dados (Firebase) e transitam entre os diversos componentes do sistema.
 
 | Model | Responsabilidade |
 | :--- | :--- |
@@ -1031,7 +1031,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 
 | Condição | Restrição | Ação |
 | :--- | :--- | :--- |
-| Usuário autorizado confirma exclusão de parceiro. | O ID do parceiro deve ser informado e existir. | O sistema remove o parceiro do Firestore ou informa falha. |
+| Usuário autorizado confirma exclusão de parceiro. | O ID do parceiro deve ser informado e existir. | O sistema remove o parceiro do Firebase ou informa falha. |
 
 > **Regra:** A exclusão física de um parceiro é uma operação sensível que requer a validação prévia da existência do registro antes da execução no Firebase.
 ---
@@ -1258,7 +1258,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 | :--- | :--- | :--- |
 | O sistema tenta acessar o Firebase e ocorre erro. | A falha não deve interromper toda a aplicação. | O MVC registra o erro e retorna mensagem adequada ou lista vazia. |
 
-> **Regra:** O isolamento de falhas de persistência é obrigatório; a indisponibilidade temporária do Firestore deve degradar o serviço de forma controlada, mantendo o sistema operante.
+> **Regra:** O isolamento de falhas de persistência é obrigatório; a indisponibilidade temporária do Firebase deve degradar o serviço de forma controlada, mantendo o sistema operante.
 ---
 
 #### 🔴 RN111 - Consulta global para dados antigos
@@ -1739,7 +1739,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 
 | Condição | Restrição | Ação |
 | :--- | :--- | :--- |
-| O MVC precisa acessar dados persistidos. | A conexão com o Firebase Firestore deve estar configurada antes das consultas e gravações. | O sistema utiliza o serviço Firebase como fonte de dados do módulo web. |
+| O MVC precisa acessar dados persistidos. | A conexão com o Firebase deve estar configurada antes das consultas e gravações. | O sistema utiliza o serviço Firebase como fonte de dados do módulo web. |
 
 > **Regra:** Estabelece a inicialização obrigatória do SDK do Firebase (`FirebaseDb`) durante o bootstrap da aplicação no `Program.cs`.
 ---
@@ -3035,25 +3035,23 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 ## Diagrama de Fluxo — MVVM Kinect
 
-Esta seção apresenta o fluxo operacional do módulo **MVVM Kinect**, responsável pelo monitoramento volumétrico utilizando o sensor Kinect. O diagrama foi dividido em seis etapas principais para facilitar a compreensão do processo, evitando a concentração de muitas informações em uma única imagem.
+Esta seção apresenta o fluxo operacional do módulo **MVVM Kinect**, responsável pelo monitoramento volumétrico de espaços utilizando o sensor Kinect. Para facilitar a compreensão do processo e evitar a concentração excessiva de informações em um único diagrama, o fluxo foi organizado em seis etapas principais e sequenciais.
 
-O fluxo contempla desde o acesso inicial do operador ao módulo Kinect/Desktop até a conexão do sensor, calibração do ambiente, configuração do espaço monitorado, execução da medição volumétrica, persistência local das informações e integração com a aplicação Web MVC por meio do SignalR.
+O processo contempla desde o acesso e a autenticação do operador no módulo Kinect/Desktop até a inicialização do sensor, o estabelecimento da comunicação com a aplicação Web MVC, a calibração do ambiente, a configuração do espaço monitorado, a execução da medição volumétrica, a persistência local das informações, a consulta ao histórico e a integração em tempo real por meio do SignalR.
 
-Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **aplicação Kinect/MVVM**, pelo **sensor Kinect** e pela **aplicação Web MVC**, além das validações, decisões, exceções e regras aplicadas durante a execução do sistema.
+Os diagramas representam o fluxo principal de funcionamento do sistema e seus principais caminhos alternativos. São apresentadas as ações executadas pelo operador e pelos componentes da aplicação, além das validações, decisões, mensagens de alerta, retornos para correção e mecanismos de continuidade operacional utilizados durante o monitoramento.
 
 ---
 
-## MVVM Kinect
-
-#### Acesso e Autenticação do Kinect
+### Acesso e Autenticação do Kinect
 
 <p align="center">
   <img src="./Imagens/DigramaFluxoMVVM_Etapa01.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 1 - Acesso e Autenticação do Kinect" />
 </p>
 
-> **Nota:** A Etapa 1 garante que somente operadores autorizados possam acessar o módulo Kinect/Desktop. O fluxo valida o e-mail informado, solicita a geração de token ao MVC, envia o código ao e-mail cadastrado e libera o monitoramento somente após a validação do token. Após a autenticação bem-sucedida, o sistema cria a sessão local do operador, mantendo o controle de acesso e a rastreabilidade das operações.
+> **Nota:** A Etapa 1 controla o acesso ao módulo Kinect/Desktop e garante que somente operadores autorizados possam acessar o monitoramento. O operador solicita o token de autenticação pelo Kinect, enquanto o sistema verifica se o e-mail informado é válido e se o usuário está ativo. Quando essas condições são atendidas, o MVC envia o token por e-mail. O operador informa o código recebido e o MVC realiza sua validação. Em caso de e-mail inválido, usuário inativo ou token inválido, o sistema informa o problema e direciona o fluxo para uma nova tentativa. Após a validação bem-sucedida, a aplicação cria a sessão local do operador e libera o acesso ao monitoramento do Kinect.
 
-
+---
 
 ### Conexão do Kinect e Comunicação SignalR
 
@@ -3061,9 +3059,9 @@ Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **
   <img src="./Imagens/DigramaFluxoMVVM_Etapa02.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 2 - Conexão do Kinect e Comunicação SignalR" />
 </p>
 
-> **Nota:** A Etapa 2 garante que o sensor Kinect esteja conectado, disponível e apto para iniciar as operações do sistema. Além da validação do hardware, a aplicação também estabelece comunicação em tempo real com o MVC por meio do SignalR. Caso o sensor esteja indisponível ou ocorra falha na comunicação, o sistema informa o operador, registra o status e mantém a operação local quando possível.
+> **Nota:** A Etapa 2 inicializa o sensor Kinect e verifica sua disponibilidade antes da execução das funcionalidades de monitoramento. Caso o sensor esteja desconectado ou indisponível, o sistema informa a falha e direciona o fluxo para uma nova tentativa de inicialização. Com o Kinect disponível, a aplicação inicia a comunicação SignalR com o MVC e verifica o estado da conexão. Quando a comunicação está ativa, o status é atualizado e o canal de comunicação em tempo real é disponibilizado. Caso o MVC esteja indisponível, a operação local é mantida, o estado da comunicação é atualizado e as tentativas de conexão ou reconexão permanecem em segundo plano. A calibração do ambiente pode ser liberada sem interromper a operação local.
 
-
+---
 
 ### Calibração do Ambiente
 
@@ -3071,19 +3069,19 @@ Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **
   <img src="./Imagens/DigramaFluxoMVVM_Etapa03.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 3 - Calibração do Ambiente" />
 </p>
 
-> **Nota:** A Etapa 3 garante que o ambiente vazio seja capturado como referência antes da realização das medições volumétricas. O sistema valida a conexão do Kinect, a disponibilidade da leitura de profundidade, a qualidade dos dados, a quantidade de pontos capturados e o volume máximo calculado. A calibração somente é concluída quando o volume máximo de referência é maior que zero, assegurando maior precisão nas medições seguintes.
+> **Nota:** A Etapa 3 estabelece a referência necessária para o cálculo das medições volumétricas. Inicialmente, o sistema valida os pré-requisitos da calibração, incluindo a disponibilidade do Kinect, a leitura de profundidade e as condições adequadas do ambiente vazio. Em seguida, são capturados múltiplos frames de profundidade, que passam por processamento, filtragem de ruídos e validação da quantidade de pontos disponíveis. Caso os dados sejam insuficientes, o sistema solicita a correção das condições de captura e realiza uma nova aquisição. Com dados válidos, o volume máximo do ambiente é calculado. Se o resultado for igual a zero, o ambiente permanece não calibrado e o procedimento deve ser reiniciado. Quando o volume máximo é válido, o mapa de referência e os dados da calibração são registrados, a calibração é concluída e a configuração do espaço monitorado é liberada.
 
+---
 
-
-### Configuração e Liberação do Espaço Monitorado
+### Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="./Imagens/DigramaFluxoMVVM_Etapa04.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração e Liberação do Espaço Monitorado" />
+  <img src="./Imagens/DigramaFluxoMVVM_Etapa04.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração do Espaço Monitorado" />
 </p>
 
-> **Nota:** A Etapa 4 garante que o espaço monitorado seja corretamente identificado e configurado antes da medição. O operador informa o nome do espaço e define o limite percentual de ocupação, enquanto o sistema valida os dados preenchidos e verifica se a calibração do ambiente está válida. Somente após essas validações o espaço é liberado para iniciar o monitoramento volumétrico.
+> **Nota:** A Etapa 4 configura as informações necessárias para a operação do espaço monitorado. O operador informa o nome do espaço e define o limite percentual de ocupação. A aplicação valida os dados preenchidos e direciona o operador ao campo correspondente quando alguma informação estiver ausente ou inválida. O nome do espaço deve estar preenchido e o limite de ocupação deve possuir um valor válido entre 1% e 100%. Antes da liberação da operação, o sistema também verifica se o ambiente possui uma calibração válida. Caso essa condição não seja atendida, o fluxo retorna à Etapa 3. Após todas as validações, a configuração do espaço e do limite de ocupação é confirmada e a medição volumétrica e o histórico são liberados.
 
-
+---
 
 ### Medição Volumétrica
 
@@ -3091,9 +3089,9 @@ Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **
   <img src="./Imagens/DigramaFluxoMVVM_Etapa05.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 5 - Medição Volumétrica" />
 </p>
 
-> **Nota:** A Etapa 5 representa a execução principal da medição volumétrica. O sistema acompanha a medição em tempo real, valida os pré-requisitos operacionais, solicita o frame de profundidade ao Kinect, processa os dados capturados, filtra ruídos e verifica se o frame possui pontos suficientes. Quando a leitura é válida, o sistema calcula o volume ocupado, o percentual de ocupação, o espaço livre e o status do ambiente, preparando os dados para persistência e integração.
+> **Nota:** A Etapa 5 representa o processamento principal da medição volumétrica. Após o início da medição, o sistema acompanha a operação em tempo real e valida os pré-requisitos necessários: Kinect conectado, calibração válida e espaço monitorado liberado. Caso alguma condição não seja atendida, o operador é informado e o fluxo retorna à validação dos pré-requisitos. Com as condições operacionais atendidas, a aplicação solicita e captura o frame de profundidade, processa os dados, filtra ruídos e valida a quantidade de pontos disponíveis. Frames inválidos ou com pontos insuficientes são descartados e o sistema solicita uma nova leitura. Quando os dados são válidos, são calculados o volume ocupado, o percentual de ocupação e o espaço livre. Em seguida, o sistema define o status operacional do espaço, exibe os resultados em tempo real ao operador e prepara os dados para a etapa de persistência, histórico e integração com o MVC.
 
-
+---
 
 ### Persistência, Histórico e Integração com MVC
 
@@ -3101,31 +3099,48 @@ Cada etapa evidencia as principais ações realizadas pelo **operador**, pela **
   <img src="./Imagens/DigramaFluxoMVVM_Etapa06.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 6 - Persistência, Histórico e Integração com MVC" />
 </p>
 
-> **Nota:** A Etapa 6 garante que os dados gerados pela medição sejam registrados e mantidos de forma rastreável. As medições são salvas localmente no SQLite e, quando houver conexão SignalR ativa, são enviadas ao MVC para atualização do Dashboard em tempo real. Caso a comunicação esteja indisponível, os dados permanecem armazenados localmente, evitando perda de informações e permitindo consulta posterior ao histórico.
-
-### Considerações sobre o Diagrama
-
-A divisão do fluxo em etapas reduz a complexidade visual e facilita a análise do comportamento do sistema. Cada diagrama apresenta uma parte específica do processo operacional, permitindo identificar com clareza as responsabilidades de cada componente, as decisões tomadas pelo sistema, os pontos de validação e os tratamentos de falha.
+> **Nota:** A Etapa 6 recebe os dados preparados pela medição volumétrica, salva a medição localmente no SQLite e atualiza o histórico disponível para consulta. Após a persistência local, o sistema verifica o estado da conexão SignalR. Quando a comunicação está disponível, o volume e o status operacional são enviados ao MVC e, em caso de sucesso, o Dashboard é atualizado em tempo real. Quando o SignalR está indisponível ou ocorre falha durante o envio, a medição permanece armazenada localmente, a operação continua funcionando e o sistema registra a falha, mantendo o acompanhamento da reconexão automática. O histórico local permanece disponível independentemente da condição da comunicação com o MVC. O operador pode consultar as medições e informações de ocupação armazenadas e, ao retornar à operação, decidir entre manter o monitoramento em execução ou solicitar seu encerramento. Caso a operação continue, o fluxo retorna ao recebimento de novos dados provenientes da Etapa 5. Quando o encerramento é solicitado, o sistema finaliza o monitoramento de forma controlada.
 
 ---
-## MVC
 
-# Login e Acesso Seguro
+#### Considerações sobre os Diagramas fluxo MVVM
+
+A divisão do fluxo operacional em seis etapas reduz a complexidade visual e facilita a compreensão do comportamento do sistema. Cada diagrama representa uma responsabilidade específica do módulo MVVM Kinect e evidencia os principais pontos de interação, validação, decisão, tratamento de falhas e continuidade operacional.
+
+A sequência das etapas demonstra a dependência lógica existente entre os processos:
+
+1. autenticação do operador;
+2. inicialização do Kinect e gerenciamento da comunicação SignalR;
+3. calibração do ambiente;
+4. configuração e liberação do espaço monitorado;
+5. captura, processamento e cálculo da medição volumétrica;
+6. persistência local, consulta ao histórico e integração com a aplicação Web MVC.
+
+Os caminhos alternativos representados nos diagramas permitem visualizar como o sistema reage às principais condições de exceção. Falhas relacionadas ao sensor, dados inválidos, calibração inadequada, frames insuficientes e indisponibilidade da comunicação são tratadas por meio de alertas e retornos específicos, evitando a continuidade do fluxo em condições inválidas.
+
+A arquitetura também prioriza a continuidade da operação local. As medições são mantidas no armazenamento local e o histórico permanece disponível mesmo quando a comunicação com o MVC está indisponível. Dessa forma, o módulo Kinect mantém suas funcionalidades essenciais e acompanha o restabelecimento da conexão SignalR sem interromper desnecessariamente o monitoramento local.
+
+Em conjunto, os seis diagramas representam o ciclo operacional completo do módulo MVVM Kinect, desde a autenticação inicial até a medição, persistência dos dados, disponibilização do histórico, integração com o MVC e encerramento controlado da operação.
+
+---
+## Diagrama de Fluxo - MVC
+
+### Login e Acesso Seguro
 
 <p align="center">
-  <img src="./Imagens/Etapa_Login_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa login e acesso ao sistema" />
+  <img src="./Imagens/Etapa_Login_Token_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa login e acesso ao sistema" />
 </p>
 
 Este fluxo garante que apenas usuários validados e com as permissões corretas consigam entrar no sistema e visualizar o painel principal.
 
-## 1. Entrada do E-mail (UC01 & UC02)
+#### 1. Entrada do E-mail (UC01 & UC02)
 
 O usuário acessa a tela de login e informa seu endereço de e-mail.
 
 - O sistema valida se o formato do e-mail é válido.
 - Caso o formato esteja incorreto, o acesso é bloqueado imediatamente e uma mensagem de erro é exibida ao usuário.
 
-## 2. Verificação no Banco de Dados (UC04)
+#### 2. Verificação no Banco de Dados (UC04)
 
 Após a validação do formato do e-mail, o sistema consulta o banco de dados para verificar:
 
@@ -3134,7 +3149,7 @@ Após a validação do formato do e-mail, o sistema consulta o banco de dados pa
 
 Caso o usuário não exista ou a conta esteja inativa, o acesso é negado.
 
-## 3. Geração e Envio do Token (UC05 a UC08)
+#### 3. Geração e Envio do Token (UC05 a UC08)
 
 Se o usuário estiver ativo, o sistema:
 
@@ -3142,7 +3157,7 @@ Se o usuário estiver ativo, o sistema:
 2. Armazena no banco de dados o hash do token e sua data de expiração.
 3. Envia o token para o e-mail do usuário.
 
-## 4. Validação do Token (UC10 & UC12)
+#### 4. Validação do Token (UC10 & UC12)
 
 O usuário:
 
@@ -3155,7 +3170,7 @@ O sistema verifica a validade do token.
 - Se o token estiver expirado, o acesso é negado.
 - Se o token estiver incorreto, uma mensagem de erro é exibida.
 
-## 5. Criação da Sessão e Redirecionamento (UC13 a UC17)
+#### 5. Criação da Sessão e Redirecionamento (UC13 a UC17)
 
 Quando o token é validado com sucesso, o sistema:
 
@@ -3165,15 +3180,15 @@ Quando o token é validado com sucesso, o sistema:
 
 Se o usuário possuir autorização para acessar o Dashboard, ele é redirecionado para a tela inicial do sistema com sucesso.
 
-# Gestão de Usuários (Visualização de Detalhes e Exclusão)
+### Gestão de Usuários (Visualização de Detalhes e Exclusão)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Usuario_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão usuario" />
+  <img src="./Imagens/Fluxo_Usuario_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão usuario" />
 </p>
 
 Este fluxo descreve o processo de governança de contas de usuários, permitindo que administradores consultem informações detalhadas e realizem a exclusão segura de usuários, mantendo registros para auditoria.
 
-## 1. Visualização de Detalhes (Modo Leitura)
+#### 1. Visualização de Detalhes (Modo Leitura)
 
 ### Requisição por ID (UC31)
 
@@ -3186,7 +3201,7 @@ O sistema realiza as seguintes validações:
 
 ### Consulta ao Banco de Dados
 
-Após validar o ID, o sistema consulta o **UsuariosRepository**, que busca o registro correspondente nas coleções do **Firestore**.
+Após validar o ID, o sistema consulta o **UsuariosRepository**, que busca o registro correspondente nas coleções do **Firebase**.
 
 - Se o usuário não for encontrado, uma mensagem de erro (**NotFound**) é exibida utilizando **TempData**.
 - Se o usuário existir, o sistema valida as permissões de acesso do administrador e carrega os dados em modo de leitura.
@@ -3219,7 +3234,7 @@ Ao confirmar a operação, o sistema envia uma requisição **HTTP POST** para `
 
 ### Remoção Definitiva (UC35)
 
-Após todas as validações serem aprovadas, o sistema estabelece conexão com o **Firestore** e remove permanentemente o registro do usuário da coleção.
+Após todas as validações serem aprovadas, o sistema estabelece conexão com o **Firebase** e remove permanentemente o registro do usuário da coleção.
 
 ### Encerramento do Processo
 
@@ -3235,7 +3250,7 @@ Após a exclusão, o sistema executa as seguintes ações:
 # Gestão de Parceiros (Cadastro, Edição, Exclusão e Controle de Status)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Parceiro_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão parceiros" />
+  <img src="./Imagens/Fluxo_Parceiro_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão parceiros" />
 </p>
 
 Este fluxo descreve todo o ciclo de vida da gestão de parceiros comerciais no sistema, abrangendo a consulta, o cadastro, a edição, a alteração de status e a exclusão segura dos registros, com mecanismos de validação e auditoria.
@@ -3246,7 +3261,7 @@ Este fluxo descreve todo o ciclo de vida da gestão de parceiros comerciais no s
 
 O Administrador ou Gestor acessa a tela de parceiros por meio de uma requisição **HTTP GET** para `Index`.
 
-O sistema consulta o **Firestore**, recuperando todos os parceiros vinculados à empresa do usuário autenticado.
+O sistema consulta o **Firebase**, recuperando todos os parceiros vinculados à empresa do usuário autenticado.
 
 ### Tratamento dos Resultados
 
@@ -3298,7 +3313,7 @@ Após as validações:
 
 - Se o formulário possuir erros, os campos inválidos são destacados e as mensagens de erro são exibidas.
 - Caso todas as validações sejam aprovadas:
-  1. O parceiro é salvo no **Firestore**;
+  1. O parceiro é salvo no **Firebase**;
   2. Um **Log Operacional** é registrado;
   3. Uma mensagem de sucesso é exibida ao usuário utilizando **TempData**.
 
@@ -3335,7 +3350,7 @@ O sistema então:
 
 1. Valida os dados recebidos;
 2. Verifica se houve alguma modificação em relação aos dados originais;
-3. Atualiza o registro no **Firestore**, caso existam alterações válidas;
+3. Atualiza o registro no **Firebase**, caso existam alterações válidas;
 4. Registra um **Log Operacional** informando a edição realizada com sucesso.
 
 ---
@@ -3367,7 +3382,7 @@ O fluxo segue duas possibilidades:
   - O sistema apresenta uma mensagem informando que não foi possível excluir o parceiro devido às dependências existentes.
 
 - **Se não houver impedimentos:**
-  1. O parceiro é removido definitivamente do **Firestore**;
+  1. O parceiro é removido definitivamente do **Firebase**;
   2. Um **Log Operacional** registra a exclusão realizada;
   3. A listagem de parceiros é recarregada;
   4. Uma mensagem de sucesso é exibida ao usuário.
@@ -3375,7 +3390,7 @@ O fluxo segue duas possibilidades:
 # Gestão de Medições (Listagem, Filtros e Recebimento via Kinect)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Medicoes_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa Medições" />
+  <img src="./Imagens/Fluxo_Medicao_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa Medições" />
 </p>
 
 Este fluxo descreve o gerenciamento das medições de volumetria do estoque, integrando a consulta histórica realizada pelos usuários com o recebimento automático de dados em tempo real enviados pelo sensor Kinect.
@@ -3386,7 +3401,7 @@ Este fluxo descreve o gerenciamento das medições de volumetria do estoque, int
 
 O usuário autorizado acessa a tela de medições por meio de uma requisição **HTTP GET** para `Index`.
 
-O sistema consulta a coleção de medições armazenadas no **Firestore**.
+O sistema consulta a coleção de medições armazenadas no **Firebase**.
 
 ### Tratamento dos Resultados
 
@@ -3429,7 +3444,7 @@ Ao receber uma nova leitura, o sistema valida a integridade do identificador (**
 Após a validação, o sistema:
 
 1. Monta o objeto contendo os dados da medição;
-2. Persiste o registro no **Firestore**.
+2. Persiste o registro no **Firebase**.
 
 Na sequência, são executados os cálculos estatísticos da aplicação, incluindo:
 
@@ -3465,14 +3480,14 @@ O sistema:
 
 1. Valida o registro solicitado;
 2. Verifica possíveis dependências;
-3. Atualiza o status da medição para **Inativa (Status = false)** na coleção operacional do **Firestore**.
+3. Atualiza o status da medição para **Inativa (Status = false)** na coleção operacional do **Firebase**.
 
 ---
 
 # Gestão de Perfis (Cadastro, Permissões e Inativação)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Perfis_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão perfis" />
+  <img src="./Imagens/Fluxo_Perfis.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão perfis" />
 </p>
 
 Este fluxo descreve o gerenciamento dos perfis de acesso da aplicação, permitindo controlar permissões, cadastrar novos perfis, editar privilégios e realizar a inativação segura quando necessário.
@@ -3483,7 +3498,7 @@ Este fluxo descreve o gerenciamento dos perfis de acesso da aplicação, permiti
 
 O Administrador Gestor acessa a tela de perfis através de uma requisição **HTTP GET** para `Index`.
 
-O sistema consulta os perfis cadastrados no **Firestore**.
+O sistema consulta os perfis cadastrados no **Firebase**.
 
 ### Exibição dos Dados
 
@@ -3523,7 +3538,7 @@ Ao enviar o formulário (**HTTP POST Create**), o sistema executa:
 
 Caso todas as validações sejam aprovadas:
 
-1. O perfil é salvo no **Firestore**;
+1. O perfil é salvo no **Firebase**;
 2. Um **Log Operacional** é registrado;
 3. Uma mensagem de sucesso é armazenada em **TempData**.
 
@@ -3555,7 +3570,7 @@ Após o envio (**HTTP POST Edit**), o sistema:
 1. Valida o formulário;
 2. Normaliza os dados recebidos;
 3. Verifica se houve alterações em relação ao estado anterior;
-4. Atualiza o perfil e suas permissões no **Firestore**;
+4. Atualiza o perfil e suas permissões no **Firebase**;
 5. Registra um **Log Operacional** documentando a alteração.
 
 ---
@@ -3580,7 +3595,7 @@ O fluxo segue duas possibilidades:
 
 - **Se não houver dependências:**
   1. O status do perfil é alterado para **Inativo (Status = false)**;
-  2. O repositório salva as alterações no **Firestore**;
+  2. O repositório salva as alterações no **Firebase**;
   3. A base operacional de segurança da aplicação é atualizada com o novo estado do perfil.
 
 ---
@@ -3588,7 +3603,7 @@ O fluxo segue duas possibilidades:
 # Gestão de Notificações (Listagem, Filtros, Resumo e Ações)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Notificacoes_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa nnotificações" />
+  <img src="./Imagens/Fluxo_Noticacões_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa nnotificações" />
 </p>
 
 Este fluxo descreve o gerenciamento das notificações geradas pelo sistema, permitindo o monitoramento de alertas, o recebimento automático de eventos provenientes do Kinect e a confirmação de coletas em tempo real por meio do SignalR.
@@ -3599,7 +3614,7 @@ Este fluxo descreve o gerenciamento das notificações geradas pelo sistema, per
 
 O usuário autorizado acessa a tela de notificações por meio de uma requisição **HTTP GET** para `Index`.
 
-O sistema consulta o **Firestore**, recuperando o histórico de notificações e os parceiros relacionados.
+O sistema consulta o **Firebase**, recuperando o histórico de notificações e os parceiros relacionados.
 
 Após a consulta, são apresentados **Cards de Métricas**, contendo indicadores consolidados como:
 
@@ -3649,7 +3664,7 @@ Ao receber a solicitação, são realizadas validações para garantir a integri
 
 Após a validação dos dados, o sistema:
 
-1. Persiste a medição original no **Firestore**;
+1. Persiste a medição original no **Firebase**;
 2. Executa a rotina de geração da notificação;
 3. Registra as informações necessárias para auditoria.
 
@@ -3669,7 +3684,7 @@ Durante o envio das informações, são executadas as seguintes validações:
 - Verificação da consistência dos dados;
 - Comparação entre os dados existentes e as alterações realizadas.
 
-Após a validação, o sistema calcula estatísticas relacionadas às notificações e salva as novas configurações na coleção correspondente do **Firestore**.
+Após a validação, o sistema calcula estatísticas relacionadas às notificações e salva as novas configurações na coleção correspondente do **Firebase**.
 
 ### Confirmação da Coleta (UC103)
 
@@ -3677,7 +3692,7 @@ Quando a atualização do banco de dados é concluída com sucesso, o sistema re
 
 Em seguida:
 
-1. O novo status da coleta é persistido no **Firestore**;
+1. O novo status da coleta é persistido no **Firebase**;
 2. Os clientes conectados recebem a atualização em tempo real através do **SignalR**;
 3. O operador visualiza imediatamente a confirmação da coleta na interface;
 4. Um **Log Operacional** é registrado, encerrando o ciclo de auditoria da notificação.
@@ -3686,7 +3701,7 @@ Em seguida:
 # Gestão de Parâmetros do Sistema (Configurações Gerais e Kinect)
 
 <p align="center">
-  <img src="./Imagens/Etapa_Parametros_MVC.png" width="900" alt="Digrama de Fluxo MVC - Etapa parâmetros" />
+  <img src="./Imagens/Cópia do Fluxo_Configuracao_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa parâmetros" />
 </p>
 
 Este fluxo descreve o gerenciamento das configurações globais da aplicação, permitindo administrar parâmetros operacionais do sistema, configurações do sensor Kinect, regras de notificações e rotinas de calibração, garantindo a consistência das configurações e a integridade da operação.
@@ -3767,7 +3782,7 @@ Se todas as validações forem aprovadas, o sistema:
 
 1. Compara os novos valores com a configuração atual;
 2. Verifica se houve alteração efetiva dos dados;
-3. Atualiza os parâmetros no **Firestore**;
+3. Atualiza os parâmetros no **Firebase**;
 4. Registra um **Log Operacional** contendo as modificações realizadas;
 5. Exibe uma mensagem de sucesso utilizando **TempData**.
 
@@ -3798,7 +3813,7 @@ O sistema então:
 
 1. Recupera as configurações padrão da aplicação;
 2. Valida as permissões e dependências do perfil responsável pela operação;
-3. Restaura os parâmetros originais no **Firestore**;
+3. Restaura os parâmetros originais no **Firebase**;
 4. Registra um **Log Operacional** contendo todas as alterações realizadas durante a restauração;
 5. Atualiza a aplicação com as configurações restauradas.
 ---
@@ -3937,7 +3952,7 @@ Essa representação evidencia o comportamento temporal dos componentes envolvid
 # Etapa 1 – Login e Autenticação (Token OTP)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Login_MVC.png" width="900" alt="Etapa de login Diagrama de Sequência" />
+  <img src="./Imagens/Diagrama_Sequencia_Login.png" width="900" alt="Etapa de login Diagrama de Sequência" />
 </p>
 
 Esta etapa representa o ponto de entrada seguro da aplicação, garantindo que apenas usuários autorizados tenham acesso ao sistema.
@@ -3968,7 +3983,7 @@ Após a validação do token:
 # Etapa 2 – Gestão de Medições (Filtros e Recebimento)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Medicoes_MVC.png" width="900" alt="Etapa de gestão de medições" />
+  <img src="./Imagens/Diagrama_Sequencia_Medicao_gestao.png" width="900" alt="Etapa de gestão de medições" />
 </p>
 
 Esta etapa é responsável pelo gerenciamento do histórico de medições do estoque e pelo processamento das novas leituras enviadas pelo sensor Kinect.
@@ -3999,7 +4014,7 @@ Toda a atualização ocorre em tempo real por meio do **SignalR**, sem necessida
 # Etapa 3 – Gestão de Parceiros (Cadastro, Edição e Status)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Parceiro_MVC.png" width="900" alt="Etapa de gestão de parceiros" />
+  <img src="./Imagens/Diagrama_Sequencia_Parceiro.png" width="900" alt="Etapa de gestão de parceiros" />
 </p>
 
 Esta etapa é responsável pelo gerenciamento das empresas e parceiros comerciais cadastrados na aplicação.
@@ -4024,7 +4039,7 @@ Caso o parceiro possua notificações ou outras dependências relacionadas, a ex
 # Etapa 4 – Medição Local (Manual ou Automática)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Medicao_Local_MVC.png" width="900" alt="Etapa de medicão local" />
+  <img src="./Imagens/Diagrama_Sequencial_Medicao.png" width="900" alt="Etapa de medicão local" />
 </p>
 
 Esta etapa representa o processamento realizado localmente pelo sensor Kinect para calcular o volume do estoque.
@@ -4052,7 +4067,7 @@ Após todas as verificações:
 # Etapa 5 – Persistência e Envio (Conexão e Sincronização)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_percistencia_MVC.png" width="900" alt="Etapa de persistência" />
+  <img src="./Imagens/Diagrama_Sequencia_Percistencia.png" width="900" alt="Etapa de persistência" />
 </p>
 
 Esta etapa garante que as medições realizadas localmente sejam transmitidas com segurança ao servidor central.
@@ -4075,7 +4090,7 @@ Nesse cenário, são executadas tentativas automáticas de reconexão, garantind
 # Etapa 6 – Histórico, Logs e Encerramento
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Historico_MVC.png" width="900" alt="Etapa de Historico" />
+  <img src="./Imagens/Diagrama_Sequencia_log.png" width="900" alt="Etapa de Historico" />
 </p>
 
 Esta etapa representa o encerramento do ciclo de monitoramento, garantindo que todas as informações geradas durante a operação sejam registradas com segurança antes da finalização do processo.
@@ -4671,7 +4686,7 @@ Para a execução estável do sistema foi definida a seguinte configuração mí
 - Razor Pages
 - Bootstrap
 - SignalR
-- Firebase Firestore
+- Firebase 
 
 #### Tecnologias de Integração
 
