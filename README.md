@@ -1258,7 +1258,7 @@ As regras do sistema **Inventory Masters** foram divididas em cinco grupos:
 | :--- | :--- | :--- |
 | O sistema tenta acessar o Firebase e ocorre erro. | A falha não deve interromper toda a aplicação. | O MVC registra o erro e retorna mensagem adequada ou lista vazia. |
 
-> **Regra:** O isolamento de falhas de persistência é obrigatório; a indisponibilidade temporária do Firestore deve degradar o serviço de forma controlada, mantendo o sistema operante.
+> **Regra:** O isolamento de falhas de persistência é obrigatório; a indisponibilidade temporária do Firebase deve degradar o serviço de forma controlada, mantendo o sistema operante.
 ---
 
 #### 🔴 RN111 - Consulta global para dados antigos
