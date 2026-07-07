@@ -2830,7 +2830,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 
 <p align="center">
-  <img src="./Imagens/Acesso.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Diagrama caso de uso Acesso e Token MVC .png" alt="Diagrama caso de uso acesso ao mvc" />
 </p>
 
 
@@ -2850,7 +2850,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 
 <p align="center">
-  <img src="./Imagens/Dashboard.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Caso de uso Dashbord.drawio.png" alt="Diagrama caso de uso Dashboard mvc " />
 </p>
 
 
@@ -2869,7 +2869,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 
 <p align="center">
-  <img src="./Imagens/Usuario.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Diagrama caso de uso Usuario MVC .png" alt="Diagrama caso de uso usuario mvc" />
 </p>
 
 
@@ -2890,7 +2890,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 #### Perfis e Permissões
 
 <p align="center">
-  <img src="./Imagens/Permissões.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Diagrama caso de uso Perfil e Permissões  MVC png.png" alt="Diagrama caso de uso perfil e permissões  mvc" />
 </p>
 
 
@@ -2909,9 +2909,8 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 #### Parceiros
 
 <p align="center">
-  <img src="./Imagens/Parceiros.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Diagrama caso de uso parceiros MVC.png" alt="Diagrama caso de uso parceiros MVC" />
 </p>
-
 
 | Código | Caso de Uso | Ator | Interação |
 |:------:|-------------|------|-----------|
@@ -2931,7 +2930,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 
 <p align="center">
-  <img src="./Imagens/Historico.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Diagrma caso de uso Historico de Medição  MVC .png" alt="Diagrma caso de uso Historico de Medição  MVC" />
 </p>
 
 
@@ -2952,9 +2951,8 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 
 <p align="center">
-  <img src="./Imagens/Notificação.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Diagrma caso de uso Notificação  MVC  .png" alt="Diagrma caso de uso Notificação  MVC" />
 </p>
-
 
 
 | Código | Caso de Uso | Ator | Interação |
@@ -2974,7 +2972,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 #### Configurações
 
 <p align="center">
-  <img src="./Imagens/Configuração.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Diagrama caso de uso Configurações  MVC  .png" alt="Diagrama caso de uso Configurações  MVC " />
 </p>
 
 
@@ -2998,7 +2996,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 #### Logs e Auditoria
 
 <p align="center">
-  <img src="./Imagens/LOG.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Diagrama caso de uso Logs  E Auditoria   MVC.png" alt="Diagrama caso de uso Logs  E Auditoria   MVCC" />
 </p>
 
 | Código | Caso de Uso | Ator | Interação |
@@ -3013,7 +3011,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 
 <p align="center">
-  <img src="./Imagens/Aplicação kinect.jpeg" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Diagrama Casos de Uso/Diagrma caso de uso Aplicação  Kinect  .png" alt="Diagrma caso de uso Aplicação  Kinect  .png" />
 </p>
 
 
