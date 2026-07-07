@@ -3125,7 +3125,7 @@ Em conjunto, os seis diagramas representam o ciclo operacional completo do módu
 ---
 ## Diagrama de Fluxo - MVC
 
-# Login e Acesso Seguro
+### Login e Acesso Seguro
 
 <p align="center">
   <img src="./Imagens/Etapa_Login_Token_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa login e acesso ao sistema" />
@@ -3133,14 +3133,14 @@ Em conjunto, os seis diagramas representam o ciclo operacional completo do módu
 
 Este fluxo garante que apenas usuários validados e com as permissões corretas consigam entrar no sistema e visualizar o painel principal.
 
-## 1. Entrada do E-mail (UC01 & UC02)
+#### 1. Entrada do E-mail (UC01 & UC02)
 
 O usuário acessa a tela de login e informa seu endereço de e-mail.
 
 - O sistema valida se o formato do e-mail é válido.
 - Caso o formato esteja incorreto, o acesso é bloqueado imediatamente e uma mensagem de erro é exibida ao usuário.
 
-## 2. Verificação no Banco de Dados (UC04)
+#### 2. Verificação no Banco de Dados (UC04)
 
 Após a validação do formato do e-mail, o sistema consulta o banco de dados para verificar:
 
@@ -3149,7 +3149,7 @@ Após a validação do formato do e-mail, o sistema consulta o banco de dados pa
 
 Caso o usuário não exista ou a conta esteja inativa, o acesso é negado.
 
-## 3. Geração e Envio do Token (UC05 a UC08)
+#### 3. Geração e Envio do Token (UC05 a UC08)
 
 Se o usuário estiver ativo, o sistema:
 
@@ -3157,7 +3157,7 @@ Se o usuário estiver ativo, o sistema:
 2. Armazena no banco de dados o hash do token e sua data de expiração.
 3. Envia o token para o e-mail do usuário.
 
-## 4. Validação do Token (UC10 & UC12)
+#### 4. Validação do Token (UC10 & UC12)
 
 O usuário:
 
@@ -3170,7 +3170,7 @@ O sistema verifica a validade do token.
 - Se o token estiver expirado, o acesso é negado.
 - Se o token estiver incorreto, uma mensagem de erro é exibida.
 
-## 5. Criação da Sessão e Redirecionamento (UC13 a UC17)
+#### 5. Criação da Sessão e Redirecionamento (UC13 a UC17)
 
 Quando o token é validado com sucesso, o sistema:
 
@@ -3180,7 +3180,7 @@ Quando o token é validado com sucesso, o sistema:
 
 Se o usuário possuir autorização para acessar o Dashboard, ele é redirecionado para a tela inicial do sistema com sucesso.
 
-# Gestão de Usuários (Visualização de Detalhes e Exclusão)
+### Gestão de Usuários (Visualização de Detalhes e Exclusão)
 
 <p align="center">
   <img src="./Imagens/Fluxo_Usuario_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão usuario" />
@@ -3188,7 +3188,7 @@ Se o usuário possuir autorização para acessar o Dashboard, ele é redireciona
 
 Este fluxo descreve o processo de governança de contas de usuários, permitindo que administradores consultem informações detalhadas e realizem a exclusão segura de usuários, mantendo registros para auditoria.
 
-## 1. Visualização de Detalhes (Modo Leitura)
+#### 1. Visualização de Detalhes (Modo Leitura)
 
 ### Requisição por ID (UC31)
 
