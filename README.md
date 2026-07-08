@@ -273,8 +273,8 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
     <th align="center">Módulo Web (MVC)</th>
   </tr>
   <tr>
-    <td align="center"><img src="./Imagens/Projeto%20Kinect.png" width="100%"></td>
-    <td align="center"><img src="./Imagens/Projeto%20MVC.png" width="110%"></td>
+    <td align="center"><img src="./Imagens/Estrutura de Camadas/Projeto%20Kinect.png" width="100%"></td>
+    <td align="center"><img src="./Imagens/Estrutura de Camadas/Projeto%20MVC.png" width="110%"></td>
   </tr>
 </table>
 
@@ -303,7 +303,7 @@ O **Inventory Masters** adota a arquitetura **MVC** (Model-View-Controller) para
 ### 1. Módulo MVC/Web - Camada de Controllers
 
 <p align="center">
-  <img src="./Imagens/Controller.png" alt="Estrutura de Controllers" />
+  <img src="./Imagens/Estrutura de Camadas/Controller.png" alt="Estrutura de Controllers" />
 </p>
 
 A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel central na orquestração das requisições HTTP e na implementação das regras de negócio que sustentam a plataforma web. A tabela abaixo detalha a responsabilidade de cada componente:
@@ -325,7 +325,7 @@ A pasta `Controllers` do projeto **MVC InventoryMasters** desempenha um papel ce
 ### 2. Módulo MVC/Web - Camada de Models
 
 <p align="center">
-  <img src="./Imagens/Models.png" alt="Estrutura de Models" />
+  <img src="./Imagens/Estrutura de Camadas/Models.png" alt="Estrutura de Models" />
 </p>
 
 A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que representam as entidades de domínio e as estruturas de dados fundamentais da aplicação. Elas definem o formato dos dados que são persistidos no banco de dados (Firebase) e transitam entre os diversos componentes do sistema.
@@ -348,7 +348,7 @@ A pasta `Models` do projeto **MVC InventoryMasters** contém as classes que repr
 ### 3. Módulo MVC/Web - Camada de Repositories
 
 <p align="center">
-  <img src="./Imagens/Repositories.png" alt="Estrutura de Repositories" />
+  <img src="./Imagens/Estrutura de Camadas/Repositories.png" alt="Estrutura de Repositories" />
 </p>
 
 A pasta `Repositories` do projeto **MVC InventoryMasters** implementa o padrão *Repository*, atuando como a camada de abstração de dados. Sua função principal é isolar a lógica de acesso a dados (CRUD) da lógica de negócio, centralizando as operações de comunicação com o **Firebase**.
@@ -369,7 +369,7 @@ A pasta `Repositories` do projeto **MVC InventoryMasters** implementa o padrão 
 ### 4. Módulo MVC/Web - Camada de Services
 
 <p align="center">
-  <img src="./Imagens/Services.png" alt="Estrutura de Services" />
+  <img src="./Imagens/Estrutura de Camadas/Services.png" alt="Estrutura de Services" />
 </p>
 
 A camada `Services` atua como uma ponte entre os `Controllers` e os `Repositories`. Ela centraliza regras de negócio específicas, processamento de serviços externos e validações de alto nível, promovendo a reutilização de código e a organização da aplicação.
@@ -386,7 +386,7 @@ A camada `Services` atua como uma ponte entre os `Controllers` e os `Repositorie
 ### 5. Módulo MVC/Web - Camada de ViewModels
 
 <p align="center">
-  <img src="./Imagens/ViewModels.png" alt="Estrutura de ViewModels" />
+  <img src="./Imagens/Estrutura de Camadas/ViewModels.png" alt="Estrutura de ViewModels" />
 </p>
 
 A pasta `ViewModels` contém as classes que estruturam os dados exibidos nas *Views* (telas) da aplicação, servindo como uma camada intermediária que formata as informações para consumo da interface do usuário.
@@ -410,10 +410,10 @@ A pasta `ViewModels` contém as classes que estruturam os dados exibidos nas *Vi
     </th>
   </tr>
   <tr>
-    <td align="center"><img src="./Imagens/acesso.png" alt="Acesso" width="160" /></td>
-    <td align="center"><img src="./Imagens/parceiros.png" alt="Parceiros" width="130" /></td>
-    <td align="center"><img src="./Imagens/Perfis.png" alt="Perfis" width="150" /></td>
-    <td align="center"><img src="./Imagens/usuario.png" alt="Usuarios" width="130" /></td>
+    <td align="center"><img src="./Imagens/Estrutura de Camadas/acesso.png" alt="Acesso" width="160" /></td>
+    <td align="center"><img src="./Imagens/Estrutura de Camadas/parceiros.png" alt="Parceiros" width="130" /></td>
+    <td align="center"><img src="./Imagens/Estrutura de Camadas/Perfis.png" alt="Perfis" width="150" /></td>
+    <td align="center"><img src="./Imagens/Estrutura de Camadas/usuario.png" alt="Usuarios" width="130" /></td>
   </tr>
 </table>
 
@@ -435,7 +435,7 @@ A pasta `Views` contém os arquivos de interface (Razor Pages) do projeto. Esta 
 ### 7. Módulo MVC/Web - Camada de Hubs (SignalR)
 
 <p align="center">
-  <img src="./Imagens/Hubs.png" alt="Estrutura de Hubs" />
+  <img src="./Imagens/Estrutura de Camadas/Hubs.png" alt="Estrutura de Hubs" />
 </p>
 
 A camada `Hubs` contém as classes que estendem `Hub` do SignalR, permitindo a comunicação bidirecional em tempo real entre o servidor e os clientes conectados. É fundamental para o envio imediato de atualizações de medições e alertas sem a necessidade de recarregar a página.
@@ -453,7 +453,7 @@ Para o processamento de dados do hardware **Kinect**, utilizamos o padrão **MVV
 ### 1. Módulo Kinect: Camada de Model 
 
 <p align="center">
-  <img src="./Imagens/Modelk.png" alt="Estrutura de Models" />
+  <img src="./Imagens/Estrutura de Camadas/Modelk.png" alt="Estrutura de Models" />
 </p>
 
 Os `Models` definem a estrutura dos dados que transitam entre o hardware e a aplicação.
@@ -473,7 +473,7 @@ Os `Models` definem a estrutura dos dados que transitam entre o hardware e a apl
 ### 2. Módulo Kinect: Camada de Service
 
 <p align="center">
-  <img src="./Imagens/Servicek.png" alt="Estrutura de Services do Kinect" />
+  <img src="./Imagens/Estrutura de Camadas/Servicek.png" alt="Estrutura de Services do Kinect" />
 </p>
 
 A camada `Service` no módulo Kinect centraliza a inteligência de processamento de hardware. Ela abstrai a complexidade do sensor, permitindo que a camada de apresentação consuma dados prontos para o uso, sem a necessidade de manipular diretamente as bibliotecas de baixo nível do Kinect.
@@ -490,7 +490,7 @@ A camada `Service` no módulo Kinect centraliza a inteligência de processamento
 ### 3. Módulo Kinect: Camada de ViewModel
 
 <p align="center">
-  <img src="./Imagens/ViewModelk.png" alt="Estrutura de ViewModels do Kinect" />
+  <img src="./Imagens/Estrutura de Camadas/ViewModelk.png" alt="Estrutura de ViewModels do Kinect" />
 </p>
 
 A camada `ViewModel` atua como o **orquestrador** da interface do Kinect. Ela processa as requisições, gerencia o estado da interface e utiliza *data binding* para refletir as mudanças do sensor na tela em tempo real, mantendo a View leve e desacoplada da lógica de processamento pesado.
@@ -507,7 +507,7 @@ A camada `ViewModel` atua como o **orquestrador** da interface do Kinect. Ela pr
 ### 4. Módulo Kinect: Camada de View
 
 <p align="center">
-  <img src="./Imagens/Viewk.png" alt="Estrutura de ViewModels do Kinect" />
+  <img src="./Imagens/Estrutura de Camadas/Viewk.png" alt="Estrutura de ViewModels do Kinect" />
 </p>
 
 A camada `View` é a camada de apresentação final da aplicação. Ela é responsável por exibir os dados ao usuário e capturar interações, mantendo-se estritamente focada no layout e na estrutura visual, delegando toda a lógica de execução para a `ViewModel` correspondente.
@@ -521,7 +521,7 @@ A camada `View` é a camada de apresentação final da aplicação. Ela é respo
 ### 5. Módulo Kinect: Camada de Repository
 
 <p align="center">
-  <img src="./Imagens/Repositoryk.png" alt="Estrutura de Repository do Kinect" />
+  <img src="./Imagens/Estrutura de Camadas/Repositoryk.png" alt="Estrutura de Repository do Kinect" />
 </p>
 
 A camada `Repository` encapsula a lógica de persistência de dados. Ela utiliza o padrão *Repository* com **Entity Framework Core** para realizar operações de leitura e escrita no banco de dados local **SQLite**, garantindo que as regras de negócio não dependam diretamente da tecnologia de persistência.
@@ -536,7 +536,7 @@ A camada `Repository` encapsula a lógica de persistência de dados. Ela utiliza
 ### 6. Módulo Kinect: Camada de Commands
 
 <p align="center">
-  <img src="./Imagens/Relayk.png" alt="Estrutura de RelayCommand do Kinect" />
+  <img src="./Imagens/Estrutura de Camadas/Relayk.png" alt="Estrutura de RelayCommand do Kinect" />
 </p>
 
 A camada `Command` provê a infraestrutura necessária para a comunicação entre a interface e a lógica de aplicação no padrão MVVM.
