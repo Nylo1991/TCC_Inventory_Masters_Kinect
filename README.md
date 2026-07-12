@@ -3816,128 +3816,179 @@ O sistema então:
 5. Atualiza a aplicação com as configurações restauradas.
 ---
 
-# Diagrama de Sequência do Módulo Kinect (MVVM)
+## Diagrama de Sequência do Módulo Kinect (MVVM)
 
-O Diagrama de Sequência do módulo Kinect apresenta o comportamento dinâmico da aplicação durante a execução das principais funcionalidades do sistema. Diferentemente do Diagrama de Casos de Uso, que demonstra as funcionalidades disponíveis ao usuário, o Diagrama de Sequência evidencia a ordem cronológica das mensagens trocadas entre os componentes internos do sistema, permitindo compreender como ocorre o fluxo completo de autenticação, inicialização do hardware, calibração, processamento das medições, persistência local e sincronização com o módulo MVC.
+O Diagrama de Sequência do módulo Kinect apresenta o comportamento dinâmico da aplicação durante a execução das principais funcionalidades do sistema. Diferentemente do Diagrama de Casos de Uso, que demonstra as funcionalidades disponíveis ao usuário, o Diagrama de Sequência evidencia a ordem cronológica das mensagens trocadas entre os componentes internos do sistema.
 
-Para facilitar a leitura e reduzir a complexidade visual, o fluxo foi dividido em seis etapas principais, cada uma representando uma fase específica da operação do sistema.
+Essa representação permite compreender como ocorre o fluxo completo do módulo Kinect/Desktop, desde a autenticação do operador, inicialização do sensor, calibração do ambiente, configuração do espaço monitorado, execução das medições volumétricas, persistência local dos dados, sincronização com o módulo MVC e encerramento seguro do monitoramento.
 
+Para facilitar a leitura e reduzir a complexidade visual, o fluxo foi dividido em seis sequências principais, cada uma representando uma fase específica da operação do sistema.
 
-# Autenticação e Criação da Sessão
+---
 
-<p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa01.png" width="900" alt="Etapa 01 - Autenticação" />
-</p>
-
-A primeira etapa representa o processo de autenticação do operador no módulo Kinect MVVM. Inicialmente, o usuário informa o endereço de e-mail previamente cadastrado no sistema MVC. A aplicação Kinect encaminha essa informação ao servidor MVC, que realiza a geração de um token temporário de autenticação e o envia para o e-mail informado.
-
-Após receber o código, o operador informa o token na aplicação Kinect. O sistema realiza uma nova comunicação com o MVC para validar sua autenticidade, verificando se o token existe, ainda está dentro do período de validade e não foi utilizado anteriormente.
-
-Quando todas as validações são aprovadas, o sistema cria uma sessão operacional local contendo as informações do usuário autenticado, empresa vinculada, e-mail e token utilizado. Em seguida, o monitor de medição é liberado para utilização.
-
-Caso o token seja inválido, expirado ou já tenha sido utilizado anteriormente, a autenticação é bloqueada e o operador deverá solicitar um novo código de acesso.
-
-### Objetivo da Etapa
-
-Garantir que apenas usuários devidamente autenticados possam acessar o módulo Kinect e iniciar o monitoramento volumétrico.
-
-
-# Inicialização do Kinect e Conexão ao SignalR
+### Sequência 1 — Acesso e Autenticação do Kinect
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa02.png" width="900" alt="Etapa 02 - Inicialização do Kinect" />
+  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia01_AcessoAutenticacao_Kinect.png" width="900" alt="Sequência 01 - Acesso e Autenticação do Kinect" />
 </p>
 
-Após a autenticação bem-sucedida, inicia-se o processo de preparação do ambiente de monitoramento. O operador solicita a inicialização do Kinect e o sistema ativa os sensores RGB e de profundidade responsáveis pela captura das informações do ambiente físico.
+> **Nota:** A Sequência 1 representa o controle de acesso ao módulo Kinect/Desktop. O fluxo demonstra que o operador só consegue acessar a tela de monitoramento após informar um e-mail válido, receber o token temporário por e-mail e ter esse token validado pelo módulo MVC. A criação da sessão local garante que as próximas operações do sistema fiquem vinculadas ao usuário, empresa, e-mail e token autenticado.
 
-Paralelamente à inicialização do hardware, a aplicação estabelece comunicação com o servidor SignalR hospedado no módulo MVC. Essa conexão será responsável pela transmissão das medições realizadas localmente para o sistema Web em tempo real.
+A primeira sequência representa o processo de acesso e autenticação do operador no módulo Kinect/Desktop. Inicialmente, o operador abre a aplicação Kinect e informa o endereço de e-mail previamente cadastrado no sistema MVC.
 
-Após a confirmação da conexão, a interface é atualizada indicando que tanto o Kinect quanto o SignalR encontram-se disponíveis, permitindo o prosseguimento para a etapa de calibração.
+A aplicação encaminha a solicitação de token ao serviço de autenticação, que se comunica com o módulo Web MVC. O MVC valida se o e-mail informado pertence a um usuário ativo e, em caso positivo, gera um token temporário de acesso. Esse token é enviado ao operador por e-mail.
 
-### Objetivo da Etapa
+Após receber o código, o operador informa o token na aplicação Kinect. O sistema envia novamente os dados ao MVC para validação, verificando se o token é válido, se ainda está dentro do prazo de utilização e se não foi utilizado anteriormente.
 
-Preparar o hardware de captura e estabelecer a comunicação em tempo real entre o módulo Kinect e o sistema MVC.
+Quando todas as validações são aprovadas, o sistema cria uma sessão operacional local contendo as informações do usuário autenticado, empresa vinculada, e-mail e token utilizado. Em seguida, a tela de monitoramento é liberada para utilização.
 
+Caso o e-mail seja inválido, o usuário esteja inativo ou o token informado seja inválido, expirado ou já utilizado, o sistema bloqueia o acesso e permite que o operador realize uma nova tentativa.
 
-# Calibração do Ambiente e Configuração do Espaço
+### Objetivo da Sequência
+
+Garantir que apenas usuários devidamente autenticados possam acessar o módulo Kinect/Desktop e iniciar o monitoramento volumétrico.
+
+---
+
+### Sequência 2 — Conexão do Kinect e Comunicação SignalR
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa03.png" width="900" alt="Etapa 03 - Calibração" />
+  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia02_ConexaoKinect_SignalR.png" width="900" alt="Sequência 02 - Conexão do Kinect e Comunicação SignalR" />
 </p>
 
-Nesta etapa é realizada a calibração do ambiente que será monitorado. O Kinect captura a imagem de profundidade do espaço vazio e processa essas informações para gerar uma referência volumétrica utilizada como base para todas as medições futuras.
+> **Nota:** A Sequência 2 demonstra a preparação inicial do ambiente operacional. O Kinect precisa estar conectado e disponível para que o sistema avance para a calibração. A conexão SignalR é iniciada para permitir comunicação em tempo real com o MVC, porém sua indisponibilidade não bloqueia a operação local, mantendo o sistema resiliente em caso de falha de rede.
 
-Após a conclusão da calibração, o operador informa os parâmetros necessários para configuração do ambiente monitorado, como nome do espaço e limite máximo de ocupação.
+Após a autenticação bem-sucedida, o operador solicita a inicialização do Kinect por meio da interface de monitoramento. A View aciona o comando correspondente no MainViewModel, que solicita ao KinectService a inicialização do sensor.
 
-O sistema valida essas informações, marca o espaço como configurado e habilita o temporizador responsável pelas medições automáticas. A partir desse momento, o ambiente encontra-se preparado para iniciar o monitoramento contínuo.
+O KinectService verifica a disponibilidade do hardware físico e tenta inicializar os recursos necessários para a captura dos dados de profundidade. Caso o sensor esteja conectado e disponível, o sistema atualiza a interface informando que o Kinect foi inicializado com sucesso.
 
-Caso alguma validação não seja atendida, como ausência de calibração ou parâmetros obrigatórios não informados, o sistema impede o início das medições até que todas as configurações sejam concluídas.
+Em seguida, o MainViewModel solicita ao SignalRService a abertura da comunicação em tempo real com o Hub SignalR do módulo MVC. Essa comunicação será utilizada posteriormente para envio das medições volumétricas ao sistema Web.
 
-### Objetivo da Etapa
+Caso o SignalR seja conectado com sucesso, a interface é atualizada indicando que o canal em tempo real está disponível. Caso a conexão com o MVC não seja estabelecida, o sistema mantém a operação local ativa e registra o estado como desconectado ou em reconexão.
 
-Estabelecer a referência espacial utilizada pelo sistema para realizar os cálculos volumétricos de forma precisa e consistente.
+A indisponibilidade temporária do SignalR não impede a continuidade da operação local, desde que o Kinect esteja conectado e funcional.
 
+### Objetivo da Sequência
 
-# Medição Local e Armazenamento
+Inicializar o sensor Kinect, verificar a disponibilidade do hardware e estabelecer a comunicação em tempo real com o módulo MVC por meio do SignalR, mantendo a operação local mesmo em caso de falha de conexão.
+
+---
+
+### Sequência 3 — Calibração do Ambiente
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa04.png" width="900" alt="Etapa 04 - Medição" />
+  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia03_CalibracaoAmbiente.png" width="900" alt="Sequência 03 - Calibração do Ambiente" />
 </p>
 
-Após a configuração do ambiente, o sistema inicia o ciclo de monitoramento, que pode ocorrer manualmente por solicitação do operador ou automaticamente por meio do temporizador interno da aplicação.
+> **Nota:** A Sequência 3 representa a calibração do ambiente vazio, etapa essencial para que o sistema tenha uma referência volumétrica confiável. Durante esse processo, o sistema interrompe medições automáticas, invalida configurações anteriores, captura dados de profundidade, processa pontos válidos e calcula o volume máximo calibrado. Somente uma calibração válida libera a próxima etapa de configuração do espaço.
 
-Antes da captura de qualquer medição são realizadas diversas validações para garantir a integridade dos dados processados. O sistema verifica se o Kinect permanece conectado, se o ambiente foi calibrado corretamente, se o espaço monitorado encontra-se salvo e se existem dados válidos para processamento.
+A terceira sequência representa a calibração do ambiente físico que será monitorado. O operador aciona o comando “Calibrar Espaço” na interface, e a View encaminha essa ação ao MainViewModel.
 
-Em seguida, o sensor captura uma nova imagem de profundidade, calcula o volume ocupado utilizando a referência obtida durante a calibração e atualiza a interface com o volume atual, percentual de ocupação e status da medição.
+Antes de iniciar a calibração, o sistema prepara o processo interrompendo temporariamente a rotina de medição automática, invalidando configurações anteriores do espaço e verificando se o Kinect está conectado e disponível para leitura.
 
-Após o processamento, a medição é armazenada no banco de dados SQLite local, permitindo que o sistema continue funcionando normalmente mesmo em situações de indisponibilidade da conexão com o servidor.
+Com as condições atendidas, o MainViewModel solicita ao KinectService a calibração do ambiente vazio. O KinectService prepara a captura dos dados de profundidade e utiliza o sensor físico para coletar as informações necessárias do espaço sem ocupação.
 
-### Objetivo da Etapa
+Durante esse processo, o sistema pode realizar múltiplas capturas de profundidade e considerar diferentes ângulos do sensor, filtrando os pontos válidos e processando o mapa de referência do ambiente. A partir dessas informações, é calculado o volume máximo calibrado, que servirá como base para as medições futuras.
 
-Realizar a captura das informações do ambiente, calcular o volume ocupado e garantir a persistência local das medições para assegurar a continuidade da operação.
+Ao final, o sistema restaura a posição original do Kinect e retorna o resultado da calibração ao MainViewModel. Quando a calibração é válida e o volume máximo calculado é maior que zero, a interface é atualizada e a próxima etapa, de configuração do espaço monitorado, é liberada.
 
+Caso o Kinect esteja desconectado, a leitura esteja indisponível ou os dados capturados sejam insuficientes para uma calibração válida, o sistema exibe um alerta e mantém o ambiente como não calibrado, permitindo nova tentativa.
 
-# Envio da Medição ao MVC e Atualização do Status
+### Objetivo da Sequência
+
+Capturar o ambiente vazio, gerar uma referência espacial confiável e calcular o volume máximo calibrado que será utilizado como base para as medições volumétricas.
+
+---
+
+### Sequência 4 — Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa05.png" width="900" alt="Etapa 05 - Sincronização" />
+  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia04_ConfiguracaoEspacoMonitorado.png" width="900" alt="Sequência 04 - Configuração do Espaço Monitorado" />
 </p>
 
-Após o armazenamento local da medição, o sistema verifica o estado da conexão com o servidor SignalR. Caso a comunicação esteja disponível, a aplicação transmite a medição ao módulo MVC utilizando o Hub responsável pela integração em tempo real.
+> **Nota:** A Sequência 4 demonstra a configuração do espaço monitorado após a calibração. O sistema valida o nome do espaço, o limite percentual de ocupação e a existência de uma calibração válida. Quando essas condições são atendidas, o espaço é marcado como salvo, o temporizador automático de 60 segundos é iniciado e o ambiente fica liberado para medições manuais e automáticas.
 
-O servidor confirma o recebimento da informação e a aplicação atualiza o status da sincronização na interface do operador.
+Após a calibração válida do ambiente, o operador realiza a configuração do espaço monitorado. Nessa etapa, são informados o nome do espaço e o limite percentual de ocupação que será utilizado como referência para alertas operacionais.
 
-Caso ocorra qualquer falha de comunicação, a medição permanece armazenada localmente no banco SQLite e o sistema inicia automaticamente tentativas de reconexão até que a comunicação seja restabelecida. Dessa forma, evita-se a perda de informações durante interrupções temporárias da rede.
+A interface atualiza os dados informados por meio dos bindings vinculados ao MainViewModel. Em seguida, o operador aciona o comando “Salvar Espaço”, que inicia as validações necessárias para liberação da medição.
 
-### Objetivo da Etapa
+O sistema verifica se existe uma calibração válida, se o volume máximo calibrado é maior que zero, se o nome do espaço foi preenchido e se o limite de ocupação informado está dentro da faixa permitida, entre 1% e 100%.
 
-Sincronizar as medições locais com o sistema MVC, mantendo a consistência dos dados e garantindo tolerância a falhas de comunicação.
+Quando todas as condições são atendidas, o MainViewModel marca o espaço como salvo, atualiza a interface e inicia o temporizador responsável pela medição automática, configurado com intervalo de 60 segundos. A partir desse momento, o ambiente fica pronto para medições manuais e automáticas.
 
+Caso a calibração não esteja válida, o nome esteja vazio ou o limite de ocupação seja inválido, o sistema exibe a mensagem correspondente e mantém o cadastro pendente até que as informações sejam corrigidas.
 
-# Histórico, Logs e Encerramento
+### Objetivo da Sequência
+
+Validar os parâmetros do espaço monitorado, salvar a configuração operacional e liberar o sistema para iniciar as medições volumétricas.
+
+---
+
+### Sequência 5 — Medição Volumétrica Manual e Automática
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa06.png" width="900" alt="Etapa 06 - Histórico e Encerramento" />
+  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia05_MedicaoVolumetrica.png" width="900" alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
 </p>
 
-A etapa final contempla as funcionalidades relacionadas ao histórico operacional e ao encerramento da sessão de monitoramento.
+> **Nota:** A Sequência 5 representa a execução da medição volumétrica. A medição pode ser iniciada manualmente pelo operador ou automaticamente pelo temporizador. Antes do cálculo, o sistema valida se o Kinect está conectado, se há calibração válida e se o espaço foi salvo. Apenas volumes válidos seguem para persistência; leituras inválidas encerram a tentativa atual sem salvar ou enviar dados.
 
-Durante a operação, o operador pode consultar o histórico de medições armazenadas localmente no banco SQLite, bem como visualizar os registros de acesso, leituras realizadas e erros registrados pelo sistema.
+A quinta sequência representa a execução da medição volumétrica, que pode ocorrer de duas formas: manualmente, quando o operador aciona o comando “Enviar Volume Atual”, ou automaticamente, quando o temporizador de 60 segundos dispara uma nova medição.
 
-Ao finalizar o monitoramento, a aplicação interrompe a captura das imagens de profundidade, encerra a comunicação com o Kinect, finaliza a conexão com o servidor SignalR e registra os eventos de encerramento no banco de dados local.
+Independentemente da origem da medição, manual ou automática, o fluxo converge para a rotina comum responsável por medir, salvar e encaminhar o volume calculado.
 
-Por fim, a interface é atualizada, os estados internos da aplicação são reinicializados e o sistema permanece preparado para uma nova sessão de monitoramento.
+Antes de realizar o cálculo, o MainViewModel valida as condições necessárias para a medição: o Kinect deve estar conectado, o ambiente deve possuir calibração válida e o espaço monitorado deve estar salvo. Caso alguma dessas condições não seja atendida, o sistema atualiza o status correspondente e encerra a tentativa atual.
 
-### Objetivo da Etapa
+Quando as condições são atendidas, o MainViewModel solicita ao KinectService o cálculo do volume atual. O KinectService realiza a leitura dos dados de profundidade capturados pelo sensor Kinect, processa os pontos válidos e retorna o volume atual calculado.
 
-Garantir a rastreabilidade das operações realizadas durante o monitoramento, preservar o histórico operacional e realizar o encerramento seguro da aplicação, liberando corretamente os recursos utilizados pelo sistema.
+Se o volume detectado for maior que zero, o sistema registra o último volume medido, calcula o percentual de ocupação, calcula o espaço livre, compara o percentual com o limite configurado e define o status operacional como “Normal” ou “Limite”.
 
+Em seguida, os indicadores da interface são atualizados e a medição válida é encaminhada para a próxima sequência, responsável pela persistência local, histórico e integração com o MVC.
 
-# Considerações
+Caso nenhum volume válido seja detectado, o sistema atualiza o status informando a ausência de volume e encerra a tentativa atual, aguardando uma nova solicitação manual ou o próximo ciclo automático do temporizador.
 
-O Diagrama de Sequência demonstra a interação entre o operador, o módulo Kinect, o banco de dados SQLite local e o sistema MVC durante toda a execução da aplicação. A divisão do fluxo em seis etapas permitiu representar de forma organizada os processos de autenticação, inicialização do hardware, calibração, captura das medições, sincronização com o servidor e encerramento da operação.
+### Objetivo da Sequência
 
-Essa representação evidencia o comportamento temporal dos componentes envolvidos, facilitando a compreensão da arquitetura do sistema e demonstrando como os dados percorrem todas as camadas da aplicação, desde a aquisição pelo sensor Kinect até a persistência local e sincronização com o módulo Web.
+Executar a medição volumétrica manual ou automática, validar as condições operacionais, calcular o volume atual, atualizar os indicadores da interface e encaminhar medições válidas para persistência.
+
+---
+
+### Sequência 6 — Persistência, Histórico e Integração com MVC
+
+<p align="center">
+  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia06_PersistenciaHistoricoIntegracao.png" width="900" alt="Sequência 06 - Persistência, Histórico e Integração com MVC" />
+</p>
+
+> **Nota:** A Sequência 6 apresenta a persistência local, atualização do histórico, integração com o MVC e encerramento seguro. Toda medição válida é primeiro salva no SQLite, garantindo preservação dos dados antes de qualquer envio externo. Se o SignalR estiver disponível, a medição é enviada ao MVC; caso contrário, a operação local continua ativa e o sistema mantém tentativas de reconexão em segundo plano.
+
+A sexta sequência representa a etapa de persistência local, atualização do histórico, integração com o módulo MVC e encerramento seguro do monitoramento.
+
+Ao receber uma medição válida da sequência anterior, o MainViewModel cria um registro do tipo MedicaoVolume contendo as informações da medição, como volume calculado, data e hora, usuário autenticado, empresa, nome do espaço, limite configurado e status da medição.
+
+Esse registro é enviado ao KinectRepository, que realiza a gravação no banco de dados SQLite local. Após a confirmação da gravação, o sistema atualiza o histórico local de medições e também atualiza o status da persistência na interface.
+
+Depois de salvar localmente, o sistema verifica o estado da conexão SignalR. Caso o SignalR esteja conectado, o MainViewModel solicita ao SignalRService o envio do volume atual ao Hub SignalR do módulo MVC. Ao término da chamada de envio, a interface é atualizada com a mensagem correspondente.
+
+Caso o SignalR esteja desconectado ou o MVC esteja temporariamente indisponível, a medição permanece preservada no SQLite local. Nessa situação, o sistema mantém a operação local ativa, atualiza o status como desconectado ou reconectando e segue tentando restabelecer a comunicação em segundo plano.
+
+Durante a operação, o operador pode solicitar a consulta ao histórico. Nesse caso, o sistema verifica se o espaço está salvo, utiliza os dados carregados localmente e exibe as medições registradas.
+
+Ao final do monitoramento, caso o operador solicite o encerramento, a aplicação executa o desligamento controlado da operação. O sistema para o temporizador de medição automática, desliga o Kinect, desconecta o SignalR, registra o encerramento e retorna para a tela de login.
+
+Se o monitoramento continuar ativo, o fluxo retorna à sequência de medição volumétrica, mantendo a operação pronta para novas medições manuais ou automáticas.
+
+### Objetivo da Sequência
+
+Garantir que toda medição válida seja preservada localmente, manter o histórico operacional, sincronizar os dados com o MVC quando houver conexão disponível e realizar o encerramento seguro dos recursos utilizados pelo sistema.
+
+---
+
+#### Considerações
+
+O Diagrama de Sequência demonstra a interação entre o operador, as telas da aplicação Kinect, o MainViewModel, os serviços internos, o sensor Kinect, o banco SQLite local e o módulo MVC durante toda a execução da aplicação.
+
+A divisão do fluxo em seis sequências permitiu representar de forma organizada os principais processos do módulo Kinect/Desktop: autenticação, inicialização do hardware, comunicação SignalR, calibração do ambiente, configuração do espaço monitorado, medição volumétrica, persistência local, histórico, integração com o MVC e encerramento seguro.
+
+Essa representação evidencia o comportamento temporal dos componentes envolvidos e facilita a compreensão da arquitetura MVVM adotada no sistema. Também demonstra como os dados percorrem as camadas da aplicação, desde a captura pelo sensor Kinect até o armazenamento local no SQLite e a sincronização com o módulo Web MVC.
 
 ---
 
