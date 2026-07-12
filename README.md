@@ -3829,7 +3829,7 @@ Para facilitar a leitura e reduzir a complexidade visual, o fluxo foi dividido e
 ### Sequência 1 — Acesso e Autenticação do Kinect
 
 <p align="center">
-  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia01_AcessoAutenticacao_Kinect.png" width="900" alt="Sequência 01 - Acesso e Autenticação do Kinect" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia01_AcessoAutenticacao_Kinect.drawio (1).png" width="900" alt="Sequência 01 - Acesso e Autenticação do Kinect" />
 </p>
 
 > **Nota:** A Sequência 1 representa o controle de acesso ao módulo Kinect/Desktop. O fluxo demonstra que o operador só consegue acessar a tela de monitoramento após informar um e-mail válido, receber o token temporário por e-mail e ter esse token validado pelo módulo MVC. A criação da sessão local garante que as próximas operações do sistema fiquem vinculadas ao usuário, empresa, e-mail e token autenticado.
@@ -3853,7 +3853,7 @@ Garantir que apenas usuários devidamente autenticados possam acessar o módulo 
 ### Sequência 2 — Conexão do Kinect e Comunicação SignalR
 
 <p align="center">
-  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia02_ConexaoKinect_SignalR.png" width="900" alt="Sequência 02 - Conexão do Kinect e Comunicação SignalR" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia02_ConexaoKinect_SignalR.drawio (1).png" width="900" alt="Sequência 02 - Conexão do Kinect e Comunicação SignalR" />
 </p>
 
 > **Nota:** A Sequência 2 demonstra a preparação inicial do ambiente operacional. O Kinect precisa estar conectado e disponível para que o sistema avance para a calibração. A conexão SignalR é iniciada para permitir comunicação em tempo real com o MVC, porém sua indisponibilidade não bloqueia a operação local, mantendo o sistema resiliente em caso de falha de rede.
@@ -3877,7 +3877,7 @@ Inicializar o sensor Kinect, verificar a disponibilidade do hardware e estabelec
 ### Sequência 3 — Calibração do Ambiente
 
 <p align="center">
-  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia03_CalibracaoAmbiente.png" width="900" alt="Sequência 03 - Calibração do Ambiente" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia03_CalibracaoAmbienteFinal.drawio.png" width="900" alt="Sequência 03 - Calibração do Ambiente" />
 </p>
 
 > **Nota:** A Sequência 3 representa a calibração do ambiente vazio, etapa essencial para que o sistema tenha uma referência volumétrica confiável. Durante esse processo, o sistema interrompe medições automáticas, invalida configurações anteriores, captura dados de profundidade, processa pontos válidos e calcula o volume máximo calibrado. Somente uma calibração válida libera a próxima etapa de configuração do espaço.
@@ -3903,7 +3903,7 @@ Capturar o ambiente vazio, gerar uma referência espacial confiável e calcular 
 ### Sequência 4 — Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia04_ConfiguracaoEspacoMonitorado.png" width="900" alt="Sequência 04 - Configuração do Espaço Monitorado" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia04_ConfiguracaoEspacoMonitorado.drawio (1).png" width="900" alt="Sequência 04 - Configuração do Espaço Monitorado" />
 </p>
 
 > **Nota:** A Sequência 4 demonstra a configuração do espaço monitorado após a calibração. O sistema valida o nome do espaço, o limite percentual de ocupação e a existência de uma calibração válida. Quando essas condições são atendidas, o espaço é marcado como salvo, o temporizador automático de 60 segundos é iniciado e o ambiente fica liberado para medições manuais e automáticas.
@@ -3927,7 +3927,7 @@ Validar os parâmetros do espaço monitorado, salvar a configuração operaciona
 ### Sequência 5 — Medição Volumétrica Manual e Automática
 
 <p align="center">
-  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia05_MedicaoVolumetrica.png" width="900" alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia05F_MedicaoVolumetrica_Final1.drawio.png" width="900" alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
 </p>
 
 > **Nota:** A Sequência 5 representa a execução da medição volumétrica. A medição pode ser iniciada manualmente pelo operador ou automaticamente pelo temporizador. Antes do cálculo, o sistema valida se o Kinect está conectado, se há calibração válida e se o espaço foi salvo. Apenas volumes válidos seguem para persistência; leituras inválidas encerram a tentativa atual sem salvar ou enviar dados.
@@ -3955,7 +3955,7 @@ Executar a medição volumétrica manual ou automática, validar as condições 
 ### Sequência 6 — Persistência, Histórico e Integração com MVC
 
 <p align="center">
-  <img src="./DiagramasSequencia/Imagens/DiagramaSequencia06_PersistenciaHistoricoIntegracao.png" width="900" alt="Sequência 06 - Persistência, Histórico e Integração com MVC" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia06fi_PersistenciaHistoricoIntegracao_Ajustado.drawio.png" width="900" alt="Sequência 06 - Persistência, Histórico e Integração com MVC" />
 </p>
 
 > **Nota:** A Sequência 6 apresenta a persistência local, atualização do histórico, integração com o MVC e encerramento seguro. Toda medição válida é primeiro salva no SQLite, garantindo preservação dos dados antes de qualquer envio externo. Se o SignalR estiver disponível, a medição é enviada ao MVC; caso contrário, a operação local continua ativa e o sistema mantém tentativas de reconexão em segundo plano.
@@ -3988,12 +3988,11 @@ O Diagrama de Sequência demonstra a interação entre o operador, as telas da a
 
 A divisão do fluxo em seis sequências permitiu representar de forma organizada os principais processos do módulo Kinect/Desktop: autenticação, inicialização do hardware, comunicação SignalR, calibração do ambiente, configuração do espaço monitorado, medição volumétrica, persistência local, histórico, integração com o MVC e encerramento seguro.
 
-Essa representação evidencia o comportamento temporal dos componentes envolvidos e facilita a compreensão da arquitetura MVVM adotada no sistema. Também demonstra como os dados percorrem as camadas da aplicação, desde a captura pelo sensor Kinect até o armazenamento local no SQLite e a sincronização com o módulo Web MVC.
 
 ---
 
 
-## Diagrama de Sequência
+## Diagrama de Sequência MVC
 
 # Etapa 1 – Login e Autenticação (Token OTP)
 
