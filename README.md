@@ -46,6 +46,7 @@
   - [Diagrama de Caso de Uso](#diagrama-de-caso-de-uso)
   - [Diagrama de Fluxo](#diagrama-de-fluxo)
   - [Diagrama de Sequência](#diagrama-de-sequencia)
+  - [Diagrama de Classes](#diagrama-de-Classes)
   - [Diagrama de Domínio](#diagrama-de-dominio)
 - [Modelagem do Banco de Dados](#modelagem-do-banco-de-dados)
   - [Modelagem do SQLite](#modelagem-do-banco-kinect)
