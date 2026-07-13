@@ -4197,6 +4197,40 @@ Fluxo dedicado ao controle das regras globais da aplicação, que regem cálculo
 * O sistema **compara campo a campo** as novas configurações com as atuais.
 * Da mesma forma que a etapa de edição: se não detectar mudanças, o sistema descarta o processamento e avisa o usuário.
 * Havendo modificações legítimas, as configurações globais são updated no banco, refletindo
+
+---
+### Diagrama de Classes
+
+O sistema **Inventory Masters** é composto por classes modulares que garantem a escalabilidade e a separação de responsabilidades.</p>
+
+<p align="center">
+  <img src="./Imagens/Diagrama_Classes.png" width="900" alt="Diagrama de classes" />
+</p>
+
+Abaixo, detalhamos o papel de cada entidade presente no nosso diagrama de classes:
+
+### Núcleo de Segurança e Acesso
+* **Usuario:** Entidade central de autenticação, vinculada a um `Perfil`.
+* **Perfil:** Define o nível de acesso e as funcionalidades disponíveis.
+* **Permissao:** Define granularmente as capacidades (CRUD) do sistema, atribuídas a cada `Perfil`.
+* **TokenAcesso:** Gerencia a segurança da sessão e a validade da comunicação.
+
+### Operação e Hardware
+* **Kinect:** Classe responsável pela interface direta com o sensor físico, incluindo calibração e envio de medições.
+* **ParametrosSistema:** Armazena as configurações globais de operação, como capacidades máxima/mínima e notificações automáticas.
+* **EspacoMapeado:** Representação lógica de um ambiente real, ligando o hardware à inteligência de negócio.
+
+### Processamento e Inteligência
+* **MedicaoVolume:** Responsável pelo cálculo efetivo do volume ocupado, contendo métodos para conversão de dados brutos e validação.
+* **HistoricoOcupacao:** Rastreia a evolução do nível de ocupação do espaço ao longo do tempo, essencial para auditoria e análises de tendência.
+* **Notificacao:** Orquestra o envio de alertas baseados nas métricas geradas, suportando múltiplos canais.
+
+### Auditabilidade
+* **LogSistema:** Centraliza o registro de eventos e erros do sistema para fins de depuração e auditoria de segurança.
+* **Empresa:** Entidade raiz que agrupa usuários, parceiros e configurações do sistema.
+* **Parceiro:** Cliente ou unidade externa que utiliza os serviços de medição.
+
+  
 ---
 ### Diagrama de Domínio
 
@@ -4223,6 +4257,7 @@ Para entender como a lógica flui nessa estrutura, observe a responsabilidade de
 | **Cliente (Local)** | ViewModel + SQLite | Gerenciamento da UI e garantia de que o dado existe localmente antes de tentar enviá-lo. |
 | **Conexão** | SignalR | O "túnel" que mantém o cliente e servidor sincronizados instantaneamente. |
 | **Servidor (Nuvem)** | Firebase + Painel MVC | Consolidação dos dados para visualização global e relatórios gerenciais. |
+
 ---
 ### Diagrama de modelo conceitual do sistema
 
