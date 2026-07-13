@@ -1,6 +1,6 @@
 # INVENTORY MASTERS - SOLUÇÕES INTELIGENTES EM MAPEAMENTO DE ESTOQUE
 ---
-**Unidade SENAI:** Nova Lima  
+**Unidade SENAI:** Nova Lima
 **Instrutor:** Frederico Martins Aguiar
 
 <div align="center">
@@ -13,14 +13,12 @@
 
 </div>
 
-| Nome | Curso| Especialidade no Projeto |
+| Nome | Curso | Especialidade no Projeto |
 | :--- | :--- | :--- |
-| **Danilo Silva Santos** | Programação de Sistemas |Desenvolvimento Kinect, Modelagem de Banco e Documentação|
+| **Danilo Silva Santos** | Programação de Sistemas | Desenvolvimento Kinect, Modelagem de Banco e Documentação|
 | **Marilene da Silva Araujo** | Programação de Sistemas |Desenvolvimento MVC, Lógica de Negócio e Documentação|
-| **Miguel Cassio Braga Duarte** |Programação de Sistemas | Desenvolvimento MVC, Lógica do Negócio, Modelagem de Banco e Documentação|
-| **Diulie Mileide Batista Correia** |Programação de Sistemas | Desenvolvimento Kinect , Lógica de Negócio e Documentação|
-
-</div>
+| **Miguel Cassio Braga Duarte** | Programação de Sistemas | Desenvolvimento MVC, Lógica do Negócio, Modelagem de Banco e Documentação|
+| **Diulie Mileide Batista Correia** | Programação de Sistemas | Desenvolvimento Kinect, Lógica de Negócio e Documentação|
 
 ---
 ## Sumário
@@ -48,8 +46,9 @@
   - [Diagrama de Caso de Uso](#diagrama-de-caso-de-uso)
   - [Diagrama de Fluxo](#diagrama-de-fluxo)
   - [Diagrama de Sequência](#diagrama-de-sequencia)
+  - [Diagrama de Domínio](#diagrama-de-dominio)
 - [Modelagem do Banco de Dados](#modelagem-do-banco-de-dados)
-  - [Modelagem do Sqlite](#modelagem-do-banco-kinect)
+  - [Modelagem do SQLite](#modelagem-do-banco-kinect)
   - [Modelagem do Firebase](#modelagem-do-banco-firebase)
 - [Viabilidade Técnica](#viabilidade-tecnica)
 - [Viabilidade Econômica](#viabilidade-economica)
@@ -60,72 +59,72 @@
 ---
 
 ## QUEM SOMOS
-  
+
   A Inventory Masters é uma plataforma tecnológica voltada para o monitoramento inteligente de espaços de armazenamento e a gestão estratégica de excedentes produtivos.
-  
+
   A solução utiliza tecnologias de visão computacional e mapeamento volumétrico para identificar, medir e acompanhar a ocupação de ambientes destinados ao armazenamento de materiais, permitindo maior controle sobre estoques, excedentes e capacidade disponível.
-  
+
   Por meio da integração entre o sensor Kinect, processamento de dados e dashboards gerenciais, a plataforma transforma informações operacionais em indicadores que auxiliam a tomada de decisão, promovendo maior eficiência logística e redução de desperdícios.
-  
+
   Além de otimizar a utilização dos espaços monitorados, a Inventory Masters contribui para a economia circular ao conectar materiais excedentes a oportunidades de reaproveitamento, transformando recursos subutilizados em ativos com potencial de geração de valor econômico.
-  
+
   Nossa proposta combina inovação tecnológica, sustentabilidade e inteligência operacional para apoiar empresas na construção de processos mais eficientes, competitivos e ambientalmente responsáveis.
-  
-  
+
+
   <p align="center">
     <img src="./Imagens/logo.png" width="600" alt="Logo Inventory Masters" />
   </p>
-  
+
   ---
-  
-## PROBLEMA 
-  
+
+## PROBLEMA
+
   O cenário empresarial atual é caracterizado por elevados níveis de produção e, consequentemente, pela geração contínua de excedentes produtivos. Esses excedentes incluem sobras de matéria-prima, materiais fora dos padrões comerciais, resíduos operacionais e insumos não aproveitados integralmente durante os processos produtivos. Em muitas organizações, esses materiais não são monitorados de forma estratégica, sendo frequentemente tratados apenas como resíduos ou custos inevitáveis.
-  
+
   Além da dificuldade de gerenciar os excedentes, muitas empresas enfrentam desafios relacionados ao controle e monitoramento da ocupação dos espaços de armazenamento. A ausência de mecanismos automatizados para medir a utilização dos ambientes dificulta a identificação da capacidade disponível, o acompanhamento do crescimento dos estoques e a tomada de decisões relacionadas ao reaproveitamento, movimentação ou destinação de materiais.
-  
+
   A falta de rastreabilidade, monitoramento e visibilidade dos espaços físicos gera impactos significativos:
-  
-  * **Sob a ótica econômica** *: aumento dos custos operacionais, desperdício de recursos, utilização inadequada dos espaços disponíveis e baixa eficiência na gestão de estoques.
-  * **Sob a ótica operacional** *: dificuldade de acompanhar a ocupação dos ambientes em tempo real, reduzindo a capacidade de planejamento, controle logístico e gestão dos excedentes.
-  * **Sob a ótica ambiental:** * descarte inadequado de materiais reutilizáveis, aumento da geração de resíduos e maior pressão sobre os recursos naturais.
-  
+
+  * **Sob a ótica econômica:** aumento dos custos operacionais, desperdício de recursos, utilização inadequada dos espaços disponíveis e baixa eficiência na gestão de estoques.
+  * **Sob a ótica operacional:** dificuldade de acompanhar a ocupação dos ambientes em tempo real, reduzindo a capacidade de planejamento, controle logístico e gestão dos excedentes.
+  * **Sob a ótica ambiental:** descarte inadequado de materiais reutilizáveis, aumento da geração de resíduos e maior pressão sobre os recursos naturais.
+
   Embora a economia circular seja amplamente reconhecida como uma estratégia importante para o desenvolvimento sustentável, sua implementação ainda encontra barreiras devido à escassez de ferramentas tecnológicas acessíveis que permitam monitorar, medir e gerenciar excedentes de forma eficiente e baseada em dados.
-  
+
   Diante desse cenário, surge a necessidade de uma solução capaz de automatizar o monitoramento dos espaços de armazenamento, medir a ocupação dos ambientes, identificar excedentes produtivos e disponibilizar informações confiáveis para apoiar a tomada de decisão.
-  
+
   É nesse contexto que se insere a proposta da **Inventory Masters**, uma plataforma tecnológica que utiliza mapeamento volumétrico, visão computacional e monitoramento inteligente para acompanhar a ocupação de espaços físicos, rastrear excedentes produtivos e apoiar estratégias de reaproveitamento de materiais. A solução busca transformar dados operacionais em informações gerenciais, permitindo maior controle dos recursos, melhor utilização da capacidade disponível e redução de desperdícios.
-  
+
   Assim, o presente estudo busca integrar inovação tecnológica, eficiência operacional e sustentabilidade, contribuindo para uma gestão mais inteligente dos recursos, redução de desperdícios e fortalecimento das práticas de economia circular.
-  
+
   Com base nas medições realizadas, a plataforma calcula automaticamente diversos indicadores para apoio à tomada de decisão:
-  
+
   -  Volume ocupado;
   -  Espaço livre disponível;
   -  Percentual de ocupação;
   -  Histórico das medições;
   -  Situação dos limites configurados;
   -  Indicadores gerenciais e operacionais.
-  
-  
+
+
   ---
-  
-## SOLUÇÃO 
-  
+
+## SOLUÇÃO
+
   A **Inventory Masters** é uma plataforma tecnológica desenvolvida para apoiar a gestão inteligente de excedentes produtivos por meio do monitoramento volumétrico de espaços de armazenamento e da rastreabilidade de materiais com potencial de reaproveitamento.
-  
+
   A solução utiliza tecnologias de visão computacional e mapeamento volumétrico para acompanhar a ocupação dos ambientes monitorados, permitindo identificar a capacidade utilizada, o espaço disponível e possíveis situações de excedente operacional. Por meio da integração entre o sensor Kinect, processamento de dados e dashboards gerenciais, o sistema transforma medições físicas em informações estratégicas para apoio à tomada de decisão.
-  
+
   O módulo Kinect é responsável por capturar dados de profundidade do ambiente, realizar a calibração do espaço monitorado e calcular automaticamente o volume ocupado. Essas informações são processadas e disponibilizadas em tempo real para a plataforma, permitindo o acompanhamento contínuo da ocupação dos estoques.
-  
+
   Além do monitoramento dos espaços físicos, a plataforma atua como um elo integrador entre empresas geradoras de excedentes e parceiros aptos a reutilizar materiais, estruturando um ecossistema colaborativo voltado para eficiência operacional, redução de desperdícios e sustentabilidade empresarial.
-  
-  Ao conectar monitoramento inteligente, rastreabilidade e reaproveitamento de materiais, a solução contribui para: 
+
+  Ao conectar monitoramento inteligente, rastreabilidade e reaproveitamento de materiais, a solução contribui para:
   * *Melhor aproveitamento dos espaços de armazenamento*;
   * *Maior controle sobre excedentes produtivos*;
   * *Melhoria da eficiência logística e operacional*;
-  * *Mitigação dos impactos ambientais* relacionados ao descarte inadequado de materiais.Mais do que uma iniciativa sustentável, a Inventory Masters configura-se como uma solução de inovação aplicada à gestão de estoques, monitoramento volumétrico e economia circular, alinhada às tendências de transformação digital, responsabilidade socioambiental e competitividade empresarial.
-    
+  * *Mitigação dos impactos ambientais* relacionados ao descarte inadequado de materiais. Mais do que uma iniciativa sustentável, a Inventory Masters configura-se como uma solução de inovação aplicada à gestão de estoques, monitoramento volumétrico e economia circular, alinhada às tendências de transformação digital, responsabilidade socioambiental e competitividade empresarial.
+
  ---
 
 ## ÁREA TECNOLÓGICA DA SOLUÇÃO
@@ -292,7 +291,7 @@ O **Inventory Masters** é uma solução híbrida projetada para alta disponibil
     * **Gestão:** Dashboard centralizado para análise de indicadores, histórico de ocupação e gestão de parceiros.
     * **Segurança:** Controle de acesso baseado em sessões (cookies) e autenticação de dispositivos via token.
     * **Integração:** Atua como *subscriber* e *hub* de dados, processando os eventos em tempo real enviados pelo Módulo Desktop e persistindo-os na nuvem para auditoria.
-            
+
 ---
 
 ## Estrutura de Camadas - MVC/Web
@@ -450,7 +449,7 @@ A camada `Hubs` contém as classes que estendem `Hub` do SignalR, permitindo a c
 ## Módulo Kinect (MVVM)
 Para o processamento de dados do hardware **Kinect**, utilizamos o padrão **MVVM** (Model-View-ViewModel). Esta abordagem permite que a interface de captura e processamento volumétrico opere com alta performance e responsividade, utilizando o *data binding* para manter a visualização dos dados sempre sincronizada com o sensor, garantindo uma separação limpa entre a lógica de captura e a interface de monitoramento.
 
-### 1. Módulo Kinect: Camada de Model 
+### 1. Módulo Kinect: Camada de Model
 
 <p align="center">
   <img src="./Imagens/Estrutura de Camadas/Modelk.png" alt="Estrutura de Models" />
@@ -572,6 +571,7 @@ A camada `Command` provê a infraestrutura necessária para a comunicação entr
 * **SignalR:** Biblioteca de comunicação em tempo real que estabelece um canal bidirecional permanente. Permite que a aplicação desktop transmita dados processados ao servidor web de forma assíncrona e instantânea.
 * **ASP.NET Core MVC:** *Framework* web que atua como o servidor central. Recebe o tráfego via SignalR, processa as regras de negócio e gerencia o fluxo de informações entre os dispositivos de ponta e o armazenamento na nuvem.
 * **Firebase (Google Cloud):** Plataforma de banco de dados *NoSQL* em nuvem. É o repositório centralizado onde as medições consolidadas são registradas, servindo de fonte de dados para o dashboard administrativo acessado via interface web.
+
   
 -----
 
@@ -2514,16 +2514,16 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 | Característica | Requisito Funcional |
 |---|---|
 | Solicitar token de acesso por e-mail | **RF001:** O sistema deve permitir que o usuário solicite um token informando seu e-mail na tela de login. |
-| Validar e-mail informado no login | **RF002:** O sistema deve validar o formato do e-mail informado antes de solicitar o token. | 
-| Verificar cadastro do usuário pelo e-mail | **RF003:** O sistema deve consultar se o e-mail informado pertence a um usuário cadastrado. | 
+| Validar e-mail informado no login | **RF002:** O sistema deve validar o formato do e-mail informado antes de solicitar o token. |
+| Verificar cadastro do usuário pelo e-mail | **RF003:** O sistema deve consultar se o e-mail informado pertence a um usuário cadastrado. |
 | Verificar status ativo do usuário | **RF004:** O sistema deve permitir solicitação de token apenas para usuários ativos. |
 | Gerar token de acesso | **RF005:** O sistema deve gerar um token numérico para autenticação do usuário. |
-| Enviar token por e-mail | **RF006:** O sistema deve enviar o token gerado para o e-mail cadastrado do usuário. | 
-| Validar token informado pelo usuário | **RF007:** O sistema deve validar o token informado na tela de validação. | 
+| Enviar token por e-mail | **RF006:** O sistema deve enviar o token gerado para o e-mail cadastrado do usuário. |
+| Validar token informado pelo usuário | **RF007:** O sistema deve validar o token informado na tela de validação. |
 | Bloquear token inválido, expirado ou já utilizado | **RF008:** O sistema deve impedir o acesso quando o token não for válido. |
-| Autenticar usuário com token válido | **RF009:** O sistema deve autenticar o usuário quando o token for válido e dentro do prazo. | 
+| Autenticar usuário com token válido | **RF009:** O sistema deve autenticar o usuário quando o token for válido e dentro do prazo. |
 | Criar sessão autenticada | **RF010:** O sistema deve criar uma sessão contendo identificador, nome, e-mail, perfil e empresa do usuário. |
-| Encerrar sessão do usuário | **RF011:** O sistema deve permitir logout e encerrar a sessão autenticada. | 
+| Encerrar sessão do usuário | **RF011:** O sistema deve permitir logout e encerrar a sessão autenticada. |
 | Redirecionar usuário sem permissão | **RF012:** O sistema deve redirecionar usuários sem permissão para a tela de acesso negado. |
 
 #### Perfis e Permissões - MVC/Web
@@ -2531,40 +2531,40 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 | Característica | Requisito Funcional |
 |---|---|
 | Controlar acesso por perfil | **RF013:** O sistema deve controlar o acesso às funcionalidades com base no perfil do usuário. |
-| Aplicar permissões do perfil Administrador | **RF014:** O sistema deve permitir que o perfil Administrador acesse todas as funcionalidades. | 
+| Aplicar permissões do perfil Administrador | **RF014:** O sistema deve permitir que o perfil Administrador acesse todas as funcionalidades. |
 | Aplicar permissões do perfil Gestor | **RF015:** O sistema deve permitir que o perfil Gestor acesse dashboard, medições, notificações e parceiros. |
-| Aplicar permissões do perfil Operador | **RF016:** O sistema deve permitir que o perfil Operador acesse dashboard, medições e Kinect. | 
+| Aplicar permissões do perfil Operador | **RF016:** O sistema deve permitir que o perfil Operador acesse dashboard, medições e Kinect. |
 | Aplicar permissões do perfil Visualizador | **RF017:** O sistema deve permitir que o perfil Visualizador acesse dashboard, medições e notificações. |
 | Cadastrar perfis | **RF018:** O sistema deve permitir o cadastro de perfis com permissões selecionadas. |
 | Editar perfis | **RF019:** O sistema deve permitir a alteração dos dados e permissões de um perfil. |
-| Inativar perfis | **RF020:** O sistema deve permitir a inativação de perfis. | 
+| Inativar perfis | **RF020:** O sistema deve permitir a inativação de perfis. |
 | Listar perfis | **RF021:** O sistema deve listar perfis cadastrados. |
-| Filtrar perfis | **RF022:** O sistema deve permitir busca de perfis por termo e status. | 
+| Filtrar perfis | **RF022:** O sistema deve permitir busca de perfis por termo e status. |
 
 #### Usuários - MVC/Web
 
-| Característica | Requisito Funcional | 
+| Característica | Requisito Funcional |
 |---|---|
 | Cadastrar usuários | **RF023:** O sistema deve permitir o cadastro de usuários. |
 | Validar dados obrigatórios do usuário | **RF024:** O sistema deve validar nome, e-mail, perfil e senha no cadastro de usuário. |
 | Editar usuários | **RF025:** O sistema deve permitir a edição de dados de usuários cadastrados. |
-| Preservar senha na edição padrão do usuário | **RF026:** O sistema deve manter a senha existente quando a edição não tratar troca de senha. | 
+| Preservar senha na edição padrão do usuário | **RF026:** O sistema deve manter a senha existente quando a edição não tratar troca de senha. |
 | Ativar e inativar usuários | **RF027:** O sistema deve permitir alterar o status de um usuário. |
-| Excluir usuários | **RF028:** O sistema deve permitir excluir usuários cadastrados. | 
-| Detalhar usuários | **RF029:** O sistema deve permitir visualizar detalhes de um usuário. | 
-| Listar usuários por empresa | **RF030:** O sistema deve listar usuários conforme a empresa do usuário autenticado. | 
-| Filtrar usuários | **RF031:** O sistema deve permitir filtrar usuários por termo, perfil, empresa e status. | 
+| Excluir usuários | **RF028:** O sistema deve permitir excluir usuários cadastrados. |
+| Detalhar usuários | **RF029:** O sistema deve permitir visualizar detalhes de um usuário. |
+| Listar usuários por empresa | **RF030:** O sistema deve listar usuários conforme a empresa do usuário autenticado. |
+| Filtrar usuários | **RF031:** O sistema deve permitir filtrar usuários por termo, perfil, empresa e status. |
 
 #### Parceiros - MVC/Web
 
 | Característica | Requisito Funcional |
 |---|---|
 | Cadastrar parceiros | **RF032:** O sistema deve permitir o cadastro de parceiros. |
-| Validar dados obrigatórios do parceiro | **RF033:** O sistema deve validar nome, e-mail, telefone, empresa e endereço no cadastro de parceiro. | 
+| Validar dados obrigatórios do parceiro | **RF033:** O sistema deve validar nome, e-mail, telefone, empresa e endereço no cadastro de parceiro. |
 | Editar parceiros | **RF034:** O sistema deve permitir a edição dos dados de parceiros. |
 | Ativar e inativar parceiros | **RF035:** O sistema deve permitir alterar o status de um parceiro. |
-| Excluir parceiros | **RF036:** O sistema deve permitir excluir parceiros cadastrados. | 
-| Detalhar parceiros | **RF037:** O sistema deve permitir visualizar detalhes de um parceiro. | 
+| Excluir parceiros | **RF036:** O sistema deve permitir excluir parceiros cadastrados. |
+| Detalhar parceiros | **RF037:** O sistema deve permitir visualizar detalhes de um parceiro. |
 | Listar parceiros por empresa | **RF038:** O sistema deve listar parceiros conforme a empresa do usuário autenticado. |
 | Filtrar parceiros | **RF039:** O sistema deve permitir filtrar parceiros por termo, período de cadastro e status. |
 | Pesquisar parceiros por texto | **RF040:** O sistema deve permitir pesquisa por ID, nome, e-mail, empresa ou telefone. |
@@ -2574,11 +2574,11 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 | Característica | Requisito Funcional |
 |---|---|
 | Exibir parâmetros do sistema | **RF041:** O sistema deve exibir os parâmetros operacionais cadastrados. |
-| Editar parâmetros do sistema | **RF042:** O sistema deve permitir que usuários autorizados alterem parâmetros operacionais. | 
+| Editar parâmetros do sistema | **RF042:** O sistema deve permitir que usuários autorizados alterem parâmetros operacionais. |
 | Validar capacidade máxima | **RF043:** O sistema deve validar se a capacidade máxima é maior que zero. |
-| Validar capacidade mínima | **RF044:** O sistema deve validar se a capacidade mínima é menor que a capacidade máxima. | 
-| Validar percentual de alerta | **RF045:** O sistema deve validar se o percentual de alerta está entre 1 e 100. | 
-| Configurar notificação automática | **RF046:** O sistema deve permitir ativar ou desativar notificações automáticas. | 
+| Validar capacidade mínima | **RF044:** O sistema deve validar se a capacidade mínima é menor que a capacidade máxima. |
+| Validar percentual de alerta | **RF045:** O sistema deve validar se o percentual de alerta está entre 1 e 100. |
+| Configurar notificação automática | **RF046:** O sistema deve permitir ativar ou desativar notificações automáticas. |
 | Configurar exibição de alerta no dashboard | **RF047:** O sistema deve permitir ativar ou desativar alertas visuais no dashboard. |
 | Configurar parceiro padrão | **RF048:** O sistema deve permitir definir parceiro padrão para alertas. |
 | Configurar dias sem coleta para alerta | **RF049:** O sistema deve permitir definir o limite de dias sem coleta. |
@@ -2588,164 +2588,164 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 | Configurar taxa de amostragem | **RF053:** O sistema deve permitir configurar a taxa de amostragem de volume. |
 | Configurar duração máxima de medição | **RF054:** O sistema deve permitir configurar a duração máxima de medição. |
 | Configurar tipo de alerta padrão | **RF055:** O sistema deve permitir definir o tipo padrão de alerta. |
-| Configurar template de mensagem | **RF056:** O sistema deve permitir configurar o texto padrão das mensagens de alerta. | 
-| Configurar canais de comunicação | **RF057:** O sistema deve permitir ativar ou desativar canais como e-mail, WhatsApp e dashboard push. | 
-| Configurar escalonamento de alerta | **RF058:** O sistema deve permitir configurar tempo e canal de escalonamento. | 
+| Configurar template de mensagem | **RF056:** O sistema deve permitir configurar o texto padrão das mensagens de alerta. |
+| Configurar canais de comunicação | **RF057:** O sistema deve permitir ativar ou desativar canais como e-mail, WhatsApp e dashboard push. |
+| Configurar escalonamento de alerta | **RF058:** O sistema deve permitir configurar tempo e canal de escalonamento. |
 | Restaurar parâmetros padrão | **RF059:** O sistema deve permitir restaurar os padrões globais de configuração. |
 
 #### Dashboard - MVC/Web
 
-| Característica | Requisito Funcional | 
+| Característica | Requisito Funcional |
 |---|---|
-| Exibir dashboard operacional | **RF060:** O sistema deve exibir um dashboard com dados consolidados. | 
-| Exibir usuários no dashboard | **RF061:** O sistema deve apresentar usuários vinculados à empresa. | 
+| Exibir dashboard operacional | **RF060:** O sistema deve exibir um dashboard com dados consolidados. |
+| Exibir usuários no dashboard | **RF061:** O sistema deve apresentar usuários vinculados à empresa. |
 | Exibir parceiros no dashboard | **RF062:** O sistema deve apresentar parceiros vinculados à empresa. |
-| Exibir medições no dashboard | **RF063:** O sistema deve apresentar medições registradas. | 
-| Exibir alertas no dashboard | **RF064:** O sistema deve apresentar alertas e notificações. | 
+| Exibir medições no dashboard | **RF063:** O sistema deve apresentar medições registradas. |
+| Exibir alertas no dashboard | **RF064:** O sistema deve apresentar alertas e notificações. |
 | Calcular percentual de ocupação | **RF065:** O sistema deve calcular a ocupação com base na última medição e capacidade máxima. |
-| Limitar percentual exibido | **RF066:** O sistema deve limitar a exibição do percentual de ocupação a 100%. | 
+| Limitar percentual exibido | **RF066:** O sistema deve limitar a exibição do percentual de ocupação a 100%. |
 
 #### Medições - MVC/Web
 
 | Característica | Requisito Funcional |
 |---|---|
-| Receber medição enviada pelo Kinect | **RF067:** O sistema deve receber volume enviado pelo Kinect via SignalR/Hub. | 
+| Receber medição enviada pelo Kinect | **RF067:** O sistema deve receber volume enviado pelo Kinect via SignalR/Hub. |
 | Converter unidade de volume | **RF068:** O sistema deve converter volume recebido em cm3 para m3. |
 | Salvar medição no Firebase | **RF069:** O sistema deve persistir medições recebidas na coleção de medições. |
 | Registrar origem da medição | **RF070:** O sistema deve registrar a origem da medição como Kinect. |
-| Registrar status da medição | **RF071:** O sistema deve registrar status inicial da medição recebida. | 
-| Listar medições | **RF072:** O sistema deve listar medições registradas. | 
-| Paginar medições | **RF073:** O sistema deve paginar medições em grupos de registros. | 
-| Filtrar medições | **RF074:** O sistema deve permitir filtros por origem, status e período. | 
-| Ordenar medições | **RF075:** O sistema deve ordenar medições da mais recente para a mais antiga. | 
+| Registrar status da medição | **RF071:** O sistema deve registrar status inicial da medição recebida. |
+| Listar medições | **RF072:** O sistema deve listar medições registradas. |
+| Paginar medições | **RF073:** O sistema deve paginar medições em grupos de registros. |
+| Filtrar medições | **RF074:** O sistema deve permitir filtros por origem, status e período. |
+| Ordenar medições | **RF075:** O sistema deve ordenar medições da mais recente para a mais antiga. |
 | Exibir resumo estatístico de medições | **RF076:** O sistema deve calcular total, média, maior e menor volume. |
-| Exibir última medição | **RF077:** O sistema deve apresentar a data/hora da última medição registrada. | 
+| Exibir última medição | **RF077:** O sistema deve apresentar a data/hora da última medição registrada. |
 
 #### Notificações e Coleta - MVC/Web
 
 | Característica | Requisito Funcional |
 |---|---|
 | Verificar alerta após medição | **RF078:** O sistema deve verificar se uma nova medição ultrapassou o percentual de alerta. |
-| Gerar notificação automática por capacidade | **RF079:** O sistema deve gerar notificação quando a ocupação atingir ou ultrapassar o limite configurado. | 
+| Gerar notificação automática por capacidade | **RF079:** O sistema deve gerar notificação quando a ocupação atingir ou ultrapassar o limite configurado. |
 | Evitar notificação pendente duplicada | **RF080:** O sistema deve impedir nova notificação quando já existir pendência. |
 | Salvar notificação no Firebase | **RF081:** O sistema deve salvar notificações geradas. |
-| Listar notificações | **RF082:** O sistema deve listar notificações cadastradas. | 
+| Listar notificações | **RF082:** O sistema deve listar notificações cadastradas. |
 | Paginar notificações | **RF083:** O sistema deve paginar notificações. |
 | Filtrar notificações | **RF084:** O sistema deve permitir filtros por período, parceiro, status e tipo. |
-| Calcular totais de notificações | **RF085:** O sistema deve calcular totais de sucesso, erro e pendência. | 
-| Aceitar solicitação de coleta | **RF086:** O sistema deve permitir aceitar uma solicitação de coleta. | 
+| Calcular totais de notificações | **RF085:** O sistema deve calcular totais de sucesso, erro e pendência. |
+| Aceitar solicitação de coleta | **RF086:** O sistema deve permitir aceitar uma solicitação de coleta. |
 | Atualizar status da notificação | **RF087:** O sistema deve alterar o status da notificação para Aceito após aceite de coleta. |
-| Notificar clientes em tempo real | **RF088:** O sistema deve enviar aviso em tempo real quando uma coleta for aceita. | 
+| Notificar clientes em tempo real | **RF088:** O sistema deve enviar aviso em tempo real quando uma coleta for aceita. |
 
 #### SignalR/Hub - MVC/Web e Integração
 
 | Característica | Requisito Funcional |
 |---|---|
 | Disponibilizar Hub de medições | **RF089:** O sistema deve disponibilizar um Hub para receber medições do Kinect. |
-| Distribuir nova medição aos clientes conectados | **RF090:** O sistema deve enviar evento de nova medição aos clientes conectados. | 
+| Distribuir nova medição aos clientes conectados | **RF090:** O sistema deve enviar evento de nova medição aos clientes conectados. |
 | Disponibilizar Hub de notificações | **RF091:** O sistema deve disponibilizar um Hub para envio de notificações em tempo real. |
-| Registrar conexão ao Hub | **RF092:** O sistema deve registrar conexões realizadas aos Hubs. | 
-| Registrar desconexão do Hub | **RF093:** O sistema deve registrar desconexões normais ou com erro. | 
+| Registrar conexão ao Hub | **RF092:** O sistema deve registrar conexões realizadas aos Hubs. |
+| Registrar desconexão do Hub | **RF093:** O sistema deve registrar desconexões normais ou com erro. |
 
 #### Firebase e Persistência - MVC/Web
 
-| Característica | Requisito Funcional | 
+| Característica | Requisito Funcional |
 |---|---|
-| Persistir dados no Firebase | **RF094:** O sistema deve persistir dados do MVC no Firebase. | 
-| Separar dados por coleções | **RF095:** O sistema deve organizar usuários, perfis, parceiros, parâmetros, medições, notificações, tokens e logs em coleções. | 
+| Persistir dados no Firebase | **RF094:** O sistema deve persistir dados do MVC no Firebase. |
+| Separar dados por coleções | **RF095:** O sistema deve organizar usuários, perfis, parceiros, parâmetros, medições, notificações, tokens e logs em coleções. |
 | Consultar dados por empresa | **RF096:** O sistema deve filtrar dados conforme a empresa do usuário autenticado. |
-| Usar configuração global como fallback | **RF097:** O sistema deve usar configuração global quando a empresa não possuir configuração própria. | 
+| Usar configuração global como fallback | **RF097:** O sistema deve usar configuração global quando a empresa não possuir configuração própria. |
 | Considerar registros globais legados | **RF098:** O sistema deve permitir registros sem empresa no contexto global. |
 
 #### Logs - MVC/Web
 
 | Característica | Requisito Funcional |
 |---|---|
-| Registrar logs de autenticação | **RF099:** O sistema deve registrar eventos de solicitação de token, validação de token e login. | 
-| Registrar logs de erro | **RF100:** O sistema deve registrar falhas críticas e erros operacionais. | 
+| Registrar logs de autenticação | **RF099:** O sistema deve registrar eventos de solicitação de token, validação de token e login. |
+| Registrar logs de erro | **RF100:** O sistema deve registrar falhas críticas e erros operacionais. |
 | Registrar logs de operações relevantes | **RF101:** O sistema deve registrar eventos importantes para rastreabilidade. |
 
 #### Autenticação - Kinect/Desktop
 
-| Característica | Requisito Funcional | 
+| Característica | Requisito Funcional |
 |---|---|
-| Solicitar token pelo Kinect | **RF102:** O sistema Kinect deve permitir solicitar token informando e-mail cadastrado. | 
+| Solicitar token pelo Kinect | **RF102:** O sistema Kinect deve permitir solicitar token informando e-mail cadastrado. |
 | Validar token pelo MVC | **RF103:** O sistema Kinect deve validar o token junto ao MVC. |
-| Bloquear acesso com token inválido | **RF104:** O sistema Kinect deve bloquear acesso ao monitor quando o token for inválido. | 
+| Bloquear acesso com token inválido | **RF104:** O sistema Kinect deve bloquear acesso ao monitor quando o token for inválido. |
 | Criar sessão local do Kinect | **RF105:** O sistema Kinect deve criar uma sessão com usuário, empresa, e-mail e token. |
-| Abrir monitor Kinect após autenticação | **RF106:** O sistema Kinect deve abrir a tela de monitoramento após validação do token. | 
+| Abrir monitor Kinect após autenticação | **RF106:** O sistema Kinect deve abrir a tela de monitoramento após validação do token. |
 
 #### Calibração - Kinect/Desktop
 
-| Característica | Requisito Funcional | 
+| Característica | Requisito Funcional |
 |---|---|
-| Verificar conexão do Kinect | **RF107:** O sistema deve verificar se o sensor Kinect está conectado. | 
-| Iniciar calibração do ambiente | **RF108:** O sistema deve permitir iniciar calibração do espaço monitorado. | 
-| Capturar referência do ambiente vazio | **RF109:** O sistema deve capturar mapa de profundidade do ambiente vazio. | 
-| Mover motor do Kinect durante calibração | **RF110:** O sistema deve mover o sensor em ângulos definidos durante a calibração. | 
+| Verificar conexão do Kinect | **RF107:** O sistema deve verificar se o sensor Kinect está conectado. |
+| Iniciar calibração do ambiente | **RF108:** O sistema deve permitir iniciar calibração do espaço monitorado. |
+| Capturar referência do ambiente vazio | **RF109:** O sistema deve capturar mapa de profundidade do ambiente vazio. |
+| Mover motor do Kinect durante calibração | **RF110:** O sistema deve mover o sensor em ângulos definidos durante a calibração. |
 | Capturar múltiplos frames de profundidade | **RF111:** O sistema deve capturar múltiplos frames para formar referência mais estável. |
 | Detectar referência angular do ambiente | **RF112:** O sistema deve identificar a referência angular adequada durante a calibração. |
 | Calcular volume máximo de referência | **RF113:** O sistema deve calcular o volume máximo do espaço monitorado. |
-| Concluir calibração válida | **RF114:** O sistema deve marcar o ambiente como calibrado quando a referência for válida. | 
-| Cancelar calibração inválida | **RF115:** O sistema deve impedir calibração quando não houver dados válidos suficientes. | 
+| Concluir calibração válida | **RF114:** O sistema deve marcar o ambiente como calibrado quando a referência for válida. |
+| Cancelar calibração inválida | **RF115:** O sistema deve impedir calibração quando não houver dados válidos suficientes. |
 | Restaurar ângulo original do Kinect | **RF116:** O sistema deve tentar restaurar o ângulo original após calibração, erro ou cancelamento. |
 
 #### Espaço Monitorado - Kinect/Desktop
 
-| Característica | Requisito Funcional | 
+| Característica | Requisito Funcional |
 |---|---|
-| Salvar espaço monitorado | **RF117:** O sistema deve permitir salvar nome do espaço e limite de ocupação. | 
-| Validar nome do espaço | **RF118:** O sistema deve exigir nome para salvar o espaço monitorado. | 
-| Validar limite de ocupação do espaço | **RF119:** O sistema deve exigir limite numérico entre 1% e 100%. | 
-| Liberar medição após salvar espaço | **RF120:** O sistema deve liberar histórico e medição automática após salvar espaço válido. | 
+| Salvar espaço monitorado | **RF117:** O sistema deve permitir salvar nome do espaço e limite de ocupação. |
+| Validar nome do espaço | **RF118:** O sistema deve exigir nome para salvar o espaço monitorado. |
+| Validar limite de ocupação do espaço | **RF119:** O sistema deve exigir limite numérico entre 1% e 100%. |
+| Liberar medição após salvar espaço | **RF120:** O sistema deve liberar histórico e medição automática após salvar espaço válido. |
 
 #### Medição Volumétrica - Kinect/Desktop
 
-| Característica | Requisito Funcional | 
+| Característica | Requisito Funcional |
 |---|---|
-| Realizar medição manual | **RF121:** O sistema deve permitir medição manual do volume. | 
-| Realizar medição automática | **RF122:** O sistema deve realizar medições automáticas em intervalo definido. | 
-| Calcular volume atual | **RF123:** O sistema deve calcular o volume ocupado com base no mapa calibrado e leitura atual. | 
-| Aplicar filtros de profundidade | **RF124:** O sistema deve considerar apenas pontos válidos de profundidade. | 
+| Realizar medição manual | **RF121:** O sistema deve permitir medição manual do volume. |
+| Realizar medição automática | **RF122:** O sistema deve realizar medições automáticas em intervalo definido. |
+| Calcular volume atual | **RF123:** O sistema deve calcular o volume ocupado com base no mapa calibrado e leitura atual. |
+| Aplicar filtros de profundidade | **RF124:** O sistema deve considerar apenas pontos válidos de profundidade. |
 | Aplicar filtros de altura do objeto | **RF125:** O sistema deve considerar apenas alturas dentro dos limites definidos. |
-| Aplicar margem de leitura | **RF126:** O sistema deve ignorar bordas do frame de profundidade. | 
-| Estabilizar volume calculado | **RF127:** O sistema deve aplicar média móvel e suavização ao volume. | 
-| Exibir volume em metros cúbicos | **RF128:** O sistema deve exibir volume em m3. | 
-| Calcular percentual de ocupação local | **RF129:** O sistema deve calcular percentual de ocupação do espaço. | 
-| Calcular espaço livre local | **RF130:** O sistema deve calcular espaço livre disponível. | 
+| Aplicar margem de leitura | **RF126:** O sistema deve ignorar bordas do frame de profundidade. |
+| Estabilizar volume calculado | **RF127:** O sistema deve aplicar média móvel e suavização ao volume. |
+| Exibir volume em metros cúbicos | **RF128:** O sistema deve exibir volume em m3. |
+| Calcular percentual de ocupação local | **RF129:** O sistema deve calcular percentual de ocupação do espaço. |
+| Calcular espaço livre local | **RF130:** O sistema deve calcular espaço livre disponível. |
 | Exibir status local de ocupação | **RF131:** O sistema deve exibir status Normal ou Limite. |
 | Bloquear medição sem Kinect conectado | **RF132:** O sistema deve impedir medição se o Kinect estiver desconectado. |
-| Bloquear medição sem calibração | **RF133:** O sistema deve impedir medição sem calibração válida. | 
+| Bloquear medição sem calibração | **RF133:** O sistema deve impedir medição sem calibração válida. |
 | Bloquear medição sem espaço salvo | **RF134:** O sistema deve impedir medição sem espaço monitorado salvo. |
 | Descartar medição sem volume detectado | **RF135:** O sistema não deve salvar nem enviar medições com volume zero ou inválido. |
 
 #### SQLite e Histórico - Kinect/Desktop
 
-| Característica | Requisito Funcional | 
+| Característica | Requisito Funcional |
 |---|---|
-| Salvar medição no SQLite | **RF136:** O sistema deve salvar medições locais no banco SQLite. | 
+| Salvar medição no SQLite | **RF136:** O sistema deve salvar medições locais no banco SQLite. |
 | Vincular medição ao usuário | **RF137:** O sistema deve salvar o usuário da sessão na medição local. |
 | Vincular medição à empresa | **RF138:** O sistema deve salvar a empresa da sessão na medição local. |
-| Vincular medição ao espaço | **RF139:** O sistema deve salvar o nome do espaço monitorado na medição. | 
+| Vincular medição ao espaço | **RF139:** O sistema deve salvar o nome do espaço monitorado na medição. |
 | Salvar estado do Kinect na medição | **RF140:** O sistema deve registrar se o Kinect estava ligado. |
-| Salvar estado de calibração na medição | **RF141:** O sistema deve registrar se a medição ocorreu com calibração. | 
+| Salvar estado de calibração na medição | **RF141:** O sistema deve registrar se a medição ocorreu com calibração. |
 | Salvar limite de ocupação na medição | **RF142:** O sistema deve salvar o limite configurado junto à medição. |
-| Carregar histórico local de medições | **RF143:** O sistema deve carregar medições salvas no SQLite. | 
+| Carregar histórico local de medições | **RF143:** O sistema deve carregar medições salvas no SQLite. |
 | Limitar histórico local exibido | **RF144:** O sistema deve limitar o histórico local a registros recentes. |
 | Salvar histórico de ocupação | **RF145:** O sistema deve salvar histórico consolidado de ocupação. |
-| Consultar histórico por espaço | **RF146:** O sistema deve permitir consultar histórico de ocupação por espaço. | 
+| Consultar histórico por espaço | **RF146:** O sistema deve permitir consultar histórico de ocupação por espaço. |
 | Consultar últimos históricos | **RF147:** O sistema deve permitir consultar os últimos históricos registrados. |
 
 #### Comunicação Kinect com MVC - Integração
 
-| Característica | Requisito Funcional | 
+| Característica | Requisito Funcional |
 |---|---|
-| Conectar Kinect ao SignalR do MVC | **RF148:** O sistema Kinect deve conectar ao Hub SignalR configurado. | 
-| Enviar volume ao MVC | **RF149:** O sistema Kinect deve enviar volume calculado ao MVC em tempo real. | 
+| Conectar Kinect ao SignalR do MVC | **RF148:** O sistema Kinect deve conectar ao Hub SignalR configurado. |
+| Enviar volume ao MVC | **RF149:** O sistema Kinect deve enviar volume calculado ao MVC em tempo real. |
 | Enviar status operacional ao MVC | **RF150:** O sistema Kinect deve enviar status operacional quando necessário. |
-| Atualizar status visual da comunicação | **RF151:** O sistema Kinect deve informar ao usuário o estado da conexão. | 
+| Atualizar status visual da comunicação | **RF151:** O sistema Kinect deve informar ao usuário o estado da conexão. |
 | Tentar reconexão automática | **RF152:** O sistema Kinect deve tentar reconectar ao MVC quando a comunicação cair. |
-| Desconectar SignalR de forma controlada | **RF153:** O sistema Kinect deve encerrar a conexão de forma controlada. | 
+| Desconectar SignalR de forma controlada | **RF153:** O sistema Kinect deve encerrar a conexão de forma controlada. |
 
 #### Logs - Kinect/Desktop
 
@@ -2812,7 +2812,7 @@ Os **requisitos não funcionais (RNF)** descrevem como o sistema deve se comport
 | Auditoria e Diagnóstico | **RNF050 - Registro de erros de integração:** O sistema deve registrar falhas de Firebase, SignalR e comunicação com MVC. |
 | Auditoria e Diagnóstico | **RNF051 - Registro de eventos do Kinect:** O sistema deve registrar calibração, medição, falhas e comunicação do Kinect. |
 | Auditoria e Diagnóstico | **RNF052 - Registro de operações críticas:** O sistema deve registrar eventos relevantes para suporte e auditoria. |
-  
+
  ---
 ## MODELAGEM DO SISTEMA
 
@@ -3031,7 +3031,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 ---
 
-## Diagrama de Fluxo — MVVM Kinect
+## Diagrama de Fluxo – MVVM Kinect
 
 Esta seção apresenta o fluxo operacional do módulo **MVVM Kinect**, responsável pelo monitoramento volumétrico de espaços utilizando o sensor Kinect. Para facilitar a compreensão do processo e evitar a concentração excessiva de informações em um único diagrama, o fluxo foi organizado em seis etapas principais e sequenciais.
 
@@ -3041,67 +3041,155 @@ Os diagramas representam o fluxo principal de funcionamento do sistema e seus pr
 
 ---
 
-### Acesso e Autenticação do Kinect
+### Etapa 1 — Acesso e Autenticação do Kinect
 
 <p align="center">
-  <img src="./Imagens/DigramaFluxoMVVM_Etapa01.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 1 - Acesso e Autenticação do Kinect" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa1-AcessoAutenticação.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 1 - Acesso e Autenticação do Kinect" />
 </p>
 
-> **Nota:** A Etapa 1 controla o acesso ao módulo Kinect/Desktop e garante que somente operadores autorizados possam acessar o monitoramento. O operador solicita o token de autenticação pelo Kinect, enquanto o sistema verifica se o e-mail informado é válido e se o usuário está ativo. Quando essas condições são atendidas, o MVC envia o token por e-mail. O operador informa o código recebido e o MVC realiza sua validação. Em caso de e-mail inválido, usuário inativo ou token inválido, o sistema informa o problema e direciona o fluxo para uma nova tentativa. Após a validação bem-sucedida, a aplicação cria a sessão local do operador e libera o acesso ao monitoramento do Kinect.
+> **Nota:** A Etapa 1 representa o controle de acesso ao módulo Kinect/Desktop. O operador solicita um token de autenticação informando um e-mail cadastrado. O sistema valida se o e-mail é válido e se o usuário está ativo. Quando a validação é aprovada, o MVC envia o token por e-mail ao operador. Em seguida, o operador informa o token recebido na aplicação Kinect, e o sistema valida sua autenticidade. Caso o e-mail seja inválido, o usuário esteja inativo ou o token seja inválido, o sistema exibe uma mensagem de alerta e permite uma nova tentativa. Quando o token é validado com sucesso, a sessão local é criada e o acesso ao monitoramento do Kinect é liberado.
+
+A primeira etapa descreve o processo de autenticação do operador antes do acesso ao monitoramento volumétrico. O fluxo inicia com a abertura da tela de acesso ao Kinect, onde o operador solicita um token digitando seu e-mail.
+
+Após o envio do e-mail, o sistema verifica se o endereço informado é válido e se o usuário vinculado está ativo no módulo MVC. Caso essas condições não sejam atendidas, a aplicação apresenta um alerta informando o erro e direciona o operador para uma nova tentativa.
+
+Quando o e-mail é validado com sucesso, o MVC envia o token de autenticação para o e-mail do operador. O operador então informa esse token na aplicação Kinect. O sistema realiza nova validação junto ao MVC para verificar se o token informado é válido.
+
+Se o token for inválido, expirado ou já utilizado, o acesso é bloqueado e uma mensagem de erro é exibida. Caso o token seja validado corretamente, a aplicação cria uma sessão local contendo os dados do operador autenticado e libera o acesso à tela de monitoramento do Kinect.
+
+#### Objetivo da Etapa
+
+Garantir que somente operadores autorizados possam acessar o módulo Kinect/Desktop, protegendo o início do monitoramento volumétrico por meio de validação de e-mail, token e criação de sessão local.
 
 ---
 
-### Conexão do Kinect e Comunicação SignalR
+### Etapa 2 — Conexão do Kinect e Comunicação SignalR
 
 <p align="center">
-  <img src="./Imagens/DigramaFluxoMVVM_Etapa02.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 2 - Conexão do Kinect e Comunicação SignalR" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa2-Conexão do Kinect e comunicação com SignalRMVVM.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 2 - Conexão do Kinect e Comunicação SignalR" />
 </p>
 
-> **Nota:** A Etapa 2 inicializa o sensor Kinect e verifica sua disponibilidade antes da execução das funcionalidades de monitoramento. Caso o sensor esteja desconectado ou indisponível, o sistema informa a falha e direciona o fluxo para uma nova tentativa de inicialização. Com o Kinect disponível, a aplicação inicia a comunicação SignalR com o MVC e verifica o estado da conexão. Quando a comunicação está ativa, o status é atualizado e o canal de comunicação em tempo real é disponibilizado. Caso o MVC esteja indisponível, a operação local é mantida, o estado da comunicação é atualizado e as tentativas de conexão ou reconexão permanecem em segundo plano. A calibração do ambiente pode ser liberada sem interromper a operação local.
+> **Nota:** A Etapa 2 representa a preparação operacional do monitoramento. O operador acessa o monitoramento e aciona o botão para ligar o Kinect. O sistema inicializa o sensor e verifica se ele está conectado e disponível. Caso o sensor esteja desconectado ou indisponível, uma mensagem de alerta é exibida e o operador pode realizar nova tentativa. Com o Kinect disponível, a aplicação inicia a comunicação SignalR com o MVC. Se a conexão SignalR estiver ativa, o canal de comunicação em tempo real é disponibilizado. Caso o SignalR ou o MVC estejam indisponíveis, a operação local é mantida e o sistema permanece tentando reconectar em segundo plano.
+
+A segunda etapa descreve a inicialização do sensor Kinect e a tentativa de comunicação em tempo real com o módulo MVC. Após acessar a tela de monitoramento, o operador aciona o comando para ligar o Kinect.
+
+O sistema inicia o sensor e verifica sua disponibilidade física. Caso o Kinect esteja desconectado ou indisponível, a aplicação exibe um alerta informando a falha de conexão física e permite que o operador realize uma nova tentativa.
+
+Quando o Kinect está conectado e disponível, a aplicação inicia a comunicação SignalR com o MVC. Essa comunicação será utilizada para integração em tempo real e envio das informações processadas pelo módulo Kinect.
+
+O sistema verifica se a conexão SignalR está ativa. Caso a comunicação seja estabelecida com sucesso, o status é atualizado para indicar que o SignalR está conectado e que o canal em tempo real está disponível.
+
+Se houver falha na comunicação com o MVC, a aplicação mantém a operação local ativa, atualiza o status como desconectado ou reconectando e mantém tentativas de conexão em segundo plano. Nessa condição, a indisponibilidade do SignalR não bloqueia a continuidade da operação local.
+
+#### Objetivo da Etapa
+
+Inicializar o sensor Kinect, validar sua disponibilidade física e estabelecer a comunicação SignalR com o MVC, mantendo a operação local resiliente mesmo em caso de falha de conexão.
 
 ---
 
-### Calibração do Ambiente
+### Etapa 3 — Calibração do Ambiente
 
 <p align="center">
-  <img src="./Imagens/DigramaFluxoMVVM_Etapa03.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 3 - Calibração do Ambiente" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa3-Calibração do Ambiente.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 3 - Calibração do Ambiente" />
 </p>
 
-> **Nota:** A Etapa 3 estabelece a referência necessária para o cálculo das medições volumétricas. Inicialmente, o sistema valida os pré-requisitos da calibração, incluindo a disponibilidade do Kinect, a leitura de profundidade e as condições adequadas do ambiente vazio. Em seguida, são capturados múltiplos frames de profundidade, que passam por processamento, filtragem de ruídos e validação da quantidade de pontos disponíveis. Caso os dados sejam insuficientes, o sistema solicita a correção das condições de captura e realiza uma nova aquisição. Com dados válidos, o volume máximo do ambiente é calculado. Se o resultado for igual a zero, o ambiente permanece não calibrado e o procedimento deve ser reiniciado. Quando o volume máximo é válido, o mapa de referência e os dados da calibração são registrados, a calibração é concluída e a configuração do espaço monitorado é liberada.
+> **Nota:** A Etapa 3 representa a calibração do ambiente vazio. O operador aciona o comando “Calibrar Espaço” e o sistema exibe as orientações necessárias para a calibração. Em seguida, são validados os pré-requisitos, como Kinect conectado, leitura de profundidade disponível e ambiente vazio. Com as condições atendidas, o sistema captura múltiplos frames em diferentes ângulos, processa as leituras, valida os pontos capturados, detecta a referência angular e registra o mapa do ambiente vazio. Caso os pontos sejam insuficientes, o mapa não seja capturado ou o volume máximo calculado seja igual a zero, o sistema exibe alertas e permite nova tentativa. Quando a calibração é concluída com sucesso, a posição original do Kinect é restaurada, a interface é atualizada e o volume máximo calibrado fica disponível para as próximas etapas.
+
+A terceira etapa descreve o processo de calibração do ambiente físico monitorado. O fluxo inicia quando o operador aciona o comando “Calibrar Espaço”. A aplicação exibe orientações para que o ambiente esteja vazio e em condições adequadas para captura.
+
+Antes de iniciar a calibração, o sistema valida os pré-requisitos necessários. São verificados o estado de conexão do Kinect, a disponibilidade da leitura de profundidade e a condição do ambiente vazio. Caso algum pré-requisito não seja atendido, a aplicação exibe um alerta e direciona o operador para correção antes de prosseguir.
+
+Com os pré-requisitos válidos, o sistema realiza a captura de múltiplos frames em diferentes ângulos. As leituras são processadas e os pontos válidos são filtrados. Em seguida, o sistema verifica se existem pontos suficientes para a calibração.
+
+Quando os pontos capturados são insuficientes, o sistema informa a falha e solicita nova condição de captura. Com dados suficientes, o sistema detecta a referência angular e realiza a captura do mapa do ambiente vazio.
+
+Após a captura do mapa, o sistema calcula o volume máximo do ambiente. Se o volume calculado for inválido ou igual a zero, o ambiente permanece não calibrado e a calibração deve ser reiniciada. Quando o volume máximo é válido, a aplicação restaura a posição original do Kinect, conclui a calibração e atualiza a interface com o volume máximo calibrado.
+
+#### Objetivo da Etapa
+
+Criar uma referência confiável do ambiente vazio e calcular o volume máximo calibrado, permitindo que as medições futuras sejam realizadas com base em uma referência espacial válida.
 
 ---
 
-### Configuração do Espaço Monitorado
+### Etapa 4 — Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="./Imagens/DigramaFluxoMVVM_Etapa04.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração do Espaço Monitorado" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa4-ConfiDoEspaçoMonit.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração do Espaço Monitorado" />
 </p>
 
-> **Nota:** A Etapa 4 configura as informações necessárias para a operação do espaço monitorado. O operador informa o nome do espaço e define o limite percentual de ocupação. A aplicação valida os dados preenchidos e direciona o operador ao campo correspondente quando alguma informação estiver ausente ou inválida. O nome do espaço deve estar preenchido e o limite de ocupação deve possuir um valor válido entre 1% e 100%. Antes da liberação da operação, o sistema também verifica se o ambiente possui uma calibração válida. Caso essa condição não seja atendida, o fluxo retorna à Etapa 3. Após todas as validações, a configuração do espaço e do limite de ocupação é confirmada e a medição volumétrica e o histórico são liberados.
+> **Nota:** A Etapa 4 representa a configuração operacional do espaço monitorado. O operador informa o nome do espaço, define o limite percentual de ocupação e visualiza o volume máximo calibrado. Ao acionar “Salvar Espaço”, o sistema valida os dados informados, verificando se o nome foi preenchido, se o limite está entre 1% e 100% e se existe calibração válida. Caso alguma condição falhe, a aplicação exibe o alerta correspondente e retorna para correção. Quando todas as validações são aprovadas, o sistema salva a configuração do espaço e do limite, liberando a medição volumétrica e o histórico.
+
+A quarta etapa descreve a configuração do espaço que será monitorado pelo sistema. Após a calibração do ambiente, o operador informa o nome do espaço monitorado e define o limite percentual de ocupação que será utilizado para controle do status operacional.
+
+A aplicação também apresenta o volume máximo calibrado, permitindo que o operador confirme que há uma referência válida antes de salvar a configuração.
+
+Ao acionar o comando “Salvar Espaço”, o sistema valida os dados informados. Primeiro, verifica se o nome do espaço foi preenchido. Caso o campo esteja vazio, uma mensagem de alerta é exibida e o fluxo retorna para o preenchimento do nome.
+
+Em seguida, o limite de ocupação é validado. O valor informado deve estar dentro da faixa permitida, entre 1% e 100%. Caso o limite seja inválido, o sistema apresenta um alerta e direciona o operador para correção do valor.
+
+Por fim, o sistema verifica se a calibração do ambiente é válida. Se a calibração estiver ausente ou inválida, a aplicação informa que é necessário realizar a calibração antes de continuar.
+
+Quando todas as validações são aprovadas, o sistema salva a configuração do espaço e do limite de ocupação. Após a confirmação, a medição volumétrica e o histórico são liberados.
+
+#### Objetivo da Etapa
+
+Validar e salvar as informações do espaço monitorado, garantindo que o nome, o limite de ocupação e a calibração estejam corretos antes de liberar a medição volumétrica.
 
 ---
 
-### Medição Volumétrica
+### Etapa 5 — Medição Volumétrica
 
 <p align="center">
-  <img src="./Imagens/DigramaFluxoMVVM_Etapa05.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 5 - Medição Volumétrica" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/ETAPA5-MediçãoVolumetrica.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 5 - Medição Volumétrica" />
 </p>
 
-> **Nota:** A Etapa 5 representa o processamento principal da medição volumétrica. Após o início da medição, o sistema acompanha a operação em tempo real e valida os pré-requisitos necessários: Kinect conectado, calibração válida e espaço monitorado liberado. Caso alguma condição não seja atendida, o operador é informado e o fluxo retorna à validação dos pré-requisitos. Com as condições operacionais atendidas, a aplicação solicita e captura o frame de profundidade, processa os dados, filtra ruídos e valida a quantidade de pontos disponíveis. Frames inválidos ou com pontos insuficientes são descartados e o sistema solicita uma nova leitura. Quando os dados são válidos, são calculados o volume ocupado, o percentual de ocupação e o espaço livre. Em seguida, o sistema define o status operacional do espaço, exibe os resultados em tempo real ao operador e prepara os dados para a etapa de persistência, histórico e integração com o MVC.
+> **Nota:** A Etapa 5 representa a execução da medição volumétrica, que pode ocorrer de forma manual ou automática. A medição manual é iniciada quando o operador aciona “Enviar Volume Atual”, enquanto a medição automática é disparada pelo temporizador. Antes do cálculo, o sistema valida se o Kinect está conectado, se a calibração é válida e se o espaço foi configurado e salvo. Quando as condições não são atendidas, a tentativa é encerrada e o fluxo retorna para a origem da medição. Quando as condições são válidas, o sistema calcula o volume atual. Se nenhum volume válido for detectado, a medição não é salva nem enviada. Se o volume for maior que zero, o sistema registra o volume, calcula ocupação e espaço livre, compara com o limite configurado, define o status como Normal ou Limite, atualiza os indicadores e encaminha a medição para persistência e integração.
+
+A quinta etapa descreve o processo de medição volumétrica do ambiente monitorado. A medição pode ser iniciada manualmente pelo operador ou automaticamente pelo temporizador da aplicação.
+
+No modo manual, o operador aciona o comando “Enviar Volume Atual”. No modo automático, o temporizador dispara uma nova solicitação de medição. Em ambos os casos, o fluxo segue para a validação das condições necessárias.
+
+Antes de calcular o volume, o sistema verifica se o Kinect está conectado, se o ambiente possui calibração válida e se o espaço monitorado foi configurado e salvo. Caso alguma dessas condições não seja atendida, a aplicação exibe um alerta informando que a medição não pode ser realizada naquele momento. A tentativa atual é encerrada, e uma nova medição poderá ocorrer por novo acionamento manual ou pelo próximo ciclo automático.
+
+Quando todas as condições são atendidas, o sistema calcula o volume atual do ambiente. Em seguida, verifica se o volume detectado é maior que zero. Caso nenhum volume válido seja identificado, a aplicação informa que não houve volume detectado e a medição não é salva nem enviada.
+
+Quando o volume é válido, o sistema registra o último volume medido, calcula o percentual de ocupação, calcula o espaço livre e compara o percentual com o limite configurado. A partir dessa comparação, o status operacional é definido como “Normal” ou “Limite”.
+
+Por fim, os indicadores são atualizados na interface, e a medição válida é encaminhada para a etapa de persistência, histórico e integração com o MVC.
+
+#### Objetivo da Etapa
+
+Executar a medição volumétrica manual ou automática, validar as condições operacionais, calcular o volume atual, atualizar os indicadores da interface e encaminhar somente medições válidas para persistência e integração.
 
 ---
 
-### Persistência, Histórico e Integração com MVC
+### Etapa 6 — Persistência, Histórico e Integração com MVC
 
 <p align="center">
-  <img src="./Imagens/DigramaFluxoMVVM_Etapa06.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 6 - Persistência, Histórico e Integração com MVC" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa6-PersistênciaHistoricoIntegraçãoMVC.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 6 - Persistência, Histórico e Integração com MVC" />
 </p>
 
-> **Nota:** A Etapa 6 recebe os dados preparados pela medição volumétrica, salva a medição localmente no SQLite e atualiza o histórico disponível para consulta. Após a persistência local, o sistema verifica o estado da conexão SignalR. Quando a comunicação está disponível, o volume e o status operacional são enviados ao MVC e, em caso de sucesso, o Dashboard é atualizado em tempo real. Quando o SignalR está indisponível ou ocorre falha durante o envio, a medição permanece armazenada localmente, a operação continua funcionando e o sistema registra a falha, mantendo o acompanhamento da reconexão automática. O histórico local permanece disponível independentemente da condição da comunicação com o MVC. O operador pode consultar as medições e informações de ocupação armazenadas e, ao retornar à operação, decidir entre manter o monitoramento em execução ou solicitar seu encerramento. Caso a operação continue, o fluxo retorna ao recebimento de novos dados provenientes da Etapa 5. Quando o encerramento é solicitado, o sistema finaliza o monitoramento de forma controlada.
+> **Nota:** A Etapa 6 representa a etapa final do ciclo operacional da medição. A medição válida é recebida, transformada em registro e salva localmente no SQLite. Após a gravação, o histórico local é atualizado e o status da persistência é exibido na interface. Em seguida, o sistema verifica se o SignalR está conectado. Se estiver conectado, o volume é enviado ao MVC e a mensagem de envio é atualizada. Se o SignalR estiver desconectado ou houver falha de envio, a medição permanece preservada localmente, a operação continua ativa e o sistema mantém a tentativa de reconexão em segundo plano. O operador pode consultar o histórico local e retornar ao monitoramento. Caso solicite encerramento, o sistema para o timer, desliga o Kinect, desconecta o SignalR, registra o encerramento e atualiza a interface.
+
+A sexta etapa descreve a persistência da medição válida, a atualização do histórico local, a integração com o módulo MVC e o encerramento controlado da operação.
+
+O fluxo inicia com o recebimento de uma medição válida proveniente da etapa anterior. O sistema cria o registro correspondente e salva a medição no banco de dados SQLite local. Após a gravação, o histórico local é atualizado, permitindo que as medições fiquem disponíveis para consulta.
+
+Em seguida, a aplicação atualiza o status da persistência na interface e verifica o estado da conexão SignalR. Caso o SignalR esteja conectado, o sistema envia o volume ao MVC. Após o envio, a mensagem de envio é atualizada para indicar que a informação foi transmitida.
+
+Caso o SignalR não esteja conectado ou ocorra falha durante o envio, a medição permanece armazenada localmente no SQLite. Nessa condição, a aplicação mantém a operação local ativa, atualiza o status como desconectado ou reconectando e aguarda a reconexão em segundo plano.
+
+O histórico local permanece disponível independentemente da condição do SignalR. Quando o operador solicita a consulta ao histórico, o sistema consulta os dados locais e exibe as medições registradas. Após a visualização, o operador pode retornar ao monitoramento.
+
+Ao final do fluxo, o sistema verifica se o encerramento foi solicitado. Caso o monitoramento continue, o fluxo retorna para a Etapa 5, permitindo novas medições. Caso o encerramento seja solicitado, a aplicação desliga o Kinect, para o temporizador de medição, desconecta o SignalR, registra o encerramento, atualiza a interface e finaliza o processo de monitoramento.
+
+#### Objetivo da Etapa
+
+Garantir que toda medição válida seja salva localmente, manter o histórico disponível, realizar a integração com o MVC quando houver comunicação disponível e encerrar o monitoramento de forma segura e controlada.
 
 ---
 
-#### Considerações sobre os Diagramas fluxo MVVM
+#### Considerações sobre os Diagramas de Fluxo MVVM
 
 A divisão do fluxo operacional em seis etapas reduz a complexidade visual e facilita a compreensão do comportamento do sistema. Cada diagrama representa uma responsabilidade específica do módulo MVVM Kinect e evidencia os principais pontos de interação, validação, decisão, tratamento de falhas e continuidade operacional.
 
@@ -3112,13 +3200,13 @@ A sequência das etapas demonstra a dependência lógica existente entre os proc
 3. calibração do ambiente;
 4. configuração e liberação do espaço monitorado;
 5. captura, processamento e cálculo da medição volumétrica;
-6. persistência local, consulta ao histórico e integração com a aplicação Web MVC.
+6. persistência local, consulta ao histórico, integração com a aplicação Web MVC e encerramento controlado da operação.
 
-Os caminhos alternativos representados nos diagramas permitem visualizar como o sistema reage às principais condições de exceção. Falhas relacionadas ao sensor, dados inválidos, calibração inadequada, frames insuficientes e indisponibilidade da comunicação são tratadas por meio de alertas e retornos específicos, evitando a continuidade do fluxo em condições inválidas.
+Os caminhos alternativos representados nos diagramas permitem visualizar como o sistema reage às principais condições de exceção. Falhas relacionadas ao e-mail, token, sensor Kinect, leitura de profundidade, calibração, configuração do espaço, ausência de volume válido e indisponibilidade da comunicação são tratadas por meio de alertas e retornos específicos, evitando a continuidade do fluxo em condições inválidas.
 
-A arquitetura também prioriza a continuidade da operação local. As medições são mantidas no armazenamento local e o histórico permanece disponível mesmo quando a comunicação com o MVC está indisponível. Dessa forma, o módulo Kinect mantém suas funcionalidades essenciais e acompanha o restabelecimento da conexão SignalR sem interromper desnecessariamente o monitoramento local.
+A arquitetura também prioriza a continuidade da operação local. As medições válidas são mantidas no armazenamento SQLite antes de qualquer tentativa de envio ao MVC. Dessa forma, mesmo quando a comunicação em tempo real por SignalR está indisponível, o módulo Kinect mantém suas funcionalidades essenciais, preserva o histórico local e acompanha o restabelecimento da conexão em segundo plano.
 
-Em conjunto, os seis diagramas representam o ciclo operacional completo do módulo MVVM Kinect, desde a autenticação inicial até a medição, persistência dos dados, disponibilização do histórico, integração com o MVC e encerramento controlado da operação.
+Em conjunto, os seis diagramas representam o ciclo operacional completo do módulo MVVM Kinect, desde a autenticação inicial até a medição, persistência dos dados, disponibilização do histórico, integração com o MVC e encerramento seguro da operação.
 
 ---
 ## Diagrama de Fluxo - MVC
@@ -3126,7 +3214,7 @@ Em conjunto, os seis diagramas representam o ciclo operacional completo do módu
 ### Login e Acesso Seguro
 
 <p align="center">
-  <img src="./Imagens/Etapa_Login_Token_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa login e acesso ao sistema" />
+  <img src="./Imagens/Etapa_Login_Token_MVC.drawio.png" width="900" alt="Diagrama de Fluxo MVC - Etapa login e acesso ao sistema" />
 </p>
 
 Este fluxo garante que apenas usuários validados e com as permissões corretas consigam entrar no sistema e visualizar o painel principal.
@@ -3181,7 +3269,7 @@ Se o usuário possuir autorização para acessar o Dashboard, ele é redireciona
 ### Gestão de Usuários (Visualização de Detalhes e Exclusão)
 
 <p align="center">
-  <img src="./Imagens/Fluxo_Usuario_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão usuario" />
+  <img src="./Imagens/Fluxo_Usuario_MVC.drawio.png" width="900" alt="Diagrama de Fluxo MVC - Etapa gestão usuario" />
 </p>
 
 Este fluxo descreve o processo de governança de contas de usuários, permitindo que administradores consultem informações detalhadas e realizem a exclusão segura de usuários, mantendo registros para auditoria.
@@ -3248,7 +3336,7 @@ Após a exclusão, o sistema executa as seguintes ações:
 # Gestão de Parceiros (Cadastro, Edição, Exclusão e Controle de Status)
 
 <p align="center">
-  <img src="./Imagens/Fluxo_Parceiro_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão parceiros" />
+  <img src="./Imagens/Fluxo_Parceiro_MVC.drawio.png" width="900" alt="Diagrama de Fluxo MVC - Etapa gestão parceiros" />
 </p>
 
 Este fluxo descreve todo o ciclo de vida da gestão de parceiros comerciais no sistema, abrangendo a consulta, o cadastro, a edição, a alteração de status e a exclusão segura dos registros, com mecanismos de validação e auditoria.
@@ -3326,7 +3414,7 @@ Ao solicitar os detalhes de um parceiro, o sistema envia uma requisição **HTTP
 São realizadas as seguintes validações:
 
 - Verificação da validade do ID informado;
-- Consulta ao Firestore para localizar o parceiro.
+- Consulta ao Firebase para localizar o parceiro.
 
 Caso o registro não seja encontrado, o sistema apresenta uma mensagem de **NotFound**.
 
@@ -3388,7 +3476,7 @@ O fluxo segue duas possibilidades:
 # Gestão de Medições (Listagem, Filtros e Recebimento via Kinect)
 
 <p align="center">
-  <img src="./Imagens/Fluxo_Medicao_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa Medições" />
+  <img src="./Imagens/Fluxo_Medicao_MVC.drawio.png" width="900" alt="Diagrama de Fluxo MVC - Etapa Medições" />
 </p>
 
 Este fluxo descreve o gerenciamento das medições de volumetria do estoque, integrando a consulta histórica realizada pelos usuários com o recebimento automático de dados em tempo real enviados pelo sensor Kinect.
@@ -3485,7 +3573,7 @@ O sistema:
 # Gestão de Perfis (Cadastro, Permissões e Inativação)
 
 <p align="center">
-  <img src="./Imagens/Fluxo_Perfis.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa gestão perfis" />
+  <img src="./Imagens/Fluxo_Perfis.drawio.png" width="900" alt="Diagrama de Fluxo MVC - Etapa gestão perfis" />
 </p>
 
 Este fluxo descreve o gerenciamento dos perfis de acesso da aplicação, permitindo controlar permissões, cadastrar novos perfis, editar privilégios e realizar a inativação segura quando necessário.
@@ -3551,7 +3639,7 @@ Ao solicitar os detalhes de um perfil, o sistema executa uma requisição **HTTP
 São realizadas as seguintes etapas:
 
 1. Validação do ID informado;
-2. Consulta ao Firestore;
+2. Consulta ao Firebase;
 3. Exibição das informações do perfil e das permissões associadas.
 
 O acesso também gera um **Log Operacional** para auditoria.
@@ -3601,7 +3689,7 @@ O fluxo segue duas possibilidades:
 # Gestão de Notificações (Listagem, Filtros, Resumo e Ações)
 
 <p align="center">
-  <img src="./Imagens/Fluxo_Noticacões_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa nnotificações" />
+  <img src="./Imagens/Fluxo_Noticacões_MVC.drawio.png" width="900" alt="Diagrama de Fluxo MVC - Etapa notificações" />
 </p>
 
 Este fluxo descreve o gerenciamento das notificações geradas pelo sistema, permitindo o monitoramento de alertas, o recebimento automático de eventos provenientes do Kinect e a confirmação de coletas em tempo real por meio do SignalR.
@@ -3699,7 +3787,7 @@ Em seguida:
 # Gestão de Parâmetros do Sistema (Configurações Gerais e Kinect)
 
 <p align="center">
-  <img src="./Imagens/Cópia do Fluxo_Configuracao_MVC.drawio.png" width="900" alt="Digrama de Fluxo MVC - Etapa parâmetros" />
+  <img src="./Imagens/Cópia do Fluxo_Configuracao_MVC.drawio.png" width="900" alt="Diagrama de Fluxo MVC - Etapa parâmetros" />
 </p>
 
 Este fluxo descreve o gerenciamento das configurações globais da aplicação, permitindo administrar parâmetros operacionais do sistema, configurações do sensor Kinect, regras de notificações e rotinas de calibração, garantindo a consistência das configurações e a integridade da operação.
@@ -3710,7 +3798,7 @@ Este fluxo descreve o gerenciamento das configurações globais da aplicação, 
 
 O usuário com permissão para administrar configurações acessa a tela por meio de uma requisição **HTTP GET** para `Index`.
 
-O sistema consulta o **Firestore**, recuperando os parâmetros gerais da aplicação.
+O sistema consulta o **Firebase**, recuperando os parâmetros gerais da aplicação.
 
 ### Painel de Configurações
 
@@ -3816,136 +3904,183 @@ O sistema então:
 5. Atualiza a aplicação com as configurações restauradas.
 ---
 
-# Diagrama de Sequência do Módulo Kinect (MVVM)
+## Diagrama de Sequência do Módulo Kinect (MVVM)
 
-O Diagrama de Sequência do módulo Kinect apresenta o comportamento dinâmico da aplicação durante a execução das principais funcionalidades do sistema. Diferentemente do Diagrama de Casos de Uso, que demonstra as funcionalidades disponíveis ao usuário, o Diagrama de Sequência evidencia a ordem cronológica das mensagens trocadas entre os componentes internos do sistema, permitindo compreender como ocorre o fluxo completo de autenticação, inicialização do hardware, calibração, processamento das medições, persistência local e sincronização com o módulo MVC.
+O Diagrama de Sequência do módulo Kinect apresenta o comportamento dinâmico da aplicação durante a execução das principais funcionalidades do sistema. Diferentemente do Diagrama de Casos de Uso, que demonstra as funcionalidades disponíveis ao usuário, o Diagrama de Sequência evidencia a ordem cronológica das mensagens trocadas entre os componentes internos do sistema.
 
-Para facilitar a leitura e reduzir a complexidade visual, o fluxo foi dividido em seis etapas principais, cada uma representando uma fase específica da operação do sistema.
+Essa representação permite compreender como ocorre o fluxo completo do módulo Kinect/Desktop, desde a autenticação do operador, inicialização do sensor, calibração do ambiente, configuração do espaço monitorado, execução das medições volumétricas, persistência local dos dados, sincronização com o módulo MVC e encerramento seguro do monitoramento.
 
+Para facilitar a leitura e reduzir a complexidade visual, o fluxo foi dividido em seis sequências principais, cada uma representando uma fase específica da operação do sistema.
 
-# Autenticação e Criação da Sessão
+---
 
-<p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa01.png" width="900" alt="Etapa 01 - Autenticação" />
-</p>
-
-A primeira etapa representa o processo de autenticação do operador no módulo Kinect MVVM. Inicialmente, o usuário informa o endereço de e-mail previamente cadastrado no sistema MVC. A aplicação Kinect encaminha essa informação ao servidor MVC, que realiza a geração de um token temporário de autenticação e o envia para o e-mail informado.
-
-Após receber o código, o operador informa o token na aplicação Kinect. O sistema realiza uma nova comunicação com o MVC para validar sua autenticidade, verificando se o token existe, ainda está dentro do período de validade e não foi utilizado anteriormente.
-
-Quando todas as validações são aprovadas, o sistema cria uma sessão operacional local contendo as informações do usuário autenticado, empresa vinculada, e-mail e token utilizado. Em seguida, o monitor de medição é liberado para utilização.
-
-Caso o token seja inválido, expirado ou já tenha sido utilizado anteriormente, a autenticação é bloqueada e o operador deverá solicitar um novo código de acesso.
-
-### Objetivo da Etapa
-
-Garantir que apenas usuários devidamente autenticados possam acessar o módulo Kinect e iniciar o monitoramento volumétrico.
-
-
-
-# Inicialização do Kinect e Conexão ao SignalR
+### Sequência 1 — Acesso e Autenticação do Kinect
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa02.png" width="900" alt="Etapa 02 - Inicialização do Kinect" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia01_AcessoAutenticacao_Kinect.drawio (1).png" width="900" alt="Sequência 01 - Acesso e Autenticação do Kinect" />
 </p>
 
-Após a autenticação bem-sucedida, inicia-se o processo de preparação do ambiente de monitoramento. O operador solicita a inicialização do Kinect e o sistema ativa os sensores RGB e de profundidade responsáveis pela captura das informações do ambiente físico.
+> **Nota:** A Sequência 1 representa o controle de acesso ao módulo Kinect/Desktop. O fluxo demonstra que o operador só consegue acessar a tela de monitoramento após informar um e-mail válido, receber o token temporário por e-mail e ter esse token validado pelo módulo MVC. A criação da sessão local garante que as próximas operações do sistema fiquem vinculadas ao usuário, empresa, e-mail e token autenticado.
 
-Paralelamente à inicialização do hardware, a aplicação estabelece comunicação com o servidor SignalR hospedado no módulo MVC. Essa conexão será responsável pela transmissão das medições realizadas localmente para o sistema Web em tempo real.
+A primeira sequência representa o processo de acesso e autenticação do operador no módulo Kinect/Desktop. Inicialmente, o operador abre a aplicação Kinect e informa o endereço de e-mail previamente cadastrado no sistema MVC.
 
-Após a confirmação da conexão, a interface é atualizada indicando que tanto o Kinect quanto o SignalR encontram-se disponíveis, permitindo o prosseguimento para a etapa de calibração.
+A aplicação encaminha a solicitação de token ao serviço de autenticação, que se comunica com o módulo Web MVC. O MVC valida se o e-mail informado pertence a um usuário ativo e, em caso positivo, gera um token temporário de acesso. Esse token é enviado ao operador por e-mail.
 
-### Objetivo da Etapa
+Após receber o código, o operador informa o token na aplicação Kinect. O sistema envia novamente os dados ao MVC para validação, verificando se o token é válido, se ainda está dentro do prazo de utilização e se não foi utilizado anteriormente.
 
-Preparar o hardware de captura e estabelecer a comunicação em tempo real entre o módulo Kinect e o sistema MVC.
+Quando todas as validações são aprovadas, o sistema cria uma sessão operacional local contendo as informações do usuário autenticado, empresa vinculada, e-mail e token utilizado. Em seguida, a tela de monitoramento é liberada para utilização.
 
+Caso o e-mail seja inválido, o usuário esteja inativo ou o token informado seja inválido, expirado ou já utilizado, o sistema bloqueia o acesso e permite que o operador realize uma nova tentativa.
 
+### Objetivo da Sequência
 
-# Calibração do Ambiente e Configuração do Espaço
+Garantir que apenas usuários devidamente autenticados possam acessar o módulo Kinect/Desktop e iniciar o monitoramento volumétrico.
+
+---
+
+### Sequência 2 — Conexão do Kinect e Comunicação SignalR
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa03.png" width="900" alt="Etapa 03 - Calibração" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia02_ConexaoKinect_SignalR.drawio (1).png" width="900" alt="Sequência 02 - Conexão do Kinect e Comunicação SignalR" />
 </p>
 
-Nesta etapa é realizada a calibração do ambiente que será monitorado. O Kinect captura a imagem de profundidade do espaço vazio e processa essas informações para gerar uma referência volumétrica utilizada como base para todas as medições futuras.
+> **Nota:** A Sequência 2 demonstra a preparação inicial do ambiente operacional. O Kinect precisa estar conectado e disponível para que o sistema avance para a calibração. A conexão SignalR é iniciada para permitir comunicação em tempo real com o MVC, porém sua indisponibilidade não bloqueia a operação local, mantendo o sistema resiliente em caso de falha de rede.
 
-Após a conclusão da calibração, o operador informa os parâmetros necessários para configuração do ambiente monitorado, como nome do espaço e limite máximo de ocupação.
+Após a autenticação bem-sucedida, o operador solicita a inicialização do Kinect por meio da interface de monitoramento. A View aciona o comando correspondente no MainViewModel, que solicita ao KinectService a inicialização do sensor.
 
-O sistema valida essas informações, marca o espaço como configurado e habilita o temporizador responsável pelas medições automáticas. A partir desse momento, o ambiente encontra-se preparado para iniciar o monitoramento contínuo.
+O KinectService verifica a disponibilidade do hardware físico e tenta inicializar os recursos necessários para a captura dos dados de profundidade. Caso o sensor esteja conectado e disponível, o sistema atualiza a interface informando que o Kinect foi inicializado com sucesso.
 
-Caso alguma validação não seja atendida, como ausência de calibração ou parâmetros obrigatórios não informados, o sistema impede o início das medições até que todas as configurações sejam concluídas.
+Em seguida, o MainViewModel solicita ao SignalRService a abertura da comunicação em tempo real com o Hub SignalR do módulo MVC. Essa comunicação será utilizada posteriormente para envio das medições volumétricas ao sistema Web.
 
-### Objetivo da Etapa
+Caso o SignalR seja conectado com sucesso, a interface é atualizada indicando que o canal em tempo real está disponível. Caso a conexão com o MVC não seja estabelecida, o sistema mantém a operação local ativa e registra o estado como desconectado ou em reconexão.
 
-Estabelecer a referência espacial utilizada pelo sistema para realizar os cálculos volumétricos de forma precisa e consistente.
+A indisponibilidade temporária do SignalR não impede a continuidade da operação local, desde que o Kinect esteja conectado e funcional.
 
+### Objetivo da Sequência
 
-# Medição Local e Armazenamento
+Inicializar o sensor Kinect, verificar a disponibilidade do hardware e estabelecer a comunicação em tempo real com o módulo MVC por meio do SignalR, mantendo a operação local mesmo em caso de falha de conexão.
+
+---
+
+### Sequência 3 — Calibração do Ambiente
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa04.png" width="900" alt="Etapa 04 - Medição" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia03_CalibracaoAmbienteFinal.drawio.png" width="900" alt="Sequência 03 - Calibração do Ambiente" />
 </p>
 
-Após a configuração do ambiente, o sistema inicia o ciclo de monitoramento, que pode ocorrer manualmente por solicitação do operador ou automaticamente por meio do temporizador interno da aplicação.
+> **Nota:** A Sequência 3 representa a calibração do ambiente vazio, etapa essencial para que o sistema tenha uma referência volumétrica confiável. Durante esse processo, o sistema interrompe medições automáticas, invalida configurações anteriores, captura dados de profundidade, processa pontos válidos e calcula o volume máximo calibrado. Somente uma calibração válida libera a próxima etapa de configuração do espaço.
 
-Antes da captura de qualquer medição são realizadas diversas validações para garantir a integridade dos dados processados. O sistema verifica se o Kinect permanece conectado, se o ambiente foi calibrado corretamente, se o espaço monitorado encontra-se salvo e se existem dados válidos para processamento.
+A terceira sequência representa a calibração do ambiente físico que será monitorado. O operador aciona o comando “Calibrar Espaço” na interface, e a View encaminha essa ação ao MainViewModel.
 
-Em seguida, o sensor captura uma nova imagem de profundidade, calcula o volume ocupado utilizando a referência obtida durante a calibração e atualiza a interface com o volume atual, percentual de ocupação e status da medição.
+Antes de iniciar a calibração, o sistema prepara o processo interrompendo temporariamente a rotina de medição automática, invalidando configurações anteriores do espaço e verificando se o Kinect está conectado e disponível para leitura.
 
-Após o processamento, a medição é armazenada no banco de dados SQLite local, permitindo que o sistema continue funcionando normalmente mesmo em situações de indisponibilidade da conexão com o servidor.
+Com as condições atendidas, o MainViewModel solicita ao KinectService a calibração do ambiente vazio. O KinectService prepara a captura dos dados de profundidade e utiliza o sensor físico para coletar as informações necessárias do espaço sem ocupação.
 
-### Objetivo da Etapa
+Durante esse processo, o sistema pode realizar múltiplas capturas de profundidade e considerar diferentes ângulos do sensor, filtrando os pontos válidos e processando o mapa de referência do ambiente. A partir dessas informações, é calculado o volume máximo calibrado, que servirá como base para as medições futuras.
 
-Realizar a captura das informações do ambiente, calcular o volume ocupado e garantir a persistência local das medições para assegurar a continuidade da operação.
+Ao final, o sistema restaura a posição original do Kinect e retorna o resultado da calibração ao MainViewModel. Quando a calibração é válida e o volume máximo calculado é maior que zero, a interface é atualizada e a próxima etapa, de configuração do espaço monitorado, é liberada.
 
+Caso o Kinect esteja desconectado, a leitura esteja indisponível ou os dados capturados sejam insuficientes para uma calibração válida, o sistema exibe um alerta e mantém o ambiente como não calibrado, permitindo nova tentativa.
 
-# Envio da Medição ao MVC e Atualização do Status
+### Objetivo da Sequência
+
+Capturar o ambiente vazio, gerar uma referência espacial confiável e calcular o volume máximo calibrado que será utilizado como base para as medições volumétricas.
+
+---
+
+### Sequência 4 — Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa05.png" width="900" alt="Etapa 05 - Sincronização" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia04_ConfiguracaoEspacoMonitorado.drawio (1).png" width="900" alt="Sequência 04 - Configuração do Espaço Monitorado" />
 </p>
 
-Após o armazenamento local da medição, o sistema verifica o estado da conexão com o servidor SignalR. Caso a comunicação esteja disponível, a aplicação transmite a medição ao módulo MVC utilizando o Hub responsável pela integração em tempo real.
+> **Nota:** A Sequência 4 demonstra a configuração do espaço monitorado após a calibração. O sistema valida o nome do espaço, o limite percentual de ocupação e a existência de uma calibração válida. Quando essas condições são atendidas, o espaço é marcado como salvo, o temporizador automático de 60 segundos é iniciado e o ambiente fica liberado para medições manuais e automáticas.
 
-O servidor confirma o recebimento da informação e a aplicação atualiza o status da sincronização na interface do operador.
+Após a calibração válida do ambiente, o operador realiza a configuração do espaço monitorado. Nessa etapa, são informados o nome do espaço e o limite percentual de ocupação que será utilizado como referência para alertas operacionais.
 
-Caso ocorra qualquer falha de comunicação, a medição permanece armazenada localmente no banco SQLite e o sistema inicia automaticamente tentativas de reconexão até que a comunicação seja restabelecida. Dessa forma, evita-se a perda de informações durante interrupções temporárias da rede.
+A interface atualiza os dados informados por meio dos bindings vinculados ao MainViewModel. Em seguida, o operador aciona o comando “Salvar Espaço”, que inicia as validações necessárias para liberação da medição.
 
-### Objetivo da Etapa
+O sistema verifica se existe uma calibração válida, se o volume máximo calibrado é maior que zero, se o nome do espaço foi preenchido e se o limite de ocupação informado está dentro da faixa permitida, entre 1% e 100%.
 
-Sincronizar as medições locais com o sistema MVC, mantendo a consistência dos dados e garantindo tolerância a falhas de comunicação.
+Quando todas as condições são atendidas, o MainViewModel marca o espaço como salvo, atualiza a interface e inicia o temporizador responsável pela medição automática, configurado com intervalo de 60 segundos. A partir desse momento, o ambiente fica pronto para medições manuais e automáticas.
 
+Caso a calibração não esteja válida, o nome esteja vazio ou o limite de ocupação seja inválido, o sistema exibe a mensagem correspondente e mantém o cadastro pendente até que as informações sejam corrigidas.
 
-# Histórico, Logs e Encerramento
+### Objetivo da Sequência
+
+Validar os parâmetros do espaço monitorado, salvar a configuração operacional e liberar o sistema para iniciar as medições volumétricas.
+
+---
+
+### Sequência 5 — Medição Volumétrica Manual e Automática
 
 <p align="center">
-  <img src="./Imagens/DiagramaSequenciaMVVM_Etapa06.png" width="900" alt="Etapa 06 - Histórico e Encerramento" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia05F_MedicaoVolumetrica_Final1.drawio.png" width="900" alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
 </p>
 
-A etapa final contempla as funcionalidades relacionadas ao histórico operacional e ao encerramento da sessão de monitoramento.
+> **Nota:** A Sequência 5 representa a execução da medição volumétrica. A medição pode ser iniciada manualmente pelo operador ou automaticamente pelo temporizador. Antes do cálculo, o sistema valida se o Kinect está conectado, se há calibração válida e se o espaço foi salvo. Apenas volumes válidos seguem para persistência; leituras inválidas encerram a tentativa atual sem salvar ou enviar dados.
 
-Durante a operação, o operador pode consultar o histórico de medições armazenadas localmente no banco SQLite, bem como visualizar os registros de acesso, leituras realizadas e erros registrados pelo sistema.
+A quinta sequência representa a execução da medição volumétrica, que pode ocorrer de duas formas: manualmente, quando o operador aciona o comando “Enviar Volume Atual”, ou automaticamente, quando o temporizador de 60 segundos dispara uma nova medição.
 
-Ao finalizar o monitoramento, a aplicação interrompe a captura das imagens de profundidade, encerra a comunicação com o Kinect, finaliza a conexão com o servidor SignalR e registra os eventos de encerramento no banco de dados local.
+Independentemente da origem da medição, manual ou automática, o fluxo converge para a rotina comum responsável por medir, salvar e encaminhar o volume calculado.
 
-Por fim, a interface é atualizada, os estados internos da aplicação são reinicializados e o sistema permanece preparado para uma nova sessão de monitoramento.
+Antes de realizar o cálculo, o MainViewModel valida as condições necessárias para a medição: o Kinect deve estar conectado, o ambiente deve possuir calibração válida e o espaço monitorado deve estar salvo. Caso alguma dessas condições não seja atendida, o sistema atualiza o status correspondente e encerra a tentativa atual.
 
-### Objetivo da Etapa
+Quando as condições são atendidas, o MainViewModel solicita ao KinectService o cálculo do volume atual. O KinectService realiza a leitura dos dados de profundidade capturados pelo sensor Kinect, processa os pontos válidos e retorna o volume atual calculado.
 
-Garantir a rastreabilidade das operações realizadas durante o monitoramento, preservar o histórico operacional e realizar o encerramento seguro da aplicação, liberando corretamente os recursos utilizados pelo sistema.
+Se o volume detectado for maior que zero, o sistema registra o último volume medido, calcula o percentual de ocupação, calcula o espaço livre, compara o percentual com o limite configurado e define o status operacional como “Normal” ou “Limite”.
 
+Em seguida, os indicadores da interface são atualizados e a medição válida é encaminhada para a próxima sequência, responsável pela persistência local, histórico e integração com o MVC.
 
+Caso nenhum volume válido seja detectado, o sistema atualiza o status informando a ausência de volume e encerra a tentativa atual, aguardando uma nova solicitação manual ou o próximo ciclo automático do temporizador.
 
-# Considerações
+### Objetivo da Sequência
 
-O Diagrama de Sequência demonstra a interação entre o operador, o módulo Kinect, o banco de dados SQLite local e o sistema MVC durante toda a execução da aplicação. A divisão do fluxo em seis etapas permitiu representar de forma organizada os processos de autenticação, inicialização do hardware, calibração, captura das medições, sincronização com o servidor e encerramento da operação.
+Executar a medição volumétrica manual ou automática, validar as condições operacionais, calcular o volume atual, atualizar os indicadores da interface e encaminhar medições válidas para persistência.
 
-Essa representação evidencia o comportamento temporal dos componentes envolvidos, facilitando a compreensão da arquitetura do sistema e demonstrando como os dados percorrem todas as camadas da aplicação, desde a aquisição pelo sensor Kinect até a persistência local e sincronização com o módulo Web.
+---
+
+### Sequência 6 — Persistência, Histórico e Integração com MVC
+
+<p align="center">
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia06fi_PersistenciaHistoricoIntegracao_Ajustado.drawio.png" width="900" alt="Sequência 06 - Persistência, Histórico e Integração com MVC" />
+</p>
+
+> **Nota:** A Sequência 6 apresenta a persistência local, atualização do histórico, integração com o MVC e encerramento seguro. Toda medição válida é primeiro salva no SQLite, garantindo preservação dos dados antes de qualquer envio externo. Se o SignalR estiver disponível, a medição é enviada ao MVC; caso contrário, a operação local continua ativa e o sistema mantém tentativas de reconexão em segundo plano.
+
+A sexta sequência representa a etapa de persistência local, atualização do histórico, integração com o módulo MVC e encerramento seguro do monitoramento.
+
+Ao receber uma medição válida da sequência anterior, o MainViewModel cria um registro do tipo MedicaoVolume contendo as informações da medição, como volume calculado, data e hora, usuário autenticado, empresa, nome do espaço, limite configurado e status da medição.
+
+Esse registro é enviado ao KinectRepository, que realiza a gravação no banco de dados SQLite local. Após a confirmação da gravação, o sistema atualiza o histórico local de medições e também atualiza o status da persistência na interface.
+
+Depois de salvar localmente, o sistema verifica o estado da conexão SignalR. Caso o SignalR esteja conectado, o MainViewModel solicita ao SignalRService o envio do volume atual ao Hub SignalR do módulo MVC. Ao término da chamada de envio, a interface é atualizada com a mensagem correspondente.
+
+Caso o SignalR esteja desconectado ou o MVC esteja temporariamente indisponível, a medição permanece preservada no SQLite local. Nessa situação, o sistema mantém a operação local ativa, atualiza o status como desconectado ou reconectando e segue tentando restabelecer a comunicação em segundo plano.
+
+Durante a operação, o operador pode solicitar a consulta ao histórico. Nesse caso, o sistema verifica se o espaço está salvo, utiliza os dados carregados localmente e exibe as medições registradas.
+
+Ao final do monitoramento, caso o operador solicite o encerramento, a aplicação executa o desligamento controlado da operação. O sistema para o temporizador de medição automática, desliga o Kinect, desconecta o SignalR, registra o encerramento e retorna para a tela de login.
+
+Se o monitoramento continuar ativo, o fluxo retorna à sequência de medição volumétrica, mantendo a operação pronta para novas medições manuais ou automáticas.
+
+### Objetivo da Sequência
+
+Garantir que toda medição válida seja preservada localmente, manter o histórico operacional, sincronizar os dados com o MVC quando houver conexão disponível e realizar o encerramento seguro dos recursos utilizados pelo sistema.
+
+---
+
+#### Considerações
+
+O Diagrama de Sequência demonstra a interação entre o operador, as telas da aplicação Kinect, o MainViewModel, os serviços internos, o sensor Kinect, o banco SQLite local e o módulo MVC durante toda a execução da aplicação.
+
+A divisão do fluxo em seis sequências permitiu representar de forma organizada os principais processos do módulo Kinect/Desktop: autenticação, inicialização do hardware, comunicação SignalR, calibração do ambiente, configuração do espaço monitorado, medição volumétrica, persistência local, histórico, integração com o MVC e encerramento seguro.
+
 
 ---
 
 
-## Diagrama de Sequência
+## Diagrama de Sequência MVC
 
 # Etapa 1 – Login e Autenticação (Token OTP)
 
@@ -3988,7 +4123,7 @@ Esta etapa é responsável pelo gerenciamento do histórico de medições do est
 
 ## Como funciona
 
-Quando um usuário autorizado acessa a tela de medições, o sistema consulta o **Firestore**, recuperando os registros armazenados.
+Quando um usuário autorizado acessa a tela de medições, o sistema consulta o **Firebase**, recuperando os registros armazenados.
 
 Durante esse processo, são aplicados automaticamente:
 
@@ -4115,7 +4250,85 @@ As ações finais incluem:
 4. Limpeza dos dados temporários da tela, deixando o sistema preparado para iniciar um novo ciclo de medição.
 
 ---
+### Diagrama de Domínio
 
+O diagrama abaixo representa o **Mapa de Domínio** do sistema *Inventory Masters*. Ele foi desenhado para consolidar a **Linguagem Ubíqua** do projeto, garantindo que as regras de negócio, os processos de monitoramento via sensor e o controle de acesso estejam perfeitamente alinhados entre a infraestrutura e a camada de aplicação.
+
+<p align="center">
+  <img src="./Imagens/Diagrama_Dominio.png" width="900" alt="Diagrama de domínio" />
+</p>
+
+#### Estrutura do Modelo
+
+A arquitetura foi segmentada em quatro contextos principais para assegurar a coesão e o baixo acoplamento:
+
+##### 1. Gestão Organizacional e Multi-Tenancy
+* **Empresa & Parceiro:** Define a hierarquia do ecossistema, permitindo que o sistema suporte múltiplos ambientes de armazenamento e diferentes entidades parceiras.
+* **Parâmetros do Sistema:** Centraliza as configurações críticas de operação, permitindo que cada empresa defina seus próprios limites de capacidade de inventário.
+
+##### 2. Controle de Acesso e Segurança (RBAC)
+* **Usuário, Perfil & Permissão:** Implementa um controle de acesso baseado em papéis (Role-Based Access Control). Isso garante que o nível de visibilidade e as ações de um usuário sejam estritamente controlados conforme o perfil definido pela empresa.
+* **TokenAcesso:** Gerencia a segurança das interações, especialmente vital para as comunicações entre o hardware (Kinect) e a camada de processamento.
+
+##### 3. Monitoramento de Ativos (O Core Domain)
+* **Kinect & EspaçoMapeado:** Representa a integração do hardware com o mundo virtual. O `EspaçoMapeado` atua como a entidade de referência para o monitoramento volumétrico.
+* **MediçãoVolume & HistoricoOcupacao:** Estes são os artefatos de dados mais importantes. Eles transformam os dados brutos de profundidade do sensor em indicadores de negócio (volume ocupado, percentual de uso, limites excedidos).
+
+##### 4. Auditoria e Notificação
+* **LogSistema:** Provê rastreabilidade completa de todas as operações críticas, essencial para compliance e diagnóstico de problemas.
+* **Notificacao:** Fecha o ciclo de feedback, processando os dados de medição e disparando alertas automáticos conforme a regra de negócio do `Parceiro`.
+
+---
+> **Por que esta modelagem é importante:**
+Esta estrutura permite que o *Inventory Masters* evolua sem se tornar um sistema monolítico de difícil manutenção. Ao separar claramente o que é "configuração de negócio" do que é "dados de sensor", permitimos que a equipe de desenvolvimento adicione novos tipos de sensores ou parceiros logísticos com um impacto mínimo no restante do código.
+
+---
+### Diagrama de modelo conceitual do sistema
+
+<p align="center">
+  <img src="./Imagens/Modelagem do Sistema/Diagrama Conceitual do Sistema Inventory Masters.drawio.png" width="900" alt="Diagrama conceitual " />
+</p>
+
+O Diagrama Conceitual do Sistema apresenta a visão geral da solução Inventory Masters, mostrando os principais elementos envolvidos na operação e a relação entre eles. Ele representa, de forma simplificada, como o usuário interage com o sistema web, como o módulo Kinect realiza o monitoramento volumétrico e como os dados são enviados para consulta, análise e tomada de decisão.
+
+Nesse modelo, o sistema é compreendido como uma solução composta por dois módulos principais: a aplicação MVC, responsável pela gestão administrativa, autenticação, configurações, dashboard, usuários, parceiros e notificações; e a aplicação Kinect, responsável pela captura das leituras do ambiente físico, calibração, cálculo do volume ocupado e envio das medições.
+
+O objetivo do diagrama conceitual é demonstrar o funcionamento macro da solução, sem detalhar tecnologias internas ou estrutura de código. Ele ajuda a entender quais partes compõem o sistema, quais informações circulam entre elas e como o monitoramento físico do estoque se transforma em dados gerenciais.
+
+
+---
+
+### Diagrama de modelo logico  do sistema
+
+<p align="center">
+  <img src="./Imagens/Modelagem do Sistema/Modelo_Logico_InventoryMasters_Simplificado.drawio.png" width="900" alt="Diagrama logico " />
+</p>
+
+O Modelo Lógico do Sistema detalha a organização funcional da solução Inventory Masters. Ele apresenta como as responsabilidades estão distribuídas entre as camadas e módulos do sistema, evidenciando a separação entre interface, regras de negócio, serviços, repositórios, integração e persistência de dados.
+
+Na aplicação MVC, o modelo lógico organiza o fluxo a partir das telas acessadas pelo usuário, passando pelos controllers, services e repositories até a gravação ou consulta das informações no Firebase. Essa estrutura permite centralizar as regras de autenticação, permissões, cadastros, parâmetros, notificações e dashboard, mantendo o sistema mais organizado e de fácil manutenção.
+
+Na aplicação Kinect, o modelo lógico representa o fluxo operacional do monitoramento: autenticação por token, inicialização do sensor, calibração do ambiente, captura de profundidade, cálculo volumétrico, armazenamento local em SQLite e envio das medições ao MVC. Essa organização garante que o Kinect possa operar de forma controlada, registrando medições e mantendo rastreabilidade mesmo quando houver falhas temporárias de comunicação.
+
+O objetivo do modelo lógico é explicar como o sistema funciona internamente em termos de responsabilidades e processos, sem depender da infraestrutura física onde será executado.
+
+---
+
+### Diagrama de modelo fisico  do sistema
+
+<p align="center">
+  <img src="./Imagens/Modelagem do Sistema/Modelo_Fisico_InventoryMasters_Simplificado.drawio.png" width="900" alt="Diagrama fisico" />
+</p>
+
+O Modelo Físico do Sistema representa a implantação real da solução Inventory Masters, demonstrando onde cada componente é executado e como ocorre a comunicação entre eles. Ele descreve a relação entre o computador que executa o Kinect, o servidor da aplicação MVC, o Firebase, os serviços de e-mail e os usuários que acessam o sistema pelo navegador.
+
+No ambiente físico, o módulo Kinect é executado em uma máquina local conectada ao sensor Kinect Xbox 360. Essa aplicação realiza as leituras do espaço monitorado, salva os registros em SQLite e envia as medições para o servidor MVC por meio da rede. O MVC, por sua vez, fica hospedado em ambiente web e centraliza as informações recebidas, disponibilizando dashboards, históricos, configurações e notificações.
+
+A comunicação em tempo real é realizada por SignalR, permitindo que novas medições sejam refletidas automaticamente na interface web. O Firebase funciona como banco principal da aplicação MVC, enquanto o SQLite atua como base local do módulo Kinect. Os serviços de e-mail são utilizados para envio de token de acesso, garantindo que somente usuários autorizados possam liberar o uso do Kinect.
+
+O objetivo do modelo físico é demonstrar a arquitetura de execução do sistema, identificando máquinas, serviços, conexões e tecnologias utilizadas na operação real da solução.
+
+----
 ## MODELAGEM DO BANCO DE DADOS
 ---
 
@@ -4123,9 +4336,9 @@ Com a evolução arquitetural do projeto, a solução passou a utilizar uma abor
 
 O módulo responsável pela captura volumétrica via Kinect (MVVM) utiliza o banco local **SQLite**, garantindo baixo custo computacional, operação offline e persistência temporária das leituras do sensor.
 
-Já a aplicação Web MVC, responsável pelo gerenciamento operacional, autenticação, dashboard, notificações e integração entre usuários e parceiros, passou a utilizar o **Firebase Firestore**, um banco de dados NoSQL orientado a documentos e altamente escalável.
+Já a aplicação Web MVC, responsável pelo gerenciamento operacional, autenticação, dashboard, notificações e integração entre usuários e parceiros, passou a utilizar o **Firebase**, um banco de dados NoSQL orientado a documentos e altamente escalável.
 
-Diferentemente da modelagem relacional tradicional, o Firestore organiza os dados em:
+Diferentemente da modelagem relacional tradicional, o Firebase organiza os dados em:
 - Coleções;
 - Documentos;
 - Subcoleções;
@@ -4135,15 +4348,15 @@ Essa abordagem elimina a necessidade de relacionamentos complexos e operações 
 
 ---
 
-## Modelagem NoSQL Firebase Firestore (MVC)
+## Modelagem NoSQL Firebase (MVC)
 
 <p align="center">
-  <img src="./Imagens/ModelagemFireBase_InevtoryMasters.png" width="1200" alt="Modelagem NoSQL Firebase Firestore MVC" />
+  <img src="./Imagens/ModelagemFireBase_InventoryMasters.png" width="1200" alt="Modelagem NoSQL Firebase MVC" />
 </p>
 
 ---
 
-# Estrutura das Coleções Firestore
+# Estrutura das Coleções Firebase
 
 | Coleção | Finalidade |
 |---------|------------|
@@ -4463,7 +4676,7 @@ Responsável pelo controle de autenticação do módulo Kinect.
 
 ```
 
-### Modelagem Conceitual - Kinect Sqlite
+### Modelagem Conceitual - Kinect SQLite
 
 O modelo conceitual do módulo MVVM Kinect representa as principais entidades responsáveis pelo armazenamento das informações utilizadas durante o funcionamento da aplicação desktop. Essas entidades contemplam o registro das medições volumétricas capturadas pelo sensor Kinect, o histórico de ocupação dos espaços monitorados, o controle de usuários locais, as sessões de autenticação e os registros operacionais da aplicação.
 
@@ -4489,13 +4702,13 @@ Além das entidades persistidas, o módulo utiliza modelos auxiliares responsáv
 
 | Relacionamento | Cardinalidade | Descrição |
 |----------------|---------------|-----------|
-| **UsuarioAcesso → MedicaoVolume** | 1:N | Um usuário pode realizar várias medições volumétricas. |
-| **UsuarioAcesso → SessaoUsuario** | 1:N | Um usuário pode possuir várias sessões registradas no sistema. |
-| **MedicaoVolume → HistoricoOcupacao** | 1:N | Uma medição volumétrica pode gerar vários registros de histórico de ocupação. |
+| **UsuarioAcesso É' MedicaoVolume** | 1:N | Um usuário pode realizar várias medições volumétricas. |
+| **UsuarioAcesso É' SessaoUsuario** | 1:N | Um usuário pode possuir várias sessões registradas no sistema. |
+| **MedicaoVolume É' HistoricoOcupacao** | 1:N | Uma medição volumétrica pode gerar vários registros de histórico de ocupação. |
 
 ---
 
-### Modelo Lógico — MVVM Kinect
+### Modelo Lógico – MVVM Kinect
 
 O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceitual, definindo as tabelas, atributos, tipos de dados, chaves primárias e chaves estrangeiras necessárias para garantir a organização e a integridade dos dados armazenados no banco SQLite local.
 
@@ -4590,7 +4803,7 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
 
 ---
 
-### Modelo Físico — MVVM Kinect
+### Modelo Físico – MVVM Kinect
 
 O modelo físico do módulo **MVVM Kinect** foi implementado utilizando o banco de dados **SQLite**, por meio do **Entity Framework 6**, responsável pelo mapeamento objeto-relacional entre as classes do domínio e as tabelas persistidas no banco de dados local.
 
@@ -4684,7 +4897,7 @@ Para a execução estável do sistema foi definida a seguinte configuração mí
 - Razor Pages
 - Bootstrap
 - SignalR
-- Firebase 
+- Firebase
 
 #### Tecnologias de Integração
 
@@ -4720,7 +4933,7 @@ O desenvolvimento da solução foi dividido em duas etapas principais.
 
 ---
 
-## BENEFICIOS TECNOLÓGICOS
+## BENEFÍCIOS TECNOLÓGICOS
 
 A solução apresenta diversos benefícios técnicos:
 
@@ -4796,7 +5009,7 @@ Para fins de análise econômica, considerou-se o esforço de desenvolvimento re
 
 - Horas totais: 40 horas
 - Valor estimado por hora: R$ 15,00
-- 
+-
 **Total estimado de mão de obra:** R$ 600,00
 
 ---
@@ -4823,7 +5036,6 @@ A implementação da plataforma proporciona diversos benefícios:
 - Melhor controle dos estoques;
 - Possibilidade de reaproveitamento de materiais;
 - Redução de custos operacionais.
-
 
 
 Desta forma Conclui-se  que o investimento total estimado em **R$ 1.360,00** demonstra que a solução apresenta excelente relação custo-benefício quando comparada a alternativas industriais de monitoramento volumétrico.
@@ -4865,18 +5077,11 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 
 ## ANEXOS
 
-Para acessar as documentações técnicas e diretrizes de manutenção do sistema, utilize a tabela abaixo:
+Para acessar as documentações técnicas, diretrizes de manutenção e recursos visuais do sistema, utilize a tabela abaixo:
 
 | Documento | Descrição | Link de Acesso |
 | :--- | :--- | :--- |
+| **Business Model Canvas** | Modelagem de negócio, fluxogramas e assets visuais | [Acessar PDF](Docs/canva.pdf) |
+| **Documentação Integra** | Repositório central de especificações do TCC | [Acessar PDF](Docs/Documentação%20Integra.pdf) |
 | **Manual Técnico** | Diretrizes de Implementação e Manutenção | [Acessar PDF](Docs/Relação%20de%20Implementação%20-%20Manutenção%20do%20Sistema.pdf) |
 | **Manual Técnico** | Guia de Configuração do ambiente (Kinect + SQLite) | [Acessar PDF](Docs/Guia%20de%20Ambiente%20-%20kinect%20SQLite.pdf) |
----------------------------------------
-
-
-
-
-
-
-
-
