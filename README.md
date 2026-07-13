@@ -4766,7 +4766,7 @@ O modelo lógico do módulo MVVM Kinect foi elaborado a partir do modelo conceit
 O modelo físico do módulo **MVVM Kinect** foi implementado utilizando o banco de dados **SQLite**, por meio do **Entity Framework 6**, responsável pelo mapeamento objeto-relacional entre as classes do domínio e as tabelas persistidas no banco de dados local.
 
 <p align="center">
-  <img src="./Imagens/Arquitetura de Persistência do Módulo MVVM Kinect.png" width="1000" alt="Arquitetura de Persistência do Módulo MVVM Kinect" />
+  <img src="./Imagens/Modelagem do banco.jpeg" width="1000" alt="Arquitetura de Persistência do Módulo MVVM Kinect" />
 </p>
 
 A Figura acima apresenta a arquitetura de persistência adotada pelo módulo **MVVM Kinect**. Observa-se que a camada de apresentação, representada pelo **MainViewModel**, realiza o acesso aos dados por meio do **KinectRepository**. O **Entity Framework 6**, através do **AppDbContext**, é responsável pelo mapeamento objeto-relacional, pelo gerenciamento da comunicação entre a aplicação e o banco de dados, pela criação das tabelas, pelo controle das conexões e pela persistência dos dados utilizados pelo sistema.
@@ -4967,7 +4967,7 @@ Para fins de análise econômica, considerou-se o esforço de desenvolvimento re
 
 - Horas totais: 40 horas
 - Valor estimado por hora: R$ 15,00
--
+
 **Total estimado de mão de obra:** R$ 600,00
 
 ---
@@ -4996,7 +4996,7 @@ A implementação da plataforma proporciona diversos benefícios:
 - Redução de custos operacionais.
 
 
-Desta forma Conclui-se  que o investimento total estimado em **R$ 1.360,00** demonstra que a solução apresenta excelente relação custo-benefício quando comparada a alternativas industriais de monitoramento volumétrico.
+Desta forma Conclui-se  que o investimento total estimado em **R$ 1.510,00** demonstra que a solução apresenta excelente relação custo-benefício quando comparada a alternativas industriais de monitoramento volumétrico.
 
 Além do baixo investimento inicial, a plataforma oferece ganhos operacionais relacionados ao controle dos espaços de armazenamento, rastreabilidade das medições e apoio à gestão dos excedentes produtivos, tornando-se uma alternativa economicamente viável para organizações de diferentes portes.
 
