@@ -143,7 +143,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                 using (var db = new AppDbContext(_empresa))
                 {
                     var consulta = db.HistoricosOcupacao
-                        .Where(x => x.EspacoMapeadoId == espacoId);
+                        .Where(x => x.MedicaoVolumeId == espacoId);
 
                    
                     if (!string.IsNullOrWhiteSpace(_empresa))
