@@ -4200,36 +4200,29 @@ Fluxo dedicado ao controle das regras globais da aplicação, que regem cálculo
 ---
 ### Diagrama de Domínio
 
-O diagrama abaixo representa o **Mapa de Domínio** do sistema *Inventory Masters*. Ele foi desenhado para consolidar a **Linguagem Ubíqua** do projeto, garantindo que as regras de negócio, os processos de monitoramento via sensor e o controle de acesso estejam perfeitamente alinhados entre a infraestrutura e a camada de aplicação.
+Este diagrama ilustra a arquitetura de uma solução de software baseada no padrão **Cliente-Servidor**, projetada para ambientes industriais ou logísticos que necessitam de processamento de imagem em tempo real com alta disponibilidade (capacidade de funcionar offline).
 
 <p align="center">
   <img src="./Imagens/Diagrama_Dominio.png" width="900" alt="Diagrama de domínio" />
 </p>
 
-#### Estrutura do Modelo
+Abaixo, detalhamos como essa estrutura funciona em cada camada:
 
-A arquitetura foi segmentada em quatro contextos principais para assegurar a coesão e o baixo acoplamento:
+#### 1. Estrutura Cliente-Servidor no Fluxo
+A arquitetura é dividida em dois grandes ambientes que se comunicam para garantir que os dados saiam do sensor e cheguem ao gestor:
 
-##### 1. Gestão Organizacional e Multi-Tenancy
-* **Empresa & Parceiro:** Define a hierarquia do ecossistema, permitindo que o sistema suporte múltiplos ambientes de armazenamento e diferentes entidades parceiras.
-* **Parâmetros do Sistema:** Centraliza as configurações críticas de operação, permitindo que cada empresa defina seus próprios limites de capacidade de inventário.
+* **Lado Cliente (Estação de Medição Local):** É a "ponta" do sistema, onde ocorre a interação com o hardware físico (Kinect). Esta camada é responsável pelo processamento pesado de dados espaciais e pela resiliência do sistema. Ao utilizar o **SQLite local**, a aplicação garante que, caso a conexão com a internet falhe, as medições não sejam perdidas, mantendo a operação contínua.
+* **Lado Servidor (Infraestrutura de Nuvem):** É o cérebro centralizador. Ele recebe os dados processados via **SignalR** (uma biblioteca que permite comunicação bidirecional em tempo real entre cliente e servidor). O servidor atua como um intermediário que armazena as informações no **Firebase**, permitindo que múltiplos usuários ou gestores acessem as medições remotamente através do **Painel MVC**.
 
-##### 2. Controle de Acesso e Segurança (RBAC)
-* **Usuário, Perfil & Permissão:** Implementa um controle de acesso baseado em papéis (Role-Based Access Control). Isso garante que o nível de visibilidade e as ações de um usuário sejam estritamente controlados conforme o perfil definido pela empresa.
-* **TokenAcesso:** Gerencia a segurança das interações, especialmente vital para as comunicações entre o hardware (Kinect) e a camada de processamento.
+#### 2. O Papel dos Componentes na Arquitetura
+Para entender como a lógica flui nessa estrutura, observe a responsabilidade de cada bloco:
 
-##### 3. Monitoramento de Ativos (O Core Domain)
-* **Kinect & EspaçoMapeado:** Representa a integração do hardware com o mundo virtual. O `EspaçoMapeado` atua como a entidade de referência para o monitoramento volumétrico.
-* **MediçãoVolume & HistoricoOcupacao:** Estes são os artefatos de dados mais importantes. Eles transformam os dados brutos de profundidade do sensor em indicadores de negócio (volume ocupado, percentual de uso, limites excedidos).
-
-##### 4. Auditoria e Notificação
-* **LogSistema:** Provê rastreabilidade completa de todas as operações críticas, essencial para compliance e diagnóstico de problemas.
-* **Notificacao:** Fecha o ciclo de feedback, processando os dados de medição e disparando alertas automáticos conforme a regra de negócio do `Parceiro`.
-
----
-> **Por que esta modelagem é importante:**
-Esta estrutura permite que o *Inventory Masters* evolua sem se tornar um sistema monolítico de difícil manutenção. Ao separar claramente o que é "configuração de negócio" do que é "dados de sensor", permitimos que a equipe de desenvolvimento adicione novos tipos de sensores ou parceiros logísticos com um impacto mínimo no restante do código.
-
+| Camada | Componente | Responsabilidade |
+| :--- | :--- | :--- |
+| **Cliente (Local)** | Sensor + KinectService | Coleta bruta e processamento inicial (transformar pixels em volume). |
+| **Cliente (Local)** | ViewModel + SQLite | Gerenciamento da UI e garantia de que o dado existe localmente antes de tentar enviá-lo. |
+| **Conexão** | SignalR | O "túnel" que mantém o cliente e servidor sincronizados instantaneamente. |
+| **Servidor (Nuvem)** | Firebase + Painel MVC | Consolidação dos dados para visualização global e relatórios gerenciais. |
 ---
 ### Diagrama de modelo conceitual do sistema
 
