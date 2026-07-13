@@ -4080,176 +4080,123 @@ A divisão do fluxo em seis sequências permitiu representar de forma organizada
 
 ---
 
+## Diagramas de Sequência - Sistema Web (MVC)
 
-## Diagrama de Sequência MVC
-
-# Etapa 1 – Login e Autenticação (Token OTP)
+### Etapa 1 – Login e Autenticação (Token OTP)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_Login.png" width="900" alt="Etapa de login Diagrama de Sequência" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Sequencia_Login_MVC.drawio.png" width="900" alt="Diagrama de Sequência - Login e Autenticação" />
 </p>
 
-Esta etapa representa o ponto de entrada seguro da aplicação, garantindo que apenas usuários autorizados tenham acesso ao sistema.
+Esta etapa representa o ponto de entrada seguro da aplicação, garantindo que apenas usuários autorizados tenham acesso ao sistema Web.
 
-## Como funciona
-
-O operador informa seu endereço de e-mail na tela de login.
-
-O sistema realiza as seguintes validações:
-
-- Verifica se o e-mail está cadastrado;
-- Confirma se a conta do usuário está ativa.
-
-Se todas as validações forem aprovadas, o sistema:
-
-1. Gera um **Token OTP** (senha temporária);
-2. Envia o código para o e-mail do operador.
-
-O usuário copia o token recebido, informa o código na tela de validação e o sistema verifica sua autenticidade.
-
-Após a validação do token:
-
-- Uma sessão segura é criada;
-- O acesso ao Dashboard é liberado.
+**Como funciona:**
+* O operador informa seu endereço de e-mail na tela de login.
+* O sistema envia a requisição e verifica no Firebase se o e-mail é válido e se a conta do usuário está ativa.
+* Se as validações falharem, o sistema retorna uma mensagem de erro ("e-mail inválido").
+* Se aprovado, o sistema:
+  1. Gera um **Token OTP** (senha temporária).
+  2. Aciona o servidor de e-mail para enviar o código ao operador.
+* O usuário recebe o token, insere na tela de validação e o sistema verifica sua autenticidade.
+* Se o token for válido, o sistema cria a sessão de usuário, verifica as permissões e libera o login.
 
 ---
 
-# Etapa 2 – Gestão de Medições (Filtros e Recebimento)
+### Etapa 2 – Carregamento do Dashboard
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_Medicao_gestao.png" width="900" alt="Etapa de gestão de medições" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Sequencia_DashBord.drawio.png" width="900" alt="Diagrama de Sequência - Dashboard" />
 </p>
 
-Esta etapa é responsável pelo gerenciamento do histórico de medições do estoque e pelo processamento das novas leituras enviadas pelo sensor Kinect.
+Esta etapa ilustra a orquestração de dados para a exibição do painel principal da aplicação, agregando informações de diferentes fontes do banco de dados em uma única tela.
 
-## Como funciona
-
-Quando um usuário autorizado acessa a tela de medições, o sistema consulta o **Firebase**, recuperando os registros armazenados.
-
-Durante esse processo, são aplicados automaticamente:
-
-- Filtros de pesquisa;
-- Ordenação;
-- Paginação dos resultados.
-
-Paralelamente, o sensor Kinect envia continuamente novas leituras de profundidade.
-
-Para cada leitura recebida, o sistema:
-
-1. Valida o identificador da medição;
-2. Converte a leitura física para volume em metros cúbicos ($m^3$);
-3. Armazena a medição no banco de dados;
-4. Atualiza automaticamente os gráficos e os Cards de Métricas.
-
-Toda a atualização ocorre em tempo real por meio do **SignalR**, sem necessidade de recarregar a página.
+**Como funciona:**
+* O operador acessa o menu do Dashboard.
+* A interface web dispara uma requisição de página inicial (GET) para o controlador do sistema.
+* O sistema consulta o **Firebase** e busca simultaneamente as listas de: Parceiros, Usuários, Medições e Alertas.
+* Em seguida, busca os Parâmetros do Sistema (necessários para saber a capacidade máxima do tanque/silo).
+* O processamento interno do sistema:
+  1. Isola a última medição registrada.
+  2. Calcula o percentual de ocupação cruzando o volume atual com a capacidade total parametrizada.
+  3. Agrupa todas as informações no modelo de visualização (`DashboardViewModel`).
+* A interface web recebe os dados prontos e renderiza o painel com todos os indicadores de desempenho.
 
 ---
 
-# Etapa 3 – Gestão de Parceiros (Cadastro, Edição e Status)
+### Etapa 3 – Listagem e Gestão de Medições
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_Parceiro.png" width="900" alt="Etapa de gestão de parceiros" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Sequencia_MVC_Medições.drawio.png" width="900" alt="Diagrama de Sequência - Gestão de Medições" />
 </p>
 
-Esta etapa é responsável pelo gerenciamento das empresas e parceiros comerciais cadastrados na aplicação.
+Esta etapa detalha como o sistema recupera e exibe o histórico de aferições de volume na tela de medições.
 
-## Como funciona
-
-Ao acessar a tela de parceiros, o administrador solicita a listagem dos registros.
-
-O sistema recupera os parceiros cadastrados e aplica automaticamente as regras de paginação.
-
-Durante o cadastro de um novo parceiro, o formulário passa pelas seguintes validações:
-
-- Validação dos campos obrigatórios;
-- Proteção contra ataques de falsificação (**ValidateAntiForgeryToken**).
-
-Quando uma exclusão é solicitada, o sistema realiza uma verificação de integridade.
-
-Caso o parceiro possua notificações ou outras dependências relacionadas, a exclusão é cancelada e uma mensagem de erro é apresentada ao administrador, preservando a consistência dos dados.
+**Como funciona:**
+* O operador acessa a página de medições, podendo ou não preencher filtros de busca.
+* A interface solicita a lista de medições via GET ao sistema.
+* O sistema envia a requisição para o banco de dados (Firebase) solicitando os dados correspondentes aos filtros aplicados.
+* O banco de dados retorna a lista bruta de medições.
+* O sistema realiza o processamento local para:
+  1. Ordenar os dados por data/hora (mais recentes primeiro).
+  2. Calcular as estatísticas gerais para a página.
+  3. Aplicar a paginação.
+* A tela (View) é montada com os dados organizados e exibida para o operador.
 
 ---
 
-# Etapa 4 – Medição Local (Manual ou Automática)
+### Etapa 4 – Novo Cadastro (Ex: Parceiros ou Usuários)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencial_Medicao.png" width="900" alt="Etapa de medicão local" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Novo_Cadastro_MVC.drawio.png" width="900" alt="Diagrama de Sequência - Novo Cadastro" />
 </p>
 
-Esta etapa representa o processamento realizado localmente pelo sensor Kinect para calcular o volume do estoque.
+Esta etapa cobre o fluxo padrão de inserção de novos registros no sistema através de formulários.
 
-## Como funciona
-
-A medição pode ser iniciada manualmente pelo operador ou automaticamente por um temporizador.
-
-Ao iniciar o processo, o sensor captura a profundidade atual do ambiente.
-
-Antes de calcular o volume, o sistema executa diversas validações, incluindo:
-
-- Verificação da conexão com o Kinect;
-- Confirmação de que o ambiente foi previamente calibrado;
-- Validação de que o volume calculado é maior que zero.
-
-Após todas as verificações:
-
-1. O volume é calculado em centímetros cúbicos ($cm^3$);
-2. O resultado é apresentado na interface local;
-3. A medição é armazenada temporariamente para posterior sincronização.
+**Como funciona:**
+* O operador preenche os campos do formulário na interface web e clica em salvar.
+* A interface envia os dados para o sistema, que realiza a primeira camada de **validação dos dados** (regras de negócio e anotações obrigatórias).
+* Se os dados forem inválidos: O sistema interrompe o fluxo e retorna a interface informando os erros no formulário.
+* Se os dados forem válidos:
+  1. O sistema solicita a inclusão do item e executa a instrução de salvamento no Firebase.
+  2. O Firebase retorna a confirmação de sucesso.
+* O sistema notifica a interface web, atualiza a lista de registros e apresenta a mensagem de êxito ao operador.
 
 ---
 
-# Etapa 5 – Persistência e Envio (Conexão e Sincronização)
+### Etapa 5 – Edição de Registros
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_Percistencia.png" width="900" alt="Etapa de persistência" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Digrama_Sequencia_Edicao_MVC.drawio.png" width="900" alt="Diagrama de Sequência - Edição de Registros" />
 </p>
 
-Esta etapa garante que as medições realizadas localmente sejam transmitidas com segurança ao servidor central.
+Este fluxo detalha a alteração de um registro existente, incorporando otimizações para evitar gravações desnecessárias no banco de dados.
 
-## Como funciona
-
-Antes do envio das informações, o sistema do Kinect verifica a conexão com o servidor principal.
-
-Se a conexão estiver disponível:
-
-1. O volume calculado é enviado ao servidor;
-2. O servidor processa a informação recebida;
-3. Uma confirmação de recebimento é retornada ao dispositivo.
-
-Caso ocorra uma falha de comunicação, o sistema entra automaticamente em um fluxo alternativo de recuperação.
-
-Nesse cenário, são executadas tentativas automáticas de reconexão, garantindo que nenhuma medição seja perdida durante o processo de sincronização.
+**Como funciona:**
+* O operador seleciona um item na listagem, preenche o formulário com novas informações e clica em salvar.
+* O sistema recebe a requisição, aplica a validação de modelo (se inválido, retorna os erros para a tela).
+* Com os dados válidos, o sistema consulta o Firebase e busca o **registro atual**.
+* Uma validação avançada é feita em memória para **verificar se houve alterações reais** comparando os dados atuais com os novos recebidos.
+* **Se não houver alteração:** O sistema não acessa o banco para salvar, apenas retorna um aviso ao usuário informando que nada foi modificado.
+* **Se houver alteração (Sim):** O sistema solicita a atualização no Firebase, recebe a confirmação de gravação e atualiza a interface del operador com os dados modificados.
 
 ---
-# Etapa 6 – Histórico, Logs e Encerramento
+
+### Etapa 6 – Gerenciamento de Parâmetros e Configurações
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_log.png" width="900" alt="Etapa de Historico" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagram_Sequencia_Parametros.drawio.png" width="900" alt="Diagrama de Sequência - Salvar Parâmetros" />
 </p>
 
-Esta etapa representa o encerramento do ciclo de monitoramento, garantindo que todas as informações geradas durante a operação sejam registradas com segurança antes da finalização do processo.
+Fluxo dedicado ao controle das regras globais da aplicação, que regem cálculos de capacidade e limites de alerta do estoque.
 
-## Como funciona
-
-Antes de encerrar o monitoramento, o sistema realiza uma última consulta ao histórico local para verificar se todas as informações foram registradas corretamente.
-
-Em seguida, é iniciado o processo de auditoria, no qual são armazenados diferentes tipos de registros, incluindo:
-
-- Log de acesso dos usuários;
-- Log das medições realizadas pelo sensor Kinect;
-- Log de erros ou exceções ocorridas durante a execução do sistema.
-
-Após concluir o armazenamento dessas informações, os registros são persistidos no banco de dados local, garantindo a rastreabilidade das operações realizadas.
-
-Com todas as etapas concluídas, o sistema executa o encerramento do monitoramento.
-
-As ações finais incluem:
-
-1. Finalização da sessão de monitoramento;
-2. Interrupção da captura de dados pelo sensor Kinect para reduzir o consumo de recursos;
-3. Atualização da interface da aplicação;
-4. Limpeza dos dados temporários da tela, deixando o sistema preparado para iniciar um novo ciclo de medição.
-
+**Como funciona:**
+* O operador ajusta configurações (ex: Capacidade Mínima e Máxima) e clica em Salvar.
+* O sistema envia o comando de atualização (`Salvar ParametrosSistema`).
+* Ocorre a validação cruzada (ex: Capacidade mínima não pode ser maior que a máxima). Falhas devolvem a tela com erro.
+* Com validação aprovada, o sistema invoca o método para **buscar as configurações atuais** no Firebase.
+* O sistema **compara campo a campo** as novas configurações com as atuais.
+* Da mesma forma que a etapa de edição: se não detectar mudanças, o sistema descarta o processamento e avisa o usuário.
+* Havendo modificações legítimas, as configurações globais são updated no banco, refletindo
 ---
 ### Diagrama de Domínio
 
