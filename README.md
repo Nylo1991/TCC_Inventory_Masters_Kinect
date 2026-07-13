@@ -547,23 +547,6 @@ A camada `Command` provê a infraestrutura necessária para a comunicação entr
 
 ---
 
-## FLUXO ENTRE AS APLICAÇÕES
-
-<p align="center">
-  <img src="./Imagens/EstruturaFluxo.png" alt="Estrutura do Fluxo de Dados do Sistema" />
-</p>
-
-### Detalhamento do Fluxo de Dados
-
-1. **Captura (Kinect Sensor):** O hardware realiza a leitura volumétrica do ambiente e envia os dados brutos para o `KinectService`.
-2. **Orquestração (MainViewModel):** A camada de apresentação (MVVM) recebe os dados processados e gerencia a interface do usuário em tempo real.
-3. **Persistência de Borda (SQLite Local):** A aplicação desktop persiste as medições localmente, garantindo a integridade dos dados mesmo em caso de oscilações na rede.
-4. **Sincronização (SignalRService):** O serviço de tempo real transmite os dados processados da aplicação desktop para o `MedicaoHub` (parte da aplicação Web).
-5. **Persistência Central (Google Firebase):** O servidor central consolida as informações no **Google Firebase**.
-6. **Visualização (Dashboard MVC):** A aplicação web consome os dados do Firebase e os exibe no dashboard administrativo, finalizando o fluxo.
-
----
-
 ## ARQUITETURA UTILIZADA
 
 * **WPF (.NET Framework C#) - MVVM:** Framework de interface gráfica utilizado para o desenvolvimento da aplicação desktop. O padrão **MVVM (Model-View-ViewModel)** garante a separação estrita entre a lógica de processamento e a interface, essencial para manter a estabilidade enquanto o sistema lida com fluxos de vídeo.
@@ -572,7 +555,6 @@ A camada `Command` provê a infraestrutura necessária para a comunicação entr
 * **SignalR:** Biblioteca de comunicação em tempo real que estabelece um canal bidirecional permanente. Permite que a aplicação desktop transmita dados processados ao servidor web de forma assíncrona e instantânea.
 * **ASP.NET Core MVC:** *Framework* web que atua como o servidor central. Recebe o tráfego via SignalR, processa as regras de negócio e gerencia o fluxo de informações entre os dispositivos de ponta e o armazenamento na nuvem.
 * **Firebase (Google Cloud):** Plataforma de banco de dados *NoSQL* em nuvem. É o repositório centralizado onde as medições consolidadas são registradas, servindo de fonte de dados para o dashboard administrativo acessado via interface web.
-
   
 -----
 
