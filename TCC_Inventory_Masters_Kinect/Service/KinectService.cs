@@ -54,12 +54,28 @@ namespace TCC_Inventory_Masters_Kinect.Service
         /// <summary>
         /// Inicializa o serviço tentando localizar o primeiro Kinect conectado ao computador.
         /// </summary>
+        /// <summary>
+        /// Inicializa o serviço. O sensor será localizado no momento em que o usuário clicar em ligar.
+        /// Isso permite conectar o Kinect depois que a aplicação já estiver aberta.
+        /// </summary>
         public KinectService()
         {
-            if (KinectSensor.KinectSensors.Count > 0)
+        }
+
+        /// <summary>
+        /// Procura um Kinect conectado e pronto para uso.
+        /// </summary>
+        private KinectSensor ObterKinectConectado()
+        {
+            foreach (var sensor in KinectSensor.KinectSensors)
             {
-                _sensor = KinectSensor.KinectSensors[0];
+                if (sensor.Status == KinectStatus.Connected)
+                {
+                    return sensor;
+                }
             }
+
+            return null;
         }
 
         /// <summary>
@@ -69,16 +85,18 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
+                _sensor = ObterKinectConectado();
+
                 if (_sensor == null)
                 {
-                    LoggerService.Erro("Nenhum Kinect foi encontrado no computador.");
-                    throw new InvalidOperationException("Nenhum Kinect foi encontrado no computador.");
+                    LoggerService.Erro("Nenhum Kinect conectado foi encontrado.");
+                    throw new InvalidOperationException("Nenhum Kinect conectado foi encontrado.");
                 }
 
-                if (_sensor.Status != KinectStatus.Connected)
+                if (_sensor.IsRunning)
                 {
-                    LoggerService.Erro("Kinect v1 nao esta conectado.");
-                    throw new InvalidOperationException("Kinect v1 nao esta conectado.");
+                    LoggerService.Info("Kinect ja estava em execucao.");
+                    return;
                 }
 
                 _sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
@@ -113,6 +131,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     {
                         _sensor.Stop();
                     }
+
+                    _sensor = null;
 
                     LoggerService.Info("Kinect finalizado.");
                 }

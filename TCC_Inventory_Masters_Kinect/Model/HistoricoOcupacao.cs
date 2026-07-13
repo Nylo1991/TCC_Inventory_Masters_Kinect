@@ -8,7 +8,7 @@ namespace TCC_Inventory_Masters_Kinect.Model
     public class HistoricoOcupacao
     {
         public int Id { get; set; }
-        public int EspacoMapeadoId { get; set; }
+        public int MedicaoVolumeId { get; set; }
         public double VolumeAtualCm3 { get; set; }
         public double VolumeMaximoCm3 { get; set; }
         public double EspacoLivreCm3 { get; set; }

@@ -131,7 +131,7 @@ namespace TCC_Inventory_Masters_Kinect.Data
 
                     CREATE TABLE IF NOT EXISTS HistoricosOcupacao (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        EspacoMapeadoId INTEGER NOT NULL,
+                        MedicaoVolumeId  INTEGER NOT NULL,
                         VolumeAtualCm3 REAL NOT NULL,
                         VolumeMaximoCm3 REAL NOT NULL,
                         EspacoLivreCm3 REAL NOT NULL,
