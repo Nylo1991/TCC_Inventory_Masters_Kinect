@@ -406,7 +406,7 @@ A pasta `ViewModels` contém as classes que estruturam os dados exibidos nas *Vi
 <table align="center">
   <tr>
     <th colspan="4" align="center">
-      <img src="./Imagens/View1.png" alt="Estrutura de Views" width="150" />
+      <img src="./Imagens/Estrutura de Camadas/View1.png" alt="Estrutura de Views" width="150" />
     </th>
   </tr>
   <tr>
