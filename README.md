@@ -4219,7 +4219,7 @@ Abaixo, detalhamos o papel de cada entidade presente no nosso diagrama de classe
 Este diagrama ilustra a arquitetura de uma solução de software baseada no padrão **Cliente-Servidor**, projetada para ambientes industriais ou logísticos que necessitam de processamento de imagem em tempo real com alta disponibilidade (capacidade de funcionar offline).
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Dominio.png" width="900" alt="Diagrama de domínio" />
+  <img src="./Imagens/Diagrama_Domínio.jpeg" width="900" alt="Diagrama de domínio" />
 </p>
 
 Abaixo, detalhamos como essa estrutura funciona em cada camada:
