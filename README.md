@@ -53,7 +53,7 @@
 - [Viabilidade Técnica](#viabilidade-tecnica)
 - [Viabilidade Econômica](#viabilidade-economica)
 - [Resultados e Conclusão](#resultados-e-conclusao)
-- [Anexos](#anexos)
+- [Documentos Complementares](#documentos-complementares)
 ---
 
 ## QUEM SOMOS
@@ -5030,7 +5030,7 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 
 ---
 
-## ANEXOS
+## DOCUMENTOS COMPLEMENTARES
 
 Para acessar as documentações técnicas, diretrizes de manutenção e recursos visuais do sistema, utilize a tabela abaixo:
 
