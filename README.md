@@ -32,9 +32,9 @@
 - [Desenvolvimento](#desenvolvimento)
 - [Minimundo](#minimundo)
 - [Estrutura do Projeto](#estrutura-do-projeto)                                                   
-- [Arquitetura Utilizada](#arquitetura-utilizada).
+- [Arquitetura Utilizada](#arquitetura-utilizada)
 - [Regras de Negócio](#regras-de-negocio)  
-- [Requisitos do Sistema](#requisitos-do-sistema).
+- [Requisitos do Sistema](#requisitos-do-sistema)
 - [Modelagem do Sistema](#modelagem-do-sistema) 
 - [Modelagem do Banco de Dados](#modelagem-do-banco-de-dados) 
 - [Viabilidade Técnica](#viabilidade-tecnica)
