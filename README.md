@@ -33,8 +33,7 @@
   - [Objetivos Específicos](#objetivos-especificos)
 - [Desenvolvimento](#desenvolvimento)
 - [Minimundo](#minimundo)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Estrutura do Projeto](#estrutura-do-projeto)                                                     
+- [Estrutura do Projeto](#estrutura-do-projeto)                                                   
 - [Arquitetura Utilizada](#arquitetura-utilizada).
 - [Regras de Negócio](#regras-de-negocio)
   - [Regras de Negócio (Kinect/Desktop)](#regras-de-negocio-kinectdesktop)
