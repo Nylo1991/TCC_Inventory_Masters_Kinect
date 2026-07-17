@@ -21,7 +21,7 @@
 | **Diulie Mileide Batista Correia** | Programação de Sistemas | Desenvolvimento Kinect, Lógica de Negócio e Documentação|
 
 ---
-## Sumário
+## SUMÁRIO
 
 - [Quem Somos](#quem-somos)
 - [Problema](#problema)
