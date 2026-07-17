@@ -1,6 +1,6 @@
 # INVENTORY MASTERS - SOLUÇÕES INTELIGENTES EM MAPEAMENTO DE ESTOQUE
 ---
-**Unidade SENAI:** Nova Lima
+**Unidade SENAI:** Nova Lima </br>
 **Instrutor:** Frederico Martins Aguiar
 
 <div align="center">
@@ -27,8 +27,6 @@
 - [Problema](#problema)
 - [Solução](#solucao)
 - [Área Tecnológica da Solução](#area-tecnologica-da-solucao)
-- [Arquitetura Utilizada](#arquitetura-utilizada)
-- [Requisitos do Sistema](#requisitos-do-sistema)
 - [Justificativa](#justificativa)
 - [Objetivos](#objetivos)
   - [Objetivo Geral](#objetivo-geral)
@@ -36,12 +34,14 @@
 - [Desenvolvimento](#desenvolvimento)
 - [Minimundo](#minimundo)
 - [Estrutura do Projeto](#estrutura-do-projeto)
-- [Regra de Negócio](#regra-de-negocio)
-  - [Regras de Negócio (MVC/Web)](#regras-de-negocio-mvcweb)
+- [Estrutura do Projeto](#estrutura-do-projeto)                                                     
+- [Arquitetura Utilizada](#arquitetura-utilizada).
+- [Regras de Negócio](#regras-de-negocio)
   - [Regras de Negócio (Kinect/Desktop)](#regras-de-negocio-kinectdesktop)
   - [Regras de Validação (MVC/Web)](#regras-de-validacao-mvcweb)
   - [Regras de Integração](#regras-de-integracao-modulos)
   - [Regras Técnicas/Operacionais](#regras-tecnicasoperacionais)
+- [Requisitos do Sistema](#requisitos-do-sistema).
 - [Modelagem do Sistema](#modelagem-do-sistema)
   - [Diagrama de Caso de Uso](#diagrama-de-caso-de-uso)
   - [Diagrama de Fluxo](#diagrama-de-fluxo)
@@ -54,8 +54,6 @@
 - [Viabilidade Técnica](#viabilidade-tecnica)
 - [Viabilidade Econômica](#viabilidade-economica)
 - [Resultados e Conclusão](#resultados-e-conclusao)
-  - [Resultados Alcançados](#resultados-alcancados)
-  - [Conclusão](#conclusao)
 - [Anexos](#anexos)
 ---
 
