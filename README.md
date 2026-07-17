@@ -104,7 +104,6 @@
   -  Situação dos limites configurados;
   -  Indicadores gerenciais e operacionais.
 
-
   ---
 
 ## SOLUÇÃO
