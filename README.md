@@ -554,7 +554,7 @@ A camada `Command` provê a infraestrutura necessária para a comunicação entr
   
 -----
 
-## REGRA DE NEGÓCIO
+## REGRAS DE NEGÓCIO
 
 As regras de negócio definem o comportamento esperado do sistema, garantindo a precisão das medições, a integridade dos dados, a operação correta do hardware Kinect, a comunicação em tempo real com a aplicação MVC e o apoio à tomada de decisão logística.
 
