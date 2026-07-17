@@ -26,7 +26,7 @@
 - [Quem Somos](#quem-somos)
 - [Problema](#problema)
 - [Solução](#solucao)
-- [Área Tecnológica da Solução](#area-tecnologica-da-solucao)
+- [Área Tecnológica da Solução](#área-tecnológica-da-solução)
 - [Justificativa](#justificativa)
 - [Objetivos](#objetivos)
   - [Objetivo Geral](#objetivo-geral)
