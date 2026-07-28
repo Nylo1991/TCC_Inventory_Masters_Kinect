@@ -4792,6 +4792,85 @@ Esta seção responde, de forma objetiva, às perguntas levantadas pela equipe d
 
 Sim. O Inventory Masters utiliza o **Firebase (versão `Google.Cloud v4.2.0`)** como banco de dados NoSQL em nuvem e conta com o **SQLite (versão `SQLiteStudio v3.4.21`)** na qualidade de banco de dados relacional leve embutido na aplicação desktop, além de utilizar o **Entity Framework 6 (v6.5.1)** para o mapeamento objeto-relacional.
 
+#### O sistema precisa de internet?
+
+Sim, de forma parcial e integrada. O cliente desktop (WPF) interage com o SQLite local e se comunica via SignalR (v6.0.36) com o servidor central, enquanto a Aplicação web em ASP.NET Core MVC (hospedada na MonsterASP.net) faz a persistência centralizada no Firebase (Google.Cloud v4.2.0). Portanto, a conexão com a internet é necessária para a sincronização em tempo real e para o funcionamento do dashboard e do armazenamento em nuvem.
+
+#### O sistema possui login?
+
+Sim. O acesso é controlado por perfis de usuário (como Administrador e Perfis operacionais) e conta com rastreabilidade de logs no sistema (LogsSistema) e gestão de tokens de acesso vinculados ao hardware Kinect.
+
+#### O sistema possui API?
+
+Não, a comunicação ocorre via SignalR. O sistema utiliza a biblioteca SignalR para a comunicação em tempo real e a troca de mensagens, integrando a aplicação desktop diretamente com o servidor central e os serviços em nuvem sem o uso de uma API REST tradicional.
+
+#### Precisa instalar runtime?
+
+Sim. O ambiente exige o ecossistema .NET (compatível com a release do Visual Studio 2026 - v18.7.1) e os pacotes e dependências nativas configurados no projeto (como os drivers do Kinect SDK 1.8 para a captura por hardware e as bibliotecas de conexão).
+
+#### Como o sistema será atualizado?
+
+As atualizações seguem duas frentes: a Aplicação web e o backend hospedados na nuvem (MonsterASP.net) são atualizados via novo deploy, enquanto a aplicação desktop WPF instalada nas estações de trabalho e os componentes de integração com o Kinect exigem a distribuição de novos pacotes ou instaladores controlados via repositório no GitHub.
+
+#### Como recuperar um backup?
+
+O Firebase (`Google.Cloud v4.2.0`) gerencia a alta disponibilidade na nuvem, e o controle local de dados em SQLite (`SQLiteStudio v3.4.21`) conta com rotinas de persistência e logs do sistema, permitindo a restauração e auditoria de registros a partir das medições salvos no banco NoSQL.
+
+#### Existe manual do sistema?
+
+A documentação técnica e os rastreios de arquitetura encontram-se estruturados no repositório do projeto. Recomenda-se a formalização de um manual operacional focado nos operadores do almoxarifado/estoque para a fase de implantação.
+
+#### Quem será treinado?
+
+Os operadores do sistema responsáveis pelo controle de estoque e almoxarifado (utilizando a interface desktop com captura via Kinect) e os administradores encarregados do monitoramento do dashboard em nuvem e da gestão de perfis e acessos.
+
+### 2.2 Sobre a Implantação
+
+#### Qual sistema será implantado?
+
+O Inventory Masters — um sistema integrado de gestão de estoque automatizado que combina uma aplicação desktop WPF (com suporte ao sensor Kinect SDK 1.8), banco local SQLite (`SQLiteStudio v3.4.21`), comunicação em tempo real via SignalR (`v6.0.36`), serviços hospedados na MonsterASP.net e armazenamento em nuvem no Firebase (`Google.Cloudv4.2.0`).
+
+#### Quem será o cliente?
+
+Empresas e indústrias com processos de controle de estoque, almoxarifado e logística interna que buscam automação e eficiência operacional.
+
+#### Onde o sistema será instalado?
+
+A aplicação desktop WPF será instalada localmente nas estações de trabalho dos operadores (junto ao hardware de captura Kinect), e os serviços web/dashboard serão hospedados na nuvem (MonsterASP.net e Firebase).
+
+#### Quais computadores serão utilizados?
+
+Computadores com Windows (compatíveis com o ecossistema .NET e Visual Studio 2026 - v18.7.1), dotados de portas e requisitos de hardware adequados para a execução do cliente WPF e conexão com o sensor Kinect.
+
+#### Quais programas precisam estar previamente instalados?
+
+* Nas estações dos operadores: .NET Runtime compatível, drivers do Kinect SDK 1.8 e os pacotes da aplicação desktop.
+* Nas estações de desenvolvimento: Visual Studio 2026 (v18.7.1), SQLiteStudio (v3.4.21) e as ferramentas de versionamento Git.
+
+#### Existe banco de dados? Qual?
+
+Sim, de forma híbrida: SQLite (`SQLiteStudio v3.4.21`) local na aplicação desktop e Firebase (`Google.Cloud v4.2.0`) em nuvem NoSQL, gerenciado via Google Cloud SDK **Kinect SDK 1.8**.
+
+#### Será necessário migrar informações?
+
+Sim, o cadastro prévio de usuários, estruturas de estoque e dados legados da empresa cliente devem ser convertidos e importados para a estrutura do Inventory Masters.
+
+#### Quem ficará responsável por cada etapa?
+
+A equipe descrita no projeto (Danilo, Diulie, Marilene e Miguel), dividida entre gestão, infraestrutura, suporte técnico e análise de dados.
+
+#### Quanto tempo será necessário para concluir a implantação?
+
+O prazo estimado deve contemplar as fases de configuração de ambiente, homologação, testes com o Kinect e implantação no cliente.
+
+#### Como será realizada a validação do sistema?
+
+Por meio de testes integrados entre o aplicativo desktop, o sensor Kinect, a comunicação em tempo real via SignalR (`v6.0.36`), os serviços web e o Firebase, seguidos de validação prática junto ao cliente.
+
+#### Existe um plano caso ocorra algum problema durante a instalação?
+
+Sim, prevendo ações de contingência para reversão de pacotes, checagem de conexões de rede/SignalR e restauração de dados em caso de falhas na nuvem ou nas estações locais.
+
 ---
 
 ## VIABILIDADE TÉCNICA
