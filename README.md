@@ -534,10 +534,10 @@ A camada `Command` provê a infraestrutura necessária para a comunicação entr
 
 * **WPF (.NET / Visual Studio 2026 - v18.7.1) - MVVM:** Framework de interface gráfica utilizado para o desenvolvimento da aplicação desktop.
 * **Kinect SDK 1.8:** Conjunto de bibliotecas e drivers que permite a interface direta com o hardware Kinect. 
-* **SQLite (SQLiteStudio v3.4.21 / SQLitePCLRaw v3.0.3):** Banco de dados relacional leve embutido na aplicação desktop. 
+* **SQLite (SQLiteStudio v3.4.21):** Banco de dados relacional leve embutido na aplicação desktop. 
 * **SignalR (Microsoft.AspNetCore.SignalR.Client v6.0.36):** Biblioteca de comunicação em tempo real que estabelece um canal bidirecional permanente.
-* **ASP.NET Core MVC (Razor Pages):** *Framework* web hospedado na nuvem via **MonsterASP.net (Free Plan)**. Atua como o servidor central, recebendo o tráfego via SignalR, processando as regras de negócio e gerenciando o fluxo de informações.
-* **Firebase (Google.Cloud v4.2.0 / FirebaseAdmin v3.5.0 / EntityFramework v6.5.1):** Plataforma de banco de dados *NoSQL* em nuvem e ORM centralizado onde as medições consolidadas são registradas, servindo de fonte de dados para o dashboard administrativo acessado via interface web.
+* **ASP.NET Core MVC (Razor Pages):** *Framework* web hospedado na nuvem via **MonsterASP.net (Plano Free)**. Atua como o servidor central, recebendo o tráfego via SignalR, processando as regras de negócio e gerenciando o fluxo de informações.
+* **Firebase (Google.Cloud v4.2.0):** Plataforma de banco de dados *NoSQL* em nuvem e ORM centralizado onde as medições consolidadas são registradas, servindo de fonte de dados para o dashboard administrativo acessado via interface web.
   
 -----
 
