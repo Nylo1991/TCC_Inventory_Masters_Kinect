@@ -4758,6 +4758,41 @@ A Figura acima apresenta a arquitetura de persistência adotada pelo módulo **M
 Nesse contexto, o banco **SQLite** foi adotado por ser uma solução leve, embarcada e de baixo consumo de recursos, características adequadas para aplicações desktop que precisam operar localmente e com suporte ao funcionamento offline. Dessa forma, as entidades do módulo MVVM Kinect são armazenadas localmente, garantindo a persistência das informações mesmo sem conexão com serviços externos.
 
 ---
+## PLANO DE IMPLANTAÇÃO
+
+O Plano de Implantação tem como objetivo detalhar os aspectos técnicos, organizacionais e operacionais necessários para que o sistema Inventory Masters saia do ambiente acadêmico e seja implantado em um contexto real. Este documento serve como guia de transição, detalhando os passos necessários para garantir que a instalação, a configuração de infraestrutura, a migração de dados e a adaptação dos usuários ocorram de forma estruturada, minimizando riscos, falhas e impactos na rotina do cliente.
+
+#### 1. Identificação do Projeto
+
+| Campo | Descrição |
+|---|---|
+| Sistema | Inventory Masters — Sistema de Gestão de Estoque Inteligente |
+| Cliente | Indústrias e Empresas com Gestão de Estoque e Almoxarifado |
+| Repositório | https://github.com/Nylo1991/TCC_Inventory_Masters_Kinect.git |
+| Data de início prevista | A definir como o cliente|
+---
+
+#### 1.2 Equipe e Função
+
+| Colaborador | Função |
+|---|---|
+| Danilo |Técnico de Infraestrutura — instalação e configuração do cliente desktop WPF e integração com o sensor Kinect nas estações da empresa cliente; suporte na entrada em produção |
+| Diulie |Gestor do Projeto — controle do cronograma, comunicação com o cliente e elaboração da documentação de implantação |
+| Marilene |Analista de Dados — diagnóstico, extração, conversão e carga dos dados na migração; configuração do Firebase e dos fluxos em nuvem em produção |
+| Miguel |Técnico de Infraestrutura — deploy e configuração web no MonsterASP.net; controle de versão das entregas via GitHub; suporte técnico durante a implantação |
+---
+
+### 2. Perguntas Norteadoras da Implantação
+
+Esta seção responde, de forma objetiva, às perguntas levantadas pela equipe durante o planejamento, organizadas em dois blocos: características técnicas do sistema e características da implantação.
+
+### 2.1 Sobre o Sistema
+
+#### O sistema possui banco de dados? Qual?
+
+Sim. O Inventory Masters utiliza o **Firebase (versão `Google.Cloud v4.2.0`)** como banco de dados NoSQL em nuvem e conta com o **SQLite (versão `SQLiteStudio v3.4.21`)** na qualidade de banco de dados relacional leve embutido na aplicação desktop, além de utilizar o **Entity Framework 6 (v6.5.1)** para o mapeamento objeto-relacional.
+
+---
 
 ## VIABILIDADE TÉCNICA
 
