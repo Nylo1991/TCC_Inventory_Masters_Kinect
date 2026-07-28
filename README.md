@@ -2788,7 +2788,7 @@ O Diagrama de Caso de Uso representa as funcionalidades da solução Inventory M
 
 * **Módulo MVC:** Responsável pela autenticação, dashboard, usuários, perfis, parceiros, configurações, medições, notificações e registros operacionais.
 * **Módulo Kinect:** Responsável pelo acesso operacional, captura, calibração, processamento volumétrico, armazenamento local e envio das medições.
-* **Módulo de Integração:** Responsável pela comunicação entre o Kinect e a aplicação MVC por meio de API e SignalR.
+* **Módulo de Integração:** Responsável pela comunicação entre o Kinect e a aplicação MVC por de SignalR.
 
 ---
 
