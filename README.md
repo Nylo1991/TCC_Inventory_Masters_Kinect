@@ -532,12 +532,12 @@ A camada `Command` provê a infraestrutura necessária para a comunicação entr
 
 ## ARQUITETURA UTILIZADA
 
-* **WPF (.NET Framework C#) - MVVM:** Framework de interface gráfica utilizado para o desenvolvimento da aplicação desktop. O padrão **MVVM (Model-View-ViewModel)** garante a separação estrita entre a lógica de processamento e a interface, essencial para manter a estabilidade enquanto o sistema lida com fluxos de vídeo.
-* **Kinect SDK 1.8:** Conjunto de bibliotecas e drivers que permite a interface direta com o hardware Kinect. É responsável pela captura e interpretação dos dados brutos de profundidade e volumetria do ambiente.
-* **SQLite:** Banco de dados relacional leve embutido na aplicação desktop. Funciona como camada de persistência local, garantindo a integridade imediata das medições e a continuidade operacional mesmo em cenários de indisponibilidade de rede.
-* **SignalR:** Biblioteca de comunicação em tempo real que estabelece um canal bidirecional permanente. Permite que a aplicação desktop transmita dados processados ao servidor web de forma assíncrona e instantânea.
-* **ASP.NET Core MVC:** *Framework* web que atua como o servidor central. Recebe o tráfego via SignalR, processa as regras de negócio e gerencia o fluxo de informações entre os dispositivos de ponta e o armazenamento na nuvem.
-* **Firebase (Google Cloud):** Plataforma de banco de dados *NoSQL* em nuvem. É o repositório centralizado onde as medições consolidadas são registradas, servindo de fonte de dados para o dashboard administrativo acessado via interface web.
+* **WPF (.NET / Visual Studio 2026 - v18.7.1) - MVVM:** Framework de interface gráfica utilizado para o desenvolvimento da aplicação desktop.
+* **Kinect SDK 1.8:** Conjunto de bibliotecas e drivers que permite a interface direta com o hardware Kinect. 
+* **SQLite (SQLiteStudio v3.4.21 / SQLitePCLRaw v3.0.3):** Banco de dados relacional leve embutido na aplicação desktop. 
+* **SignalR (Microsoft.AspNetCore.SignalR.Client v6.0.36):** Biblioteca de comunicação em tempo real que estabelece um canal bidirecional permanente.
+* **ASP.NET Core MVC (Razor Pages):** *Framework* web hospedado na nuvem via **MonsterASP.net (Free Plan)**. Atua como o servidor central, recebendo o tráfego via SignalR, processando as regras de negócio e gerenciando o fluxo de informações.
+* **Firebase (Google.Cloud v4.2.0 / FirebaseAdmin v3.5.0 / EntityFramework v6.5.1):** Plataforma de banco de dados *NoSQL* em nuvem e ORM centralizado onde as medições consolidadas são registradas, servindo de fonte de dados para o dashboard administrativo acessado via interface web.
   
 -----
 
