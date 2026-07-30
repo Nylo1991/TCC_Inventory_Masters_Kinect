@@ -4782,6 +4782,8 @@ O Plano de Implantação tem como objetivo detalhar os aspectos técnicos, organ
 | Miguel |Técnico de Infraestrutura — deploy e configuração web no MonsterASP.net; controle de versão das entregas via GitHub; suporte técnico durante a implantação |
 ---
 
+---
+
 ### 2. Perguntas Norteadoras da Implantação
 
 Esta seção responde, de forma objetiva, às perguntas levantadas pela equipe durante o planejamento, organizadas em dois blocos: características técnicas do sistema e características da implantação.
@@ -4872,6 +4874,143 @@ Por meio de testes integrados entre o aplicativo desktop, o sensor Kinect, a com
 Sim, prevendo ações de contingência para reversão de pacotes, checagem de conexões de rede/SignalR e restauração de dados em caso de falhas na nuvem ou nas estações locais.
 
 ---
+
+## 3. Levantamento da Infraestrutura Necessária
+
+### 3.1 Requisitos de Hardware (estações cliente)
+
+| Item | Requisito mínimo | Configuração de Referência (Desenvolvimento/Teste) | Recomendado |
+|---|---|---|---|
+| Processador | Intel Core i7 | **13th Gen Intel(R) Core(TM) i7-13620H (2.40 GHz)** | Intel Core i7 de alta performance |
+| Memória RAM | 24 GB | **24,0 GB (4800 MT/s)** | 24 GB ou superior |
+| Armazenamento | 500 MB livres (dados locais em SQLite) | **477 GB (com cerca de 153 GB usados)** | 512 GB SSD ou superior |
+| Sistema Operacional | Windows 10/11 (64 bits) | **Windows 11 (64 bits)** | Windows 11 (64 bits) |
+| Periféricos | Porta USB 2.0 / 3.0 disponível | Porta USB dedicada para o sensor Kinect | Porta USB dedicada para o sensor Kinect |
+| Conexão | Internet banda larga estável | Internet banda larga estável | Internet banda larga com redundância (4G de backup) |
+
+### 3.2 Requisitos de Software
+
+- Ecossistema .NET (compatível com a release do Visual Studio 2026 - v18.7.1)
+- Drivers do Kinect SDK 1.8 para a captura via hardware
+- SQLiteStudio (v3.4.21) para suporte local
+- Navegador atualizado para acesso administrativo ao console Firebase (`Google.Cloud v4.2.0`)
+
+### 3.3 Infraestrutura de Servidor e Serviços em Nuvem
+
+| Camada | Serviço | Observação |
+|---|---|---|
+| Hospedagem Web | MonsterASP.net | Executa o backend e os serviços web integrados |
+| Banco de dados | Firebase (Google.Cloud v4.2.0) | Armazenamento centralizado em nuvem NoSQL gerenciado via Google Cloud SDK |
+| Comunicação em tempo real | SignalR (v6.0.36) | Gerencia a troca de mensagens e a sincronização entre a aplicação desktop e o servidor central |
+| Controle de versão | Git/GitHub | Repositório centralizado e usado para a distribuição de pacotes e instaladores |
+
+### 3.4 Rede e Segurança
+
+- Conexão segura obrigatória para a sincronização em tempo real e comunicação com os serviços externos.
+- Liberação de acesso de saída (outbound) nas estações da empresa cliente para os domínios do Firebase e da hospedagem em nuvem, caso exista firewall ou proxy corporativo.
+- Controle de acesso segmentado por perfis de usuário (Administrador e Operacional) com trilha de rastreabilidade nos logs do sistema (`LogsSistema`).
+- Definição prévia, junto ao cliente, dos responsáveis por cada perfil de acesso antes do início dos treinamentos.
+
+---
+
+## 4. Plano de Migração de Dados
+
+Como o **Inventory Masters** substitui um controle manual ou planilhas legadas por um sistema automatizado com captura via sensor Kinect e banco de dados híbrido, a migração concentra-se em duas frentes: o cadastro inicial de referência (perfis de usuários, cadastros de parceiros e medições de estoque) e, quando disponível, o histórico de medições de materiais já mantido pela empresa.
+
+| Fase | Atividade | Responsável |
+|---|---|---|
+| 1. Diagnóstico | Levantamento das planilhas, cadastros legados ou registros manuais existentes na empresa cliente; avaliação da qualidade e consistência dos dados | Analista de Dados (Marilene) |
+| 2. Extração | Extração dos dados relevantes (descrição dos parâmetros, quantidades em estoque, localização e dados cadastrais prévios) | Analista de Dados (Marilene) |
+| 3. Conversão | Estruturação dos dados extraídos no formato das entidades do Inventory Masters (para salvamento no SQLite local e sincronização via SignalR no Firebase) | Danilo |
+| 4. Carga | Importação dos dados convertidos para o banco SQLite local e para o Firebase via rotinas estruturadas ou scripts de carga | Miguel |
+| 5. Validação | Conferência de integridade dos dados migrados em conjunto com a equipe da empresa cliente | Diulie + Cliente |
+
+> Caso a empresa cliente não possua nenhum controle histórico digitalizado, esta etapa se reduz ao cadastro inicial dos parâmetros, dos perfis de acesso, dos usuários e dos parceiros sem necessidade de conversão de dados legados.
+
+---
+## 5. Cronograma Resumido da Implantação
+
+O cronograma abaixo estima 11 semanas de implantação, a partir da assinatura do aceite pela empresa cliente (D+0), adaptado da estrutura de cronograma corporativo usada como referência pela equipe.
+
+| Etapa | Atividade principal | Duração estimada |
+|---|---|---|
+| 1. Kickoff | Reunião de abertura, alinhamento de expectativas e definição de responsáveis | 3 dias |
+| 2. Infraestrutura | Validação do ambiente do cliente, configuração do Firebase, dos serviços na MonsterASP.net e do ecossistema .NET nas estações | 7 dias |
+| 3. Migração de Dados | Diagnóstico, extração, conversão e carga dos dados existentes na empresa cliente (SQLite local e nuvem) | 5 dias |
+| 4. Instalação do Cliente | Instalação do Inventory Masters nas estações de trabalho e configuração do sensor Kinect SDK 1.8 | 3 dias |
+| 5. Elaboração de Manuais | Produção do manual operacional para o almoxarifado/estoque e da documentação técnica | 15 dias |
+| 6. Treinamento | Capacitação dos usuários operacionais e do(s) administrador(es) nos perfis de acesso | 5 dias |
+| 7. Testes e Homologação | Testes funcionais integrados via SignalR, testes com o hardware Kinect e homologação com o cliente | 10 dias |
+| 8. Go-Live | Entrada em produção, sincronização em tempo real e acompanhamento intensivo pós Go-Live | 3 dias |
+| 9. Encerramento | Coleta de feedback, relatório final e reunião de encerramento do projeto | 3 dias |
+
+> **Prazo total estimado:** aproximadamente 11 semanas (54 dias úteis), podendo variar conforme a disponibilidade das equipes da empresa para participação nas etapas de migração, testes e treinamento.
+
+---
+
+### 6. Distribuição das Responsabilidades
+
+| Papel na implantação | Integrante | Principais responsabilidades |
+|---|---|---|
+| Gestor do Projeto | Diulie | Coordenação geral, cronograma, comunicação com o cliente e com a equipe, relatório final |
+| Técnico de Infraestrutura | Miguel / Danilo | Configuração dos serviços na MonsterASP.net, instalação do cliente desktop WPF e do sensor Kinect SDK 1.8 nas estações da empresa cliente, validação de rede e SignalR |
+| Analista de Dados | Marilene | Diagnóstico, extração, conversão e carga de dados, configuração do Firebase e gerenciamento dos dados no SQLite local |
+| Instrutor de Treinamento | Toda a equipe (rodízio) | Elaboração dos manuais operacionais e condução dos treinamentos com os usuários e administradores da empresa cliente |
+
+---
+### 7. Plano de Validação do Sistema
+
+A validação segue três níveis, do técnico ao aceite final do cliente:
+
+#### 7.1 Testes Funcionais
+
+- Cadastro, edição e exclusão de perfis e movimentações no estoque (perfil Operacional e Administrador).
+- Login e controle de acesso por perfil (Operacional / Administrador).
+- Captura de dados e interação física com o sensor Kinect SDK 1.8.
+- Geração de relatórios e registros a partir dos dados locais e em nuvem.
+
+#### 7.2 Testes de Integração
+
+- Comunicação em tempo real entre a aplicação desktop WPF e o servidor central via SignalR (`v6.0.36`).
+- Sincronização e persistência híbrida entre o banco SQLite local (`SQLiteStudio v3.4.21`) e o Firebase (`Google.Cloud v4.2.0`).
+- Comportamento do sistema e sincronização em cenários de instabilidade ou perda momentânea de conexão de rede.
+
+#### 7.3 Homologação e Aceite
+
+- Simulação de fluxos reais de trabalho de controle de estoque pelos próprios operadores da empresa cliente.
+- Validação, pelo cliente, da migração de dados realizada na Seção 4 item 5.
+- Assinatura de termo de aceite formalizando a homologação.
+
+> **Critério de aceite:** o sistema será considerado apto quando todos os módulos e integrações (aplicação desktop WPF, captura via Kinect, banco SQLite local e sincronização via SignalR com o Firebase) estiverem funcionando sem erros críticos e o cliente tiver validado formalmente os dados migrados.
+
+---
+
+### 8. Plano de Contingência
+
+| Risco | Probabilidade | Impacto | Ação de mitigação |
+|---|---|---|---|
+| Indisponibilidade dos serviços em nuvem (MonsterASP.net) | Baixo | Alto | Monitoramento ativo da hospedagem e procedimentos manuais de reinicialização ou verificação de logs no servidor |
+| Falha ou desconexão do sensor Kinect SDK 1.8 | Média | Alto | Checagem prévia das portas USB 2.0 / 3.0, verificação de drivers e reinicialização do subsistema de captura |
+| Falha na migração de dados | Média | Alto | Backup do banco SQLite local e estado do Firebase antes de cada carga; rotinas de rollback e nova tentativa |
+| Indisponibilidade de internet na empresa contratante | Baixa | Alto | Verificação prévia de conectividade; uso de 4G/hotspot como contingência temporária para o funcionamento em nuvem e persistência local via SQLite |
+| Resistência ou dificuldade dos usuários no treinamento | Média | Médio | Disponibilização do manual operacional, sessões de reforço e suporte próximo nos primeiros dias de uso |
+| Erros críticos identificados após a implantação | Média | Alto | Equipe de suporte técnico de prontidão logo após a entrada em produção |
+
+---
+
+### 9. Considerações Finais
+
+O planejamento apresentado demonstra que o **Inventory Masters** está tecnicamente apto a sair do ambiente acadêmico e ser implantado em um contexto real: sua arquitetura híbrida e conectada (aplicação desktop WPF com suporte ao sensor Kinect SDK 1.8, banco de dados local SQLite, comunicação em tempo real via SignalR e armazenamento em nuvem no Firebase), já validada durante o desenvolvimento, permite uma implantação estruturada e de baixo risco para a automação do estoque e da gestão interna.
+
+A dependência de serviços em nuvem evidencia que a robustez da comunicação em tempo real e a integridade da persistência híbrida trabalham para assegurar a segurança e a confiabilidade dos dados em produção.
+
+De forma geral, a viabilidade da implantação do Inventory Masters está sustentada por três fatores:
+
+1. Uma arquitetura integrada e moderna, combinando processamento local e sincronização em tempo real via SignalR;
+2. Um cronograma realista de aproximadamente 11 semanas, compatível com a maturidade atual do sistema e as etapas detalhadas;
+3. Uma distribuição clara de responsabilidades dentro da equipe (Danilo, Diulie, Marilene e Miguel), aproximando a experiência do projeto acadêmico das práticas reais de implantação de sistemas.
+
+---  
 
 ## VIABILIDADE TÉCNICA
 
