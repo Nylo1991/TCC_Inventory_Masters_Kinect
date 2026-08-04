@@ -33,6 +33,7 @@
 ---
 
 ## Alterações previstas
+
 * **Migração de Banco de Dados Local:** Substituição definitiva do SQLite (utilizado para fins acadêmicos e de desenvolvimento) por **SQL Server** no ambiente de produção do cliente, exigindo reconfiguração das strings de conexão e adaptação dos mapeamentos do Entity Framework.
 * **Transição de Persistência em Nuvem (Multi-tenant Azure):** Substituição da arquitetura atual baseada no Firebase (onde o isolamento de dados entre empresas precisava de ajustes para evitar o acesso cruzado) por uma estrutura robusta hospedada no **Microsoft Azure**, implementando o modelo de múltiplos inquilinos (*multi-tenant*) com bancos de dados isolados e associados diretamente a cada cliente respectivo.
 * **Evolução Estrutural:** Inclusão de novas tabelas, campos e índices conforme atualizações e novas entregas de requisitos do sistema.
@@ -63,16 +64,6 @@
 ---
 
 ## Estratégia de Migração
-* **Justificativa de Ausência de Migração de Dados Legados:** 
-  A captura de dados do **Inventory Masters** baseia-se na interação física com o sensor Kinect (SDK 1.8), portanto a ausência de um sistema legado tradicional fundamenta-se no fato de que os dados gerados são nativamente estruturados pela primeira vez a partir da nova tecnologia de hardware e visão computacional.
-  
-  Como o sistema introduz uma solução inovadora de automação e controle de estoque, a aplicação opera com um fluxo de informações dinâmico e físico que difere totalmente dos métodos tradicionais de digitação ou planilhas estáticas. Portanto, não se faz necessária uma migração de dados de um sistema legado anterior pelos seguintes motivos:
-  * **Natureza Inovadora da Captura:** Os dados de movimentação e inventário são gerados primariamente em tempo real através da interação com o sensor Kinect, tornando obsoletos registros puramente textuais ou manuais pré-existentes.
-  * **Inexistência de Base Prévia Compatível:** As empresas ou ambientes de teste que adotam a solução partem de um cenário onde o controle de estoque era inexistente ou manual, não havendo estrutura de dados digitalizada com o mesmo padrão espacial e métrico exigido pela aplicação.
-  * **Inicialização Limpa (Clean State):** O ecossistema híbrido do sistema (banco local SQLite e sincronização com o Firebase) é populado a partir do primeiro inventário físico assistido por hardware, garantindo total integridade e eliminando o risco de inconsistências decorrentes da importação de bases legadas incompatíveis.
----
-
-## Estratégia de Migração
 
 * **Justificativa de Ausência de Migração de Dados Legados:**  
   A captura de dados do **Inventory Masters** baseia-se na interação física com o sensor Kinect (SDK 1.8), portanto a ausência de um sistema legado tradicional fundamenta-se no fato de que os dados gerados são nativamente estruturados pela primeira vez a partir da nova tecnologia de hardware e visão computacional.
@@ -84,9 +75,13 @@
 
 * **Cenários Alternativos de Migração e Integração (Casos de Uso Corporativo):**  
   Embora o núcleo do **Inventory Masters** nasça de uma inicialização limpa baseada em captura física, a adoção do sistema em clientes de médio e grande porte exige diretrizes para cenários onde dados pré-existentes precisem ser considerados:
-  * **Cenário de Carga Inicial de Cadastros (Planilhas e ERPs):** Caso o cliente possua catálogos de produtos, SKUs e dados de fornecedores em sistemas legados (ERPs ou planilhas de Excel), a estratégia prevê a execução de scripts de *importação estática via rotinas ETL (Extract, Transform, Load)* diretamente nas novas tabelas do SQL Server / Azure, populando apenas as entidades relacionais básicas antes da ativação do hardware.
-  * **Cenário de Convivência Híbrida (API Gateway / Integração de Sistemas):** Para ambientes corporativos que mantêm sistemas legados de gestão de armazéns (WMS), a estratégia de migração evolui para uma abordagem de integração contínua. O **Inventory Masters** atua como a ponta de captura física (Kinect), despachando os *payloads* de medição via SignalR e gravando os dados consolidados no SQL Server/Azure, que por sua vez disponibiliza webhooks ou endpoints para sincronização com o software legado do cliente.
-  * **Cenário de Transição de Base (Legacy to Production Cutover):** Na eventualidade de substituição de uma versão piloto baseada em arquivos SQLite locais para o ambiente corporativo definitivo em nuvem, a estratégia adota uma janela de manutenção programada (*cutover*), onde as bases locais são consolidadas, validadas por *checksum*, e migradas em lote para a respectiva instância *tenant* no Azure SQL Database.
+
+| Cenário Alternativo | Abordagem e Direcionamento Técnico | Finalidade e Impacto Operacional |
+| :--- | :--- | :--- |
+| **Cenário de Carga Inicial de Cadastros**<br>*(Planilhas e ERPs)* | Caso o cliente possua catálogos de produtos, SKUs e dados de fornecedores em sistemas legados (ERPs ou planilhas de Excel), a estratégia prevê a execução de scripts de importação estática via rotinas ETL (Extract, Transform, Load) diretamente nas novas tabelas do SQL Server / Azure. | Popular apenas as entidades relacionais básicas antes da ativação do hardware. |
+| **Cenário de Convivência Híbrida**<br>*(API Gateway / Integração de Sistemas)* | Para ambientes corporativos que mantêm sistemas legados de gestão de armazéns (WMS), a estratégia de migração evolui para uma abordagem de integração contínua. O Inventory Masters atua como a ponta de captura física (Kinect), despachando os payloads de medição via SignalR e gravando os dados consolidados no SQL Server/Azure. | Disponibilizar webhooks ou endpoints para sincronização com o software legado do cliente. |
+| **Cenário de Transição de Base**<br>*(Legacy to Production Cutover)* | Na eventualidade de substituição de uma versão piloto baseada em arquivos SQLite locais para o ambiente corporativo definitivo em nuvem, a estratégia adota uma janela de manutenção programada (cutover), onde as bases locais são consolidadas e validadas por checksum. | Migrar os dados em lote para a respectiva instância tenant no Azure SQL Database. |
+
 ---
 
 ## Testes de Validação de Backup
