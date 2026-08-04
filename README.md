@@ -4856,7 +4856,7 @@ Sim, de forma híbrida: SQLite (`SQLiteStudio v3.4.21`) local na aplicação des
 
 #### Será necessário migrar informações?
 
-Sim, o cadastro prévio de usuários, estruturas de estoque e dados legados da empresa cliente devem ser convertidos e importados para a estrutura do Inventory Masters.
+Não será necessária a migração tradicional de dados legados, visto que o ecossistema do **Inventory Masters** baseia-se em uma inicialização limpa (*clean state*), gerando os dados de inventário nativamente e em tempo real a partir da captura física com o sensor Kinect. 
 
 #### Quem ficará responsável por cada etapa?
 
