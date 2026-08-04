@@ -7,7 +7,7 @@
 **Data da revisão:** agosto de 2026  
 **Repositório:** https://github.com/Nylo1991/TCC_Inventory_Masters_Kinect
 
----
+
 
 # Informações do Projeto
 
@@ -29,13 +29,13 @@ A solução é composta por dois módulos integrados:
 | **Comunicação** | SignalR sobre HTTPS, utilizando WebSockets quando disponíveis |
 | **Sensor** | Kinect Xbox 360 |
 
----
+
 
 # Nome
 
 **Inventory Masters — Soluções Inteligentes em Mapeamento de Estoque**
 
----
+
 
 # Versão
 
@@ -53,7 +53,7 @@ A solução é composta por dois módulos integrados:
 
 > **Observação técnica:** o módulo WPF utiliza a biblioteca `Microsoft.Kinect` 1.8.0.0, compatível com o Kinect Xbox 360. Antes da entrega final, a referência do projeto e o `packages.config` devem ser padronizados para o SDK 1.8, eliminando referências divergentes e caminhos absolutos de computadores pessoais.
 
----
+
 
 # Requisitos de Hardware
 
@@ -93,7 +93,7 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 - acesso ao Firebase/Google Cloud ;
 - capacidade dimensionada conforme o número de usuários, sensores e conexões simultâneas.
 
----
+
 
 # Requisitos de Software
 
@@ -130,7 +130,6 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 - acesso autorizado ao projeto Firebase;
 - computador de validação diferente do ambiente original de desenvolvimento.
 
----
 
 # Dependências
 
@@ -161,7 +160,6 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 
 > Antes da compilação e publicação, todas as dependências deverão ser restauradas pelo NuGet. O arquivo do projeto MVC contém referências a bibliotecas WPF e SQLite que deverão ser revisadas e removidas caso não sejam efetivamente utilizadas pelo módulo web.
 
----
 
 # Arquitetura do Sistema
 
@@ -225,7 +223,6 @@ flowchart LR
 
 O módulo Kinect mantém a gravação local das medições no SQLite quando a comunicação SignalR não está disponível. A conexão SignalR possui tentativa automática de reconexão. Entretanto, o reenvio automático das medições que não foram transmitidas deverá ser implementado ou formalmente validado antes da implantação em produção. Até essa validação, a equipe deverá manter um procedimento documentado para identificar e reenviar registros pendentes.
 
----
 
 # Riscos Identificados
 
@@ -248,7 +245,6 @@ O módulo Kinect mantém a gravação local das medições no SQLite quando a co
 | Falha durante uma atualização | Média | Alto | Fazer backup e manter plano de rollback |
 | Queda de energia | Média | Alto | Utilizar filtro de linha ou nobreak e encerrar o sistema corretamente |
 
----
 
 # Plano de Contingência
 
@@ -264,7 +260,6 @@ O módulo Kinect mantém a gravação local das medições no SQLite quando a co
 | Credencial comprometida | Revogar imediatamente a credencial | Gerar nova credencial, atualizar o ambiente e revisar os logs | Administrador do sistema |
 | Queda de energia | Interromper a operação com segurança | Reiniciar os equipamentos, validar o banco e recalibrar quando necessário | Operador e suporte técnico |
 
----
 
 # Fluxo de Implantação Segura
 
@@ -279,7 +274,6 @@ O módulo Kinect mantém a gravação local das medições no SQLite quando a co
 9. Monitorar os logs e o funcionamento durante as primeiras horas.
 10. Executar rollback caso seja identificado erro crítico.
 
----
 
 # Critérios de Aceite da Implantação
 
@@ -300,7 +294,6 @@ A implantação será considerada concluída quando:
 - os logs não apresentarem erros críticos;
 - o responsável técnico aprovar a entrada em produção.
 
----
 
 # Checklist de Implantação
 
