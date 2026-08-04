@@ -63,7 +63,7 @@ A solução é composta por dois módulos integrados:
 |---|---|---|
 | Processador | Intel Core i3 ou equivalente | Intel Core i5/i7 ou equivalente |
 | Memória RAM | 8 GB | 16 GB ou superior |
-| | SSD de 240 GB | SSD de 512 GB ou superior |
+| Armazenamento | SSD de 240 GB | SSD de 512 GB ou superior |
 | Espaço livre | 20 GB | 50 GB ou superior |
 | Arquitetura | 64 bits | 64 bits |
 | Porta USB | Uma porta USB disponível | Porta USB dedicada ao Kinect |
