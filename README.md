@@ -5282,5 +5282,6 @@ Para acessar as documentações técnicas, diretrizes de manutenção e recursos
 | :--- | :--- | :--- |
 | **Business Model Canvas** | Modelagem de negócio, fluxogramas e assets visuais | [Acessar PDF](Docs/canva.pdf) |
 | **Documentação Integra** | Repositório central de especificações do TCC | [Acessar PDF](Docs/Documentação%20Integra.pdf) |
+| **Migração de Banco de Dados** | Estratégia de backup, transição tecnológica e cenários de migração | [Acessar Markdown](Docs/migracao.md) |
 | **Manual Técnico** | Diretrizes de Implementação e Manutenção | [Acessar PDF](Docs/Relação%20de%20Implementação%20-%20Manutenção%20do%20Sistema.pdf) |
 | **Manual Técnico** | Guia de Configuração do ambiente (Kinect + SQLite) | [Acessar PDF](Docs/Guia%20de%20Ambiente%20-%20kinect%20SQLite.pdf) |
