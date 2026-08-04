@@ -39,9 +39,9 @@
 * **Evolução Estrutural:** Inclusão de novas tabelas, campos e índices conforme atualizações e novas entregas de requisitos do sistema.
 * **Adaptação de Componentes:** Ajustes nas rotinas de persistência e nas assinaturas de métodos para compatibilidade com eventuais atualizações de SDKs ou bibliotecas de terceiros (troca dos provedores de nuvem do Google/Firebase para os serviços equivalentes e gerenciados do ecossistema Microsoft Azure / SQL Server).
   
-## Nova Estrutura Proposta (Ambiente de Produção / Cliente)
+### Nova Estrutura Proposta (Ambiente de Produção / Cliente)
 
-### Bibliotecas, Dependências e Arquitetura
+#### Bibliotecas, Dependências e Arquitetura
 
 | Componente / Camada | Tecnologias / Pacotes | Descrição Técnica e Finalidade |
 | :--- | :--- | :--- |
