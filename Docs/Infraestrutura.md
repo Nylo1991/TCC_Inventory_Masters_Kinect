@@ -4,7 +4,7 @@
 **Versão documental:** 1.0.0  
 **Status:** Ambiente acadêmico de homologação  
 **Arquiteturas:** WPF/MVVM e ASP.NET Core MVC  
-**Data da revisão:** agosto de 2026  
+**Data da revisão:** 04 agosto de 2026  
 **Repositório:** https://github.com/Nylo1991/TCC_Inventory_Masters_Kinect
 
 
