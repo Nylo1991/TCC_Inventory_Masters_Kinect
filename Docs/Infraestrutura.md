@@ -121,16 +121,6 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 - variáveis de ambiente para credenciais e configurações sensíveis;
 - política CORS restrita aos endereços autorizados em produção.
 
-## Ambiente de Desenvolvimento
-
-- Visual Studio com suporte a WPF, .NET Framework 4.8 e ASP.NET Core .NET 8;
-- Git para controle de versão;
-- NuGet para restauração das dependências;
-- SQLiteStudio ou ferramenta equivalente para inspeção do banco local;
-- acesso autorizado ao projeto Firebase;
-- computador de validação diferente do ambiente original de desenvolvimento.
-
-
 # Dependências
 
 ## Principais Dependências do Módulo Kinect/MVVM
