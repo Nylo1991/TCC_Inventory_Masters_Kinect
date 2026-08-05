@@ -100,6 +100,7 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 ## Módulo Kinect/Desktop — MVVM
 
 - Windows 10 ou Windows 11, 32 ou 64 bits;
+- Microsoft Visual C++ Redistributable 2015–2022 (x64).
 - Microsoft .NET Framework 4.8;
 - Kinect for Windows SDK 1.8;
 - drivers do Kinect instalados e reconhecidos pelo Windows;
@@ -300,6 +301,7 @@ A implantação será considerada concluída quando:
 ## Software — MVVM
 
 - [ ] O Windows 10 ou 11, 64 bits, está atualizado.
+- [ ] Microsoft Visual C++ Redistributable 2015–2022 (x64) instalado.
 - [ ] O .NET Framework 4.8 está instalado.
 - [ ] O Kinect SDK 1.8 e os drivers estão instalados.
 - [ ] A referência do Kinect foi padronizada para o SDK 1.8.
