@@ -1,4 +1,4 @@
-# Migração
+# Migração do Banco de Dados
 
 ## Dados do sistema
 * **Nome do Sistema:** Inventory Masters
@@ -83,19 +83,14 @@
 | **3. Reestruturação e Nuvem (Cloud Migration)** | **Substituição do Firebase para Azure** | • Descomissionamento gradual dos ouvintes e serviços de escuta em tempo real do Firebase.<br>• Redirecionamento da mensageria e dos fluxos em tempo real para a Azure, utilizando recursos como *Azure SQL Database Change Tracking* ou *Azure SignalR Service*.<br>• Centralização definitiva de todos os logs, metadados espaciais e métricas capturadas pelo sensor Kinect nas tabelas estruturadas do SQL Server na Azure. |
 | **4. Homologação, Cutover e Validação** | **Congelamento e Integridade** | • Definição de uma janela de manutenção controlada (*Cutover*) com interrupção temporária das gravações locais no SQLite e Firebase para evitar perdas de dados recentes do Kinect.<br>• Execução de auditorias de contagem de registros e validações matemáticas por *checksums* comparativos entre as origens e o destino final.<br>• Homologação do ambiente corporativo centralizado para liberar o acesso seguro e segregado às empresas. |
 
-[^1]: **Multi-tenant**: (Multilocatário) Arquitetura de software onde uma única instância do sistema atende a vários clientes (empresas ou "tenants"). Os dados de todos os clientes residem no mesmo banco de dados, mas são isolados de forma lógica e segura, geralmente por meio de uma chave de identificação (como `EmpresaId`).
-
-[^2]: **Schema**: O "esqueleto" ou modelo estrutural do banco de dados. Ele define como os dados são organizados logicamente, incluindo a especificação de tabelas, colunas, tipos de dados, chaves primárias e relacionamentos (chaves estrangeiras).
-
-[^3]: **ETL (Extract, Transform, Load) Local**: Processo que envolve **Extrair** dados da origem (SQLite), **Transformá-los** (ajustar formatos, converter tipos de dados) e **Carregá-los** no banco de destino (SQL Server). O termo "Local" refere-se à execução dessa rotina diretamente no ambiente ou nas bases embarcadas antes da subida para a nuvem.
-
-[^4]: **T-SQL (Transact-SQL)**: É a extensão proprietária da Microsoft para a linguagem padrão SQL, utilizada no SQL Server. Ela adiciona recursos avançados de programação, variáveis, controle de fluxo e funções nativas específicas (como o `GETDATE()`).
-
-[^5]: **Database Change Tracking**: (Rastreamento de Alterações de Banco de Dados) Recurso nativo do SQL Server e Azure SQL que identifica e registra quais linhas de uma tabela foram modificadas (inseridas, atualizadas ou excluídas), sendo extremamente útil para sincronizar dados com aplicações em tempo real sem sobrecarregar o banco.
-
-[^6]: **Cutover**: O momento exato (ou janela de transição) em que a operação do sistema antigo é congelada/desligada e o novo sistema corporativo assume oficialmente o ambiente de produção. É o "ponto de virada" da migração.
-
-[^7]: **Checksums**: (Somas de Verificação) Técnica de validação que utiliza cálculos matemáticos sobre um bloco de dados para verificar sua integridade. Na migração, serve para atestar que os dados saíram da origem e chegaram ao destino exatamente iguais, sem corrupção ou perda de informações.
+> **Notas Técnicas:**
+> * **Multi-tenant**: (Multilocatário) Arquitetura de software onde uma única instância do sistema atende a vários clientes (empresas ou "tenants"). Os dados de todos os clientes residem no mesmo banco de dados, mas são isolados de forma lógica e segura, geralmente por meio de uma chave de identificação (como `EmpresaId`).
+> * **Schema**: O "esqueleto" ou modelo estrutural do banco de dados. Ele define como os dados são organizados logicamente, incluindo a especificação de tabelas, colunas, tipos de dados, chaves primárias e relacionamentos (chaves estrangeiras).
+> * **ETL (Extract, Transform, Load) Local**: Processo que envolve **Extrair** dados da origem (SQLite), **Transformá-los** (ajustar formatos, converter tipos de dados) e **Carregá-los** no banco de destino (SQL Server). O termo "Local" refere-se à execução dessa rotina diretamente no ambiente ou nas bases embarcadas antes da subida para a nuvem.
+> * **T-SQL (Transact-SQL)**: É a extensão proprietária da Microsoft para a linguagem padrão SQL, utilizada no SQL Server. Ela adiciona recursos avançados de programação, variáveis, controle de fluxo e funções nativas específicas (como o `GETDATE()`).
+> * **Database Change Tracking**: (Rastreamento de Alterações de Banco de Dados) Recurso nativo do SQL Server e Azure SQL que identifica e registra quais linhas de uma tabela foram modificadas (inseridas, atualizadas ou excluídas), sendo extremamente útil para sincronizar dados com aplicações em tempo real sem sobrecarregar o banco.
+> * **Cutover**: O momento exato (ou janela de transição) em que a operação do sistema antigo é congelada/desligada e o novo sistema corporativo assume oficialmente o ambiente de produção. É o "ponto de virada" da migração.
+> * **Checksums**: (Somas de Verificação) Técnica de validação que utiliza cálculos matemáticos sobre um bloco de dados para verificar sua integridade. Na migração, serve para atestar que os dados saíram da origem e chegaram ao destino exatamente iguais, sem corrupção ou perda de informações.
 
 ---
 
