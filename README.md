@@ -5282,6 +5282,7 @@ Para acessar as documentações técnicas, diretrizes de manutenção e recursos
 | :--- | :--- | :--- |
 | **Business Model Canvas** | Modelagem de negócio, fluxogramas e assets visuais | [Acessar PDF](Docs/canva.pdf) |
 | **Documentação Integra** | Repositório central de especificações do TCC | [Acessar PDF](Docs/Documentação%20Integra.pdf) |
+| **Infraestrutura** | Especificações de infraestrutura, requisitos de hardware e software, arquitetura, riscos e checklist de implantação | [Acessar Markdown](Docs/Infraestrutura.md) |
 | **Migração de Banco de Dados** | Estratégia de backup, transição tecnológica e cenários de migração | [Acessar Markdown](Docs/Migracao.md) |
 | **Publicação Release** | Documentação de publicação, implantação, ferramentas e notas de release | [Acessar Markdown](Docs/Publicacao%20Release.md) |
 | **Manual Técnico** | Diretrizes de Implementação e Manutenção | [Acessar PDF](Docs/Relação%20de%20Implementação%20-%20Manutenção%20do%20Sistema.pdf) |
