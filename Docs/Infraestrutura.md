@@ -99,7 +99,7 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 
 ## Módulo Kinect/Desktop — MVVM
 
-- Windows 10 ou Windows 11, 64 bits;
+- Windows 10 ou Windows 11, 32 ou 64 bits;
 - Microsoft .NET Framework 4.8;
 - Kinect for Windows SDK 1.8;
 - drivers do Kinect instalados e reconhecidos pelo Windows;
@@ -112,7 +112,6 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 ## Módulo Web — MVC
 
 - ASP.NET Core com .NET 8.0;
-- .NET 8 Hosting Bundle, quando a hospedagem exigir instalação própria;
 - projeto Firebase/Google Cloud configurado;
 - credencial do serviço armazenada fora do repositório;
 - certificado HTTPS válido;
