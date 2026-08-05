@@ -2,114 +2,279 @@
 
 ## Objetivo
 
-Para a implantação do sistema **Inventory Masters** foram utilizadas ferramentas que garantem a compilação, empacotamento, instalação e execução da aplicação em computadores clientes. A escolha de cada tecnologia levou em consideração a compatibilidade com os requisitos do projeto, a facilidade de manutenção e a confiabilidade durante todo o processo de implantação.
+Para a implantação do sistema **Inventory Masters** foram utilizadas ferramentas responsáveis pela compilação, publicação, empacotamento, instalação e execução das aplicações desenvolvidas.
+
+Durante o processo foram gerados dois tipos de instaladores para a aplicação desktop (EXE e MSI), permitindo diferentes estratégias de distribuição do sistema.
+
+A escolha de cada tecnologia levou em consideração a compatibilidade com a arquitetura da solução, facilidade de manutenção, estabilidade e integração com o ambiente Windows.
 
 ---
 
 ## Visual Studio 2022
 
-O **Visual Studio 2022** foi utilizado como o ambiente de desenvolvimento integrado (IDE) oficial para a construção e compilação do sistema.
+O Visual Studio 2022 foi utilizado como ambiente oficial de desenvolvimento da solução.
 
-Por meio dele foi possível desenvolver, depurar, testar e gerar a versão final da aplicação em modo **Release**, garantindo que o software fosse compilado sem dependências do ambiente de desenvolvimento.
+Por meio dele foi possível desenvolver, depurar, testar, compilar e publicar tanto a aplicação desktop (WPF) quanto a aplicação Web (ASP.NET Core MVC).
 
-A ferramenta também viabilizou o gerenciamento dos pacotes **NuGet**, o controle de referências, a configuração da arquitetura **x64** e a validação do funcionamento do sistema antes da geração do instalador.
+Também foi utilizado para gerenciamento de dependências, referências do projeto, pacotes NuGet e configuração dos perfis de publicação.
 
 ### Justificativa da escolha
 
-O Visual Studio foi escolhido por ser o ambiente padrão da Microsoft para o desenvolvimento de aplicações **.NET** e **WPF**, oferecendo total compatibilidade e integração nativa com todas as bibliotecas utilizadas no projeto.
+O Visual Studio foi escolhido por ser o ambiente oficial de desenvolvimento da plataforma .NET, oferecendo integração completa com todas as tecnologias utilizadas no projeto.
 
 ---
 
 ## .NET Framework 4.8
 
-A aplicação desktop responsável pela interface e pela comunicação direta com o sensor **Kinect** foi desenvolvida utilizando o **.NET Framework 4.8**.
+A aplicação desktop responsável pela comunicação com o Kinect foi desenvolvida utilizando o .NET Framework 4.8.
 
-Essa plataforma fornece o suporte essencial às bibliotecas do **Kinect SDK**, do **Entity Framework 6** e do **SQLite**.
+Essa plataforma oferece suporte nativo ao Kinect SDK 1.8, Entity Framework 6, SQLite e demais bibliotecas utilizadas durante o desenvolvimento.
 
 ### Justificativa da escolha
 
-O **Kinect SDK 1.8** possui dependência e suporte nativo voltados ao ecossistema do .NET Framework, tornando esta versão a alternativa mais estável e compatível para a execução segura da aplicação desktop de captura física.
+Foi escolhida por oferecer total compatibilidade com o Kinect SDK 1.8 e estabilidade para aplicações desktop.
 
 ---
 
-## ASP.NET Core 8
+## ASP.NET Core .NET 8
 
-A aplicação web e os serviços de retaguarda foram desenvolvidos utilizando o **ASP.NET Core 8**.
+A aplicação Web foi desenvolvida utilizando ASP.NET Core .NET 8.
 
-Essa plataforma gerencia o ecossistema de usuários, autenticação, painéis (*dashboards*), persistência em nuvem e a comunicação em tempo real via **SignalR** para a integração com o aplicativo desktop.
+Essa aplicação é responsável por:
+
+- autenticação;
+- gerenciamento de usuários;
+- gerenciamento das empresas;
+- dashboard;
+- armazenamento em nuvem;
+- APIs;
+- comunicação em tempo real através do SignalR.
+
+Após a compilação foi realizada a publicação da aplicação em modo **Release**, gerando uma pasta contendo todos os arquivos necessários para execução fora do ambiente de desenvolvimento.
 
 ### Justificativa da escolha
 
-O **.NET 8** oferece alto desempenho, estabilidade, suporte de longo prazo (**LTS**) e excelente integração nativa com serviços em nuvem, destacando-se como a melhor escolha para arquiteturas corporativas modernas.
+Foi escolhido devido ao seu alto desempenho, suporte LTS (Long Term Support), segurança e integração com serviços em nuvem.
+
+---
+
+## Publicação da Aplicação Web (MVC)
+
+Após a conclusão do desenvolvimento da aplicação Web, foi realizada a publicação (Publish) do projeto ASP.NET Core MVC utilizando o Visual Studio 2022.
+
+Foi adotado o perfil de publicação em pasta (Folder Publish), gerando uma versão independente da aplicação pronta para execução fora do ambiente de desenvolvimento.
+
+A publicação foi configurada utilizando:
+
+- Configuration: **Release**
+- Target Framework: **.NET 8**
+- Deployment Mode: **Framework-dependent**
+- Target Runtime: **Portable**
+
+Ao final da publicação foi gerada uma pasta contendo todos os arquivos necessários para execução da aplicação Web.
+
+Entre os principais arquivos gerados destacam-se:
+
+- MVC_InventoryMasters.exe
+- MVC_InventoryMasters.dll
+- MVC_InventoryMasters.deps.json
+- MVC_InventoryMasters.runtimeconfig.json
+- appsettings.json
+- web.config
+- bibliotecas (.dll)
+- pasta wwwroot
+- arquivos estáticos da aplicação
+
+A publicação foi armazenada na pasta:
+
+```text
+C:\PublicacaoInventoryMastersMVC
+```
+
+Essa estrutura permite executar a aplicação diretamente através do executável ou realizar posteriormente sua implantação em um servidor IIS ou outro ambiente compatível com ASP.NET Core.
+
+### Justificativa da escolha
+
+A publicação em modo **Release** foi adotada por gerar uma versão otimizada da aplicação, removendo informações de depuração e reunindo todos os arquivos necessários para execução em ambiente de produção.
+
+A utilização do modo **Framework-dependent** reduz o tamanho da publicação, aproveitando o runtime .NET já instalado no servidor, facilitando futuras atualizações do sistema.
+
+---
+
+## Executável da Aplicação Web
+
+Durante o processo de publicação foi gerado automaticamente o executável da aplicação Web:
+
+```text
+MVC_InventoryMasters.exe
+```
+
+Esse executável inicializa o servidor Web da aplicação utilizando o Kestrel, permitindo que o sistema seja executado fora do Visual Studio.
+
+Durante os testes realizados, a aplicação foi iniciada com sucesso, disponibilizando o sistema através do endereço:
+
+```text
+http://localhost:5000
+```
+
+Essa validação confirmou que a publicação da aplicação foi realizada corretamente e que todos os arquivos necessários para sua execução foram gerados com sucesso.
+
+  -------
+
+## Publicação da Aplicação Desktop
+
+A aplicação desktop foi compilada em modo **Release x64**.
+
+Durante a publicação foram incluídas automaticamente todas as bibliotecas necessárias para funcionamento da aplicação, incluindo:
+
+- Kinect SDK;
+- SQLite;
+- Entity Framework;
+- SignalR Client;
+- bibliotecas auxiliares.
+
+Também foi realizada a configuração das referências do projeto para que todas as dependências fossem copiadas automaticamente para a pasta de publicação.
 
 ---
 
 ## Inno Setup
 
-O **Inno Setup** foi a ferramenta selecionada para a criação do instalador da aplicação desktop.
+O Inno Setup foi utilizado para criação do instalador principal da aplicação desktop.
 
-A tecnologia permitiu consolidar a distribuição em um único arquivo executável responsável por copiar os arquivos necessários, criar atalhos, registrar componentes no Windows e estruturar um desinstalador limpo.
+Foi gerado um instalador no formato:
 
-Também automatizou a criação das estruturas de diretórios locais exigidas para o armazenamento de dados e logs da aplicação.
+```
+InventoryMastersKinect-Setup-1.0.0.exe
+```
+
+Esse instalador é responsável por:
+
+- copiar todos os arquivos da aplicação;
+- instalar o sistema;
+- criar atalhos;
+- registrar o desinstalador;
+- permitir atualização de versões;
+- remover versões anteriores quando necessário.
 
 ### Justificativa da escolha
 
-O **Inno Setup** destaca-se por ser uma ferramenta gratuita, amplamente validada pelo mercado e capaz de gerar instaladores profissionais e customizáveis com baixa complexidade operacional.
+Foi escolhido por ser uma ferramenta gratuita, consolidada no mercado e extremamente flexível para criação de instaladores profissionais.
+
+---
+
+## WiX Toolset
+
+Também foi utilizado o WiX Toolset para geração de um pacote de instalação no padrão Windows Installer.
+
+Foi gerado o arquivo:
+
+```
+InventoryMastersKinect-1.0.0.msi
+```
+
+Esse pacote realiza:
+
+- instalação da aplicação;
+- registro junto ao Windows Installer;
+- integração com o gerenciamento de aplicativos do Windows;
+- suporte à instalação em ambientes corporativos.
+
+### Justificativa da escolha
+
+Foi escolhido para demonstrar a utilização do padrão MSI (Microsoft Installer), amplamente empregado em ambientes corporativos para distribuição e gerenciamento de aplicações.
 
 ---
 
 ## SQLite
 
-O **SQLite** foi adotado como o banco de dados relacional local da aplicação desktop.
+O SQLite foi utilizado como banco de dados local da aplicação desktop.
 
-Seu principal objetivo é armazenar de forma embarcada as medições, o histórico operacional e os estados locais, garantindo a continuidade das operações mesmo em cenários de instabilidade ou ausência de conexão com a rede.
+Seu objetivo é armazenar temporariamente informações necessárias ao funcionamento da aplicação, permitindo persistência local dos dados.
+
+Durante a implantação, o banco de dados passou a ser criado automaticamente na pasta:
+
+```
+C:\ProgramData\Inventory Masters\Dados
+```
+
+evitando problemas de permissão de escrita na pasta da aplicação.
 
 ### Justificativa da escolha
 
-Foi escolhido por ser um banco de dados leve, autossuficiente (sem necessidade de instalação de serviços de servidor) e de alta performance para cenários de persistência local (*edge computing*).
+Foi escolhido por ser leve, rápido, portátil e não exigir instalação de servidor.
 
 ---
 
-## Firebase
+## Firebase 
 
-O **Firebase** foi utilizado como a infraestrutura de nuvem inicial para suporte à aplicação web e sincronização de dados.
+O Firebase foi utilizado como banco de dados principal da aplicação Web.
 
-Nele foram estruturadas as informações de autenticação, perfis corporativos e os dados compartilhados entre os clientes.
+Nele são armazenadas informações como:
+
+- usuários;
+- empresas;
+- configurações;
+- medições;
+- histórico;
+- demais dados sincronizados entre os clientes.
 
 ### Justificativa da escolha
 
-Sua adoção deu-se pela alta disponibilidade, facilidade de integração rápida com o ecossistema .NET e baixa sobrecarga na administração inicial de infraestrutura.
+Foi escolhido devido à alta disponibilidade, escalabilidade e facilidade de integração com aplicações .NET.
 
 ---
 
 ## Kinect SDK 1.8
 
-O **Kinect SDK 1.8** foi a biblioteca de interface utilizada para estabelecer a comunicação direta entre o software e o sensor **Kinect Xbox 360**.
+O Kinect SDK foi utilizado para comunicação entre o sistema e o sensor Kinect Xbox 360.
 
-Através dele, o sistema obtém os fluxos de profundidade e mapeamento espacial indispensáveis para o cálculo volumétrico do estoque.
+Através dele são obtidos os dados de profundidade utilizados no cálculo volumétrico do estoque.
 
 ### Justificativa da escolha
 
-Trata-se do kit de desenvolvimento oficial da Microsoft para a primeira geração do sensor, garantindo estabilidade de drivers e acesso direto às matrizes de profundidade requeridas pelo projeto.
+Foi escolhido por ser o SDK oficial da Microsoft para o Kinect v1 e oferecer todas as funcionalidades necessárias ao projeto.
 
 ---
 
 ## Git e GitHub
 
-O controle de versões e a gestão de configuração do código-fonte foram conduzidos utilizando o **Git** em conjunto com o **GitHub**.
+Durante todo o desenvolvimento foi utilizado Git para controle de versões e GitHub para armazenamento remoto do código-fonte.
 
-Essas ferramentas viabilizaram o versionamento incremental, o rastreamento histórico de alterações e o fluxo de trabalho colaborativo entre os membros da equipe.
+Essas ferramentas permitiram manter o histórico das alterações, facilitar o trabalho colaborativo e garantir rastreabilidade durante o desenvolvimento.
 
 ### Justificativa da escolha
 
-São ferramentas consolidadas como padrão de mercado, proporcionando segurança, auditoria e facilidade na integração contínua durante o ciclo de vida do desenvolvimento.
+Foram escolhidos por serem padrões de mercado para versionamento de software.
+
+---
+
+## Arquivos Gerados na Implantação
+
+Ao final do processo de implantação foram gerados os seguintes artefatos:
+
+### Aplicação Web
+
+- Publicação da aplicação ASP.NET Core MVC
+- Pasta completa de publicação para servidor
+
+### Aplicação Desktop
+
+- Publicação Release x64
+
+### Instaladores
+
+- **InventoryMastersKinect-Setup-1.0.0.exe** (Inno Setup)
+- **InventoryMastersKinect-1.0.0.msi** (WiX Toolset)
 
 ---
 
 ## Conclusão
 
-A seleção harmônica das tecnologias empregadas permitiu projetar, desenvolver, testar e implantar o **Inventory Masters** de maneira organizada, escalável e segura.
+A implantação do sistema Inventory Masters foi realizada utilizando ferramentas consolidadas do ecossistema Microsoft.
 
-Enquanto o **Visual Studio 2022** direcionou a engenharia do software, o **ASP.NET Core 8** e o **.NET Framework 4.8** sustentaram as camadas web e desktop, respectivamente. O uso combinado do **SQLite** (local) e do **Firebase** (nuvem inicial) garantiu a flexibilidade de dados, complementada pela integração direta com o **Kinect SDK 1.8** para a captura física precisa. 
+Foram geradas publicações independentes para a aplicação Web e para a aplicação Desktop, além de dois formatos distintos de instaladores (EXE e MSI), permitindo diferentes estratégias de distribuição do sistema.
 
-Por fim, o empacotamento via **Inno Setup** simplificou a distribuição nos nós clientes, e o ecossistema **Git/GitHub** assegurou a integridade e a colaboração técnica ao longo de todo o projeto.
+Essa abordagem garante facilidade de instalação, manutenção, atualização e futura implantação em ambientes corporativos, atendendo aos requisitos definidos para o desenvolvimento do projeto de conclusão de curso.
+
+---
+
