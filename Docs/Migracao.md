@@ -73,14 +73,29 @@
   * **Inexistência de Base Prévia Compatível:** As empresas ou ambientes de teste que adotam a solução partem de um cenário onde o controle de estoque era inexistente ou manual, não havendo estrutura de dados digitalizada com o mesmo padrão espacial e métrico exigido pela aplicação.
   * **Inicialização Limpa (Clean State):** O ecossistema híbrido do sistema (banco local SQLite e sincronização com o Firebase) é populado a partir do primeiro inventário físico assistido por hardware, garantindo total integridade e eliminando o risco de inconsistências decorrentes da importação de bases legadas incompatíveis.
 
-* **Cenários Alternativos de Migração e Integração (Casos de Uso Corporativo):**  
-  Embora o núcleo do **Inventory Masters** nasça de uma inicialização limpa baseada em captura física, a adoção do sistema em clientes de médio e grande porte exige diretrizes para cenários onde dados pré-existentes precisem ser considerados:
-
-| Cenário Alternativo | Abordagem e Direcionamento Técnico | Finalidade e Impacto Operacional |
+* **Cenário de Migração e Integração com Dados Pré-Existentes:**  
+  Embora o ecossistema do **Inventory Masters** seja concebido nativamente sob a premissa de uma inicialização limpa (*clean state*) voltada à captura física por visão computacional, o sistema prevê diretrizes técnicas robustas para cenários corporativos onde há a necessidade de aproveitamento e migração de bases legadas. Isso abrange tanto a transição de armazenamentos locais embarcados (como **SQLite**) quanto de estruturas descentralizadas em nuvem leve (como **Firebase**), consolidando-as em definitivo para uma arquitetura centralizada e multi-empresa baseada em **SQL Server e Azure**.
+  
+| Fase Operacional | Foco da Migração | Detalhes Técnicos, Passos e Abordagem da Execução |
 | :--- | :--- | :--- |
-| **Cenário de Carga Inicial de Cadastros**<br>*(Planilhas e ERPs)* | Caso o cliente possua catálogos de produtos, SKUs e dados de fornecedores em sistemas legados (ERPs ou planilhas de Excel), a estratégia prevê a execução de scripts de importação estática via rotinas ETL (Extract, Transform, Load) diretamente nas novas tabelas do SQL Server / Azure. | Popular apenas as entidades relacionais básicas antes da ativação do hardware. |
-| **Cenário de Convivência Híbrida**<br>*(API Gateway / Integração de Sistemas)* | Para ambientes corporativos que mantêm sistemas legados de gestão de armazéns (WMS), a estratégia de migração evolui para uma abordagem de integração contínua. O Inventory Masters atua como a ponta de captura física (Kinect), despachando os payloads de medição via SignalR e gravando os dados consolidados no SQL Server/Azure. | Disponibilizar webhooks ou endpoints para sincronização com o software legado do cliente. |
-| **Cenário de Transição de Base**<br>*(Legacy to Production Cutover)* | Na eventualidade de substituição de uma versão piloto baseada em arquivos SQLite locais para o ambiente corporativo definitivo em nuvem, a estratégia adota uma janela de manutenção programada (cutover), onde as bases locais são consolidadas e validadas por checksum. | Migrar os dados em lote para a respectiva instância tenant no Azure SQL Database. |
+| **1. Planejamento e Estruturação do Ambiente** | **Modelagem Multi-tenant e Schema** | • Mapeamento inicial das entidades no Entity Framework Core, alterando o provedor de banco de dados de `UseSqlite` para `UseSqlServer`.<br>• Injeção obrigatória e automatizada da coluna discriminadora de isolamento por inquilino (`EmpresaId`) em todas as tabelas relacionais para garantir a segurança dos dados por cliente. |
+| **2. Extração e Tratamento de Dados (ETL Local)** | **Conversão de SQLite para SQL Server** | • Exportação dos dados brutos locais e ajuste de dialetos e funções nativas incompatíveis (ex: conversão de `DATETIME('now')` para `GETDATE()`).<br>• Adaptação das chaves primárias e sequências de identificadores auto-incrementais (transformando `INTEGER PRIMARY KEY` do SQLite em `IDENTITY(1,1)` do T-SQL).<br>• Execução de rotinas de carga assistida via scripts C# transacionais ou comandos otimizados de `BULK INSERT`, preservando rigorosamente as chaves estrangeiras e a integridade referencial por tenant. |
+| **3. Reestruturação e Nuvem (Cloud Migration)** | **Substituição do Firebase para Azure** | • Descomissionamento gradual dos ouvintes e serviços de escuta em tempo real do Firebase.<br>• Redirecionamento da mensageria e dos fluxos em tempo real para a Azure, utilizando recursos como *Azure SQL Database Change Tracking* ou *Azure SignalR Service*.<br>• Centralização definitiva de todos os logs, metadados espaciais e métricas capturadas pelo sensor Kinect nas tabelas estruturadas do SQL Server na Azure. |
+| **4. Homologação, Cutover e Validação** | **Congelamento e Integridade** | • Definição de uma janela de manutenção controlada (*Cutover*) com interrupção temporária das gravações locais no SQLite e Firebase para evitar perdas de dados recentes do Kinect.<br>• Execução de auditorias de contagem de registros e validações matemáticas por *checksums* comparativos entre as origens e o destino final.<br>• Homologação do ambiente corporativo centralizado para liberar o acesso seguro e segregado às empresas. |
+
+[^1]: **Multi-tenant**: (Multilocatário) Arquitetura de software onde uma única instância do sistema atende a vários clientes (empresas ou "tenants"). Os dados de todos os clientes residem no mesmo banco de dados, mas são isolados de forma lógica e segura, geralmente por meio de uma chave de identificação (como `EmpresaId`).
+
+[^2]: **Schema**: O "esqueleto" ou modelo estrutural do banco de dados. Ele define como os dados são organizados logicamente, incluindo a especificação de tabelas, colunas, tipos de dados, chaves primárias e relacionamentos (chaves estrangeiras).
+
+[^3]: **ETL (Extract, Transform, Load) Local**: Processo que envolve **Extrair** dados da origem (SQLite), **Transformá-los** (ajustar formatos, converter tipos de dados) e **Carregá-los** no banco de destino (SQL Server). O termo "Local" refere-se à execução dessa rotina diretamente no ambiente ou nas bases embarcadas antes da subida para a nuvem.
+
+[^4]: **T-SQL (Transact-SQL)**: É a extensão proprietária da Microsoft para a linguagem padrão SQL, utilizada no SQL Server. Ela adiciona recursos avançados de programação, variáveis, controle de fluxo e funções nativas específicas (como o `GETDATE()`).
+
+[^5]: **Database Change Tracking**: (Rastreamento de Alterações de Banco de Dados) Recurso nativo do SQL Server e Azure SQL que identifica e registra quais linhas de uma tabela foram modificadas (inseridas, atualizadas ou excluídas), sendo extremamente útil para sincronizar dados com aplicações em tempo real sem sobrecarregar o banco.
+
+[^6]: **Cutover**: O momento exato (ou janela de transição) em que a operação do sistema antigo é congelada/desligada e o novo sistema corporativo assume oficialmente o ambiente de produção. É o "ponto de virada" da migração.
+
+[^7]: **Checksums**: (Somas de Verificação) Técnica de validação que utiliza cálculos matemáticos sobre um bloco de dados para verificar sua integridade. Na migração, serve para atestar que os dados saíram da origem e chegaram ao destino exatamente iguais, sem corrupção ou perda de informações.
 
 ---
 
