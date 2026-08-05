@@ -218,23 +218,22 @@ O módulo Kinect mantém a gravação local das medições no SQLite quando a co
 
 | Risco | Probabilidade | Impacto | Ação preventiva |
 |---|---|---|---|
-| Falha ou desconexão do Kinect | Média | Alto | Verificar cabos, fonte, porta USB e drivers antes da operação |
-| Divergência entre versões do SDK do Kinect | Média | Alto | Padronizar referências e pacotes para o Kinect SDK 1.8 |
-| Caminho absoluto para DLL do Kinect | Alta | Alto | Remover caminhos pessoais e validar a compilação após novo clone |
-| Indisponibilidade da internet | Média | Alto | Manter persistência local no SQLite e conexão alternativa |
-| Indisponibilidade da hospedagem web | Baixa | Alto | Monitorar o servidor e manter o pacote estável anterior |
-| Falha na comunicação SignalR | Média | Alto | Verificar URL, HTTPS, firewall, hospedagem e logs |
-| Medições não reenviadas após queda de conexão | Média | Alto | Implementar ou documentar o controle de medições pendentes |
-| Corrupção do banco SQLite | Baixa | Alto | Realizar backups e testes periódicos de restauração |
-| Falha ou perda de dados no Firebase | Baixa | Alto | Manter política de backup, exportação e controle de acesso |
-| Credenciais expostas no repositório | Média | Alto | Utilizar variáveis de ambiente, revogar segredos expostos e revisar o histórico |
-| Acesso não autorizado | Média | Alto | Aplicar autenticação, perfis e princípio do menor privilégio |
-| CORS excessivamente permissivo | Média | Alto | Restringir as origens autorizadas no ambiente de produção |
-| Erros detalhados expostos em produção | Média | Médio | Desabilitar mensagens detalhadas do SignalR fora do desenvolvimento |
-| Bloqueio pelo antivírus ou firewall | Média | Médio | Validar a aplicação e liberar somente portas e executáveis necessários |
-| Falha durante uma atualização | Média | Alto | Fazer backup e manter plano de rollback |
-| Queda de energia | Média | Alto | Utilizar filtro de linha ou nobreak e encerrar o sistema corretamente |
-
+| Falha ou desconexão do sensor Kinect | Média | Alto | Verificar cabos, fonte de alimentação, porta USB, drivers e reconhecimento do sensor antes da operação |
+| Incompatibilidade entre as versões do Kinect SDK | Média | Alto | Padronizar as referências, bibliotecas e pacotes do projeto para o Kinect for Windows SDK 1.8 |
+| Referência não portátil à biblioteca do Kinect | Alta | Alto | Substituir caminhos pessoais por uma referência compatível com o Kinect SDK 1.8 e validar a compilação após um novo clone do repositório |
+| Indisponibilidade da conexão com a internet | Média | Alto | Manter a persistência local no SQLite e disponibilizar uma conexão alternativa |
+| Indisponibilidade da hospedagem do módulo web | Baixa | Alto | Monitorar o serviço de hospedagem e manter disponível o último pacote estável da aplicação |
+| Falha na comunicação pelo SignalR | Média | Alto | Verificar URL, certificado HTTPS, firewall, suporte da hospedagem, conexão e registros de log |
+| Medições não reenviadas após o restabelecimento da conexão | Média | Alto | Implementar ou documentar um procedimento para identificar e reenviar as medições pendentes |
+| Falha de integridade no banco SQLite | Baixa | Alto | Realizar backups periódicos e testar os procedimentos de restauração |
+| Indisponibilidade ou perda de dados no Google Cloud Firestore | Baixa | Alto | Manter política de backup, exportação dos dados e controle adequado de acesso |
+| Exposição de credenciais no repositório | Média | Alto | Utilizar variáveis de ambiente, revogar credenciais expostas, gerar novas credenciais e revisar o histórico do repositório |
+| Acesso não autorizado ao sistema | Média | Alto | Aplicar autenticação, controle de perfis, permissões e o princípio do menor privilégio |
+| Configuração de CORS excessivamente permissiva | Média | Alto | Restringir as origens, os métodos e os cabeçalhos autorizados no ambiente de produção |
+| Exposição de mensagens detalhadas de erro em produção | Média | Médio | Desabilitar os erros detalhados do SignalR fora do ambiente de desenvolvimento |
+| Bloqueio da aplicação pelo antivírus ou firewall | Média | Médio | Validar a aplicação e liberar somente as portas, os endereços e os executáveis necessários |
+| Falha durante a atualização do sistema | Média | Alto | Realizar backup antes da implantação e manter um procedimento de rollback para a versão estável anterior |
+| Queda ou oscilação de energia | Média | Alto | Utilizar filtro de linha ou nobreak e garantir o encerramento seguro da aplicação e do banco de dados |
 
 # Plano de Contingência
 
