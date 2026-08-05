@@ -1,4 +1,4 @@
-# Infraestrutura — Inventory Masters
+# INFRAESTRUTURA
 
 **Documento:** Infraestrutura de Implantação  
 **Versão documental:** 1.0.0  
@@ -7,9 +7,7 @@
 **Data da revisão:** 04 agosto de 2026  
 **Repositório:** https://github.com/Nylo1991/TCC_Inventory_Masters_Kinect
 
-
-
-# Informações do Projeto
+## Informações do Projeto
 
 O **Inventory Masters** é uma solução de monitoramento volumétrico de espaços de armazenamento. O sistema utiliza o sensor **Kinect Xbox 360** para capturar dados de profundidade, calcular o volume ocupado e disponibilizar os resultados em uma aplicação web.
 
@@ -29,15 +27,11 @@ A solução é composta por dois módulos integrados:
 | **Comunicação** | SignalR sobre HTTPS, utilizando WebSockets quando disponíveis |
 | **Sensor** | Kinect Xbox 360 |
 
-
-
-# Nome
+### Nome
 
 **Inventory Masters — Soluções Inteligentes em Mapeamento de Estoque**
 
-
-
-# Versão
+## Versão
 
 | Componente | Versão |
 |---|---|
@@ -54,10 +48,9 @@ A solução é composta por dois módulos integrados:
 > **Observação técnica:** o módulo WPF utiliza a biblioteca `Microsoft.Kinect` 1.8.0.0, compatível com o Kinect Xbox 360. Antes da entrega final, a referência do projeto e o `packages.config` devem ser padronizados para o SDK 1.8, eliminando referências divergentes e caminhos absolutos de computadores pessoais.
 
 
+## Requisitos de Hardware
 
-# Requisitos de Hardware
-
-## Estação do Operador — Módulo Kinect/MVVM
+### Estação do Operador — Módulo Kinect/MVVM
 
 | Recurso | Requisito mínimo | Recomendado |
 |---|---|---|
@@ -72,6 +65,7 @@ A solução é composta por dois módulos integrados:
 
 > Os requisitos apresentados foram definidos pela equipe como configuração inicial para implantação e homologação. Antes da entrada em produção, deverão ser confirmados por testes de desempenho realizados em um ambiente equivalente ao do cliente.
 
+
 ## Sensor e Ambiente Físico
 
 - Kinect Xbox 360 em condições adequadas de funcionamento;
@@ -81,6 +75,7 @@ A solução é composta por dois módulos integrados:
 - cabos protegidos contra desconexões acidentais;
 - iluminação e posicionamento compatíveis com a leitura do sensor;
 - filtro de linha ou nobreak para reduzir riscos relacionados a quedas de energia.
+
 
 ## Módulo Web/MVC
 
@@ -94,10 +89,9 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 - capacidade dimensionada conforme o número de usuários, sensores e conexões simultâneas.
 
 
+## Requisitos de Software
 
-# Requisitos de Software
-
-## Módulo Kinect/Desktop — MVVM
+### Módulo Kinect/Desktop — MVVM
 
 - Windows 10 ou Windows 11, 32 ou 64 bits;
 - Microsoft Visual C++ Redistributable 2015–2022 (x64).
@@ -110,7 +104,7 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 - acesso HTTPS ao endereço do módulo MVC;
 - configuração da URL do Hub SignalR.
 
-## Módulo Web — MVC
+### Módulo Web — MVC
 
 - ASP.NET Core com .NET 8.0;
 - projeto Firebase/Google Cloud configurado;
@@ -121,9 +115,10 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 - variáveis de ambiente para credenciais e configurações sensíveis;
 - política CORS restrita aos endereços autorizados em produção.
 
-# Dependências
 
-## Principais Dependências do Módulo Kinect/MVVM
+## Dependências
+
+### Principais Dependências do Módulo Kinect/MVVM
 
 | Dependência | Versão | Finalidade |
 |---|---:|---|
@@ -138,7 +133,8 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 | Microsoft.Xaml.Behaviors.Wpf | 1.1.19 | Comportamentos e comandos utilizados no MVVM |
 | Newtonsoft.Json | 13.0.4 | Serialização e desserialização JSON |
 
-## Principais Dependências do Módulo Web/MVC
+
+### Principais Dependências do Módulo Web/MVC
 
 | Dependência | Versão | Finalidade |
 |---|---:|---|
@@ -151,10 +147,9 @@ O módulo web deverá ser hospedado em servidor ou serviço de nuvem compatível
 > Antes da compilação e publicação, todas as dependências deverão ser restauradas pelo NuGet. O arquivo do projeto MVC contém referências a bibliotecas WPF e SQLite que deverão ser revisadas e removidas caso não sejam efetivamente utilizadas pelo módulo web.
 
 
-# Arquitetura do Sistema
+## Arquitetura do Sistema
 
 O Inventory Masters possui uma arquitetura híbrida, combinando processamento local, armazenamento local e serviços em nuvem.
-
 ```mermaid
 flowchart LR
     K[Kinect Xbox 360]
@@ -181,6 +176,7 @@ flowchart LR
     C --> WEB
 ```
 
+
 ## Módulo Kinect/Desktop — Arquitetura Baseada em MVVM
 
 - **Model:** representa medições, usuários, logs, sessões, calibrações e históricos;
@@ -191,6 +187,7 @@ flowchart LR
 - **Commands:** permitem que a View execute ações definidas nas ViewModels;
 - **Code-behind:** mantém eventos específicos da interface, navegação entre janelas e parte do controle de sessão.
 
+
 ## Módulo Web — MVC
 
 - **Models:** representam usuários, empresas, medições, parâmetros, perfis e notificações;
@@ -199,6 +196,7 @@ flowchart LR
 - **Services:** concentram regras de negócio, autenticação, permissões e integrações;
 - **Repositories:** realizam o acesso aos dados do Firebase;
 - **Hubs:** executam a comunicação em tempo real pelo SignalR.
+
 
 ## Fluxo Principal
 
@@ -209,12 +207,13 @@ flowchart LR
 5. O módulo MVC valida a informação e realiza sua persistência no Firebase.
 6. O dashboard e as notificações são atualizados em tempo real.
 
+
 ## Operação Durante Indisponibilidade de Rede
 
 O módulo Kinect mantém a gravação local das medições no SQLite quando a comunicação SignalR não está disponível. A conexão SignalR possui tentativa automática de reconexão. Entretanto, o reenvio automático das medições que não foram transmitidas deverá ser implementado ou formalmente validado antes da implantação em produção. Até essa validação, a equipe deverá manter um procedimento documentado para identificar e reenviar registros pendentes.
 
 
-# Riscos Identificados
+### Riscos Identificados
 
 | Risco | Probabilidade | Impacto | Ação preventiva |
 |---|---|---|---|
@@ -235,7 +234,8 @@ O módulo Kinect mantém a gravação local das medições no SQLite quando a co
 | Falha durante a atualização do sistema | Média | Alto | Realizar backup antes da implantação e manter um procedimento de rollback para a versão estável anterior |
 | Queda ou oscilação de energia | Média | Alto | Utilizar filtro de linha ou nobreak e garantir o encerramento seguro da aplicação e do banco de dados |
 
-# Plano de Contingência
+
+### Plano de Contingência
 
 | Situação | Ação imediata | Recuperação | Responsável |
 |---|---|---|---|
@@ -250,7 +250,7 @@ O módulo Kinect mantém a gravação local das medições no SQLite quando a co
 | Queda de energia | Interromper a operação com segurança | Reiniciar os equipamentos, validar o banco e recalibrar quando necessário | Operador e suporte técnico |
 
 
-# Fluxo de Implantação Segura
+## Fluxo de Implantação Segura
 
 1. Criar backup dos bancos, configurações e versão atual.
 2. Validar se os backups podem ser restaurados.
@@ -264,10 +264,9 @@ O módulo Kinect mantém a gravação local das medições no SQLite quando a co
 10. Executar rollback caso seja identificado erro crítico.
 
 
-# Critérios de Aceite da Implantação
+## Critérios de Aceite da Implantação
 
 A implantação será considerada concluída quando:
-
 - o módulo Kinect reconhecer corretamente o sensor;
 - a calibração do ambiente for concluída sem erros críticos;
 - as medições forem gravadas corretamente no SQLite;
@@ -283,11 +282,9 @@ A implantação será considerada concluída quando:
 - os logs não apresentarem erros críticos;
 - o responsável técnico aprovar a entrada em produção.
 
+## Checklist de Implantação
 
-# Checklist de Implantação
-
-## Hardware
-
+### Hardware
 - [ ] O computador atende aos requisitos mínimos definidos pela equipe.
 - [ ] A memória RAM e o espaço em disco foram verificados.
 - [ ] O Kinect Xbox 360 está funcionando.
@@ -297,8 +294,7 @@ A implantação será considerada concluída quando:
 - [ ] A área monitorada está livre de obstáculos permanentes.
 - [ ] Os equipamentos estão protegidos contra quedas de energia.
 
-## Software — MVVM
-
+### Software — MVVM
 - [ ] O Windows 10 ou 11, 64 bits, está atualizado.
 - [ ] Microsoft Visual C++ Redistributable 2015–2022 (x64) instalado.
 - [ ] O .NET Framework 4.8 está instalado.
@@ -311,8 +307,7 @@ A implantação será considerada concluída quando:
 - [ ] O usuário possui permissão de leitura e gravação.
 - [ ] O antivírus não está bloqueando a aplicação.
 
-## Software — MVC
-
+### Software — MVC
 - [ ] O servidor é compatível com .NET 8.
 - [ ] A aplicação MVC foi publicada em modo Release.
 - [ ] O certificado HTTPS está válido.
@@ -324,8 +319,7 @@ A implantação será considerada concluída quando:
 - [ ] Dependências WPF e SQLite desnecessárias foram removidas do projeto MVC.
 - [ ] Os navegadores suportados foram testados.
 
-## Rede e Segurança
-
+### Rede e Segurança
 - [ ] A internet está funcionando no ambiente do cliente.
 - [ ] O endereço do módulo MVC está acessível.
 - [ ] A porta HTTPS 443 está liberada.
@@ -340,8 +334,7 @@ A implantação será considerada concluída quando:
 - [ ] Senhas e tokens não são registrados nos logs.
 - [ ] Logs de acesso, falhas e auditoria estão ativos.
 
-## Banco de Dados e Backup
-
+### Banco de Dados e Backup
 - [ ] O banco SQLite foi criado corretamente.
 - [ ] O teste de leitura e gravação local foi realizado.
 - [ ] O Firebase está acessível.
@@ -350,8 +343,7 @@ A implantação será considerada concluída quando:
 - [ ] O procedimento de restauração foi testado.
 - [ ] O pacote da versão anterior está disponível para rollback.
 
-## Testes Finais
-
+### Testes Finais
 - [ ] O projeto foi clonado e compilado em um computador diferente do ambiente original.
 - [ ] O login no módulo Kinect foi validado.
 - [ ] O login no módulo MVC foi validado.
