@@ -2,118 +2,114 @@
 
 ## Objetivo
 
-Para a implantação do sistema **Inventory Masters** foram utilizadas ferramentas que garantem a compilação, empacotamento, instalação e execução da aplicação em computadores clientes. A escolha de cada ferramenta levou em consideração a compatibilidade com as tecnologias utilizadas no projeto, facilidade de manutenção e confiabilidade durante o processo de instalação.
+Para a implantação do sistema **Inventory Masters** foram utilizadas ferramentas que garantem a compilação, empacotamento, instalação e execução da aplicação em computadores clientes. A escolha de cada tecnologia levou em consideração a compatibilidade com os requisitos do projeto, a facilidade de manutenção e a confiabilidade durante todo o processo de implantação.
 
 ---
 
-# Visual Studio 2022
+## Visual Studio 2022
 
-O **Visual Studio 2022** foi utilizado como ambiente oficial de desenvolvimento e compilação do sistema.
+O **Visual Studio 2022** foi utilizado como o ambiente de desenvolvimento integrado (IDE) oficial para a construção e compilação do sistema.
 
 Por meio dele foi possível desenvolver, depurar, testar e gerar a versão final da aplicação em modo **Release**, garantindo que o software fosse compilado sem dependências do ambiente de desenvolvimento.
 
-A ferramenta também permitiu o gerenciamento dos pacotes **NuGet**, referências do projeto, configuração da arquitetura **x64** e validação do funcionamento do sistema antes da criação do instalador.
+A ferramenta também viabilizou o gerenciamento dos pacotes **NuGet**, o controle de referências, a configuração da arquitetura **x64** e a validação do funcionamento do sistema antes da geração do instalador.
 
 ### Justificativa da escolha
 
-O Visual Studio foi escolhido por ser o ambiente oficial para desenvolvimento de aplicações **.NET** e **WPF**, oferecendo total compatibilidade com o projeto e integração com todas as bibliotecas utilizadas.
+O Visual Studio foi escolhido por ser o ambiente padrão da Microsoft para o desenvolvimento de aplicações **.NET** e **WPF**, oferecendo total compatibilidade e integração nativa com todas as bibliotecas utilizadas no projeto.
 
 ---
 
-# .NET Framework 4.8
+## .NET Framework 4.8
 
-A aplicação desktop responsável pela comunicação com o **Kinect** foi desenvolvida utilizando o **.NET Framework 4.8**.
+A aplicação desktop responsável pela interface e pela comunicação direta com o sensor **Kinect** foi desenvolvida utilizando o **.NET Framework 4.8**.
 
-Essa plataforma oferece suporte às bibliotecas necessárias para comunicação com o **Kinect SDK**, **Entity Framework 6** e **SQLite**.
+Essa plataforma fornece o suporte essencial às bibliotecas do **Kinect SDK**, do **Entity Framework 6** e do **SQLite**.
 
 ### Justificativa da escolha
 
-O **Kinect SDK 1.8** possui suporte nativo ao **.NET Framework**, tornando essa versão a alternativa mais estável e compatível para o funcionamento da aplicação desktop.
+O **Kinect SDK 1.8** possui dependência e suporte nativo voltados ao ecossistema do .NET Framework, tornando esta versão a alternativa mais estável e compatível para a execução segura da aplicação desktop de captura física.
 
 ---
 
-# ASP.NET Core .NET 8
+## ASP.NET Core 8
 
-A aplicação web foi desenvolvida utilizando **ASP.NET Core .NET 8**.
+A aplicação web e os serviços de retaguarda foram desenvolvidos utilizando o **ASP.NET Core 8**.
 
-Essa aplicação é responsável pelo gerenciamento dos usuários, autenticação, dashboard, armazenamento em nuvem, comunicação em tempo real e disponibilização das APIs utilizadas pelo aplicativo desktop.
+Essa plataforma gerencia o ecossistema de usuários, autenticação, painéis (*dashboards*), persistência em nuvem e a comunicação em tempo real via **SignalR** para a integração com o aplicativo desktop.
 
 ### Justificativa da escolha
 
-O **.NET 8** oferece alto desempenho, estabilidade, suporte de longo prazo (**LTS**) e excelente integração com serviços em nuvem, sendo adequado para aplicações corporativas.
+O **.NET 8** oferece alto desempenho, estabilidade, suporte de longo prazo (**LTS**) e excelente integração nativa com serviços em nuvem, destacando-se como a melhor escolha para arquiteturas corporativas modernas.
 
 ---
 
-# Inno Setup
+## Inno Setup
 
-O **Inno Setup** foi utilizado para criar o instalador da aplicação desktop.
+O **Inno Setup** foi a ferramenta selecionada para a criação do instalador da aplicação desktop.
 
-A ferramenta possibilitou gerar um único arquivo executável responsável por copiar todos os arquivos necessários, criar atalhos, registrar o sistema no Windows e disponibilizar um desinstalador.
+A tecnologia permitiu consolidar a distribuição em um único arquivo executável responsável por copiar os arquivos necessários, criar atalhos, registrar componentes no Windows e estruturar um desinstalador limpo.
 
-Também foi configurada a criação automática das pastas utilizadas para armazenamento de dados e logs da aplicação.
+Também automatizou a criação das estruturas de diretórios locais exigidas para o armazenamento de dados e logs da aplicação.
 
 ### Justificativa da escolha
 
-O **Inno Setup** foi escolhido por ser gratuito, amplamente utilizado no mercado e permitir a criação de instaladores profissionais com baixo nível de complexidade.
-
-Além disso, atende aos requisitos da atividade proposta e oferece recursos suficientes para distribuir a aplicação desktop.
+O **Inno Setup** destaca-se por ser uma ferramenta gratuita, amplamente validada pelo mercado e capaz de gerar instaladores profissionais e customizáveis com baixa complexidade operacional.
 
 ---
 
-# SQLite
+## SQLite
 
-O **SQLite** foi utilizado como banco de dados local da aplicação desktop.
+O **SQLite** foi adotado como o banco de dados relacional local da aplicação desktop.
 
-Seu objetivo é armazenar temporariamente medições, histórico de ocupação e informações necessárias para o funcionamento da aplicação, mesmo quando não houver comunicação imediata com o servidor.
+Seu principal objetivo é armazenar de forma embarcada as medições, o histórico operacional e os estados locais, garantindo a continuidade das operações mesmo em cenários de instabilidade ou ausência de conexão com a rede.
 
 ### Justificativa da escolha
 
-Foi escolhido por ser um banco leve, de fácil distribuição, que não necessita de instalação de servidor e possui excelente desempenho para aplicações desktop.
+Foi escolhido por ser um banco de dados leve, autossuficiente (sem necessidade de instalação de serviços de servidor) e de alta performance para cenários de persistência local (*edge computing*).
 
 ---
 
-# Firebase
+## Firebase
 
-O **Firebase** foi utilizado como banco de dados principal da aplicação web.
+O **Firebase** foi utilizado como a infraestrutura de nuvem inicial para suporte à aplicação web e sincronização de dados.
 
-Nele são armazenadas as informações corporativas, usuários, empresas, configurações e demais dados sincronizados entre os clientes.
+Nele foram estruturadas as informações de autenticação, perfis corporativos e os dados compartilhados entre os clientes.
 
 ### Justificativa da escolha
 
-Foi escolhido devido à alta disponibilidade, escalabilidade, facilidade de integração com aplicações .NET e baixa necessidade de administração de infraestrutura.
+Sua adoção deu-se pela alta disponibilidade, facilidade de integração rápida com o ecossistema .NET e baixa sobrecarga na administração inicial de infraestrutura.
 
 ---
 
-# Kinect SDK 1.8
+## Kinect SDK 1.8
 
-O **Kinect SDK 1.8** foi utilizado para permitir a comunicação entre o sistema e o sensor **Kinect Xbox 360**.
+O **Kinect SDK 1.8** foi a biblioteca de interface utilizada para estabelecer a comunicação direta entre o software e o sensor **Kinect Xbox 360**.
 
-Através dele é possível acessar os sensores de profundidade e imagem utilizados no cálculo volumétrico do estoque.
+Através dele, o sistema obtém os fluxos de profundidade e mapeamento espacial indispensáveis para o cálculo volumétrico do estoque.
 
 ### Justificativa da escolha
 
-Foi escolhido por ser a biblioteca oficial da Microsoft para o **Kinect v1**, oferecendo estabilidade e suporte às funcionalidades necessárias para o projeto.
+Trata-se do kit de desenvolvimento oficial da Microsoft para a primeira geração do sensor, garantindo estabilidade de drivers e acesso direto às matrizes de profundidade requeridas pelo projeto.
 
 ---
 
-# Git e GitHub
+## Git e GitHub
 
-O controle de versões do projeto foi realizado utilizando **Git** e **GitHub**.
+O controle de versões e a gestão de configuração do código-fonte foram conduzidos utilizando o **Git** em conjunto com o **GitHub**.
 
-Essas ferramentas permitiram controlar alterações no código, manter histórico das versões e facilitar o trabalho colaborativo entre os integrantes da equipe.
+Essas ferramentas viabilizaram o versionamento incremental, o rastreamento histórico de alterações e o fluxo de trabalho colaborativo entre os membros da equipe.
 
 ### Justificativa da escolha
 
-Foram escolhidos por serem padrões de mercado para versionamento de software, proporcionando segurança, rastreabilidade e colaboração durante o desenvolvimento.
+São ferramentas consolidadas como padrão de mercado, proporcionando segurança, auditoria e facilidade na integração contínua durante o ciclo de vida do desenvolvimento.
 
 ---
 
-# Conclusão
+## Conclusão
 
-A combinação das ferramentas utilizadas permitiu desenvolver, testar, implantar e distribuir o sistema **Inventory Masters** de forma organizada e segura.
+A seleção harmônica das tecnologias empregadas permitiu projetar, desenvolver, testar e implantar o **Inventory Masters** de maneira organizada, escalável e segura.
 
-O **Visual Studio 2022** foi empregado para o desenvolvimento e compilação do sistema, enquanto o **ASP.NET Core .NET 8** e o **.NET Framework 4.8** forneceram a base tecnológica para as aplicações web e desktop. O **Firebase** foi utilizado como banco de dados em nuvem e o **SQLite** como banco de dados local da aplicação desktop, garantindo armazenamento e sincronização das informações.
+Enquanto o **Visual Studio 2022** direcionou a engenharia do software, o **ASP.NET Core 8** e o **.NET Framework 4.8** sustentaram as camadas web e desktop, respectivamente. O uso combinado do **SQLite** (local) e do **Firebase** (nuvem inicial) garantiu a flexibilidade de dados, complementada pela integração direta com o **Kinect SDK 1.8** para a captura física precisa. 
 
-A integração com o **Kinect SDK 1.8** possibilitou a captura dos dados necessários para o cálculo volumétrico do estoque, enquanto o **Inno Setup** foi responsável pela criação do instalador da aplicação, simplificando sua distribuição e instalação nos computadores clientes.
-
-Por fim, o uso do **Git** e do **GitHub** proporcionou controle de versões, colaboração entre os integrantes da equipe e rastreabilidade das alterações realizadas durante todo o desenvolvimento do projeto.
+Por fim, o empacotamento via **Inno Setup** simplificou a distribuição nos nós clientes, e o ecossistema **Git/GitHub** assegurou a integridade e a colaboração técnica ao longo de todo o projeto.
