@@ -218,7 +218,10 @@ O módulo Kinect mantém a gravação local das medições no SQLite quando a co
 | Risco | Probabilidade | Impacto | Ação preventiva |
 |---|---|---|---|
 | Falha ou desconexão do sensor Kinect | Média | Alto | Verificar cabos, fonte de alimentação, porta USB, drivers e reconhecimento do sensor antes da operação |
+| Falha no reconhecimento do Kinect pelo computador | Média | Alto | Instalar e validar os drivers do Kinect for Windows 1.8, verificar a conexão em uma porta USB 2.0 e confirmar o reconhecimento do dispositivo no Gerenciador de Dispositivos antes da execução do sistema |
 | Incompatibilidade entre as versões do Kinect SDK | Média | Alto | Padronizar as referências, bibliotecas e pacotes do projeto para o Kinect for Windows SDK 1.8 |
+| Ausência ou instalação incompleta dos pré-requisitos do módulo Kinect | Média | Alto | Verificar e instalar o Kinect for Windows SDK/Runtime 1.8, os drivers do sensor e o .NET Framework 4.8 antes da implantação; validar o reconhecimento do Kinect e a inicialização da aplicação |
+| Falha na restauração dos pacotes e dependências nativas | Média | Alto | Restaurar os pacotes NuGet antes da compilação, validar as bibliotecas nativas x64 do SQLite e realizar a compilação e execução em um computador diferente do ambiente de desenvolvimento |
 | Referência não portátil à biblioteca do Kinect | Alta | Alto | Substituir caminhos pessoais por uma referência compatível com o Kinect SDK 1.8 e validar a compilação após um novo clone do repositório |
 | Indisponibilidade da conexão com a internet | Média | Alto | Manter a persistência local no SQLite e disponibilizar uma conexão alternativa |
 | Indisponibilidade da hospedagem do módulo web | Baixa | Alto | Monitorar o serviço de hospedagem e manter disponível o último pacote estável da aplicação |
@@ -233,6 +236,7 @@ O módulo Kinect mantém a gravação local das medições no SQLite quando a co
 | Bloqueio da aplicação pelo antivírus ou firewall | Média | Médio | Validar a aplicação e liberar somente as portas, os endereços e os executáveis necessários |
 | Falha durante a atualização do sistema | Média | Alto | Realizar backup antes da implantação e manter um procedimento de rollback para a versão estável anterior |
 | Queda ou oscilação de energia | Média | Alto | Utilizar filtro de linha ou nobreak e garantir o encerramento seguro da aplicação e do banco de dados |
+
 
 
 ### Plano de Contingência
