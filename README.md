@@ -3025,6 +3025,8 @@ Quando o e-mail é validado com sucesso, o MVC envia o token de autenticação p
 
 Se o token for inválido, expirado ou já utilizado, o acesso é bloqueado e uma mensagem de erro é exibida. Caso o token seja validado corretamente, a aplicação cria uma sessão local contendo os dados do operador autenticado e libera o acesso à tela de monitoramento do Kinect.
 
+Após uma rejeição, o sistema também verifica se o token foi digitado incorretamente. Quando houve erro de digitação, o operador pode informar novamente o token recebido. Quando é necessário solicitar outro token, o fluxo retorna ao preenchimento do e-mail.
+
 #### Objetivo da Etapa
 
 Garantir que somente operadores autorizados possam acessar o módulo Kinect/Desktop, protegendo o início do monitoramento volumétrico por meio de validação de e-mail, token e criação de sessão local.
@@ -3047,7 +3049,7 @@ Quando o Kinect está conectado e disponível, a aplicação inicia a comunicaç
 
 O sistema verifica se a conexão SignalR está ativa. Caso a comunicação seja estabelecida com sucesso, o status é atualizado para indicar que o SignalR está conectado e que o canal em tempo real está disponível.
 
-Se houver falha na comunicação com o MVC, a aplicação mantém a operação local ativa, atualiza o status como desconectado ou reconectando e mantém tentativas de conexão em segundo plano. Nessa condição, a indisponibilidade do SignalR não bloqueia a continuidade da operação local.
+Se houver falha na comunicação com o MVC, a aplicação registra o erro, atualiza o status como desconectado e permite ao operador escolher entre uma nova tentativa de conexão ou a continuidade em modo local. Nessa condição, a indisponibilidade do SignalR não bloqueia as funções locais do Kinect.
 
 #### Objetivo da Etapa
 
@@ -3111,7 +3113,7 @@ Validar e salvar as informações do espaço monitorado, garantindo que o nome, 
   <img src="./Imagens/Diagrama_Fluxo_MVVM/ETAPA5-MediçãoVolumetrica.drawio.png.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 5 - Medição Volumétrica" />
 </p>
 
-> **Nota:** A Etapa 5 representa a execução da medição volumétrica, que pode ocorrer de forma manual ou automática. A medição manual é iniciada quando o operador aciona “Enviar Volume Atual”, enquanto a medição automática é disparada pelo temporizador. Antes do cálculo, o sistema valida se o Kinect está conectado, se a calibração é válida e se o espaço foi configurado e salvo. Quando as condições não são atendidas, a tentativa é encerrada e o fluxo retorna para a origem da medição. Quando as condições são válidas, o sistema calcula o volume atual. Se nenhum volume válido for detectado, a medição não é salva nem enviada. Se o volume for maior que zero, o sistema registra o volume, calcula ocupação e espaço livre, compara com o limite configurado, define o status como Normal ou Limite, atualiza os indicadores e encaminha a medição para persistência e integração.
+> **Nota:** A Etapa 5 representa a execução da medição volumétrica, que pode ocorrer de forma manual ou automática. A medição manual é iniciada quando o operador aciona “Enviar Volume Atual”, enquanto a medição automática é disparada pelo temporizador. Antes do cálculo, o sistema valida se o Kinect está conectado, se a calibração é válida e se o espaço foi configurado e salvo. Quando as condições não são atendidas, a tentativa é encerrada e o fluxo retorna para a origem da medição. Quando as condições são válidas, o sistema calcula o volume atual. Se nenhum volume válido for detectado, a medição não é salva nem enviada. Se o volume for maior que zero, o sistema registra o volume, calcula ocupação e espaço livre, compara com o limite configurado, define o status como Normal ou Alerta, atualiza os indicadores e encaminha a medição para persistência e integração.
 
 A quinta etapa descreve o processo de medição volumétrica do ambiente monitorado. A medição pode ser iniciada manualmente pelo operador ou automaticamente pelo temporizador da aplicação.
 
@@ -3121,7 +3123,7 @@ Antes de calcular o volume, o sistema verifica se o Kinect está conectado, se o
 
 Quando todas as condições são atendidas, o sistema calcula o volume atual do ambiente. Em seguida, verifica se o volume detectado é maior que zero. Caso nenhum volume válido seja identificado, a aplicação informa que não houve volume detectado e a medição não é salva nem enviada.
 
-Quando o volume é válido, o sistema registra o último volume medido, calcula o percentual de ocupação, calcula o espaço livre e compara o percentual com o limite configurado. A partir dessa comparação, o status operacional é definido como “Normal” ou “Limite”.
+Quando o volume é válido, o sistema registra o último volume medido, calcula o percentual de ocupação, calcula o espaço livre e compara o percentual com o limite configurado. A partir dessa comparação, o status operacional é definido como “Normal” ou “Alerta”.
 
 Por fim, os indicadores são atualizados na interface, e a medição válida é encaminhada para a etapa de persistência, histórico e integração com o MVC.
 
@@ -3134,26 +3136,30 @@ Executar a medição volumétrica manual ou automática, validar as condições 
 ### Etapa 6 — Persistência, Histórico e Integração com MVC
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa6-PersistênciaHistoricoIntegraçãoMVC.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 6 - Persistência, Histórico e Integração com MVC" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa6-PersistênciaHistoricoIntegraçãoMVC.drawio.png.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 6 - Persistência, Histórico e Integração com MVC" />
 </p>
 
-> **Nota:** A Etapa 6 representa a etapa final do ciclo operacional da medição. A medição válida é recebida, transformada em registro e salva localmente no SQLite. Após a gravação, o histórico local é atualizado e o status da persistência é exibido na interface. Em seguida, o sistema verifica se o SignalR está conectado. Se estiver conectado, o volume é enviado ao MVC e a mensagem de envio é atualizada. Se o SignalR estiver desconectado ou houver falha de envio, a medição permanece preservada localmente, a operação continua ativa e o sistema mantém a tentativa de reconexão em segundo plano. O operador pode consultar o histórico local e retornar ao monitoramento. Caso solicite encerramento, o sistema para o timer, desliga o Kinect, desconecta o SignalR, registra o encerramento e atualiza a interface.
+> **Nota:** A Etapa 6 representa a etapa final do ciclo operacional da medição. A medição válida recebe um identificador único e é salva primeiro no SQLite com o estado “Pendente”. Somente após o salvamento local o sistema tenta enviar os registros pendentes ao MVC pelo SignalR. O MVC precisa confirmar o recebimento da medição para que o estado local seja alterado para “Enviado”. Quando a comunicação está indisponível ou não há confirmação, os dados permanecem preservados localmente e uma nova tentativa é programada. O histórico continua disponível, e o operador pode retornar ao monitoramento ou solicitar o encerramento controlado dos recursos.
 
 A sexta etapa descreve a persistência da medição válida, a atualização do histórico local, a integração com o módulo MVC e o encerramento controlado da operação.
 
-O fluxo inicia com o recebimento de uma medição válida proveniente da etapa anterior. O sistema cria o registro correspondente e salva a medição no banco de dados SQLite local. Após a gravação, o histórico local é atualizado, permitindo que as medições fiquem disponíveis para consulta.
+O fluxo inicia com o recebimento de uma medição válida proveniente da etapa anterior. A aplicação gera um identificador único e cria um registro contendo volume atual e máximo, ocupação, volume livre, data e hora, origem, usuário, empresa, espaço, limite e estado de sincronização.
 
-Em seguida, a aplicação atualiza o status da persistência na interface e verifica o estado da conexão SignalR. Caso o SignalR esteja conectado, o sistema envia o volume ao MVC. Após o envio, a mensagem de envio é atualizada para indicar que a informação foi transmitida.
+O registro é salvo no SQLite com o estado “Pendente”. Se o salvamento local falhar, o mesmo registro é mantido em memória, a falha é registrada e a gravação é repetida antes de qualquer tentativa de envio. Com o salvamento concluído, a aplicação recarrega até 100 medições no histórico, incluindo o estado de sincronização, e atualiza as informações apresentadas na interface.
 
-Caso o SignalR não esteja conectado ou ocorra falha durante o envio, a medição permanece armazenada localmente no SQLite. Nessa condição, a aplicação mantém a operação local ativa, atualiza o status como desconectado ou reconectando e aguarda a reconexão em segundo plano.
+Em seguida, a aplicação verifica a conexão SignalR. Quando o SignalR está conectado, consulta os registros pendentes no SQLite e envia o registro completo ao MVC. O identificador único é utilizado para evitar duplicidade. Depois do envio, o sistema verifica se o MVC confirmou o recebimento da medição.
 
-O histórico local permanece disponível independentemente da condição do SignalR. Quando o operador solicita a consulta ao histórico, o sistema consulta os dados locais e exibe as medições registradas. Após a visualização, o operador pode retornar ao monitoramento.
+Quando não há confirmação, o registro permanece como “Pendente”, a falha é registrada e uma nova tentativa é programada. Quando o MVC confirma o recebimento, o SQLite é atualizado com o estado “Enviado” e com a data e a hora da confirmação.
 
-Ao final do fluxo, o sistema verifica se o encerramento foi solicitado. Caso o monitoramento continue, o fluxo retorna para a Etapa 5, permitindo novas medições. Caso o encerramento seja solicitado, a aplicação desliga o Kinect, para o temporizador de medição, desconecta o SignalR, registra o encerramento, atualiza a interface e finaliza o processo de monitoramento.
+Se o SignalR estiver desconectado, os registros permanecem como “Pendente”, o monitoramento local é mantido e a aplicação tenta a reconexão em segundo plano. Ao reconectar, os registros pendentes são enviados ao MVC.
+
+O operador pode consultar até 100 registros no histórico local, que é atualizado a cada dois segundos enquanto a janela estiver aberta. Depois da consulta, pode retornar ao monitoramento. Se optar por continuar, o fluxo retorna à Etapa 5 para uma nova medição.
+
+Quando o encerramento é solicitado, a aplicação interrompe os processos periódicos de frames, medições, envio, histórico e reconexão, desliga o Kinect, libera os recursos visuais, desconecta o SignalR, encerra a sessão local, abre a tela de login e finaliza o monitoramento.
 
 #### Objetivo da Etapa
 
-Garantir que toda medição válida seja salva localmente, manter o histórico disponível, realizar a integração com o MVC quando houver comunicação disponível e encerrar o monitoramento de forma segura e controlada.
+Garantir que toda medição válida seja salva localmente, manter o histórico disponível, sincronizar os registros pendentes com o MVC de forma controlada e encerrar o monitoramento com segurança.
 
 ---
 
@@ -3177,6 +3183,7 @@ A arquitetura também prioriza a continuidade da operação local. As medições
 Em conjunto, os seis diagramas representam o ciclo operacional completo do módulo MVVM Kinect, desde a autenticação inicial até a medição, persistência dos dados, disponibilização do histórico, integração com o MVC e encerramento seguro da operação.
 
 ---
+
 ## Diagrama de Fluxo - MVC
 
 ### Login e Acesso Seguro
