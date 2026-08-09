@@ -3058,7 +3058,7 @@ Inicializar o sensor Kinect, validar sua disponibilidade física e estabelecer a
 ### Etapa 3 — Calibração do Ambiente
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa3-Calibração do Ambiente.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 3 - Calibração do Ambiente" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa3-Calibração do Ambiente.drawio.png.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 3 - Calibração do Ambiente" />
 </p>
 
 > **Nota:** A Etapa 3 representa a calibração do ambiente vazio. O operador aciona o comando “Calibrar Espaço” e o sistema exibe as orientações necessárias para a calibração. Em seguida, são validados os pré-requisitos, como Kinect conectado, leitura de profundidade disponível e ambiente vazio. Com as condições atendidas, o sistema captura múltiplos frames em diferentes ângulos, processa as leituras, valida os pontos capturados, detecta a referência angular e registra o mapa do ambiente vazio. Caso os pontos sejam insuficientes, o mapa não seja capturado ou o volume máximo calculado seja igual a zero, o sistema exibe alertas e permite nova tentativa. Quando a calibração é concluída com sucesso, a posição original do Kinect é restaurada, a interface é atualizada e o volume máximo calibrado fica disponível para as próximas etapas.
