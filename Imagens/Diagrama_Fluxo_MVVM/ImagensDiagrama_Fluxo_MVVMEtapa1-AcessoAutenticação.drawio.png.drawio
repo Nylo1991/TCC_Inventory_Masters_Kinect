@@ -1,0 +1,132 @@
+<mxfile host="app.diagrams.net" agent="ChatGPT Codex">
+  <diagram id="etapa1-pb" name="Etapa 1 - Acesso e Autenticação P&amp;B">
+    <mxGraphModel dx="1647" dy="848" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1200" pageHeight="1800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="titulo" parent="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontFamily=Arial;fontSize=23;fontStyle=1;fontColor=#000000;" value="ETAPA 1 — ACESSO E AUTENTICAÇÃO — MÓDULO KINECT" vertex="1">
+          <mxGeometry height="45" width="1000" x="100" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-29" edge="1" parent="1" source="inicio" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="abrirTela" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inicio" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontStyle=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Início" vertex="1">
+          <mxGeometry height="55" width="90" x="-192" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-6" edge="1" parent="1" source="abrirTela" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="informarEmail" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="abrirTela" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Abrir o Inventory Masters Kinect na aba&lt;br&gt;“Token pelo MVC”&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="75" width="210" x="-252" y="168" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-8" edge="1" parent="1" source="informarEmail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="emailAtivo" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="informarEmail" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Informar o e-mail cadastrado e clicar em&lt;br&gt;“Solicitar token ao MVC”&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="75" width="191" x="-6" y="168" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-12" edge="1" parent="1" source="emailAtivo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="alertaEmail" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-36" edge="1" parent="1" source="emailAtivo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="gerarToken" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="emailAtivo" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="E-mail cadastrado e&lt;br&gt;vinculado a um&lt;br&gt;usuário ativo?" vertex="1">
+          <mxGeometry height="115" width="220" x="223" y="148" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-14" edge="1" parent="1" source="alertaEmail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="informarEmail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="alertaEmail" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;dashed=1;dashPattern=6 4;" value="Exibir a mensagem:&lt;br&gt;“E-mail não encontrado ou usuário inativo.”&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="82" width="195" x="235" y="329" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-15" edge="1" parent="1" source="gerarToken" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="informarToken" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gerarToken" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="O módulo MVC gera um token temporário&lt;br&gt;e o envia ao e-mail cadastrado" vertex="1">
+          <mxGeometry height="75" width="195" x="496" y="168" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-17" edge="1" parent="1" source="informarToken" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="validarToken" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="informarToken" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Consultar o e-mail e informar o token&lt;br&gt;recebido no campo&amp;nbsp; &lt;b&gt;Token de Acesso&lt;/b&gt;" vertex="1">
+          <mxGeometry height="75" width="175" x="726" y="168" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-18" edge="1" parent="1" source="validarToken" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="tokenValido" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="validarToken" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Acionar “Validar token e entrar” e&lt;br&gt;enviar o token para validação&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="182" x="936" y="165.5" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-20" edge="1" parent="1" source="tokenValido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="alertaToken" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-25" edge="1" parent="1" source="tokenValido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="criarSessao" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tokenValido" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Token válido,&lt;br&gt;não expirado e&lt;br&gt;não utilizado?&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="125" width="171" x="1146" y="143" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-21" edge="1" parent="1" source="SDqm3PxJaNHlWpecM7ZJ-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" target="informarEmail">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1035" y="455" />
+              <mxPoint x="42" y="455" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-23" edge="1" parent="1" source="alertaToken" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="SDqm3PxJaNHlWpecM7ZJ-22" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="alertaToken" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;dashed=1;dashPattern=6 4;" value="Exibir a mensagem:&lt;br&gt;“Token inválido, expirado ou já utilizado.”" vertex="1">
+          <mxGeometry height="82" width="171" x="1153" y="331" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-27" edge="1" parent="1" source="criarSessao" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="abrirMonitor" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="criarSessao" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Criar a sessão local do usuário&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="126" x="1373" y="170.5" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-28" edge="1" parent="1" source="abrirMonitor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="seguirEtapa2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="abrirMonitor" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Abrir a tela “Monitoramento Kinect”" vertex="1">
+          <mxGeometry height="70" width="148" x="1554" y="170.5" as="geometry" />
+        </mxCell>
+        <mxCell id="seguirEtapa2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Prosseguir para a Etapa 2 —&lt;br&gt;Conexão do Kinect e SignalR" vertex="1">
+          <mxGeometry height="70" width="210" x="1523" y="286" as="geometry" />
+        </mxCell>
+        <mxCell id="seguirEtapa2Fim" edge="1" parent="1" source="seguirEtapa2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;" target="fim" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fim" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontStyle=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Fim da&lt;br&gt;Etapa 1" vertex="1">
+          <mxGeometry height="70" width="100" x="1578" y="405" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-24" edge="1" parent="1" source="SDqm3PxJaNHlWpecM7ZJ-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="informarToken">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-22" parent="1" style="rhombus;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=#000000;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;" value="Token digitado&lt;br&gt;incorretamente?" vertex="1">
+          <mxGeometry height="100" width="180" x="945" y="321" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-37" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Arial;fontSize=14;" value="Sim" vertex="1">
+          <mxGeometry height="30" width="60" x="436" y="176" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-39" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Não" vertex="1">
+          <mxGeometry height="30" width="60" x="289" y="263" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-40" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Sim" vertex="1">
+          <mxGeometry height="30" width="60" x="1306" y="170.5" as="geometry" />
+        </mxCell>
+        <mxCell id="SDqm3PxJaNHlWpecM7ZJ-43" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Não" vertex="1">
+          <mxGeometry height="30" width="60" x="1186" y="268" as="geometry" />
+        </mxCell>
+        <mxCell id="correcaoTokenSim" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Arial;fontSize=14;" value="Sim" vertex="1">
+          <mxGeometry height="30" width="60" x="888" y="322" as="geometry" />
+        </mxCell>
+        <mxCell id="correcaoTokenNao" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=Arial;fontSize=14;" value="Não" vertex="1">
+          <mxGeometry height="30" width="60" x="1005" y="421" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
