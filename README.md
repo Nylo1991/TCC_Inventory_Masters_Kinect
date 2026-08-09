@@ -3012,7 +3012,7 @@ Os diagramas representam o fluxo principal de funcionamento do sistema e seus pr
 ### Etapa 1 — Acesso e Autenticação do Kinect
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa1-AcessoAutenticação.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 1 - Acesso e Autenticação do Kinect" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa 1 - Acesso e Autenticação do Kinect.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 1 - Acesso e Autenticação do Kinect" />
 </p>
 
 > **Nota:** A Etapa 1 representa o controle de acesso ao módulo Kinect/Desktop. O operador solicita um token de autenticação informando um e-mail cadastrado. O sistema valida se o e-mail é válido e se o usuário está ativo. Quando a validação é aprovada, o MVC envia o token por e-mail ao operador. Em seguida, o operador informa o token recebido na aplicação Kinect, e o sistema valida sua autenticidade. Caso o e-mail seja inválido, o usuário esteja inativo ou o token seja inválido, o sistema exibe uma mensagem de alerta e permite uma nova tentativa. Quando o token é validado com sucesso, a sessão local é criada e o acesso ao monitoramento do Kinect é liberado.
