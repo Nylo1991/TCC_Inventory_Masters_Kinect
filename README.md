@@ -3892,25 +3892,24 @@ Para facilitar a leitura e reduzir a complexidade visual, o fluxo foi dividido e
 ### Sequência 1 — Acesso e Autenticação do Kinect
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia01_AcessoAutenticacao_Kinect.drawio (1).png" width="900" alt="Sequência 01 - Acesso e Autenticação do Kinect" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia01_AcessoAutenticacao_Kinect.drawio (2).png" width="900" alt="Sequência 01 - Acesso e Autenticação do Kinect" />
 </p>
 
-> **Nota:** A Sequência 1 representa o controle de acesso ao módulo Kinect/Desktop. O fluxo demonstra que o operador só consegue acessar a tela de monitoramento após informar um e-mail válido, receber o token temporário por e-mail e ter esse token validado pelo módulo MVC. A criação da sessão local garante que as próximas operações do sistema fiquem vinculadas ao usuário, empresa, e-mail e token autenticado.
+> **Nota:** A Sequência 1 representa o controle de acesso ao módulo Kinect/Desktop. O fluxo demonstra que o operador somente consegue acessar a tela de monitoramento após informar um e-mail cadastrado, receber o token temporário por e-mail e ter esse token validado pelo módulo MVC. A criação da sessão local garante que as próximas operações do sistema fiquem vinculadas ao usuário, à empresa, ao e-mail e ao token autenticado. Por segurança, o MVC armazena o hash do token e o marca como utilizado após a validação; o token mantido na sessão local não deve ser exibido nem registrado em logs.
 
-A primeira sequência representa o processo de acesso e autenticação do operador no módulo Kinect/Desktop. Inicialmente, o operador abre a aplicação Kinect e informa o endereço de e-mail previamente cadastrado no sistema MVC.
+A primeira sequência representa o processo de acesso e autenticação do operador no módulo Kinect/Desktop. Inicialmente, o operador abre a aplicação Kinect, informa o endereço de e-mail previamente cadastrado no sistema MVC e aciona a opção **“Solicitar token ao MVC”**.
 
-A aplicação encaminha a solicitação de token ao serviço de autenticação, que se comunica com o módulo Web MVC. O MVC valida se o e-mail informado pertence a um usuário ativo e, em caso positivo, gera um token temporário de acesso. Esse token é enviado ao operador por e-mail.
+A tela `KinectLogin` encaminha a solicitação ao `AutenticacaoMvcService`, que envia o e-mail ao endpoint `POST /api/kinect/solicitar-token`, disponibilizado pelo `KinectApiController`. O `TokenAcessoKinectService` verifica se o e-mail informado está cadastrado e vinculado a um usuário ativo. Em caso positivo, o MVC gera um token temporário e utiliza o `EmailTokenService` para enviá-lo ao endereço cadastrado.
 
-Após receber o código, o operador informa o token na aplicação Kinect. O sistema envia novamente os dados ao MVC para validação, verificando se o token é válido, se ainda está dentro do prazo de utilização e se não foi utilizado anteriormente.
+Após receber o código, o operador informa o token na aplicação Kinect e aciona a opção **“Validar token e entrar”**. O `AutenticacaoMvcService` envia o token ao endpoint `POST /api/kinect/validar-token`. O MVC verifica se o token é válido, se ainda está dentro do prazo de utilização, se não foi utilizado anteriormente e se não está revogado.
 
-Quando todas as validações são aprovadas, o sistema cria uma sessão operacional local contendo as informações do usuário autenticado, empresa vinculada, e-mail e token utilizado. Em seguida, a tela de monitoramento é liberada para utilização.
+Quando todas as validações são aprovadas, o MVC marca o token como utilizado e retorna os dados do usuário autenticado. A aplicação cria uma sessão local contendo usuário, empresa, e-mail e token. Em seguida, o `KinectLogin` cria o `KinectMonitorWindow`, que inicializa o `MainViewModel`, exibe a tela de monitoramento e permite o prosseguimento para a **Etapa 2 — Conexão do Kinect e comunicação com SignalR**.
 
-Caso o e-mail seja inválido, o usuário esteja inativo ou o token informado seja inválido, expirado ou já utilizado, o sistema bloqueia o acesso e permite que o operador realize uma nova tentativa.
+Caso o e-mail não seja encontrado, o usuário esteja inativo ou o token informado seja inválido, expirado, utilizado ou revogado, o sistema bloqueia o acesso e permite que o operador realize uma nova tentativa.
 
 ### Objetivo da Sequência
 
-Garantir que apenas usuários devidamente autenticados possam acessar o módulo Kinect/Desktop e iniciar o monitoramento volumétrico.
-
+Garantir que apenas usuários cadastrados, ativos e devidamente autenticados possam acessar o módulo Kinect/Desktop, criar uma sessão operacional local e iniciar o monitoramento volumétrico.
 ---
 
 ### Sequência 2 — Conexão do Kinect e Comunicação SignalR
