@@ -3108,7 +3108,7 @@ Validar e salvar as informações do espaço monitorado, garantindo que o nome, 
 ### Etapa 5 — Medição Volumétrica
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/ETAPA5-MediçãoVolumetrica.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 5 - Medição Volumétrica" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/ETAPA5-MediçãoVolumetrica.drawio.png.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 5 - Medição Volumétrica" />
 </p>
 
 > **Nota:** A Etapa 5 representa a execução da medição volumétrica, que pode ocorrer de forma manual ou automática. A medição manual é iniciada quando o operador aciona “Enviar Volume Atual”, enquanto a medição automática é disparada pelo temporizador. Antes do cálculo, o sistema valida se o Kinect está conectado, se a calibração é válida e se o espaço foi configurado e salvo. Quando as condições não são atendidas, a tentativa é encerrada e o fluxo retorna para a origem da medição. Quando as condições são válidas, o sistema calcula o volume atual. Se nenhum volume válido for detectado, a medição não é salva nem enviada. Se o volume for maior que zero, o sistema registra o volume, calcula ocupação e espaço livre, compara com o limite configurado, define o status como Normal ou Limite, atualiza os indicadores e encaminha a medição para persistência e integração.
