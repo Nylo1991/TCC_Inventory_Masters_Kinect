@@ -3082,7 +3082,7 @@ Criar uma referência confiável do ambiente vazio e calcular o volume máximo c
 ### Etapa 4 — Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa4-ConfiDoEspaçoMonit.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração do Espaço Monitorado" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa4-ConfiDoEspaçoMonit.drawio.png.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração do Espaço Monitorado" />
 </p>
 
 > **Nota:** A Etapa 4 representa a configuração operacional do espaço monitorado. O operador informa o nome do espaço, define o limite percentual de ocupação e visualiza o volume máximo calibrado. Ao acionar “Salvar Espaço”, o sistema valida os dados informados, verificando se o nome foi preenchido, se o limite está entre 1% e 100% e se existe calibração válida. Caso alguma condição falhe, a aplicação exibe o alerta correspondente e retorna para correção. Quando todas as validações são aprovadas, o sistema salva a configuração do espaço e do limite, liberando a medição volumétrica e o histórico.
