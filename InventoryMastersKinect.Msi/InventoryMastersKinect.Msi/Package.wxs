@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package
+      Name="Inventory Masters Kinect"
+      Manufacturer="Inventory Masters"
+      Version="1.0.0"
+      Language="1046"
+      UpgradeCode="E426D390-13E6-4DA7-BB8E-83176C9CB83D"
+      Scope="perMachine">
+
+    <MajorUpgrade
+        DowngradeErrorMessage="Já existe uma versão mais recente do Inventory Masters Kinect instalada neste computador." />
+
+    <MediaTemplate
+        EmbedCab="yes"
+        CompressionLevel="high" />
+
+    <!-- Interface gráfica do instalador -->
+    <ui:WixUI
+        Id="WixUI_InstallDir"
+        InstallDirectory="INSTALLFOLDER" />
+
+    <!-- Licença -->
+    <WixVariable
+        Id="WixUILicenseRtf"
+        Value="Licenca_Inventory_Masters.rtf" />
+
+    <!-- Imagem da tela inicial e final -->
+    <WixVariable
+        Id="WixUIDialogBmp"
+        Value="InventoryMasters_WixUIDialogBmp.bmp" />
+
+    <!-- Imagem superior das demais telas -->
+    <WixVariable
+        Id="WixUIBannerBmp"
+        Value="InventoryMasters_WixUIBannerBmp.bmp" />
+
+    <!-- Ícone utilizado nos atalhos -->
+    <Icon
+        Id="InventoryMastersIcon"
+        SourceFile="InventoryMasters.ico" />
+
+    <!-- Pasta principal da aplicação -->
+    <StandardDirectory Id="ProgramFiles64Folder">
+
+      <Directory
+          Id="INSTALLFOLDER"
+          Name="Inventory Masters Kinect" />
+
+    </StandardDirectory>
+
+    <!-- Atalho na Área de Trabalho -->
+    <StandardDirectory Id="DesktopFolder">
+
+      <Component
+          Id="DesktopShortcutComponent"
+          Guid="*">
+
+        <Shortcut
+            Id="DesktopShortcut"
+            Name="Inventory Masters Kinect"
+            Description="Abrir o sistema Inventory Masters Kinect"
+            Target="[INSTALLFOLDER]TCC_Inventory_Masters_Kinect.exe"
+            WorkingDirectory="INSTALLFOLDER"
+            Icon="InventoryMastersIcon"
+            IconIndex="0"
+            Advertise="no" />
+
+        <RegistryValue
+            Root="HKCU"
+            Key="Software\Inventory Masters\Kinect"
+            Name="AtalhoAreaTrabalhoInstalado"
+            Type="integer"
+            Value="1"
+            KeyPath="yes" />
+
+      </Component>
+
+    </StandardDirectory>
+
+    <!-- Atalho no Menu Iniciar -->
+    <StandardDirectory Id="ProgramMenuFolder">
+
+      <Directory
+          Id="InventoryMastersMenuIniciar"
+          Name="Inventory Masters Kinect">
+
+        <Component
+            Id="StartMenuShortcutComponent"
+            Guid="*">
+
+          <Shortcut
+              Id="StartMenuShortcut"
+              Name="Inventory Masters Kinect"
+              Description="Abrir o sistema Inventory Masters Kinect"
+              Target="[INSTALLFOLDER]TCC_Inventory_Masters_Kinect.exe"
+              WorkingDirectory="INSTALLFOLDER"
+              Icon="InventoryMastersIcon"
+              IconIndex="0"
+              Advertise="no" />
+
+          <RemoveFolder
+              Id="RemoveInventoryMastersMenuIniciar"
+              Directory="InventoryMastersMenuIniciar"
+              On="uninstall" />
+
+          <RegistryValue
+              Root="HKCU"
+              Key="Software\Inventory Masters\Kinect"
+              Name="AtalhoMenuIniciarInstalado"
+              Type="integer"
+              Value="1"
+              KeyPath="yes" />
+
+        </Component>
+
+      </Directory>
+
+    </StandardDirectory>
+
+    <!-- Arquivos e componentes da instalação -->
+    <Feature
+        Id="MainFeature"
+        Title="Instalação completa do Inventory Masters Kinect"
+        Description="Instala a aplicação, suas dependências e atalhos."
+        Level="1">
+
+      <Files
+          Include="!(bindpath.AppFiles)\**"
+          Directory="INSTALLFOLDER">
+
+        <Exclude Files="!(bindpath.AppFiles)\**\*.pdb" />
+        <Exclude Files="!(bindpath.AppFiles)\**\*.db" />
+
+      </Files>
+
+      <ComponentRef Id="DesktopShortcutComponent" />
+      <ComponentRef Id="StartMenuShortcutComponent" />
+
+    </Feature>
+
+  </Package>
+
+</Wix>

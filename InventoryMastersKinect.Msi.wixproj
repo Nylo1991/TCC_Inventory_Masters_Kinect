@@ -1,0 +1,15 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+
+  <PropertyGroup>
+    <OutputName>InventoryMastersKinect-1.0.0</OutputName>
+    <OutputType>Package</OutputType>
+    <Platform>x64</Platform>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <BindPath
+        Include="C:\TesteInventoryMasters\Release"
+        BindName="AppFiles" />
+  </ItemGroup>
+
+</Project>

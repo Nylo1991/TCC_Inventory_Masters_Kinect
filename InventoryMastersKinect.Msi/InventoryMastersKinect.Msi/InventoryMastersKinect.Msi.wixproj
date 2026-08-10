@@ -1,0 +1,37 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+
+  <PropertyGroup>
+
+    <!-- Nome do MSI gerado -->
+    <OutputName>InventoryMastersKinect-1.0.0</OutputName>
+
+    <!-- Tipo de saída -->
+    <OutputType>Package</OutputType>
+
+    <!-- Arquitetura -->
+    <Platform>x64</Platform>
+
+    <!-- Idioma das telas do instalador -->
+    <Cultures>pt-BR</Cultures>
+
+  </PropertyGroup>
+
+  <!-- Pasta contendo o executável e as DLLs da aplicação -->
+  <ItemGroup>
+
+    <BindPath
+        Include="C:\TesteInventoryMasters\Release"
+        BindName="AppFiles" />
+
+  </ItemGroup>
+
+  <!-- Extensão que fornece a interface gráfica do MSI -->
+  <ItemGroup>
+
+    <PackageReference
+        Include="WixToolset.UI.wixext"
+        Version="5.0.2" />
+
+  </ItemGroup>
+
+</Project>

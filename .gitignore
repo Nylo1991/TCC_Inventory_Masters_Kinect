@@ -365,3 +365,10 @@ FodyWeavers.xsd
 # Chaves e Credenciais de Segurança
 **/Config/inventorymasters_firebase.json
 **/Config/*_firebase.json
+
+# Credenciais e configurações privadas
+MVC_InventoryMasters/Config/inventorymasters_firebase.json
+MVC_InventoryMasters/appsettings.Production.json
+**/*service-account*.json
+**/*firebase*.json
+*.db

@@ -1,0 +1,105 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <Package
+      Name="Inventory Masters Kinect"
+      Manufacturer="Inventory Masters"
+      Version="1.0.0"
+      UpgradeCode="E426D390-13E6-4DA7-BB8E-83176C9CB83D"
+      Scope="perMachine">
+
+    <MajorUpgrade
+        DowngradeErrorMessage="Já existe uma versão mais recente do Inventory Masters Kinect instalada." />
+
+    <MediaTemplate
+        EmbedCab="yes"
+        CompressionLevel="high" />
+
+    <!-- Pasta principal de instalação -->
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory
+          Id="INSTALLFOLDER"
+          Name="Inventory Masters Kinect" />
+    </StandardDirectory>
+
+    <!-- Atalho da Área de Trabalho -->
+    <StandardDirectory Id="DesktopFolder">
+
+      <Component
+          Id="DesktopShortcutComponent"
+          Guid="*">
+
+        <Shortcut
+            Id="DesktopShortcut"
+            Name="Inventory Masters Kinect"
+            Description="Sistema Inventory Masters Kinect"
+            Target="[INSTALLFOLDER]TCC_Inventory_Masters_Kinect.exe"
+            WorkingDirectory="INSTALLFOLDER"
+            Advertise="no" />
+
+        <RegistryValue
+            Root="HKCU"
+            Key="Software\Inventory Masters\Kinect"
+            Name="DesktopShortcut"
+            Type="integer"
+            Value="1"
+            KeyPath="yes" />
+
+      </Component>
+
+    </StandardDirectory>
+
+    <!-- Pasta do Menu Iniciar -->
+    <StandardDirectory Id="ProgramMenuFolder">
+
+      <Directory
+          Id="PROGRAMMENUFOLDER"
+          Name="Inventory Masters Kinect">
+
+        <Component
+            Id="StartMenuShortcutComponent"
+            Guid="*">
+
+          <Shortcut
+              Id="StartMenuShortcut"
+              Name="Inventory Masters Kinect"
+              Description="Sistema Inventory Masters Kinect"
+              Target="[INSTALLFOLDER]TCC_Inventory_Masters_Kinect.exe"
+              WorkingDirectory="INSTALLFOLDER"
+              Advertise="no" />
+
+          <RemoveFolder
+              Id="RemoveStartMenuFolder"
+              Directory="PROGRAMMENUFOLDER"
+              On="uninstall" />
+
+          <RegistryValue
+              Root="HKCU"
+              Key="Software\Inventory Masters\Kinect"
+              Name="StartMenuShortcut"
+              Type="integer"
+              Value="1"
+              KeyPath="yes" />
+
+        </Component>
+
+      </Directory>
+
+    </StandardDirectory>
+
+    <!-- Arquivos da aplicação -->
+    <Files
+        Include="!(bindpath.AppFiles)\**"
+        Directory="INSTALLFOLDER">
+
+      <Exclude Files="!(bindpath.AppFiles)\**\*.pdb" />
+      <Exclude Files="!(bindpath.AppFiles)\**\*.db" />
+
+    </Files>
+
+    <!-- Inclui os componentes dos atalhos no MSI -->
+    <ComponentRef Id="DesktopShortcutComponent" />
+    <ComponentRef Id="StartMenuShortcutComponent" />
+
+  </Package>
+
+</Wix>

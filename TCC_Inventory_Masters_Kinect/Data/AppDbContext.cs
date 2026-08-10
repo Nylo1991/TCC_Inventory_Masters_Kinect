@@ -49,8 +49,19 @@ namespace TCC_Inventory_Masters_Kinect.Data
                 ? "inventorymasters_acesso.db"
                 : $"inventorymasters_{NormalizarNomeBanco(empresa)}.db";
 
+            string pastaDados = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                "Inventory Masters",
+                "Dados"
+            );
+
+            if (!Directory.Exists(pastaDados))
+            {
+                Directory.CreateDirectory(pastaDados);
+            }
+
             string dbPath = Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
+                pastaDados,
                 nomeBanco
             );
 

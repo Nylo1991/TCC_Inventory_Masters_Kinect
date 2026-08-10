@@ -1,0 +1,29 @@
+INVENTORY MASTERS MSI - PASSOS RÁPIDOS
+
+1. Confirme que existe:
+   C:\TesteInventoryMasters\Release\TCC_Inventory_Masters_Kinect.exe
+
+2. Copie todos os arquivos desta pasta para:
+   C:\Users\Usuario\source\repos\TCC_Inventory_Masters_Kinect\InventoryMastersKinect.Msi\InventoryMastersKinect.Msi
+
+3. Substitua os arquivos existentes quando o Windows perguntar.
+
+4. Abra o PowerShell nessa pasta e execute:
+
+   Remove-Item -Recurse -Force bin -ErrorAction SilentlyContinue
+   Remove-Item -Recurse -Force obj -ErrorAction SilentlyContinue
+   dotnet restore
+   dotnet build ".\InventoryMastersKinect.Msi.wixproj"
+
+5. O MSI será gerado em:
+   bin\x64\Debug\InventoryMastersKinect-1.0.0.msi
+
+6. Antes de testar, desinstale a versão anterior do Inventory Masters.
+
+7. O novo MSI deve mostrar:
+   - interface de instalação;
+   - licença;
+   - imagens personalizadas;
+   - escolha da pasta;
+   - atalho na Área de Trabalho;
+   - atalho no Menu Iniciar.
