@@ -3,7 +3,7 @@
 ## 1. Identificação do Projeto
 * **Nome do sistema:** Inventory Masters
 * **Versão:** 1.0.0
-* **Equipe responsável:** Equipe de Desenvolvimento Inventory Masters
+* **Equipe responsável:** Danilo, Diulie, Marilene e Miguel
 * **Data do planejamento:** 08/08/2026
 
 ---
