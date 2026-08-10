@@ -4013,7 +4013,7 @@ Validar e persistir os parâmetros do espaço monitorado, garantir a existência
 ### Sequência 5 — Medição Volumétrica Manual e Automática
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia05F_MedicaoVolumetrica_Final1.drawio (1)" width="900" alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia05F_MedicaoVolumetrica_Final1.drawio (1).png" width="900" alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
 </p>
 
 > **Nota:** A Sequência 5 representa a execução da medição volumétrica manual ou automática. Antes da captura, o sistema valida se o Kinect está iniciado, se o fluxo de profundidade está disponível, se existe uma calibração válida, se o mapa de referência está disponível e se o espaço foi salvo. Somente medições válidas são preparadas para a Etapa 6; leituras inválidas e falhas encerram o ciclo atual sem salvar ou enviar dados.
