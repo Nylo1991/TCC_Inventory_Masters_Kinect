@@ -3915,25 +3915,34 @@ Garantir que apenas usuários cadastrados, ativos e devidamente autenticados pos
 ### Sequência 2 — Conexão do Kinect e Comunicação SignalR
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia02_ConexaoKinect_SignalR.drawio (1).png" width="900" alt="Sequência 02 - Conexão do Kinect e Comunicação SignalR" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia02_ConexaoKinect_SignalR.drawio (1).drawio.png" width="900" alt="Sequência 02 - Conexão do Kinect e Comunicação SignalR" />
 </p>
 
-> **Nota:** A Sequência 2 demonstra a preparação inicial do ambiente operacional. O Kinect precisa estar conectado e disponível para que o sistema avance para a calibração. A conexão SignalR é iniciada para permitir comunicação em tempo real com o MVC, porém sua indisponibilidade não bloqueia a operação local, mantendo o sistema resiliente em caso de falha de rede.
+> **Nota:** A Sequência 2 demonstra a preparação inicial do ambiente operacional. O Kinect precisa estar localizado, conectado e inicializado para que o sistema possa avançar para a calibração. A conexão SignalR é estabelecida com o endpoint `/medicaoHub` para disponibilizar a comunicação em tempo real com o módulo MVC. Caso essa conexão não seja estabelecida, o operador pode escolher entre continuar em modo local ou realizar uma nova tentativa, mantendo a operação resiliente diante de falhas de rede.
 
-Após a autenticação bem-sucedida, o operador solicita a inicialização do Kinect por meio da interface de monitoramento. A View aciona o comando correspondente no MainViewModel, que solicita ao KinectService a inicialização do sensor.
+Após a autenticação bem-sucedida, o operador acessa a tela de monitoramento. A interface apresenta inicialmente os estados **“Kinect desligado”** e **“SignalR desconectado”**. Em seguida, o operador aciona o botão **“Ligar Kinect”**.
 
-O KinectService verifica a disponibilidade do hardware físico e tenta inicializar os recursos necessários para a captura dos dados de profundidade. Caso o sensor esteja conectado e disponível, o sistema atualiza a interface informando que o Kinect foi inicializado com sucesso.
+A `KinectMonitorWindow`, que representa a View, executa o `LigarKinectCommand` no `MainViewModel`. O ViewModel solicita ao `KinectService` a inicialização do sensor por meio do método `Start()`.
 
-Em seguida, o MainViewModel solicita ao SignalRService a abertura da comunicação em tempo real com o Hub SignalR do módulo MVC. Essa comunicação será utilizada posteriormente para envio das medições volumétricas ao sistema Web.
+O `KinectService` procura um sensor disponível. Quando o Kinect é localizado, o serviço habilita os fluxos RGB e de profundidade e inicia o sensor. Após a conclusão desse processo, o `MainViewModel` atualiza a interface com o estado **“Kinect conectado”**.
 
-Caso o SignalR seja conectado com sucesso, a interface é atualizada indicando que o canal em tempo real está disponível. Caso a conexão com o MVC não seja estabelecida, o sistema mantém a operação local ativa e registra o estado como desconectado ou em reconexão.
+Caso o Kinect não seja localizado ou esteja indisponível, o sistema interrompe o avanço da sequência, atualiza o estado de erro e apresenta orientações para que o operador verifique os cabos, a fonte de alimentação, a porta USB e os drivers instalados. Após essa verificação, uma nova tentativa de inicialização pode ser realizada. Nessa situação, a conexão SignalR e a calibração do ambiente não são liberadas.
 
-A indisponibilidade temporária do SignalR não impede a continuidade da operação local, desde que o Kinect esteja conectado e funcional.
+Com o Kinect inicializado, o `MainViewModel` solicita ao `SignalRService` a abertura da comunicação por meio do método `ConectarAsync()`. O serviço tenta estabelecer a conexão com o Hub SignalR do módulo MVC utilizando o endpoint `/medicaoHub`.
+
+Quando a conexão SignalR é estabelecida, o `SignalRService` informa o estado conectado ao `MainViewModel`. O ViewModel atualiza a interface, inicia o temporizador responsável pela atualização dos dados e libera a **Etapa 3 — Calibração do Ambiente**. Nesse momento, o canal em tempo real e a calibração ficam disponíveis para o operador.
+
+Caso ocorra uma falha na conexão inicial ou o módulo MVC esteja indisponível, o sistema atualiza o estado para **“SignalR sem conexão”** e orienta o operador a verificar a rede, a URL configurada e a disponibilidade do MVC. Em seguida, são apresentadas as opções de continuar em modo local ou tentar estabelecer a conexão novamente.
+
+Ao escolher **“Continuar em modo local”**, o sistema mantém o Kinect ativo, inicia o temporizador de atualização, altera o estado da interface para **“modo local”** e libera a calibração do ambiente. Dessa forma, a indisponibilidade do SignalR não impede a continuidade da operação, desde que o Kinect esteja conectado e funcional.
+
+Ao escolher **“Tentar novamente”**, o sistema executa uma nova chamada ao método `ConectarAsync()`. A tentativa pode ser repetida enquanto o SignalR permanecer desconectado e o operador solicitar uma nova conexão.
+
+Como observação de aderência ao código, o modo local representa o comportamento projetado para o sistema. Para que esse fluxo seja reproduzido integralmente na implementação, a exceção gerada por `ConectarAsync()` deverá ser tratada separadamente, e o método `IniciarTimerFrames()` deverá ser executado após a escolha do operador pela continuidade em modo local.
 
 ### Objetivo da Sequência
 
-Inicializar o sensor Kinect, verificar a disponibilidade do hardware e estabelecer a comunicação em tempo real com o módulo MVC por meio do SignalR, mantendo a operação local mesmo em caso de falha de conexão.
-
+Inicializar o sensor Kinect, verificar a disponibilidade do hardware, habilitar os recursos de captura RGB e profundidade e estabelecer a comunicação em tempo real com o módulo MVC por meio do SignalR. Em caso de indisponibilidade da conexão, o sistema deve permitir que o operador continue em modo local ou realize novas tentativas, garantindo que a calibração seja liberada somente quando o Kinect estiver ativo e funcional.
 ---
 
 ### Sequência 3 — Calibração do Ambiente
