@@ -3980,25 +3980,34 @@ Preparar e capturar o ambiente vazio, validar as leituras de profundidade, gerar
 ### Sequência 4 — Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia04_ConfiguracaoEspacoMonitorado.drawio (1).png" width="900" alt="Sequência 04 - Configuração do Espaço Monitorado" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia04_ConfiguracaoEspacoMonitorado.drawio (1).drawio.png" width="900" alt="Sequência 04 - Configuração do Espaço Monitorado" />
 </p>
 
-> **Nota:** A Sequência 4 demonstra a configuração do espaço monitorado após a calibração. O sistema valida o nome do espaço, o limite percentual de ocupação e a existência de uma calibração válida. Quando essas condições são atendidas, o espaço é marcado como salvo, o temporizador automático de 60 segundos é iniciado e o ambiente fica liberado para medições manuais e automáticas.
+> **Nota:** A Sequência 4 demonstra a configuração do espaço monitorado após a calibração. O sistema valida o nome do espaço, o limite percentual de ocupação, o mapa de referência e o volume máximo calibrado. A configuração é persistida no SQLite e somente após a confirmação do salvamento o espaço é marcado como salvo, o temporizador automático de 60 segundos é iniciado e a Etapa 5 é liberada.
 
-Após a calibração válida do ambiente, o operador realiza a configuração do espaço monitorado. Nessa etapa, são informados o nome do espaço e o limite percentual de ocupação que será utilizado como referência para alertas operacionais.
+Após a calibração válida do ambiente, o operador acessa a etapa de configuração do espaço monitorado. A interface carrega os dados da calibração e exibe o volume máximo calibrado. Em seguida, o operador informa o nome do espaço e o limite percentual de ocupação que será utilizado como referência para os alertas operacionais.
 
-A interface atualiza os dados informados por meio dos bindings vinculados ao MainViewModel. Em seguida, o operador aciona o comando “Salvar Espaço”, que inicia as validações necessárias para liberação da medição.
+A interface atualiza os dados informados por meio dos bindings vinculados ao `MainViewModel`. Após preencher as informações, o operador aciona o comando “Salvar Espaço”, executando o `SalvarEspacoCommand`.
 
-O sistema verifica se existe uma calibração válida, se o volume máximo calibrado é maior que zero, se o nome do espaço foi preenchido e se o limite de ocupação informado está dentro da faixa permitida, entre 1% e 100%.
+O sistema aplica `Trim()` ao nome informado e verifica se ele permanece válido após a remoção dos espaços extras. Também verifica se o limite de alerta foi informado, se possui valor numérico e se está dentro do intervalo permitido, entre 1% e 100%.
 
-Quando todas as condições são atendidas, o MainViewModel marca o espaço como salvo, atualiza a interface e inicia o temporizador responsável pela medição automática, configurado com intervalo de 60 segundos. A partir desse momento, o ambiente fica pronto para medições manuais e automáticas.
+Além dessas verificações, o sistema confirma se existe uma calibração válida, se o mapa de referência está disponível e se o volume máximo calibrado é maior que zero.
 
-Caso a calibração não esteja válida, o nome esteja vazio ou o limite de ocupação seja inválido, o sistema exibe a mensagem correspondente e mantém o cadastro pendente até que as informações sejam corrigidas.
+Quando todas as condições são atendidas, o `MainViewModel` solicita ao `EspacoRepository` o salvamento assíncrono da configuração no SQLite por meio da operação `SalvarConfiguracaoAsync(...)`. São persistidos o nome do espaço, o limite de ocupação, o volume máximo calibrado e o mapa de referência.
+
+Somente após a confirmação da persistência, o sistema define `EspacoSalvo = true`, inicia o `DispatcherTimer` com intervalo de 60 segundos e libera a medição automática, o histórico de medições e a Etapa 5 — Medições Volumétricas.
+
+Caso ocorra uma falha durante a persistência da configuração, o sistema mantém os dados preenchidos, exibe uma mensagem de erro de armazenamento e permite que o operador realize uma nova tentativa.
+
+Se a calibração estiver inválida, o mapa de referência estiver indisponível ou o volume máximo for menor ou igual a zero, o sistema orienta o operador a retornar à Etapa 3 — Calibração do Ambiente.
+
+Caso o nome do espaço esteja vazio, o limite de alerta não tenha sido informado, não seja numérico ou esteja fora do intervalo entre 1% e 100%, o sistema exibe a mensagem correspondente e mantém os dados disponíveis para correção.
+
+A configuração do espaço não registra uma medição volumétrica no SQLite. Nessa etapa são armazenados apenas os parâmetros necessários para o monitoramento; as medições são iniciadas na Etapa 5.
 
 ### Objetivo da Sequência
 
-Validar os parâmetros do espaço monitorado, salvar a configuração operacional e liberar o sistema para iniciar as medições volumétricas.
-
+Validar e persistir os parâmetros do espaço monitorado, garantir a existência de uma calibração válida e liberar o temporizador, o histórico e a etapa de medições volumétricas somente após o salvamento bem-sucedido da configuração.
 ---
 
 ### Sequência 5 — Medição Volumétrica Manual e Automática
