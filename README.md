@@ -4013,28 +4013,69 @@ Validar e persistir os parâmetros do espaço monitorado, garantir a existência
 ### Sequência 5 — Medição Volumétrica Manual e Automática
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia05F_MedicaoVolumetrica_Final1.drawio.png" width="900" alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia05F_MedicaoVolumetrica_Final1.drawio (1)" width="900" alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
 </p>
 
-> **Nota:** A Sequência 5 representa a execução da medição volumétrica. A medição pode ser iniciada manualmente pelo operador ou automaticamente pelo temporizador. Antes do cálculo, o sistema valida se o Kinect está conectado, se há calibração válida e se o espaço foi salvo. Apenas volumes válidos seguem para persistência; leituras inválidas encerram a tentativa atual sem salvar ou enviar dados.
+> **Nota:** A Sequência 5 representa a execução da medição volumétrica manual ou automática. Antes da captura, o sistema valida se o Kinect está iniciado, se o fluxo de profundidade está disponível, se existe uma calibração válida, se o mapa de referência está disponível e se o espaço foi salvo. Somente medições válidas são preparadas para a Etapa 6; leituras inválidas e falhas encerram o ciclo atual sem salvar ou enviar dados.
 
-A quinta sequência representa a execução da medição volumétrica, que pode ocorrer de duas formas: manualmente, quando o operador aciona o comando “Enviar Volume Atual”, ou automaticamente, quando o temporizador de 60 segundos dispara uma nova medição.
+A quinta sequência representa a execução da medição volumétrica. O processo pode ser iniciado manualmente, quando o operador aciona o comando “Enviar Volume Atual”, ou automaticamente, quando o `DispatcherTimer` executa um novo ciclo após o intervalo de 60 segundos.
 
-Independentemente da origem da medição, manual ou automática, o fluxo converge para a rotina comum responsável por medir, salvar e encaminhar o volume calculado.
+Na medição manual, a `KinectMonitorWindow` executa o `MedirAgoraCommand`. Na medição automática, o evento `Tick()` do temporizador solicita diretamente ao `MainViewModel` o início de um novo ciclo. Independentemente da origem, os dois fluxos convergem para a mesma rotina de medição.
 
-Antes de realizar o cálculo, o MainViewModel valida as condições necessárias para a medição: o Kinect deve estar conectado, o ambiente deve possuir calibração válida e o espaço monitorado deve estar salvo. Caso alguma dessas condições não seja atendida, o sistema atualiza o status correspondente e encerra a tentativa atual.
+Antes de iniciar a captura, o `MainViewModel` registra a origem da medição e valida as condições operacionais. O sistema verifica se:
 
-Quando as condições são atendidas, o MainViewModel solicita ao KinectService o cálculo do volume atual. O KinectService realiza a leitura dos dados de profundidade capturados pelo sensor Kinect, processa os pontos válidos e retorna o volume atual calculado.
+- o Kinect está iniciado;
+- o fluxo de profundidade está disponível;
+- existe uma calibração válida;
+- o mapa de referência está disponível;
+- o volume máximo foi calculado;
+- `EspacoSalvo = true`.
 
-Se o volume detectado for maior que zero, o sistema registra o último volume medido, calcula o percentual de ocupação, calcula o espaço livre, compara o percentual com o limite configurado e define o status operacional como “Normal” ou “Limite”.
+Caso alguma dessas condições não seja atendida, a interface apresenta uma das seguintes orientações:
 
-Em seguida, os indicadores da interface são atualizados e a medição válida é encaminhada para a próxima sequência, responsável pela persistência local, histórico e integração com o MVC.
+- “Kinect não está iniciado.”
+- “Fluxo de profundidade indisponível.”
+- “Calibre o espaço antes de medir.”
+- “Salve o espaço antes de medir.”
 
-Caso nenhum volume válido seja detectado, o sistema atualiza o status informando a ausência de volume e encerra a tentativa atual, aguardando uma nova solicitação manual ou o próximo ciclo automático do temporizador.
+Nessas situações, o ciclo atual é encerrado sem salvar ou enviar dados, mantendo o monitoramento ativo.
+
+Quando todas as condições são atendidas, o `MainViewModel` solicita ao `KinectService` o cálculo do volume atual por meio da operação `CalcularVolumeAtualAsync(mapaReferencia)`.
+
+O `KinectService` solicita ao sensor Kinect a captura de uma sequência de frames de profundidade. Após receber os frames, o serviço filtra os pontos inválidos, compara as leituras com o mapa de referência calibrado e calcula o volume atual estabilizado.
+
+Quando o processamento é concluído, o `KinectService` retorna o `ResultadoVolume(volumeAtual)` ao `MainViewModel`. O sistema considera válida a leitura que atende à condição:
+
+```text
+0 < volumeAtual <= volumeMáximo
+```
+
+Para uma medição válida, o sistema:
+
+1. registra a última leitura válida;
+2. calcula o percentual de ocupação;
+3. calcula o espaço livre;
+4. compara a ocupação com o limite de alerta configurado;
+5. define a situação operacional como `Normal` ou `Alerta`.
+
+Em seguida, a interface é atualizada com:
+
+- volume atual;
+- percentual de ocupação;
+- espaço livre;
+- situação operacional.
+
+Após a atualização dos indicadores, a medição válida é preparada para a **Etapa 6 — Persistência, Histórico e Integração com o MVC**.
+
+Caso nenhum volume seja detectado, a leitura seja inválida ou o valor esteja fora dos limites calibrados, o sistema atualiza a interface, exibe o alerta correspondente e encerra a tentativa atual sem salvar ou enviar dados.
+
+Se ocorrer uma falha inesperada durante a captura ou o cálculo, o sistema registra a falha, atualiza o status para “Erro na medição” e encerra o ciclo atual. O monitoramento permanece ativo para permitir a continuidade da operação.
+
+Quando a origem for manual, o operador poderá solicitar uma nova medição. Quando a origem for automática, o sistema aguardará o próximo evento `Tick()` do temporizador de 60 segundos.
 
 ### Objetivo da Sequência
 
-Executar a medição volumétrica manual ou automática, validar as condições operacionais, calcular o volume atual, atualizar os indicadores da interface e encaminhar medições válidas para persistência.
+Executar a medição volumétrica manual ou automática, validar as condições operacionais, capturar e processar os dados de profundidade, calcular o volume estabilizado, atualizar os indicadores da interface e preparar exclusivamente as medições válidas para a etapa de persistência, histórico e integração.
 
 ---
 
