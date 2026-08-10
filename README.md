@@ -3951,23 +3951,29 @@ Inicializar o sensor Kinect, verificar a disponibilidade do hardware, habilitar 
   <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia03_CalibracaoAmbienteFinal.drawio.png" width="900" alt="Sequência 03 - Calibração do Ambiente" />
 </p>
 
-> **Nota:** A Sequência 3 representa a calibração do ambiente vazio, etapa essencial para que o sistema tenha uma referência volumétrica confiável. Durante esse processo, o sistema interrompe medições automáticas, invalida configurações anteriores, captura dados de profundidade, processa pontos válidos e calcula o volume máximo calibrado. Somente uma calibração válida libera a próxima etapa de configuração do espaço.
+> **Nota:** A Sequência 3 representa a calibração do ambiente vazio, etapa essencial para que o sistema obtenha uma referência volumétrica confiável. Antes da captura, o operador recebe orientações e confirma que o ambiente está vazio. O sistema interrompe temporariamente as atualizações, invalida a calibração anterior, captura múltiplos frames de profundidade, valida os pontos, consolida o mapa de referência e calcula o volume máximo. A Etapa 4 somente é liberada após uma calibração válida e a restauração da posição original do Kinect.
 
-A terceira sequência representa a calibração do ambiente físico que será monitorado. O operador aciona o comando “Calibrar Espaço” na interface, e a View encaminha essa ação ao MainViewModel.
+A terceira sequência representa o processo de calibração do ambiente físico que será monitorado. Inicialmente, o operador aciona o comando **“Calibrar Espaço”** na interface. A `KinectMonitorWindow` encaminha a ação ao `MainViewModel`, que solicita a exibição do vídeo ou das orientações necessárias para preparar o ambiente.
 
-Antes de iniciar a calibração, o sistema prepara o processo interrompendo temporariamente a rotina de medição automática, invalidando configurações anteriores do espaço e verificando se o Kinect está conectado e disponível para leitura.
+Após receber as orientações, o operador confirma que o espaço está vazio e solicita o início da calibração. A View executa o comando de confirmação, e o `MainViewModel` prepara o processo, interrompendo temporariamente o temporizador de atualização, invalidando a calibração anterior e verificando as condições necessárias.
 
-Com as condições atendidas, o MainViewModel solicita ao KinectService a calibração do ambiente vazio. O KinectService prepara a captura dos dados de profundidade e utiliza o sensor físico para coletar as informações necessárias do espaço sem ocupação.
+A calibração somente é iniciada quando o Kinect está ativo, o fluxo de profundidade está disponível e o ambiente vazio foi confirmado pelo operador. Quando essas condições são atendidas, o `MainViewModel` solicita ao `KinectService` o início da calibração. O serviço prepara a captura do ambiente vazio, verifica a disponibilidade das leituras de profundidade e atualiza a interface com o estado **“Calibração em andamento”**.
 
-Durante esse processo, o sistema pode realizar múltiplas capturas de profundidade e considerar diferentes ângulos do sensor, filtrando os pontos válidos e processando o mapa de referência do ambiente. A partir dessas informações, é calculado o volume máximo calibrado, que servirá como base para as medições futuras.
+Durante a calibração, o sistema executa um ciclo de captura para diferentes ângulos e conjuntos de frames. Em cada repetição, o Kinect é movimentado para o próximo ângulo, o sistema aguarda a estabilização do sensor e, somente depois, captura o frame de profundidade. Os dados retornados são filtrados, e os pontos válidos são acumulados para o processamento.
 
-Ao final, o sistema restaura a posição original do Kinect e retorna o resultado da calibração ao MainViewModel. Quando a calibração é válida e o volume máximo calculado é maior que zero, a interface é atualizada e a próxima etapa, de configuração do espaço monitorado, é liberada.
+Após concluir as capturas, o `KinectService` valida a quantidade e a qualidade dos pontos, detecta a referência angular e consolida o mapa de referência do ambiente vazio. Com base nesse mapa, o sistema calcula o volume máximo do espaço. Ao final do processamento, a posição original do Kinect é restaurada.
 
-Caso o Kinect esteja desconectado, a leitura esteja indisponível ou os dados capturados sejam insuficientes para uma calibração válida, o sistema exibe um alerta e mantém o ambiente como não calibrado, permitindo nova tentativa.
+Quando as leituras são suficientes, o mapa de referência é válido e o volume máximo calculado é maior que zero, o `KinectService` retorna ao `MainViewModel` o resultado da calibração, incluindo o volume máximo e a quantidade de pontos válidos. O sistema marca o ambiente como calibrado, define a ocupação inicial como `0%` e calcula o volume livre inicial com base no volume máximo.
+
+Em seguida, a interface é atualizada com o volume máximo, a quantidade de pontos válidos, a ocupação inicial e o volume livre. O sistema exibe a mensagem **“Calibração concluída”**, orienta o operador a salvar o espaço e libera a **Etapa 4 — Configuração e salvamento do espaço monitorado**.
+
+Caso as leituras sejam insuficientes, a referência seja inválida ou o volume máximo calculado seja menor ou igual a zero, o sistema mantém o espaço como não calibrado, exibe uma mensagem de erro, orienta a verificação do Kinect e do ambiente vazio e permite uma nova tentativa.
+
+Se o Kinect estiver indisponível, não houver fluxo de profundidade ou o ambiente vazio não tiver sido confirmado, a calibração não será iniciada. Nesse cenário, o sistema apresenta as orientações necessárias, mantém o espaço como não calibrado e permite que o operador tente novamente.
 
 ### Objetivo da Sequência
 
-Capturar o ambiente vazio, gerar uma referência espacial confiável e calcular o volume máximo calibrado que será utilizado como base para as medições volumétricas.
+Preparar e capturar o ambiente vazio, validar as leituras de profundidade, gerar uma referência espacial confiável e calcular o volume máximo calibrado que será utilizado como base para a configuração do espaço e para as futuras medições volumétricas.
 
 ---
 
