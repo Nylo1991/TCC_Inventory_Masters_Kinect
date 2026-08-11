@@ -162,43 +162,26 @@ A estratégia de garantia de qualidade do *Inventory Masters* fundamenta-se em p
 
 O processo abrange os **5 fluxos operacionais e arquiteturais mais críticos** do sistema, mapeando especificamente os pontos focais de reteste, o escopo da regressão sistêmica associada e o racional de impacto técnico:
 
-#### 1. Autenticação e Controle de Acesso de Usuários
-* **Escopo do Módulo:** Mecanismo de login, checagem de permissões por perfil (Administrador vs. Operador) na interface WPF, persistência local e comunicação em tempo real via SignalR para notificações e sincronização de estados de sessão.
-* **Foco do Reteste:** Validar se a correção de falhas de permissão (como o bloqueio correto de acesso a rotinas administrativas por operadores) ou o tratamento de e-mails inexistentes opera sem falhas de exceção não tratada.
-* **Escopo da Regressão:** Reexecutar o fluxo de persistência de sessão no SQL Server e a comunicação com serviços de autenticação, garantindo que alterações no controle de acesso não comprometam a integridade dos dados atrelados ao usuário logado ou gerem falhas de *bypass* na interface.
+| Fluxo Crítico | Escopo do Módulo | Foco do Reteste | Escopo da Regressão |
+| :--- | :--- | :--- | :--- |
+| **1. Autenticação e Controle de Acesso de Usuários** | Mecanismo de login, checagem de permissões por perfil (Administrador vs. Operador) na interface WPF, persistência local e comunicação em tempo real via SignalR para notificações e sincronização de estados de sessão. | Validar se a correção de falhas de permissão (como o bloqueio correto de acesso a rotinas administrativas por operadores) ou o tratamento de e-mails inexistentes opera sem falhas de exceção não tratada. | Reexecutar o fluxo de persistência de sessão no SQL Server e a comunicação com serviços de autenticação, garantindo que alterações no controle de acesso não comprometam a integridade dos dados atrelados ao usuário logado ou gerem falhas de *bypass* na interface. |
+| **2. Processamento e Captura Volumétrica (Sensor / Kinect)** | Leitura tridimensional de resíduos armazenados, conversão e arredondamento dos dados dimensionais em metros cúbicos ($m^3$) e exibição em tempo real na interface WPF. | Certificar a correção de desvios no cálculo volumétrico (como erros de arredondamento em leituras limítrofes ou falsos positivos gerados por reflexos e interferências ambientais). | Validar o pipeline completo de dados desde a leitura do hardware até o armazenamento relacional no banco de dados local, assegurando que o consumo de memória (*heap*) e o descarte de recursos gráficos via padrão `IDisposable` continuem estáveis após múltiplas capturas consecutivas. |
+| **3. Sincronização de Dados Local-Nuvem (SQL Server e Microsoft Azure)** | Mecanismo de persistência transacional local, gerenciamento de filas de retransmissão em modo offline e integração remota com o ecossistema Microsoft Azure. | Verificar a eficácia das rotinas de tratamento de exceções e recuperação transacional em cenários de indisponibilidade simulada da conexão com o banco local ou com a nuvem. | Reexecutar testes de consistência de dados na fila de sincronização e o envio de atualizações em tempo real para o dashboard corporativo via SignalR, garantindo que a assimetria informacional e a integridade do cache local permaneçam preservadas. |
+| **4. Atualização de Status e Gestão do Estoque** | Rotinas de inventário periódico, recálculo de lotes de resíduos armazenados, tratamento de divergências volumétricas e exibição de grades de dados na interface WPF. | Assegurar que correções em regras de negócio de divergência de estoque reflitam corretamente os alertas visuais para o operador e atualizem os registros sem corrupção relacional. | Executar verificações nas consultas de paginação máxima de estoque, na consistência das métricas exibidas no dashboard e na estabilidade das transações atômicas com blocos de *rollback* automático no SQL Server. |
+| **5. Atualização do Dashboard e Consolidação Gerencial em Tempo Real** | Atualização contínua do dashboard gerencial e consolidação dos dados de estoque e resíduos por meio de mensageria em tempo real via SignalR. | Validar se falhas de renderização nas grades de exibição, desincronizações de métricas ou exceções na transmissão via SignalR foram corrigidas com sucesso. | Revalidar o consumo de recursos de rede e a exatidão das consultas SQL associadas à consolidação, garantindo que a atualização contínua do dashboard não degrade a performance da aplicação durante os turnos operacionais do estoque. |
 
-#### 2. Processamento e Captura Volumétrica (Sensor / Kinect)
-* **Escopo do Módulo:** Leitura tridimensional de resíduos armazenados, conversão e arredondamento dos dados dimensionais em metros cúbicos ($m^3$) e exibição em tempo real na interface WPF.
-* **Foco do Reteste:** Certificar a correção de desvios no cálculo volumétrico (como erros de arredondamento em leituras limítrofes ou falsos positivos gerados por reflexos e interferências ambientais).
-* **Escopo da Regressão:** Validar o pipeline completo de dados desde a leitura do hardware até o armazenamento relacional no banco de dados local, assegurando que o consumo de memória (*heap*) e o descarte de recursos gráficos via padrão `IDisposable` continuem estáveis após múltiplas capturas consecutivas.
-
-#### 3. Sincronização de Dados Local-Nuvem (SQL Server e Microsoft Azure)
-* **Escopo do Módulo:** Mecanismo de persistência transacional local, gerenciamento de filas de retransmissão em modo offline e integração remota com o ecossistema Microsoft Azure.
-* **Foco do Reteste:** Verificar a eficácia das rotinas de tratamento de exceções e recuperação transacional em cenários de indisponibilidade simulada da conexão com o banco local ou com a nuvem.
-* **Escopo da Regressão:** Reexecutar testes de consistência de dados na fila de sincronização e o envio de atualizações em tempo real para o dashboard corporativo via SignalR, garantindo que a assimetria informacional e a integridade do cache local permaneçam preservadas.
-
-#### 4. Atualização de Status e Gestão do Estoque
-* **Escopo do Módulo:** Rotinas de inventário periódico, recálculo de lotes de resíduos armazenados, tratamento de divergências volumétricas e exibição de grades de dados na interface WPF.
-* **Foco do Reteste:** Assegurar que correções em regras de negócio de divergência de estoque reflitam corretamente os alertas visuais para o operador e atualizem os registros sem corrupção relacional.
-* **Escopo da Regressão:** Executar verificações nas consultas de paginação máxima de estoque, na consistência das métricas exibidas no dashboard e na estabilidade das transações atômicas com blocos de *rollback* automático no SQL Server.
-
-#### 5. Atualização do Dashboard e Consolidação Gerencial em Tempo Real
-* **Escopo do Módulo:** Atualização contínua do dashboard gerencial e consolidação dos dados de estoque e resíduos por meio de mensageria em tempo real via SignalR.
-* **Foco do Reteste:** Validar se falhas de renderização nas grades de exibição, desincronizações de métricas ou exceções na transmissão via SignalR foram corrigidas com sucesso.
-* **Regressão:** Revalidar o consumo de recursos de rede e a exatidão das consultas SQL associadas à consolidação, garantindo que a atualização contínua do dashboard não degrade a performance da aplicação durante os turnos operacionais do estoque.
-  
 ---
 
 ## 10. Critérios de Entrada e Saída
 
-### Critérios de Entrada (*Entry Criteria*)
+### Critérios de Entrada
 O início da execução dos testes do *Inventory Masters* exige o atendimento às seguintes condições:
 * **Infraestrutura e Hardware Operacionais:** Instigação do ambiente local configurada com o SQL Server ativo, sensor Kinect calibrado e conectado, e aplicação WPF compilada e funcional.
 * **Massa de Dados Inicializada:** Disponibilização de massa de dados de teste padronizada para simulação de lotes de resíduos e cenários volumétricos.
 * **Artefatos e Requisitos Aprovados:** Casos de teste documentados, requisitos funcionais e critérios de aceitação formalmente aprovados e disponibilizados para a equipe de QA.
 * **Liberação de Build:** Entrega oficial de pacotes ou branch estável pelo time de desenvolvimento, atestando a conclusão da codificação dos módulos planejados.
 
-### Critérios de Saída (*Exit Criteria*)
+### Critérios de Saída 
 A conclusão da etapa de testes e a liberação do sistema para homologação ou entrega considerarão:
 * **Cobertura de Execução:** 100% dos casos de teste planejados (com foco prioritário nos fluxos críticos de captura, banco de dados e mensageria via SignalR) integralmente executados.
 * **Zero Defeitos Críticos ou Altos:** Ausência total de defeitos pendentes classificados como Críticos ou Altos (como falhas de *memory leak*, corrupção de dados ou interrupção de transações).
