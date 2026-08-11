@@ -2,17 +2,37 @@
 
 ## 1. Identificação do Projeto
 * **Nome do sistema:** Inventory Masters
-* **Versão:** 1.0.0
+* **Versão:** 2.0.0
 * **Equipe responsável:** Danilo, Diulie, Marilene e Miguel
 * **Data do planejamento:** 08/08/2026
 
 ---
 
 ## 2. Objetivos dos Testes
-* **O que a equipe pretende verificar?** Verificar se o sistema *Inventory Masters* atinge os requisitos funcionais e não funcionais estabelecidos, garantindo a integridade nas operações de inventário, a precisão das medições volumétricas (capturadas via sensor/Kinect), a correta sincronização entre o banco de dados local (SQL Server) e a nuvem (Microsoft Azure), além de assegurar a estabilidade das aplicações WPF em MVVM[cite: 1, 2].
-* **Quais riscos pretende reduzir?** Falhas de sincronização de estoque entre o ambiente local e a nuvem, distorções nas medições volumétricas causadas por calibração incorreta ou interferências externas, indisponibilidade do banco de dados SQL Server ou da infraestrutura Azure, e falhas de autenticação ou controle de acesso dos operadores[cite: 1, 2].
-* **O que será considerado como evidência de qualidade?** A execução bem-sucedida dos casos de teste prioritários com seus respectivos resultados obtidos documentados, ausência de defeitos críticos ou bloqueantes não resolvidos, logs de execução limpos, estabilidade comprovada em cenários de estresse de dados e relatórios de validação dos dados volumétricos[cite: 1, 2].
 
+O foco desta etapa de testes é garantir a robustez, a segurança e a integridade de todos os fluxos críticos e componentes estruturais do sistema *Inventory Masters*, prevenindo falhas sistêmicas que possam comprometer a operação, causar corrupção de dados ou paralisar a aplicação.
+
+* **O que a equipe pretende verificar?**
+  * **Autenticação e Segurança:** A eficácia do algoritmo de login, a validação rigorosa de e-mails cadastrados/ativos, e a lógica de geração, validade e expiração dos tokens temporários em cenários de sucesso e insucesso.
+  * **Captura Volumétrica e Hardware:** A precisão milimétrica das medições de espaço expressas estritamente em metros cúbicos ($m^3$) capturadas via sensor/Kinect, avaliando a resiliência do sistema perante variações de calibração e interferências externas.
+  * **Persistência de Dados:** A consistência, integridade e correta gravação das transações e do estoque no banco de dados local (SQL Server).
+  * **Sincronização e Nuvem:** A perfeita sincronização e redundância de dados entre o ambiente local e a nuvem (Microsoft Azure).
+  * **Comunicação em Tempo Real (SignalR):** A fluidez, a ausência de atrasos perceptíveis e a confiabilidade na transmissão de dados em tempo real entre a aplicação local e o dashboard web na nuvem.
+  * **Gestão de Estados e Resiliência:** O comportamento da aplicação WPF perante entradas de dados inválidas, falhas de conexão ou interrupções abruptas nos serviços de mensageria e banco de dados.
+
+* **Quais riscos pretende reduzir?**
+  * **Falhas de Autenticação:** Riscos de acesso não autorizado, burla de tokens expirados/malformados ou processamento de fluxos sem a devida validação de credenciais de operador.
+  * **Distorções Volumétricas:** Inconsistências ou erros de cálculo no volume de itens ($m^3$) provocados por falhas de calibração ou interferências no campo de visão do Kinect.
+  * **Perda de Dados e Falhas de Sincronização:** Riscos de corrupção ou perda de informações de estoque decorrentes de falhas de conectividade entre o SQL Server local e a infraestrutura do Microsoft Azure.
+  * **Instabilidade em Tempo Real:** Atrasos, perda de pacotes ou falhas na mensageria via SignalR que comprometam a visualização instantânea das operações no dashboard web.
+  * **Travamentos e Exceções Não Tratadas:** Prevenir falhas críticas na interface WPF ou exceções não tratadas (*unhandled exceptions*) em cenários de estresse operacional e inserção de dados inválidos.
+
+* **O que será considerado como evidência de qualidade?**
+  * **Matriz de Cobertura de Testes:** Documentação contendo a execução bem-sucedida dos casos de teste prioritários (abrangendo caminhos de sucesso e insucesso para autenticação, Kinect, SQL Server, Azure e SignalR) com seus respectivos resultados obtidos devidamente registrados.
+  * **Ausência de Defeitos Críticos:** Inexistência de defeitos bloqueantes, falhas de concorrência ou corrupção de dados em aberto nos módulos principais.
+  * **Logs de Execução e Auditoria:** Registros limpos e consistentes que comprovem o tratamento adequado de exceções, tentativas de login inválidas e transações de sincronização.
+  * **Relatórios de Desempenho e Validação:** Laudos e evidências visuais (prints ou vídeos) que comprovem a precisão dos dados volumétricos em $m^3$, a estabilidade sob estresse de dados e a latência imperceptível na comunicação via SignalR.
+    
 ---
 
 ## 3. Escopo
@@ -141,6 +161,34 @@ Para cada falha ou inconsistência encontrada, um registro de defeito contendo o
 * **Prioridade:** (Baixa, Média, Alta, Urgente) — indicando a ordem de correção.
 * **Versão:** Versão do *Inventory Masters* em que o erro foi encontrado.
 * **Ambiente:** Especificações do ambiente de teste (ex: máquina local, versão do SQL Server, status da conexão Azure).
+
+----
+# Cenários Testados:
+
+### Caso de Teste: CT-Login-01 — Validação do Campo de E-mail e Autenticação por Token
+
+* **Objetivo:** Validar o comportamento visual, a usabilidade, a obrigatoriedade, o tratamento de mensagens, o fluxo de envio/validação de tokens e o retorno à tela inicial no módulo de autenticação.
+* **Pré-condições:** A aplicação deve estar aberta na tela de login inicial.
+
+#### 1. Execução dos Passos
+* **Ação 1:** Iniciar o processo de login e interagir com o campo destinado à digitação do e-mail (Tela 1).
+* **Ação 2:** Submeter um endereço de e-mail não cadastrado no sistema (Tela 2).
+* **Ação 3:** Inserir um e-mail cadastrado e avançar para a solicitação e validação do token (Telas 3 e 4).
+* **Ação 4:** Acionar a opção de solicitar um novo token e verificar o fluxo de retorno (Tela 5).
+
+#### 2. Resultados Esperados e Observados
+
+* **Cenário Positivo (Validação de Interface, Usabilidade e Fluxos):**
+  * **Layout e Preenchimento:** A tela apresenta indicação visual clara que determina especificamente o campo onde o usuário deve digitar o e-mail, com espaçamento adequado dentro da caixa de texto.
+  * **Validação de Obrigatoriedade:** Caso o usuário tente avançar sem preencher o campo de e-mail, o sistema dispara imediatamente uma mensagem informando a obrigatoriedade do preenchimento.
+  * **Design Visual e Destaque:** A interface possui paleta de cores harmônica que não sobrecarrega a visão do operador, e as cores das caixas de mensagens se destacam claramente para indicar quando há incorreções.
+  * **Campos e Instruções:** A tela exibe o campo de solicitação e validação de token de forma clara e intuitiva.
+  * **Fluxo de Retorno:** Ao solicitar um novo token, o sistema redireciona o fluxo perfeitamente de volta à tela inicial para que o usuário redigite o e-mail.
+
+* **Cenário Negativo (Oportunidades de Melhoria e Alinhamento Técnico):**
+  * **Aviso de Primeiro Acesso:** Ao acessar a aplicação pela primeira vez, o sistema é omisso em informar que o endereço de e-mail precisa prévia e obrigatoriamente ser cadastrado pelo administrador do sistema.
+  * **Tratamento de Mensagem:** A mensagem exibida para e-mails não cadastrados é genérica, pois deixa de informar explicitamente que o usuário não possui acesso ao sistema.
+  * **Ausência de Tooltips:** Falta de dicas de contexto (tooltips) nos botões de ação da tela de login, especificamente nos botões de validar e de solicitar novo token.
 
 
 
