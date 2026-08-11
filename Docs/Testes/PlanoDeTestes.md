@@ -155,12 +155,13 @@ A elaboração dos casos de teste do *Inventory Masters* fundamenta-se em técni
 
 ## 8. Análise de Riscos
 
-| Risco | Impacto | Probabilidade | Ação |
+| Risco | Impacto Detalhado | Probabilidade | Ação de Mitigação e Teste |
 | :--- | :--- | :--- | :--- |
-| Falha na conexão com o SQL Server local | Alto | Média | Criar cenário de indisponibilidade simulada, testando mensagens de exceção e rotinas de recuperação de transação. |
-| Perda de conectividade com a nuvem Microsoft Azure | Alto | Média | Garantir persistência local em cache no SQL Server e testar o comportamento da aplicação em modo offline/fila de sincronização. |
-| Distorção na medição volumétrica por interferência externa | Médio | Alta | Aplicar testes com variação de iluminação e obstruções parciais, validando os limites de tolerância do sensor. |
-| Entrada de dados inválidos pelo operador | Médio | Alta | Utilizar particionamento de equivalência e análise de valor limite para blindar os campos de entrada na interface WPF. |
+| **Falha na conexão com o SQL Server local** | **Crítico:** Paralisação imediata das operações no armazém, interrupção da captura no Kinect e risco de corrupção ou perda de transações ativas caso o mecanismo de *rollback* falhe. | Média | Criar cenário de indisponibilidade simulada, testando mensagens de exceção e rotinas robustas de recuperação de transação. |
+| **Perda de conectividade com a nuvem Microsoft Azure** | **Alto:** Inconsistência no dashboard corporativo em tempo real via SignalR, impedindo a consolidação remota dos estoques de resíduos e gerando assimetria de informações para os parceiros. | Média | Garantir persistência local em cache no SQL Server e testar o comportamento da aplicação em modo offline com fila de sincronização. |
+| **Saturação de memória (*Memory Leak*) na interface WPF** | **Alto:** Degradação de performance durante o turno de trabalho. Após horas de uso contínuo, a aplicação pode apresentar lentidão severa ou travamentos devido ao acúmulo de instâncias gráficas não liberadas. | Média | Aplicar testes de longa duração, garantir o descarte adequado de recursos e implementar a interface `IDisposable` nos serviços de captura e janelas. |
+| **Distorção na medição volumétrica por interferência externa** | **Médio:** Erros no cálculo em metros cúbicos ($m^3$) dos resíduos, gerando divergências em inventários periódicos e exigindo recontagens manuais por causa de reflexos ou ruídos no sensor. | Alta | Aplicar testes com variação de iluminação e obstruções parciais, validando os limites de tolerância do Kinect. |
+| **Entrada de dados inválidos pelo operador** | **Médio:** Inserção de informações incorretas no banco local, falhas de renderização nas grades da interface WPF e instabilidade em relatórios gerenciais e de conformidade. | Alta | Utilizar particionamento de equivalência e análise de valor limite para blindar os campos de entrada na interface. |
 
 ---
 
