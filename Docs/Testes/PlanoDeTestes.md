@@ -113,12 +113,14 @@ A estratégia de qualidade do *Inventory Masters* emprega uma combinação de ab
 ---
 
 ## 6. Técnicas de Projeto de Testes
-* **Particionamento de Equivalência:** Utilizado para dividir os dados de entrada em partições válidas e inválidas (ex: campos de quantidade de itens ou dimensões volumétricas), reduzindo o número de casos de teste sem perder cobertura.
-* **Análise de Valor Limite:** Aplicada nos limites das faixas de medição e capacidade do sistema (ex: valores mínimos e máximos aceitos pelo sensor ou limites de paginação de estoque).
-* **Tabela de Decisão:** Empregada para testar combinações complexas de regras de negócio (ex: permissões de acesso associadas ao perfil do usuário e status do item).
-* **Testes Baseados em Cenários:** Utilizados para simular a jornada completa do operador de estoque utilizando o *Inventory Masters*.
-* **Testes Exploratórios:** Aplicados em sessões cronometradas para testar a robustez da interface WPF e usabilidade geral.
 
+A elaboração dos casos de teste do *Inventory Masters* fundamenta-se em técnicas estruturadas de projeto, garantindo alta eficiência na detecção de falhes e o alinhamento rigoroso com as especificações do ecossistema tecnológico:
+
+* **Particionamento de Equivalência:** Técnica aplicada para segmentar os dados de entrada em classes de equivalência válidas e inválidas (como a inserção de dimensões volumétricas em metros cúbicos ou a contagem de resíduos no estoque), permitindo a validação de comportamento correto com um conjunto reduzido e representativo de casos de teste.
+* **Análise de Valor Limite:** Estratégia direcionada aos extremos das faixas de operação e medição do sistema (como os limites mínimos e máximos de alcance volumétrico suportados pelo sensor/Kinect ou os limiares de paginação de registros na interface WPF), focando na detecção de falhas típicas nas bordas das condições lógicas.
+* **Tabela de Decisão:** Metodologia utilizada para estruturar combinações complexas de regras de negócio condicionais (como a matriz de permissões de acesso e ações permitidas por perfil de usuário — administrador versus operador — combinada com o status dos resíduos armazenados).
+* **Testes Baseados em Cenários:** Utilizados para modelar e executar a jornada operacional completa do operador de armazém utilizando o ecossistema do *Inventory Masters*, simulando fluxos transacionais do mundo real.
+* **Testes Exploratórios:** Aplicados em sessões livres e dinâmicas para avaliar a robustez da interface WPF, o comportamento sob concorrência de requisições e a experiência de usabilidade geral da aplicação.
 ---
 
 ## 7. Casos de Teste
