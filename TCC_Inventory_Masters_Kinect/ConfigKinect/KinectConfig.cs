@@ -27,26 +27,14 @@
         /// Campo de visão vertical aproximado do Kinect v1.
         /// </summary>
         public const double VerticalFovGraus = 43.0;
-
-        /// <summary>
-        /// URL do Hub SignalR responsável por receber as medições volumétricas.
-        /// </summary>
         public const string UrlSignalR =
-            "http://inventorymasters.runasp.net/medicaoHub";
-
-        /// <summary>
-        /// Conexão local com o MVC para validação do token.
-        /// Use a mesma origem exibida no terminal do MVC.
-        /// </summary>
+            "http://localhost:5212/medicaoHub";
 
         public const string UrlValidarTokenMvc =
-            "http://inventorymasters.runasp.net/api/kinect/validar-token";
+            "http://localhost:5212/api/kinect/validar-token";
 
-        /// <summary>
-        /// Endpoint do MVC usado pelo aplicativo Kinect para solicitar um token por e-mail.
-        /// </summary>
         public const string UrlSolicitarTokenMvc =
-            "http://inventorymasters.runasp.net/api/kinect/solicitar-token";
+            "http://localhost:5212/api/kinect/solicitar-token";
 
         /// <summary>
         /// Intervalo, em segundos, para envio periódico do volume ao sistema web.
