@@ -59,17 +59,19 @@ O foco desta etapa de testes é garantir a robustez, a segurança e a integridad
 ---
 
 ## 4. Base de Teste
-As informações e artefatos utilizados para projetar os testes englobam:
-* Requisitos funcionais e não funcionais documentados do TCC.
-* Regras de negócio voltadas à gestão de estoque e medição volumétrica.
-* Histórias de usuário e critérios de aceitação mapeados para o *Inventory Masters*.
-* Especificações técnicas da arquitetura WPF (MVVM) e dos bancos de dados (SQL Server e Microsoft Azure).
-* Documentação de arquitetura e diagramas de fluxo do sistema.
+
+A concepção, o planejamento e o projeto dos casos de teste do *Inventory Masters* fundamentam-se nos artefatos técnicos, funcionais e arquiteturais do projeto:
+
+* **Requisitos do Sistema:** Especificações detalhadas dos requisitos funcionais e não funcionais estabelecidos para o TCC.
+* **Regras de Negócio:** Diretrizes e restrições voltadas à lógica de gestão de estoque, validação de acesso, notificações de parceiros e precisão milimétrica nas medições volumétricas.
+* **Histórias de Usuário e Critérios de Aceitação:** Mapeamento comportamental das funcionalidades esperadas pelos operadores do sistema.
+* **Especificações Técnicas e Arquiteturais:** Padrões de desenvolvimento da aplicação WPF estruturada em MVVM, protocolos de comunicação em tempo real via SignalR, além da modelagem dos bancos de dados locais (SQL Server) e da infraestrutura em nuvem (Microsoft Azure).
+* **Documentação de Projeto:** Diagramas de fluxo de dados, especificações de endpoints e arquitetura de integração entre os componentes locais e os serviços remotos.
 
 ---
 
 ## 5. Abordagem de Testes
-As seguintes abordagens serão adotadas durante o ciclo de qualidade do sistema[cite: 1, 2]:
+As seguintes abordagens serão adotadas durante o ciclo de qualidade do sistema:
 * **Testes Funcionais:** Validação se as funções do sistema realizam o que os requisitos determinam (ex: cadastros, relatórios e buscas).
 * **Testes Não Funcionais:** Avaliação de características como usabilidade da interface WPF e confiabilidade da sincronização.
 * **Testes de Sistema:** Verificação do comportamento do sistema integrado como um todo, testando o fluxo ponta a ponta.
