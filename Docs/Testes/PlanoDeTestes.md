@@ -174,59 +174,89 @@ A elaboração dos casos de teste do *Inventory Masters* fundamenta-se em técni
 ---
 
 ## 9. Reteste e Regressão
-Para garantir a estabilidade do sistema após alterações, o seguinte processo será adotado em **5 cenários críticos** que frequentemente apresentam defeitos:
-1. *Autenticação de Usuários*
-2. *Processamento de Captura Volumétrica*
-3. *Sincronização de Dados Local-Nuvem*
-4. *Atualização de Status de Inventário*
-5. *Exportação de Relatórios de Estoque*
 
-* **Reteste:** Após a correção de um defeito identificado em um desses cenários, a equipe executará exatamente o mesmo caso de teste que falhou para certificar-se de que o erro foi solucionado (*A correção resolveu o defeito identificado?*).
-* **Regressão:** Após validar a correção, a equipe selecionará e executará os testes associados às funcionalidades adjacentes que interagem com o módulo alterado para responder à pergunta: *A alteração afetou alguma funcionalidade que anteriormente funcionava?* Funcionalidades centrais de persistência no SQL Server e comunicação com o Microsoft Azure serão sempre retestadas após mudanças estruturais relevantes.
+A estratégia de garantia de qualidade do *Inventory Masters* fundamenta-se em processos de reteste e regressão para isolar intervenções corretivas e certificar que alterações estruturais não gerem efeitos colaterais.
 
+### 9.1. Metodologia de Execução
+* **Reteste:** Reexecução estrita do caso de teste original que apontou a falha, validando a eficácia do ajuste implementado.
+* **Regressão:** Execução de uma bateria de testes correlacionados nas funcionalidades adjacentes para garantir que a correção não comprometeu módulos estáveis do sistema.
+---
+
+### 9.2. Matriz de Cenários Críticos para Reteste e Regressão
+
+O processo abrange os **5 fluxos operacionais e arquiteturais mais críticos** do sistema, mapeando especificamente os pontos focais de reteste, o escopo da regressão sistêmica associada e o racional de impacto técnico:
+
+#### 1. Autenticação e Controle de Acesso de Usuários
+* **Escopo do Módulo:** Mecanismo de login, checagem de permissões por perfil (Administrador vs. Operador) na interface WPF, persistência local e comunicação em tempo real via SignalR para notificações e sincronização de estados de sessão.
+* **Foco do Reteste:** Validar se a correção de falhas de permissão (como o bloqueio correto de acesso a rotinas administrativas por operadores) ou o tratamento de e-mails inexistentes opera sem falhas de exceção não tratada.
+* **Escopo da Regressão:** Reexecutar o fluxo de persistência de sessão no SQL Server e a comunicação com serviços de autenticação, garantindo que alterações no controle de acesso não comprometam a integridade dos dados atrelados ao usuário logado ou gerem falhas de *bypass* na interface.
+
+#### 2. Processamento e Captura Volumétrica (Sensor / Kinect)
+* **Escopo do Módulo:** Leitura tridimensional de resíduos armazenados, conversão e arredondamento dos dados dimensionais em metros cúbicos ($m^3$) e exibição em tempo real na interface WPF.
+* **Foco do Reteste:** Certificar a correção de desvios no cálculo volumétrico (como erros de arredondamento em leituras limítrofes ou falsos positivos gerados por reflexos e interferências ambientais).
+* **Escopo da Regressão:** Validar o pipeline completo de dados desde a leitura do hardware até o armazenamento relacional no banco de dados local, assegurando que o consumo de memória (*heap*) e o descarte de recursos gráficos via padrão `IDisposable` continuem estáveis após múltiplas capturas consecutivas.
+
+#### 3. Sincronização de Dados Local-Nuvem (SQL Server e Microsoft Azure)
+* **Escopo do Módulo:** Mecanismo de persistência transacional local, gerenciamento de filas de retransmissão em modo offline e integração remota com o ecossistema Microsoft Azure.
+* **Foco do Reteste:** Verificar a eficácia das rotinas de tratamento de exceções e recuperação transacional em cenários de indisponibilidade simulada da conexão com o banco local ou com a nuvem.
+* **Escopo da Regressão:** Reexecutar testes de consistência de dados na fila de sincronização e o envio de atualizações em tempo real para o dashboard corporativo via SignalR, garantindo que a assimetria informacional e a integridade do cache local permaneçam preservadas.
+
+#### 4. Atualização de Status e Gestão do Estoque
+* **Escopo do Módulo:** Rotinas de inventário periódico, recálculo de lotes de resíduos armazenados, tratamento de divergências volumétricas e exibição de grades de dados na interface WPF.
+* **Foco do Reteste:** Assegurar que correções em regras de negócio de divergência de estoque reflitam corretamente os alertas visuais para o operador e atualizem os registros sem corrupção relacional.
+* **Escopo da Regressão:** Executar verificações nas consultas de paginação máxima de estoque, na consistência das métricas exibidas no dashboard e na estabilidade das transações atômicas com blocos de *rollback* automático no SQL Server.
+
+#### 5. Atualização do Dashboard e Consolidação Gerencial em Tempo Real
+* **Escopo do Módulo:** Atualização contínua do dashboard gerencial e consolidação dos dados de estoque e resíduos por meio de mensageria em tempo real via SignalR.
+* **Foco do Reteste:** Validar se falhas de renderização nas grades de exibição, desincronizações de métricas ou exceções na transmissão via SignalR foram corrigidas com sucesso.
+* **Regressão:** Revalidar o consumo de recursos de rede e a exatidão das consultas SQL associadas à consolidação, garantindo que a atualização contínua do dashboard não degrade a performance da aplicação durante os turnos operacionais do estoque.
+  
 ---
 
 ## 10. Critérios de Entrada e Saída
 
-### Critérios de Entrada
+### Critérios de Entrada (*Entry Criteria*)
 O início da execução dos testes do *Inventory Masters* exige o atendimento às seguintes condições:
-* Ambiente de desenvolvimento e testes configurado (SQL Server e ambiente WPF operacionais).
-* Versão estável do software instalada na máquina de teste.
-* Massa de dados de teste previamente preparada.
-* Funcionalidades liberadas pelo time de desenvolvimento.
-* Requisitos e critérios de aceitação formalmente definidos.
+* **Infraestrutura e Hardware Operacionais:** Instigação do ambiente local configurada com o SQL Server ativo, sensor Kinect calibrado e conectado, e aplicação WPF compilada e funcional.
+* **Massa de Dados Inicializada:** Disponibilização de massa de dados de teste padronizada para simulação de lotes de resíduos e cenários volumétricos.
+* **Artefatos e Requisitos Aprovados:** Casos de teste documentados, requisitos funcionais e critérios de aceitação formalmente aprovados e disponibilizados para a equipe de QA.
+* **Liberação de Build:** Entrega oficial de pacotes ou branch estável pelo time de desenvolvimento, atestando a conclusão da codificação dos módulos planejados.
 
-### Critérios de Saída 
-A conclusão da etapa de testes e liberação do sistema considerará:
-* 100% dos casos de teste prioritários executados.
-* Ausência total de defeitos classificados com severidade Crítica ou Alta não resolvidos.
-* Quantidade aceitável e controlada de defeitos menores conhecidos (documentados e com plano de contorno).
-* Riscos residuais avaliados e aceitos pela equipe.
-* Objetivos de qualidade definidos no planejamento alcançados.
+### Critérios de Saída (*Exit Criteria*)
+A conclusão da etapa de testes e a liberação do sistema para homologação ou entrega considerarão:
+* **Cobertura de Execução:** 100% dos casos de teste planejados (com foco prioritário nos fluxos críticos de captura, banco de dados e mensageria via SignalR) integralmente executados.
+* **Zero Defeitos Críticos ou Altos:** Ausência total de defeitos pendentes classificados como Críticos ou Altos (como falhas de *memory leak*, corrupção de dados ou interrupção de transações).
+* **Gestão de Defeitos Menores:** Defeitos de severidade menor devidamente catalogados, documentados e com plano de contorno (*workaround*) formalizado.
+* **Estabilidade de Recursos:** Validação de que o uso do padrão `IDisposable` e o ciclo de vida das instâncias mantêm o consumo de memória estável em testes de longa duração.
+* **Aceite de Riscos Residuais:** Riscos remanescentes avaliados, documentados e formalmente aceitos pela equipe de projeto.
 
 ---
 
-## 11. Evidências e Documentação
-Os resultados da execução dos testes serão devidamente registrados utilizando os seguintes artefatos:
-* Capturas de tela (*prints*) das telas do sistema WPF e painéis de controle.
-* Gravações em vídeo para cenários complexos de captura volumétrica via sensor, quando necessário.
-* Registros de execução e logs do sistema (SQL Server e Azure).
+## 11. Evidências, Documentação e Gestão de Defeitos
 
-### Registro de Defeitos
-Para cada falha ou inconsistência encontrada, um registro de defeito contendo os seguintes campos obrigatórios será aberto:
-* **Título:** Resumo claro do problema.
-* **Descrição:** Detalhamento do comportamento incorreto observado.
-* **Passos para reprodução:** Sequência exata de ações para gerar o erro.
-* **Resultado esperado:** O comportamento correto previsto na base de teste.
-* **Resultado obtido:** O que de fato aconteceu no sistema.
-* **Evidência:** Print ou log anexado.
-* **Severidade:** (Baixa, Média, Alta, Crítica) — indicando o impacto técnico da falha.
-* **Prioridade:** (Baixa, Média, Alta, Urgente) — indicando a ordem de correção.
-* **Versão:** Versão do *Inventory Masters* em que o erro foi encontrado.
-* **Ambiente:** Especificações do ambiente de teste (ex: máquina local, versão do SQL Server, status da conexão Azure).
+A rastreabilidade dos resultados e o controle de incidentes do *Inventory Masters* são fundamentados em padrões formais de engenharia de software para assegurar a auditabilidade e o diagnóstico preciso das falhas.
+
+### 11.1. Coleta de Evidências
+A execução dos casos de teste será documentada mediante o uso dos seguintes artefatos de comprovação:
+* **Capturas de Tela (*Prints*):** Registro visual das interfaces WPF, estados de erro e mensagens de validação.
+* **Gravações em Vídeo:** Capturas dinâmicas para cenários complexos, como o fluxo contínuo de mensageria via SignalR, oscilações de conexão local-nuvem e variação na leitura tridimensional pelo sensor Kinect.
+* **Logs de Sistema:** Arquivos de auditoria e depuração gerados pelo SQL Server, fluxos de transação e serviços de transmissão em tempo real.
+
+### 11.2. Ciclo e Estrutura do Registro de Defeitos
+Para cada anomalia identificada durante as baterias de teste, um chamado técnico será aberto contendo os seguintes campos obrigatórios:
+* **Identificador Único (ID):** Código sequencial para rastreio do *bug*.
+* **Título:** Resumo direto e conciso do problema.
+* **Descrição Detalhada:** Explicação técnica do comportamento incorreto observado.
+* **Passos para Reprodução (*Steps to Reproduce*):** Sequência lógica e exata de ações para replicar o cenário de falha.
+* **Resultado Esperado:** O comportamento normativo previsto nos critérios de aceitação.
+* **Resultado Obtido:** A divergência técnica ou exceção de fato apresentada pelo sistema.
+* **Evidência Anexada:** Captura de tela, trecho de log ou arquivo de vídeo correspondente.
+* **Severidade:** Classificação de impacto técnico (`Baixa`, `Média`, `Alta`, `Crítica`), ponderando riscos como vazamento de memória (*memory leak*), falha de transação ou interrupção de hardware.
+* **Prioridade:** Ordem de urgência para tratamento (`Baixa`, `Média`, `Alta`, `Urgente`).
+* **Versão e Ambiente:** Tag da *build* do *Inventory Masters* e especificações do ambiente de teste (como instabilidade simulada do SQL Server ou do Kinect).
 
 ----
-# Cenários Testados:
+## Cenários de teste:
 
 ### Caso de Teste: CT-Login-01 — Validação do Campo de E-mail e Autenticação por Token
 
