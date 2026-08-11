@@ -50,12 +50,12 @@ O foco desta etapa de testes é garantir a robustez, a segurança e a integridad
   * Quedas generalizadas, instabilidades globais ou problemas de infraestrutura nativa do provedor de nuvem Microsoft Azure.
   * Integrações complexas com sistemas ERP externos legados que fujam do escopo arquitetural estabelecido para este TCC.
 
-* **Funcionalidades prioritárias:**
+* **Funcionalidades prioritárias:** 
   1. Fluxo crítico de autenticação, validação de tokens e restrição de acesso por perfil.
-  2. Captura e cálculo volumétrico preciso do nível de estoque em metros cúbicos ($m^3$).
+  2. Captura e cálculo volumétrico preciso de itens no armazém em metros cúbicos ($m^3$).
   3. Sincronização e persistência íntegra de dados entre o SQL Server local e o Microsoft Azure.
   4. Comunicação instantânea via SignalR para atualização do dashboard web em tempo real.
- 5. Rotinas essenciais de cadastro, gerenciamento, atualização de estoque e notificação de parceiros na interface WPF.
+  5. Rotinas essenciais de cadastro, gerenciamento, atualização de estoque e notificação de parceiros na interface WPF.
 ---
 
 ## 4. Base de Teste
