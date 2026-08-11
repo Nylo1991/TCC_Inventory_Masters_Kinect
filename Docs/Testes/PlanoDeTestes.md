@@ -36,22 +36,26 @@ O foco desta etapa de testes é garantir a robustez, a segurança e a integridad
 ---
 
 ## 3. Escopo
-* **O que será testado:**
-  * Módulo de autenticação e controle de acesso de usuários.
-  * Funcionalidades de cadastro e gerenciamento de itens do inventário.
-  * Integração de captura volumétrica e processamento de dados via sensor.
-  * Persistência e integridade das informações no banco de dados local (SQL Server).
-  * Mecanismo de sincronização de dados com o ambiente em nuvem (Microsoft Azure).
-  * Tratamento de entradas inválidas e mensagens de erro na interface WPF.
-* **O que não será testado:**
-  * Desempenho e falhas físicas nativas do hardware de terceiros (como falhas de fabricação internas do sensor Kinect ou instabilidades globais da infraestrutura do provedor de nuvem Microsoft Azure).
-  * Integrações com sistemas ERP externos legados que não façam parte do escopo atual do TCC.
-* **Funcionalidades prioritárias:**
-  1. Processo de login e permissões de acesso.
-  2. Captura e cálculo volumétrico de itens no armazém.
-  3. Sincronização de dados críticos entre o SQL Server local e o Microsoft Azure.
-  4. Fluxo de cadastro e atualização de estoque.
 
+* **O que será testado:**
+  * **Módulo de Autenticação e Controle de Acesso:** O fluxo completo de login, validação rigorosa de e-mails cadastrados/ativos, lógica de geração, validade e expiração de tokens temporários, e restrição de permissões por perfil de operador.
+  * **Gestão de Cadastros e Estoque:** As funcionalidades de cadastro, atualização, gerenciamento de medições e a resiliência da interface WPF perante entradas de dados inválidas.
+  * **Captura Volumétrica e Hardware:** A integração e o processamento de dados tridimensional via sensor/Kinect, validando a precisão milimétrica dos cálculos volumétricos expressos em metros cúbicos ($m^3$) sob diferentes condições de ambiente.
+  * **Persistência Local (SQL Server):** A consistência, integridade absoluta e o salvamento transacional das informações e movimentações de estoque no banco de dados local.
+  * **Sincronização em Nuvem (Microsoft Azure):** O mecanismo de redundância, resiliência em modo offline com fila de sincronização e o envio de dados para o ambiente em nuvem.
+  * **Comunicação em Tempo Real (SignalR):** A estabilidade, a fluidez e a entrega de dados via *payload* em tempo real entre a aplicação local e o dashboard web hospedado na nuvem, garantindo ausência de atrasos perceptíveis.
+
+* **O que não será testado:**
+  * O desempenho, falhas físicas nativas ou defeitos de fabricação internos do hardware de terceiros (como falhas estruturais do sensor Kinect).
+  * Quedas generalizadas, instabilidades globais ou problemas de infraestrutura nativa do provedor de nuvem Microsoft Azure.
+  * Integrações complexas com sistemas ERP externos legados que fujam do escopo arquitetural estabelecido para este TCC.
+
+* **Funcionalidades prioritárias:**
+  1. Fluxo crítico de autenticação, validação de tokens e restrição de acesso por perfil.
+  2. Captura e cálculo volumétrico preciso do nível de estoque em metros cúbicos ($m^3$).
+  3. Sincronização e persistência íntegra de dados entre o SQL Server local e o Microsoft Azure.
+  4. Comunicação instantânea via SignalR para atualização do dashboard web em tempo real.
+ 5. Rotinas essenciais de cadastro, gerenciamento, atualização de estoque e notificação de parceiros na interface WPF.
 ---
 
 ## 4. Base de Teste
