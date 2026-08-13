@@ -5345,16 +5345,16 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 ## TELAS DO SISTEMA
 ---
 
-## DOCUMENTOS COMPLEMENTARES
-
-Para acessar as documentações técnicas, diretrizes de manutenção e recursos visuais do sistema, utilize a tabela abaixo:
-
-| Documento | Descrição | Link de Acesso |
-| :--- | :--- | :--- |
-| **Business Model Canvas** | Modelagem de negócio, fluxogramas e assets visuais | [Acessar PDF](Docs/canva.pdf) |
-| **Documentação Integra** | Repositório central de especificações do TCC | [Acessar PDF](Docs/Documentação%20Integra.pdf) |
-| **Infraestrutura** | Especificações de infraestrutura, requisitos de hardware e software, arquitetura, riscos e checklist de implantação | [Acessar Markdown](Docs/Infraestrutura.md) |
+  ## DOCUMENTOS COMPLEMENTARES
+  
+  Para acessar as documentações técnicas, diretrizes de manutenção e recursos visuais do sistema, utilize a tabela abaixo:
+  
+  | Documento | Descrição | Link de Acesso |
+  | :--- | :--- | :--- |
+  | **Business Model Canvas** | Modelagem de negócio, fluxogramas e assets visuais | [Acessar PDF](Docs/canva.pdf) |
+  | **Documentação Integra** | Repositório central de especificações do TCC | [Acessar PDF](Docs/Documentação%20Integra.pdf) |
+  | **Infraestrutura** | Especificações de infraestrutura, requisitos de hardware e software, arquitetura, riscos e checklist de implantação | [Acessar Markdown](Docs/Infraestrutura.md) |
 | **Migração de Banco de Dados** | Estratégia de backup, transição tecnológica e cenários de migração | [Acessar Markdown](Docs/Migracao.md) |
 | **Publicação Release** | Documentação de publicação, implantação, ferramentas e notas de release | [Acessar Markdown](Docs/Publicacao%20Release.md) |
-| **Licença de Uso** | Contrato de licença que define direitos autorais, responsabilidades operacionais, suporte técnico e conformidade com a LGPD. | [Acessar PDF](Docs/Intalação%20do%20Sistema/Licença%20-%20Inventory%20Masters.pdf) |
-| **Termo de Uso** | Regras de conduta, perfis de acesso, uso do hardware Kinect e diretrizes de segurança para o usuário final. | [Acessar PDF](Docs/Intalação%20do%20Sistema/Termo%20de%20uso%20-%20Inventory%20Masters.pdf) |
+  | **Licença de Uso** | Contrato de licença que define direitos autorais, responsabilidades operacionais, suporte técnico e conformidade com a LGPD. | [Acessar PDF](Docs/Intalação%20do%20Sistema/Licença%20-%20Inventory%20Masters.pdf) |
+  | **Termo de Uso** | Regras de conduta, perfis de acesso, uso do hardware Kinect e diretrizes de segurança para o usuário final. | [Acessar PDF](Docs/Intalação%20do%20Sistema/Termo%20de%20uso%20-%20Inventory%20Masters.pdf) |
