@@ -215,33 +215,6 @@ Para cada anomalia identificada durante as baterias de teste, um chamado técnic
 * **Versão e Ambiente:** Tag da *build* do *Inventory Masters* e especificações do ambiente de teste (como instabilidade simulada do SQL Server ou do Kinect).
 
 ----
-## Cenários de teste:
-
-### Caso de Teste: CT-Login-01 — Validação do Campo de E-mail e Autenticação por Token
-
-* **Objetivo:** Validar o comportamento visual, a usabilidade, a obrigatoriedade, o tratamento de mensagens, o fluxo de envio/validação de tokens e o retorno à tela inicial no módulo de autenticação.
-* **Pré-condições:** A aplicação deve estar aberta na tela de login inicial.
-
-#### 1. Execução dos Passos
-* **Ação 1:** Iniciar o processo de login e interagir com o campo destinado à digitação do e-mail (Tela 1).
-* **Ação 2:** Submeter um endereço de e-mail não cadastrado no sistema (Tela 2).
-* **Ação 3:** Inserir um e-mail cadastrado e avançar para a solicitação e validação do token (Telas 3 e 4).
-* **Ação 4:** Acionar a opção de solicitar um novo token e verificar o fluxo de retorno (Tela 5).
-
-#### 2. Resultados Esperados e Observados
-
-* **Cenário Positivo (Validação de Interface, Usabilidade e Fluxos):**
-  * **Layout e Preenchimento:** A tela apresenta indicação visual clara que determina especificamente o campo onde o usuário deve digitar o e-mail, com espaçamento adequado dentro da caixa de texto.
-  * **Validação de Obrigatoriedade:** Caso o usuário tente avançar sem preencher o campo de e-mail, o sistema dispara imediatamente uma mensagem informando a obrigatoriedade do preenchimento.
-  * **Design Visual e Destaque:** A interface possui paleta de cores harmônica que não sobrecarrega a visão do operador, e as cores das caixas de mensagens se destacam claramente para indicar quando há incorreções.
-  * **Campos e Instruções:** A tela exibe o campo de solicitação e validação de token de forma clara e intuitiva.
-  * **Fluxo de Retorno:** Ao solicitar um novo token, o sistema redireciona o fluxo perfeitamente de volta à tela inicial para que o usuário redigite o e-mail.
-
-* **Cenário Negativo (Oportunidades de Melhoria e Alinhamento Técnico):**
-  * **Aviso de Primeiro Acesso:** Ao acessar a aplicação pela primeira vez, o sistema é omisso em informar que o endereço de e-mail precisa prévia e obrigatoriamente ser cadastrado pelo administrador do sistema.
-  * **Tratamento de Mensagem:** A mensagem exibida para e-mails não cadastrados é genérica, pois deixa de informar explicitamente que o usuário não possui acesso ao sistema.
-  * **Ausência de Tooltips:** Falta de dicas de contexto (tooltips) nos botões de ação da tela de login, especificamente nos botões de validar e de solicitar novo token.
-
 
 
 
