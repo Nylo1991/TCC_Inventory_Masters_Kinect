@@ -215,8 +215,40 @@ Para cada anomalia identificada durante as baterias de teste, um chamado técnic
 * **Versão e Ambiente:** Tag da *build* do *Inventory Masters* e especificações do ambiente de teste (como instabilidade simulada do SQL Server ou do Kinect).
 
 ----
+## 12. Recursos Necessários
 
+| Tipo de Recurso | Descrição |
+| :--- | :--- |
+| **Equipe** | 4 integrantes atuando em revezamento entre desenvolvimento e testes |
+| **Ambiente** | 4 máquinas Windows 10 ou Windows 11 de 64 bits para testes de instalação e execução do módulo Kinect/Desktop (WPF) |
+| **Ferramentas** | Visual Studio, SDK do Kinect para Windows 1.8, e ferramentas de gerenciamento de banco de dados SQLite local |
+| **Dados de Teste** | Massa de dados local em SQLite e registros de calibração de profundidade capturados pelo sensor Kinect Xbox 360 |
+| **Acessos** | Permissão de leitura e gravação na pasta do banco de dados e dos logs locais, além de acesso à rede para comunicação via SignalR com o módulo web |
 
+---
+## 13. Cronograma de Testes
+
+Este cronograma consolida as atividades de validação do sistema e deverá ser atualizado a cada ciclo de desenvolvimento (sprint) do sistema.
+
+| Período Previsto | Atividade | Casos de Teste / Escopo | Responsável |
+| :--- | :--- | :--- | :--- |
+| **Semana 1** | Preparação do ambiente e dados de teste | Configuração do ambiente (Azure/SQL Server), sensor Kinect e massa de dados inicial | Equipe de Infraestrutura |
+| **Semana 2** | Execução dos Casos de Teste funcionais | CT-001 a CT-003 (Autenticação), CT-007 a CT-008 (Dados), CT-011 a CT-012 (Cadastro/Estoque) e CT-015 a CT-016 (Permissões) | Analista de Qualidade / QA |
+| **Semana 2–3** | Testes de integração (SQL Server, Azure e SignalR) | CT-009 a CT-010 (Sincronização), CT-013 a CT-014 (Fluxo de Estoque e Divergências) | Analista de Integração |
+| **Semana 3** | Testes de Captura Volumétrica e de Sistema | CT-004 a CT-006 (Sensor Kinect) e CT-017 a CT-018 (Testes de Aceitação e Sistema ponta a ponta) | Analista de Testes / Product Owner |
+| **Semana 3–4** | Testes não funcionais, exploratórios e de estresse | CT-019 (Desempenho/Memory Leak), CT-020 (Resiliência de Rede), CT-021 a CT-022 (Testes Exploratórios e Robustez) | Analista de Desempenho / Exploratório |
+| **Semana 4** | Correção de defeitos, reteste e regressão | CT-002 (Reteste de E-mail), CT-006 (Reteste de Arredondamento) e CT-023 (Testes de Regressão) | Equipe de Desenvolvimento / QA |
+| **Semana 5** | Fechamento e relatório final | Consolidação de resultados, revisão de pendências e entrega do relatório de testes | Gerente de Projeto / QA |
+
+---
+## 14. Conclusão 
+
+O presente Plano de Testes estruturado para o sistema **Inventory Masters** (versão 2.0.0) estabelece uma diretriz sistemática e abrangente para mitigar riscos operacionais, arquiteturais e de integridade de dados ao longo de todo o ecossistema tecnológico. 
+
+* **Garantia de Qualidade End-to-End:** A estratégia delineada assegura a validação rigorosa desde os componentes de hardware e captura volumétrica em metros cúbicos ($m^3$) via sensor/Kinect, passando pela persistência transacional local (SQL Server) e sincronização com a nuvem (Microsoft Azure), até a comunicação em tempo real via SignalR para o dashboard web.
+* **Mitigação de Riscos Críticos:** O mapeamento preventivo de falhas como estouros de memória (*memory leaks*) no fluxo gráfico, corrupção de dados transacionais, quebras na resiliência de rede e desvios nas regras de controle de acesso por perfil blinda a aplicação contra exceções não tratadas e vulnerabilidades estruturais.
+ * **Prontidão Operacional:** A execução integrada dos casos de teste funcionais, de estresse, exploratórios e de regressão consolida um padrão de excelência, assegurando que o sistema opere com alta estabilidade, precisão métrica e confiabilidade durante o ciclo de vida da gestão do estoque.
+---
 
 
 
