@@ -5356,5 +5356,5 @@ Para acessar as documentações técnicas, diretrizes de manutenção e recursos
 | **Infraestrutura** | Especificações de infraestrutura, requisitos de hardware e software, arquitetura, riscos e checklist de implantação | [Acessar Markdown](Docs/Infraestrutura.md) |
 | **Migração de Banco de Dados** | Estratégia de backup, transição tecnológica e cenários de migração | [Acessar Markdown](Docs/Migracao.md) |
 | **Publicação Release** | Documentação de publicação, implantação, ferramentas e notas de release | [Acessar Markdown](Docs/Publicacao%20Release.md) |
-| **Manual Técnico** | Diretrizes de Implementação e Manutenção | [Acessar PDF](Docs/Relação%20de%20Implementação%20-%20Manutenção%20do%20Sistema.pdf) |
-| **Manual Técnico** | Guia de Configuração do ambiente (Kinect + SQLite) | [Acessar PDF](Docs/Guia%20de%20Ambiente%20-%20kinect%20SQLite.pdf) |
+| **Licença de Uso** | Contrato de licença que define direitos autorais, responsabilidades operacionais, suporte técnico e conformidade com a LGPD. | [Acessar PDF](TCC_Inventory_Masters_Kinect/Docs/Intalação%20do%20Sistema/Licença%20-%20Inventory%20Masters.pdf) |
+| **Termo de Uso** | Regras de conduta, perfis de acesso, uso do hardware Kinect e diretrizes de segurança para o usuário final. | [Acessar PDF](TCC_Inventory_Masters_Kinect/Docs/Intalação%20do%20Sistema/Termo%20de%20uso%20-%20Inventory%20Masters.pdf) |
