@@ -4365,7 +4365,7 @@ Essa abordagem elimina a necessidade de relacionamentos complexos e operações 
 ## Modelagem NoSQL Firebase (MVC)
 
 <p align="center">
-  <img src="./Imagens/ModelagemFireBase_InventoryMasters.png" width="1200" alt="Modelagem NoSQL Firebase MVC" />
+  <img src="./Imagens/Modelagem_Banco_MVC_1.png" width="1200" alt="Modelagem NoSQL Firebase MVC" />
 </p>
 
 ---
