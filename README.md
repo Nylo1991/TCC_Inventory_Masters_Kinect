@@ -3012,7 +3012,7 @@ Os diagramas representam o fluxo principal de funcionamento do sistema e seus pr
 ### Etapa 1 — Acesso e Autenticação do Kinect
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa 1 - Acesso e Autenticação do Kinect.png" width="600" alt="Diagrama de Fluxo MVVM Kinect - Etapa 1 - Acesso e Autenticação do Kinect" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa 1 - Acesso e Autenticação do Kinect.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 1 - Acesso e Autenticação do Kinect" />
 </p>
 
 > **Nota:** A Etapa 1 representa o controle de acesso ao módulo Kinect/Desktop. O operador solicita um token de autenticação informando um e-mail cadastrado. O sistema valida se o e-mail é válido e se o usuário está ativo. Quando a validação é aprovada, o MVC envia o token por e-mail ao operador. Em seguida, o operador informa o token recebido na aplicação Kinect, e o sistema valida sua autenticidade. Caso o e-mail seja inválido, o usuário esteja inativo ou o token seja inválido, o sistema exibe uma mensagem de alerta e permite uma nova tentativa. Quando o token é validado com sucesso, a sessão local é criada e o acesso ao monitoramento do Kinect é liberado.
@@ -3036,7 +3036,7 @@ Garantir que somente operadores autorizados possam acessar o módulo Kinect/Desk
 ### Etapa 2 — Conexão do Kinect e Comunicação SignalR
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa2-Conexão do Kinect e comunicação com SignalRMVVM.drawio.png" width="600" alt="Diagrama de Fluxo MVVM Kinect - Etapa 2 - Conexão do Kinect e Comunicação SignalR" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa2-Conexão do Kinect e comunicação com SignalRMVVM.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 2 - Conexão do Kinect e Comunicação SignalR" />
 </p>
 
 > **Nota:** A Etapa 2 representa a preparação operacional do monitoramento. O operador acessa o monitoramento e aciona o botão para ligar o Kinect. O sistema inicializa o sensor e verifica se ele está conectado e disponível. Caso o sensor esteja desconectado ou indisponível, uma mensagem de alerta é exibida e o operador pode realizar nova tentativa. Com o Kinect disponível, a aplicação inicia a comunicação SignalR com o MVC. Se a conexão SignalR estiver ativa, o canal de comunicação em tempo real é disponibilizado. Caso o SignalR ou o MVC estejam indisponíveis, a operação local é mantida e o sistema permanece tentando reconectar em segundo plano.
@@ -3060,7 +3060,7 @@ Inicializar o sensor Kinect, validar sua disponibilidade física e estabelecer a
 ### Etapa 3 — Calibração do Ambiente
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa3-Calibração do Ambiente.drawio.png.drawio.png" width="600" alt="Diagrama de Fluxo MVVM Kinect - Etapa 3 - Calibração do Ambiente" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa3-Calibração do Ambiente.drawio.png.drawio.png" width="900" alt="Diagrama de Fluxo MVVM Kinect - Etapa 3 - Calibração do Ambiente" />
 </p>
 
 > **Nota:** A Etapa 3 representa a calibração do ambiente vazio. O operador aciona o comando “Calibrar Espaço” e o sistema exibe as orientações necessárias para a calibração. Em seguida, são validados os pré-requisitos, como Kinect conectado, leitura de profundidade disponível e ambiente vazio. Com as condições atendidas, o sistema captura múltiplos frames em diferentes ângulos, processa as leituras, valida os pontos capturados, detecta a referência angular e registra o mapa do ambiente vazio. Caso os pontos sejam insuficientes, o mapa não seja capturado ou o volume máximo calculado seja igual a zero, o sistema exibe alertas e permite nova tentativa. Quando a calibração é concluída com sucesso, a posição original do Kinect é restaurada, a interface é atualizada e o volume máximo calibrado fica disponível para as próximas etapas.
@@ -3084,7 +3084,7 @@ Criar uma referência confiável do ambiente vazio e calcular o volume máximo c
 ### Etapa 4 — Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa4-ConfiDoEspaçoMonit.drawio.png.drawio.png" wwidth="600" alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração do Espaço Monitorado" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa4-ConfiDoEspaçoMonit.drawio.png.drawio.png" width="900"  alt="Diagrama de Fluxo MVVM Kinect - Etapa 4 - Configuração do Espaço Monitorado" />
 </p>
 
 > **Nota:** A Etapa 4 representa a configuração operacional do espaço monitorado. O operador informa o nome do espaço, define o limite percentual de ocupação e visualiza o volume máximo calibrado. Ao acionar “Salvar Espaço”, o sistema valida os dados informados, verificando se o nome foi preenchido, se o limite está entre 1% e 100% e se existe calibração válida. Caso alguma condição falhe, a aplicação exibe o alerta correspondente e retorna para correção. Quando todas as validações são aprovadas, o sistema salva a configuração do espaço e do limite, liberando a medição volumétrica e o histórico.
@@ -3110,7 +3110,7 @@ Validar e salvar as informações do espaço monitorado, garantindo que o nome, 
 ### Etapa 5 — Medição Volumétrica
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/ETAPA5-MediçãoVolumetrica.drawio.png.drawio.png" width="600" alt="Diagrama de Fluxo MVVM Kinect - Etapa 5 - Medição Volumétrica" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/ETAPA5-MediçãoVolumetrica.drawio.png.drawio.png" width="900"   alt="Diagrama de Fluxo MVVM Kinect - Etapa 5 - Medição Volumétrica" />
 </p>
 
 > **Nota:** A Etapa 5 representa a execução da medição volumétrica, que pode ocorrer de forma manual ou automática. A medição manual é iniciada quando o operador aciona “Enviar Volume Atual”, enquanto a medição automática é disparada pelo temporizador. Antes do cálculo, o sistema valida se o Kinect está conectado, se a calibração é válida e se o espaço foi configurado e salvo. Quando as condições não são atendidas, a tentativa é encerrada e o fluxo retorna para a origem da medição. Quando as condições são válidas, o sistema calcula o volume atual. Se nenhum volume válido for detectado, a medição não é salva nem enviada. Se o volume for maior que zero, o sistema registra o volume, calcula ocupação e espaço livre, compara com o limite configurado, define o status como Normal ou Alerta, atualiza os indicadores e encaminha a medição para persistência e integração.
@@ -3136,7 +3136,7 @@ Executar a medição volumétrica manual ou automática, validar as condições 
 ### Etapa 6 — Persistência, Histórico e Integração com MVC
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa6-PersistênciaHistoricoIntegraçãoMVC.drawio.png.drawio.png" wwidth="600"  alt="Diagrama de Fluxo MVVM Kinect - Etapa 6 - Persistência, Histórico e Integração com MVC" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa6-PersistênciaHistoricoIntegraçãoMVC.drawio.png.drawio.png" width="900"   alt="Diagrama de Fluxo MVVM Kinect - Etapa 6 - Persistência, Histórico e Integração com MVC" />
 </p>
 
 > **Nota:** A Etapa 6 representa a etapa final do ciclo operacional da medição. A medição válida recebe um identificador único e é salva primeiro no SQLite com o estado “Pendente”. Somente após o salvamento local o sistema tenta enviar os registros pendentes ao MVC pelo SignalR. O MVC precisa confirmar o recebimento da medição para que o estado local seja alterado para “Enviado”. Quando a comunicação está indisponível ou não há confirmação, os dados permanecem preservados localmente e uma nova tentativa é programada. O histórico continua disponível, e o operador pode retornar ao monitoramento ou solicitar o encerramento controlado dos recursos.
@@ -3189,7 +3189,7 @@ Em conjunto, os seis diagramas representam o ciclo operacional completo do módu
 ### Login e Acesso Seguro
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa_Login_Token_MVC.drawio (1).png" width="600"" alt="Diagrama de Fluxo MVC - Etapa login e acesso ao sistema" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Etapa_Login_Token_MVC.drawio (1).png" width="900"  alt="Diagrama de Fluxo MVC - Etapa login e acesso ao sistema" />
 </p>
 
 Este fluxo garante que apenas usuários validados e com as permissões corretas consigam entrar no sistema e visualizar o painel principal.
@@ -3244,7 +3244,7 @@ Se o usuário possuir autorização para acessar o Dashboard, ele é redireciona
 ### Gestão de Usuários (Visualização de Detalhes e Exclusão)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Usuario_MVC.drawio (1).png" width="600" alt="Diagrama de Fluxo MVC - Etapa gestão usuario" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Usuario_MVC.drawio (1).png" width="900" alt="Diagrama de Fluxo MVC - Etapa gestão usuario" />
 </p>
 
 Este fluxo descreve o processo de governança de contas de usuários, permitindo que administradores consultem informações detalhadas e realizem a exclusão segura de usuários, mantendo registros para auditoria.
@@ -3311,7 +3311,7 @@ Após a exclusão, o sistema executa as seguintes ações:
 # Gestão de Parceiros (Cadastro, Edição, Exclusão e Controle de Status)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Parceiro_MVC.drawio (1).png" width="600" alt="Diagrama de Fluxo MVC - Etapa gestão parceiros" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Parceiro_MVC.drawio (1).png" width="900"   alt="Diagrama de Fluxo MVC - Etapa gestão parceiros" />
 </p>
 
 Este fluxo descreve todo o ciclo de vida da gestão de parceiros comerciais no sistema, abrangendo a consulta, o cadastro, a edição, a alteração de status e a exclusão segura dos registros, com mecanismos de validação e auditoria.
@@ -3451,7 +3451,7 @@ O fluxo segue duas possibilidades:
 # Gestão de Medições (Listagem, Filtros e Recebimento via Kinect)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Medicao_MVC.drawio (1).png" width="600" alt="Diagrama de Fluxo MVC - Etapa Medições" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Medicao_MVC.drawio (1).png" width="900"  alt="Diagrama de Fluxo MVC - Etapa Medições" />
 </p>
 
 Este fluxo descreve o gerenciamento das medições de volumetria do estoque, integrando a consulta histórica realizada pelos usuários com o recebimento automático de dados em tempo real enviados pelo sensor Kinect.
@@ -3548,7 +3548,7 @@ O sistema:
 # Gestão de Perfis (Cadastro, Permissões e Inativação)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Perfis.drawio (1).png" width="600" alt="Diagrama de Fluxo MVC - Etapa gestão perfis" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Perfis.drawio (1).png" width="900"  alt="Diagrama de Fluxo MVC - Etapa gestão perfis" />
 </p>
 
 Este fluxo descreve o gerenciamento dos perfis de acesso da aplicação, permitindo controlar permissões, cadastrar novos perfis, editar privilégios e realizar a inativação segura quando necessário.
@@ -3664,7 +3664,7 @@ O fluxo segue duas possibilidades:
 # Gestão de Notificações (Listagem, Filtros, Resumo e Ações)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Noticacões_MVC.drawio (2).png" width="600" alt="Diagrama de Fluxo MVC - Etapa notificações" />
+  <img src="./Imagens/Diagrama_Fluxo_MVVM/Fluxo_Noticacões_MVC.drawio (2).png" width="900"  alt="Diagrama de Fluxo MVC - Etapa notificações" />
 </p>
 
 Este fluxo descreve o gerenciamento das notificações geradas pelo sistema, permitindo o monitoramento de alertas, o recebimento automático de eventos provenientes do Kinect e a confirmação de coletas em tempo real por meio do SignalR.
@@ -3892,7 +3892,7 @@ Para facilitar a leitura e reduzir a complexidade visual, o fluxo foi dividido e
 ### Sequência 1 — Acesso e Autenticação do Kinect
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia01_AcessoAutenticacao_Kinect.drawio (2).png" width="600" alt="Sequência 01 - Acesso e Autenticação do Kinect" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia01_AcessoAutenticacao_Kinect.drawio (2).png" width="900"  alt="Sequência 01 - Acesso e Autenticação do Kinect" />
 </p>
 
 > **Nota:** A Sequência 1 representa o controle de acesso ao módulo Kinect/Desktop. O fluxo demonstra que o operador somente consegue acessar a tela de monitoramento após informar um e-mail cadastrado, receber o token temporário por e-mail e ter esse token validado pelo módulo MVC. A criação da sessão local garante que as próximas operações do sistema fiquem vinculadas ao usuário, à empresa, ao e-mail e ao token autenticado. Por segurança, o MVC armazena o hash do token e o marca como utilizado após a validação; o token mantido na sessão local não deve ser exibido nem registrado em logs.
@@ -3915,7 +3915,7 @@ Garantir que apenas usuários cadastrados, ativos e devidamente autenticados pos
 ### Sequência 2 — Conexão do Kinect e Comunicação SignalR
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia02_ConexaoKinect_SignalR.drawio (1).drawio.png" width="600"  alt="Sequência 02 - Conexão do Kinect e Comunicação SignalR" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia02_ConexaoKinect_SignalR.drawio (1).drawio.png" width="900"   alt="Sequência 02 - Conexão do Kinect e Comunicação SignalR" />
 </p>
 
 > **Nota:** A Sequência 2 demonstra a preparação inicial do ambiente operacional. O Kinect precisa estar localizado, conectado e inicializado para que o sistema possa avançar para a calibração. A conexão SignalR é estabelecida com o endpoint `/medicaoHub` para disponibilizar a comunicação em tempo real com o módulo MVC. Caso essa conexão não seja estabelecida, o operador pode escolher entre continuar em modo local ou realizar uma nova tentativa, mantendo a operação resiliente diante de falhas de rede.
@@ -3948,7 +3948,7 @@ Inicializar o sensor Kinect, verificar a disponibilidade do hardware, habilitar 
 ### Sequência 3 — Calibração do Ambiente
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia03_CalibracaoAmbienteFinal.drawio.png" width="600" alt="Sequência 03 - Calibração do Ambiente" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia03_CalibracaoAmbienteFinal.drawio.png" width="900"  alt="Sequência 03 - Calibração do Ambiente" />
 </p>
 
 > **Nota:** A Sequência 3 representa a calibração do ambiente vazio, etapa essencial para que o sistema obtenha uma referência volumétrica confiável. Antes da captura, o operador recebe orientações e confirma que o ambiente está vazio. O sistema interrompe temporariamente as atualizações, invalida a calibração anterior, captura múltiplos frames de profundidade, valida os pontos, consolida o mapa de referência e calcula o volume máximo. A Etapa 4 somente é liberada após uma calibração válida e a restauração da posição original do Kinect.
@@ -3980,7 +3980,7 @@ Preparar e capturar o ambiente vazio, validar as leituras de profundidade, gerar
 ### Sequência 4 — Configuração do Espaço Monitorado
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia04_ConfiguracaoEspacoMonitorado.drawio (1).drawio.png" width="600" alt="Sequência 04 - Configuração do Espaço Monitorado" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia04_ConfiguracaoEspacoMonitorado.drawio (1).drawio.png" width="900"   alt="Sequência 04 - Configuração do Espaço Monitorado" />
 </p>
 
 > **Nota:** A Sequência 4 demonstra a configuração do espaço monitorado após a calibração. O sistema valida o nome do espaço, o limite percentual de ocupação, o mapa de referência e o volume máximo calibrado. A configuração é persistida no SQLite e somente após a confirmação do salvamento o espaço é marcado como salvo, o temporizador automático de 60 segundos é iniciado e a Etapa 5 é liberada.
@@ -4013,7 +4013,7 @@ Validar e persistir os parâmetros do espaço monitorado, garantir a existência
 ### Sequência 5 — Medição Volumétrica Manual e Automática
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia05F_MedicaoVolumetrica_Final1.drawio (1).png" width="600"  alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia05F_MedicaoVolumetrica_Final1.drawio (1).png" width="900"  alt="Sequência 05 - Medição Volumétrica Manual e Automática" />
 </p>
 
 > **Nota:** A Sequência 5 representa a execução da medição volumétrica manual ou automática. Antes da captura, o sistema valida se o Kinect está iniciado, se o fluxo de profundidade está disponível, se existe uma calibração válida, se o mapa de referência está disponível e se o espaço foi salvo. Somente medições válidas são preparadas para a Etapa 6; leituras inválidas e falhas encerram o ciclo atual sem salvar ou enviar dados.
@@ -4082,7 +4082,7 @@ Executar a medição volumétrica manual ou automática, validar as condições 
 ### Sequência 6 — Persistência, Histórico e Integração com MVC
 
 <p align="center">
-  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia06fi_PersistenciaHistoricoIntegracao_Ajustado.drawio.png" width="600" alt="Sequência 06 - Persistência, Histórico e Integração com MVC" />
+  <img src="Imagens/Diagrama_Sequencia_MVVM/DiagramaSequencia06fi_PersistenciaHistoricoIntegracao_Ajustado.drawio.png" width="900"  alt="Sequência 06 - Persistência, Histórico e Integração com MVC" />
 </p>
 
 > **Nota:** A Sequência 6 apresenta a persistência local, atualização do histórico, integração com o MVC e encerramento seguro. Toda medição válida é primeiro salva no SQLite, garantindo preservação dos dados antes de qualquer envio externo. Se o SignalR estiver disponível, a medição é enviada ao MVC; caso contrário, a operação local continua ativa e o sistema mantém tentativas de reconexão em segundo plano.
@@ -4123,7 +4123,7 @@ A divisão do fluxo em seis sequências permitiu representar de forma organizada
 ### Etapa 1 – Login e Autenticação (Token OTP)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Sequencia_Login_MVC.drawio.png" width="600" alt="Diagrama de Sequência - Login e Autenticação" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Sequencia_Login_MVC.drawio.png" width="900"   alt="Diagrama de Sequência - Login e Autenticação" />
 </p>
 
 Esta etapa representa o ponto de entrada seguro da aplicação, garantindo que apenas usuários autorizados tenham acesso ao sistema Web.
@@ -4143,7 +4143,7 @@ Esta etapa representa o ponto de entrada seguro da aplicação, garantindo que a
 ### Etapa 2 – Carregamento do Dashboard
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Sequencia_DashBord.drawio.png" width="600" alt="Diagrama de Sequência - Dashboard" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Sequencia_DashBord.drawio.png" width="900"  alt="Diagrama de Sequência - Dashboard" />
 </p>
 
 Esta etapa ilustra a orquestração de dados para a exibição do painel principal da aplicação, agregando informações de diferentes fontes do banco de dados em uma única tela.
@@ -4164,7 +4164,7 @@ Esta etapa ilustra a orquestração de dados para a exibição do painel princip
 ### Etapa 3 – Listagem e Gestão de Medições
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Sequencia_MVC_Medições.drawio.png" width="600" alt="Diagrama de Sequência - Gestão de Medições" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Sequencia_MVC_Medições.drawio.png" width="900"  alt="Diagrama de Sequência - Gestão de Medições" />
 </p>
 
 Esta etapa detalha como o sistema recupera e exibe o histórico de aferições de volume na tela de medições.
@@ -4185,7 +4185,7 @@ Esta etapa detalha como o sistema recupera e exibe o histórico de aferições d
 ### Etapa 4 – Novo Cadastro (Ex: Parceiros ou Usuários)
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Novo_Cadastro_MVC.drawio.png" width="600" alt="Diagrama de Sequência - Novo Cadastro" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagrama_Novo_Cadastro_MVC.drawio.png" width="900"  alt="Diagrama de Sequência - Novo Cadastro" />
 </p>
 
 Esta etapa cobre o fluxo padrão de inserção de novos registros no sistema através de formulários.
@@ -4222,7 +4222,7 @@ Este fluxo detalha a alteração de um registro existente, incorporando otimiza�
 ### Etapa 6 – Gerenciamento de Parâmetros e Configurações
 
 <p align="center">
-  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagram_Sequencia_Parametros.drawio.png" width="600" alt="Diagrama de Sequência - Salvar Parâmetros" />
+  <img src="./Imagens/Diagrama_Sequencia_MVVM/Diagram_Sequencia_Parametros.drawio.png" width="900"  alt="Diagrama de Sequência - Salvar Parâmetros" />
 </p>
 
 Fluxo dedicado ao controle das regras globais da aplicação, que regem cálculos de capacidade e limites de alerta do estoque.
