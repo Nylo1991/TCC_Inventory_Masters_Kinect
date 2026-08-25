@@ -190,11 +190,6 @@ Docs/
 
 No Visual Studio, abra o **Gerenciador de Testes**, compile a solução e selecione **Executar Todos**.
 
-Também é possível utilizar o terminal:
-
-```bash
-dotnet test TCC_Inventory_Masters_Kinect.Danilo.Tests/TCC_Inventory_Masters_Kinect.Danilo.Tests.csproj
-dotnet test MVC_InventoryMasters.Danilo.Tests/MVC_InventoryMasters.Danilo.Tests.csproj
 ```
 
 ## 11. Conclusão
