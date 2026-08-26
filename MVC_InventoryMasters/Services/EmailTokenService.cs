@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MVC_InventoryMasters.Services
 {
-    public class EmailTokenService
+    public class EmailTokenService : IEmailTokenService
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<EmailTokenService> _logger;

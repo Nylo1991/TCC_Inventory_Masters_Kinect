@@ -18,10 +18,10 @@ namespace MVC_InventoryMasters.Controllers
     [PermissaoAuthorize(PermissoesSistema.ParceirosVisualizar)]
     public class ParceirosController : Controller
     {
-        private readonly ParceirosRepository _repository;
+        private readonly IParceirosRepository _repository;
         private readonly ILogger<ParceirosController> _logger;
 
-        public ParceirosController(ParceirosRepository repository, ILogger<ParceirosController> logger)
+        public ParceirosController(IParceirosRepository repository, ILogger<ParceirosController> logger)
         {
             _repository = repository;
             _logger = logger;

@@ -14,7 +14,7 @@ namespace MVC_InventoryMasters.Repositories
     /// Centraliza o acesso à coleção de parceiros, abstraindo as operações
     /// de persistência e recuperação de dados.
     /// </remarks>
-    public class ParceirosRepository
+    public class ParceirosRepository : IParceirosRepository
     {
         private readonly string _colecao = "Parceiros";
         private readonly FirestoreDb _db;

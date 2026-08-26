@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System;
 using TCC_Inventory_Masters_Kinect.Data;
 using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Model;
@@ -14,6 +15,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
     public class KinectRepository : IKinectRepository
     {
         private readonly string _empresa;
+        private readonly Func<IKinectDataContext> _criarContexto;
         public KinectRepository()
             : this(null)
         {
@@ -21,8 +23,14 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         }
 
         public KinectRepository(string empresa)
+            : this(empresa, () => new KinectDataContext(empresa))
+        {
+        }
+
+        internal KinectRepository(string empresa, Func<IKinectDataContext> criarContexto)
         {
             _empresa = empresa;
+            _criarContexto = criarContexto ?? throw new ArgumentNullException(nameof(criarContexto));
         }
 
         /// <summary>
@@ -38,9 +46,9 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                     medicao.Empresa = _empresa;
                 }
 
-                using (var db = new AppDbContext(_empresa))
+                using (var db = _criarContexto())
                 {
-                    db.MedicaoVolumes.Add(medicao);
+                    db.AdicionarMedicao(medicao);
                     db.SaveChanges();
 
                     int total = db.MedicaoVolumes.Count();
@@ -63,7 +71,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         {
             try
             {
-                using (var db = new AppDbContext(_empresa))
+                using (var db = _criarContexto())
                 {
                     return db.MedicaoVolumes
                         .OrderByDescending(x => x.Id)
@@ -87,7 +95,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         {
             try
             {
-                using (var db = new AppDbContext(_empresa))
+                using (var db = _criarContexto())
                 {
                     return db.MedicaoVolumes
                         .OrderByDescending(x => x.Id)
@@ -117,9 +125,9 @@ namespace TCC_Inventory_Masters_Kinect.Repository
                     historico.Empresa = _empresa;
                 }
 
-                using (var db = new AppDbContext(_empresa))
+                using (var db = _criarContexto())
                 {
-                    db.HistoricosOcupacao.Add(historico);
+                    db.AdicionarHistorico(historico);
                     db.SaveChanges();
                 }
 
@@ -140,7 +148,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         {
             try
             {
-                using (var db = new AppDbContext(_empresa))
+                using (var db = _criarContexto())
                 {
                     var consulta = db.HistoricosOcupacao
                         .Where(x => x.MedicaoVolumeId == espacoId);
@@ -170,7 +178,7 @@ namespace TCC_Inventory_Masters_Kinect.Repository
         {
             try
             {
-                using (var db = new AppDbContext(_empresa))
+                using (var db = _criarContexto())
                 {
                     var consulta = db.HistoricosOcupacao.AsQueryable();
 

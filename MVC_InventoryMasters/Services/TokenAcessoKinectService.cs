@@ -7,7 +7,7 @@ using System.Text;
 
 namespace MVC_InventoryMasters.Services
 {
-    public class TokenAcessoKinectService
+    public class TokenAcessoKinectService : ITokenAcessoKinectService
     {
         private readonly TokensAcessoKinectRepository _tokensRepository;
         private readonly UsuariosRepository _usuariosRepository;

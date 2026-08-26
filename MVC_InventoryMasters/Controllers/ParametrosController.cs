@@ -17,11 +17,11 @@ namespace MVC_InventoryMasters.Controllers
     [PermissaoAuthorize(PermissoesSistema.ConfiguracoesGerenciar)]
     public class ParametrosController : Controller
     {
-        private readonly ParametrosSistemaRepository _repository;
+        private readonly IParametrosSistemaRepository _repository;
         private readonly ILogger<ParametrosController> _logger;
 
         public ParametrosController(
-            ParametrosSistemaRepository repository,
+            IParametrosSistemaRepository repository,
             ILogger<ParametrosController> logger)
         {
             _repository = repository;

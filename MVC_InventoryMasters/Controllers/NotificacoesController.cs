@@ -22,14 +22,14 @@ namespace MVC_InventoryMasters.Controllers
     [PermissaoAuthorize(PermissoesSistema.NotificacoesVisualizar)]
     public class NotificacoesController : Controller
     {
-        private readonly NotificacaoRepository _repo;
-        private readonly ParceirosRepository _parceirosRepository;
+        private readonly INotificacaoRepository _repo;
+        private readonly IParceirosRepository _parceirosRepository;
         private readonly IHubContext<NotificacaoHub> _hubContext;
         private readonly ILogger<NotificacoesController> _logger;
         
         public NotificacoesController(
-            NotificacaoRepository repo,
-            ParceirosRepository parceirosRepository,
+            INotificacaoRepository repo,
+            IParceirosRepository parceirosRepository,
             IHubContext<NotificacaoHub> hubContext,
             ILogger<NotificacoesController> logger)
         {

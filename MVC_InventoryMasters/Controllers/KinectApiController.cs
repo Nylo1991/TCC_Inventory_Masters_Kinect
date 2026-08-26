@@ -9,16 +9,16 @@ namespace MVC_InventoryMasters.Controllers
     [Route("api/kinect")]
     public class KinectApiController : ControllerBase
     {
-        private readonly TokenAcessoKinectService _tokenService;
-        private readonly EmailTokenService _emailService;
-        private readonly LogsSistemaRepository _logsRepository;
+        private readonly ITokenAcessoKinectService _tokenService;
+        private readonly IEmailTokenService _emailService;
+        private readonly ILogsSistemaRepository _logsRepository;
         private readonly IConfiguration _configuration;
         private readonly ILogger<KinectApiController> _logger;
 
         public KinectApiController(
-            TokenAcessoKinectService tokenService,
-            EmailTokenService emailService,
-            LogsSistemaRepository logsRepository,
+            ITokenAcessoKinectService tokenService,
+            IEmailTokenService emailService,
+            ILogsSistemaRepository logsRepository,
             IConfiguration configuration,
             ILogger<KinectApiController> logger)
         {

@@ -19,13 +19,13 @@ namespace MVC_InventoryMasters.Controllers
     [PermissaoAuthorize(PermissoesSistema.UsuariosGerenciar)]
     public class UsuariosController : Controller
     {
-        private readonly UsuariosRepository _repository;
-        private readonly PerfisRepository _perfisRepository;
+        private readonly IUsuariosRepository _repository;
+        private readonly IPerfisRepository _perfisRepository;
         private readonly ILogger<UsuariosController> _logger;
 
         public UsuariosController(
-            UsuariosRepository repository,
-            PerfisRepository perfisRepository,
+            IUsuariosRepository repository,
+            IPerfisRepository perfisRepository,
             ILogger<UsuariosController> logger)
         {
             _repository = repository;

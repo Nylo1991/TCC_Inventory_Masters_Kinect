@@ -8,7 +8,7 @@ using TCC_Inventory_Masters_Kinect.Model;
 
 namespace TCC_Inventory_Masters_Kinect.Service
 {
-    public class AutenticacaoMvcService
+    public class AutenticacaoMvcService : IAutenticacaoMvcService
     {
         /// <summary>
         /// HttpClient utilizado para realizar requisições HTTPS ao MVC,

@@ -5,7 +5,7 @@ using MVC_InventoryMasters.Services;
 
 namespace MVC_InventoryMasters.Repositories
 {
-    public class LogsSistemaRepository
+    public class LogsSistemaRepository : ILogsSistemaRepository
     {
         private readonly FirestoreDb _db;
         private readonly ILogger<LogsSistemaRepository> _logger;

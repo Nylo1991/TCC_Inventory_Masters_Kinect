@@ -14,7 +14,7 @@ namespace MVC_InventoryMasters.Repositories
     /// permitindo consulta, atualização e cálculos relacionados aos parâmetros
     /// operacionais do sistema.
     /// </remarks>
-    public class ParametrosSistemaRepository
+    public class ParametrosSistemaRepository : IParametrosSistemaRepository
     {
         private readonly string _colecao = "parametrosSistema";
         private readonly FirestoreDb _db;

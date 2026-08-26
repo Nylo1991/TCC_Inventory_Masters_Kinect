@@ -9,10 +9,10 @@ namespace MVC_InventoryMasters.Controllers
     [PermissaoAuthorize(PermissoesSistema.PerfisGerenciar)]
     public class PerfisController : Controller
     {
-        private readonly PerfisRepository _repository;
+        private readonly IPerfisRepository _repository;
         private readonly ILogger<PerfisController> _logger;
 
-        public PerfisController(PerfisRepository repository, ILogger<PerfisController> logger)
+        public PerfisController(IPerfisRepository repository, ILogger<PerfisController> logger)
         {
             _repository = repository;
             _logger = logger;

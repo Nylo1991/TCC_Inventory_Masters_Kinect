@@ -156,7 +156,7 @@
     </Reference>
     <Reference Include="Microsoft.Kinect, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\OneDrive\Imagens\AppInterfaceKinect\AppInterfaceKinect\bin\Debug\Microsoft.Kinect.dll</HintPath>
+      <HintPath>..\Bibliotecas\Kinect\Microsoft.Kinect.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
@@ -286,13 +286,16 @@
     <Compile Include="Model\SessaoUsuario.cs" />
     <Compile Include="Model\TokenSolicitadoResultado.cs" />
     <Compile Include="Model\ValidacaoTokenResultado.cs" />
+    <Compile Include="Service\IAutenticacaoMvcService.cs" />
     <Compile Include="Service\AutenticacaoMvcService.cs" />
     <Compile Include="Service\KinectService.Calibration.cs" />
     <Compile Include="Service\KinectService.Camera.cs" />
     <Compile Include="Service\KinectService.Volume.cs" />
     <Compile Include="ViewModel\MainViewModel.Espaco.cs" />
+    <Compile Include="ViewModel\KinectLoginViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.Historico.cs" />
     <Compile Include="ViewModel\MainViewModel.Kinect.cs" />
+    <Compile Include="ViewModel\MainViewModel.Interface.cs" />
     <Compile Include="ViewModel\MainViewModel.Volume.cs" />
     <Compile Include="View\KinectLogin.xaml.cs">
       <DependentUpon>KinectLogin.xaml</DependentUpon>
@@ -312,6 +315,7 @@
     <Compile Include="Command\RelayCommand.cs" />
     <Compile Include="ConfigKinect\KinectConfig.cs" />
     <Compile Include="Data\AppDbContext.cs" />
+    <Compile Include="Data\KinectDataContext.cs" />
     <Compile Include="Logs\LoggerService.cs" />
     <Compile Include="Model\CalibrationProgress.cs" />
     <Compile Include="Model\CalibrationResult.cs" />

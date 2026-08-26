@@ -17,12 +17,12 @@ namespace MVC_InventoryMasters.Controllers
     [PermissaoAuthorize(PermissoesSistema.MedicoesVisualizar)]
     public class MedicoesController : Controller
     {
-        private readonly MedicaoVolumeRepository _repo;
+        private readonly IMedicaoVolumeRepository _repo;
         private readonly IHubContext<MedicaoHub> _hub;
         private readonly ILogger<MedicoesController> _logger;
 
         public MedicoesController(
-            MedicaoVolumeRepository repo,
+            IMedicaoVolumeRepository repo,
             IHubContext<MedicaoHub> hub,
             ILogger<MedicoesController> logger)
         {

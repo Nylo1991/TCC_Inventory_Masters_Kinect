@@ -4,8 +4,8 @@
     {
         // Propriedade que toda página
 
-        public string NomeUsuario { get; set; } 
-        public string TituloPagina { get; set; }
+        public string NomeUsuario { get; set; } = string.Empty;
+        public string TituloPagina { get; set; } = string.Empty;
     }
 
     // Se precisar de suporte a notificação de mudança no futuro:

@@ -13,6 +13,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
     public partial class KinectService
     {
         private KinectSensor _sensor;
+        private readonly Func<KinectSensor> _localizarSensor;
         private short[] _depthCalibrado;
         private int _larguraDepth;
         private int _alturaDepth;
@@ -58,8 +59,13 @@ namespace TCC_Inventory_Masters_Kinect.Service
         /// Inicializa o serviço. O sensor será localizado no momento em que o usuário clicar em ligar.
         /// Isso permite conectar o Kinect depois que a aplicação já estiver aberta.
         /// </summary>
-        public KinectService()
+        public KinectService() : this(null)
         {
+        }
+
+        internal KinectService(Func<KinectSensor> localizarSensor)
+        {
+            _localizarSensor = localizarSensor ?? ObterKinectConectado;
         }
 
         /// <summary>
@@ -85,7 +91,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
         {
             try
             {
-                _sensor = ObterKinectConectado();
+                _sensor = _localizarSensor();
 
                 if (_sensor == null)
                 {

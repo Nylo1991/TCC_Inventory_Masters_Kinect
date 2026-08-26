@@ -1,11 +1,21 @@
 ﻿<Window x:Class="TCC_Inventory_Masters_Kinect.View.HistoricoMedicoesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         Title=" Histórico de Medições"
         Height="675"
         Width="980"
         WindowStartupLocation="CenterOwner"
         Background="#F4F6F8">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding IniciarHistoricoCommand}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding PararHistoricoCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <Grid Background="#F4F6F8">
         <Grid.RowDefinitions>
@@ -33,7 +43,7 @@
                         FontWeight="Bold"
                         BorderThickness="0"
                         Cursor="Hand"
-                        Click="Fechar_Click"/>
+                        Command="{Binding FecharHistoricoCommand}"/>
             </Grid>
         </Border>
 

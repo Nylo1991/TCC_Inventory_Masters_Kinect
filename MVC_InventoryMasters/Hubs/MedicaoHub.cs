@@ -12,9 +12,9 @@ namespace MVC_InventoryMasters.Hubs
     /// </summary>
     public class MedicaoHub : Hub
     {
-        private readonly MedicaoVolumeRepository _medicaoRepository;
-        private readonly ParametrosSistemaRepository _parametrosRepository;
-        private readonly NotificacaoRepository _notificacaoRepository;
+        private readonly IMedicaoVolumeRepository _medicaoRepository;
+        private readonly IParametrosSistemaRepository _parametrosRepository;
+        private readonly INotificacaoRepository _notificacaoRepository;
         private readonly ILogger<MedicaoHub> _logger;
 
         /// <summary>
@@ -33,9 +33,9 @@ namespace MVC_InventoryMasters.Hubs
         /// Serviço de log utilizado para registrar eventos e erros.
         /// </param>
         public MedicaoHub(
-            MedicaoVolumeRepository medicaoRepository,
-            ParametrosSistemaRepository parametrosRepository,
-            NotificacaoRepository notificacaoRepository,
+            IMedicaoVolumeRepository medicaoRepository,
+            IParametrosSistemaRepository parametrosRepository,
+            INotificacaoRepository notificacaoRepository,
             ILogger<MedicaoHub> logger)
         {
             _medicaoRepository = medicaoRepository;

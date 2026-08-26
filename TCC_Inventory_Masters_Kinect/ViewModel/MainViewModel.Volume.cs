@@ -41,7 +41,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         /// <summary>
         /// Mede o volume, salva no banco SQLite e envia ao MVC via SignalR.
         /// </summary>
-        private async Task MedirSalvarEEnviarAsync(string statusMedicao)
+        internal async Task MedirSalvarEEnviarAsync(string statusMedicao)
         {
             try
             {
@@ -129,7 +129,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         /// <summary>
         /// Atualiza os indicadores de volume exibidos na interface.
         /// </summary>
-        private void AtualizarIndicadoresVolume(double volumeAtualCm3)
+        internal void AtualizarIndicadoresVolume(double volumeAtualCm3)
         {
             VolumeTexto = FormatarVolumeM3(volumeAtualCm3);
 
@@ -165,7 +165,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         /// <summary>
         /// Converte volume de centímetros cúbicos para metros cúbicos.
         /// </summary>
-        private string FormatarVolumeM3(double volumeCm3)
+        internal static string FormatarVolumeM3(double volumeCm3)
         {
             double volumeM3 = volumeCm3 / 1000000.0;
             return $"{volumeM3:F3} m3";

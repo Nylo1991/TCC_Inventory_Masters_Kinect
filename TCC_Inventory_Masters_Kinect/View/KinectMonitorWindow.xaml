@@ -1,16 +1,32 @@
 ﻿<Window x:Class="TCC_Inventory_Masters_Kinect.View.KinectMonitorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         Title="Inventory Masters - Kinect"
         Height="760"
         Width="1180"
         MinHeight="680"
         MinWidth="1050"
         WindowStartupLocation="CenterScreen"
-        Closing="KinectWindow_Closing"
         Background="#F4F6F8">
 
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="PreviewMouseMove">
+            <i:InvokeCommandAction Command="{Binding RegistrarAtividadeCommand}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="PreviewMouseDown">
+            <i:InvokeCommandAction Command="{Binding RegistrarAtividadeCommand}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="PreviewKeyDown">
+            <i:InvokeCommandAction Command="{Binding RegistrarAtividadeCommand}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding EncerrarCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Foreground" Value="White"/>
@@ -108,7 +124,7 @@
                             HorizontalContentAlignment="Left"
                             Padding="14,0"
                             Cursor="Hand"
-                            Click="AbrirHistorico_Click"
+                            Command="{Binding AbrirHistoricoCommand}"
                             ToolTip="Histórico de medições em tempo real."/>
                 </StackPanel>
 
@@ -180,7 +196,7 @@
                         FontWeight="Bold"
                         BorderThickness="0"
                         Cursor="Hand"
-                        Click="SairButton_Click"
+                        Command="{Binding SairCommand}"
                         ToolTip="Sair do sistema e fechar a aplicação."/>
             </Grid>
         </Border>
@@ -239,41 +255,48 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Panel.ZIndex="0">
-                        <TextBlock x:Name="CalibrationTitleTextBlock"
-                                   Text="Calibração"
+                        <TextBlock Text="{Binding CalibrationTitle}"
                                    Foreground="#111111"
                                    FontSize="18"
                                    FontWeight="SemiBold"
                                    HorizontalAlignment="Center"/>
 
-                        <TextBlock x:Name="CalibrationSubtitleTextBlock"
-                                   Text=""
+                        <TextBlock Text="{Binding CalibrationSubtitle}"
                                    Foreground="#6B7280"
                                    FontSize="13"
                                    HorizontalAlignment="Center"
                                    Margin="0,6,0,0"/>
                     </StackPanel>
 
-                    <MediaElement x:Name="CalibrationVideoElement"
-                                  Source="Videos/calibracao.mp4"
-                                  LoadedBehavior="Manual"
+                    <MediaElement Source="Videos/calibracao.mp4"
                                   UnloadedBehavior="Stop"
                                   Stretch="UniformToFill"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
-                                  Visibility="Hidden"
-                                  MediaEnded="CalibrationVideoElement_MediaEnded"
                                   Panel.ZIndex="1"
-                                  ToolTip="Video de orientação exibido durante a calibração."/>
+                                  ToolTip="Video de orientação exibido durante a calibração.">
+                        <MediaElement.Style>
+                            <Style TargetType="MediaElement">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="LoadedBehavior" Value="Stop"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CalibrationVideoPlaying}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Setter Property="LoadedBehavior" Value="Play"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </MediaElement.Style>
+                    </MediaElement>
 
-                    <Border x:Name="PainelCalibracao"
+                    <Border
                             Background="#CC0B3323"
                             CornerRadius="8"
                             Padding="18"
                             Width="420"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Visibility="Collapsed"
+                            Visibility="{Binding CalibrationVideoPlaying, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Panel.ZIndex="2">
                         <StackPanel>
                             <TextBlock Text="Calibração em andamento"
@@ -492,7 +515,6 @@
 
                         <Button Content="Calibrar Espaço"
                                 Command="{Binding CalibrarCommand}"
-                                Click="CalibrarButton_Click"
                                 Style="{StaticResource ActionButtonStyle}"
                                 Background="#D97706"
                                 Margin="0,0,0,8"/>
@@ -599,13 +621,13 @@
                        TextTrimming="CharacterEllipsis"/>
         </Border>
 
-        <Grid x:Name="TelaBloqueioInatividade"
+        <Grid
               Grid.Row="0"
               Grid.Column="0"
               Grid.RowSpan="3"
               Grid.ColumnSpan="3"
               Background="#DD0B3323"
-              Visibility="Collapsed"
+              Visibility="{Binding SessaoBloqueada, Converter={StaticResource BooleanToVisibilityConverter}}"
               Panel.ZIndex="99">
 
             <Border Width="430"
@@ -658,13 +680,12 @@
                                FontSize="12"
                                FontWeight="SemiBold"/>
 
-                    <TextBlock x:Name="EmailSessaoTextBlock"
+                    <TextBlock Text="{Binding EmailSessao}"
                                Foreground="#111111"
                                FontSize="14"
                                Margin="0,4,0,12"/>
 
-                    <Button x:Name="SolicitarNovoTokenButton"
-                            Content="Enviar novo token"
+                    <Button Content="Enviar novo token"
                             Height="40"
                             Margin="0,0,0,16"
                             Background="White"
@@ -674,7 +695,8 @@
                             BorderBrush="#108A3B"
                             BorderThickness="1"
                             Cursor="Hand"
-                            Click="SolicitarNovoToken_Click"/>
+                            IsEnabled="{Binding SolicitarNovoTokenHabilitado}"
+                            Command="{Binding SolicitarNovoTokenCommand}"/>
 
                     <TextBlock Text="Token de desbloqueio"
                                Foreground="#111111"
@@ -682,24 +704,24 @@
                                FontWeight="SemiBold"
                                Margin="0,0,0,6"/>
 
-                    <PasswordBox x:Name="TokenDesbloqueioPasswordBox"
-                                 Height="42"
-                                 FontSize="15"
-                                 Padding="12,0"
-                                 VerticalContentAlignment="Center"
-                                 BorderBrush="#DADDE2"
-                                 BorderThickness="1"
-                                 MaxLength="6"
-                                 KeyDown="TokenDesbloqueioPasswordBox_KeyDown"/>
+                    <TextBox Height="42"
+                             FontSize="15"
+                             Padding="12,0"
+                             VerticalContentAlignment="Center"
+                             TextAlignment="Center"
+                             BorderBrush="#DADDE2"
+                             BorderThickness="1"
+                             MaxLength="6"
+                             InputScope="Number"
+                             Text="{Binding TokenDesbloqueio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock x:Name="MensagemBloqueioTextBlock"
+                    <TextBlock Text="{Binding MensagemBloqueio}"
                                Foreground="#DC2626"
                                FontSize="13"
                                TextWrapping="Wrap"
                                Margin="0,12,0,0"/>
 
-                    <Button x:Name="DesbloquearButton"
-                            Content="Desbloquear"
+                    <Button Content="Desbloquear"
                             Height="42"
                             Margin="0,22,0,0"
                             Background="#108A3B"
@@ -708,8 +730,60 @@
                             FontWeight="Bold"
                             BorderThickness="0"
                             Cursor="Hand"
-                            Click="DesbloquearSessao_Click"/>
+                            IsDefault="True"
+                            IsEnabled="{Binding DesbloquearHabilitado}"
+                            Command="{Binding DesbloquearSessaoCommand}"/>
                 </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="0"
+              Grid.Column="0"
+              Grid.RowSpan="3"
+              Grid.ColumnSpan="3"
+              Background="#88000000"
+              Visibility="{Binding AvisoHistoricoVisivel, Converter={StaticResource BooleanToVisibilityConverter}}"
+              Panel.ZIndex="100">
+            <Border Width="460"
+                    Height="250"
+                    Padding="24"
+                    Background="White"
+                    BorderBrush="#DADDE2"
+                    BorderThickness="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Histórico indisponível"
+                               Foreground="#111111"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Margin="0,0,0,14"/>
+
+                    <TextBlock Grid.Row="1"
+                               Text="Salve os dados do espaço antes de abrir o histórico de medições."
+                               Foreground="#4B5563"
+                               FontSize="16"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center"/>
+
+                    <Button Grid.Row="2"
+                            Content="Entendi"
+                            Width="110"
+                            Height="38"
+                            HorizontalAlignment="Right"
+                            Background="#108A3B"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Command="{Binding FecharAvisoHistoricoCommand}"/>
+                </Grid>
             </Border>
         </Grid>
     </Grid>

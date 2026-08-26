@@ -18,6 +18,15 @@ namespace TCC_Inventory_Masters_Kinect.Logs
         private static readonly object _lock = new object();
 
         private static string _empresaAtual;
+        // Nos testes, o destino é substituído por uma fila em memória.
+        internal static Action<Log> PersistirLog { get; set; } = log =>
+        {
+            using (var context = new AppDbContext(_empresaAtual))
+            {
+                context.Logs.Add(log);
+                context.SaveChanges();
+            }
+        };
 
         private static readonly Action<string> _logger = linha =>
         {
@@ -94,18 +103,12 @@ namespace TCC_Inventory_Masters_Kinect.Logs
 
                 lock (_lock)
                 {
-                    using (var context = new AppDbContext(_empresaAtual))
+                    PersistirLog(new Log
                     {
-                        var log = new Log
-                        {
-                            DataHora = DateTime.Now,
-                            Nivel = nivel,
-                            Mensagem = mensagem
-                        };
-
-                        context.Logs.Add(log);
-                        context.SaveChanges();
-                    }
+                        DataHora = DateTime.Now,
+                        Nivel = nivel,
+                        Mensagem = mensagem
+                    });
                 }
             }
             catch

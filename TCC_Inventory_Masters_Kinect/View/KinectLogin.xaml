@@ -7,6 +7,10 @@
         WindowStartupLocation="CenterScreen"
         Background="#F4F6F8">
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+
     <Grid Background="#F4F6F8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="340"/>
@@ -51,14 +55,12 @@
                     BorderThickness="1">
 
                 <StackPanel>
-                    <TextBlock x:Name="TituloTextBlock"
-                               Text="Acesso ao Kinect"
+                    <TextBlock Text="{Binding Titulo}"
                                Foreground="#111111"
                                FontSize="28"
                                FontWeight="Bold"/>
 
-                    <TextBlock x:Name="SubtituloTextBlock"
-                               Text="Informe o token enviado pelo MVC"
+                    <TextBlock Text="{Binding Subtitulo}"
                                Foreground="#6B7280"
                                FontSize="14"
                                Margin="0,8,0,24"/>
@@ -69,31 +71,51 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="AbaEntrarButton"
-                                Grid.Column="0"
+                        <Button Grid.Column="0"
                                 Content="Entrar"
                                 Height="40"
-                                Background="#108A3B"
-                                Foreground="White"
                                 FontWeight="SemiBold"
                                 BorderThickness="0"
                                 Cursor="Hand"
-                                Click="AbaEntrar_Click"/>
+                                Command="{Binding MostrarLoginCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#E5E7EB"/>
+                                    <Setter Property="Foreground" Value="#111111"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding AbaLoginSelecionada}" Value="True">
+                                            <Setter Property="Background" Value="#108A3B"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
 
-                        <Button x:Name="AbaCadastroButton"
-                                Grid.Column="1"
+                        <Button Grid.Column="1"
                                 Content="Token pelo MVC"
                                 Height="40"
-                                Background="#E5E7EB"
-                                Foreground="#111111"
                                 FontWeight="SemiBold"
                                 BorderThickness="0"
                                 Cursor="Hand"
-                                Click="AbaCadastro_Click"
-                                ToolTip="Primeiro Acesso."/>
+                                Command="{Binding MostrarSolicitacaoTokenCommand}"
+                                ToolTip="Primeiro Acesso.">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#E5E7EB"/>
+                                    <Setter Property="Foreground" Value="#111111"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding AbaSolicitacaoSelecionada}" Value="True">
+                                            <Setter Property="Background" Value="#108A3B"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                     </Grid>
 
-                    <StackPanel x:Name="LoginPanel">
+                    <StackPanel Visibility="{Binding AbaLoginSelecionada, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBlock Text="Token de Acesso"
                                    Foreground="#111111"
                                    FontSize="14"
@@ -101,8 +123,7 @@
                                    Margin="0,0,0,6"/>
 
                         <Grid>
-                            <TextBox x:Name="LoginUsuarioTextBox"
-                                     Height="42"
+                            <TextBox Height="42"
                                      FontSize="18"
                                      FontWeight="Bold"
                                      MaxLength="6"
@@ -111,18 +132,17 @@
                                      VerticalContentAlignment="Center"
                                      BorderBrush="#DADDE2"
                                      BorderThickness="1"
-                                     PreviewTextInput="SomenteNumeros_PreviewTextInput"
-                                     DataObject.Pasting="TokenTextBox_Pasting"
-                                     TextChanged="LoginUsuarioTextBox_TextChanged"
+                                     Text="{Binding TokenAcesso, UpdateSourceTrigger=PropertyChanged}"
+                                     InputScope="Number"
                                      ToolTip="Digite os seis números recebidos por e-mail."/>
 
-                            <TextBlock x:Name="TokenPlaceholderTextBlock"
-                                       Text="000000"
+                            <TextBlock Text="000000"
                                        Foreground="#6B7280"
                                        FontSize="18"
                                        FontWeight="Bold"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
+                                       Visibility="{Binding TokenVazio, Converter={StaticResource BooleanToVisibilityConverter}}"
                                        IsHitTestVisible="False"/>
                         </Grid>
 
@@ -166,11 +186,12 @@
                                 FontWeight="SemiBold"
                                 BorderThickness="0"
                                 Cursor="Hand"
-                                Click="Entrar_Click"/>
+                                IsDefault="True"
+                                IsEnabled="{Binding PodeInteragir}"
+                                Command="{Binding EntrarCommand}"/>
                     </StackPanel>
 
-                    <StackPanel x:Name="CadastroPanel"
-                                Visibility="Collapsed">
+                    <StackPanel Visibility="{Binding AbaSolicitacaoSelecionada, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                         <TextBlock Text="E-mail Cadastrado"
                                    Foreground="#111111"
@@ -178,14 +199,14 @@
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,6"/>
 
-                        <TextBox x:Name="CadastroEmailTextBox"
-                                 Height="42"
+                        <TextBox Height="42"
                                  FontSize="15"
                                  Padding="10,0"
                                  HorizontalContentAlignment="Left"
                                  VerticalContentAlignment="Center"
                                  BorderBrush="#DADDE2"
                                  BorderThickness="1"
+                                 Text="{Binding EmailCadastro, UpdateSourceTrigger=PropertyChanged}"
                                  ToolTip="Digite o e-mail Cadastrado no MVC."/>
 
                         <TextBlock Text="O MVC vai validar se o e-mail existe no cadastro de usuários e enviar um token temporário."
@@ -203,18 +224,29 @@
                                 FontWeight="SemiBold"
                                 BorderThickness="0"
                                 Cursor="Hand"
-                                Click="Cadastrar_Click"
+                                IsDefault="True"
+                                IsEnabled="{Binding PodeInteragir}"
+                                Command="{Binding SolicitarTokenCommand}"
                                 ToolTip="Solicitar token para o e-mail cadastrado."/>
                     </StackPanel>
 
-                    <TextBlock x:Name="MensagemTextBlock"
-                               Text=""
-                               Foreground="#DC2626"
+                    <TextBlock Text="{Binding Mensagem}"
                                FontSize="13"
                                FontWeight="SemiBold"
                                Margin="0,14,0,0"
                                MinHeight="30"
-                               TextWrapping="Wrap"/>
+                               TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#DC2626"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding MensagemSucesso}" Value="True">
+                                        <Setter Property="Foreground" Value="#108A3B"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </StackPanel>
             </Border>
         </Grid>

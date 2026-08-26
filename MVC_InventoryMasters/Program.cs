@@ -34,6 +34,18 @@ builder.Services.AddScoped<ParceirosRepository>();
 builder.Services.AddScoped<MedicaoVolumeRepository>();
 builder.Services.AddScoped<NotificacaoRepository>();
 builder.Services.AddScoped<ParametrosSistemaRepository>();
+builder.Services.AddScoped<ITokenAcessoKinectService>(sp => sp.GetRequiredService<TokenAcessoKinectService>());
+builder.Services.AddScoped<IEmailTokenService>(sp => sp.GetRequiredService<EmailTokenService>());
+builder.Services.AddScoped<ILogsSistemaRepository>(sp => sp.GetRequiredService<LogsSistemaRepository>());
+builder.Services.AddScoped<IParceirosRepository>(sp => sp.GetRequiredService<ParceirosRepository>());
+builder.Services.AddScoped<IPerfisRepository>(sp => sp.GetRequiredService<PerfisRepository>());
+builder.Services.AddScoped<IUsuariosRepository>(sp => sp.GetRequiredService<UsuariosRepository>());
+builder.Services.AddScoped<IMedicaoVolumeRepository>(sp =>
+    sp.GetRequiredService<MedicaoVolumeRepository>());
+builder.Services.AddScoped<INotificacaoRepository>(sp =>
+    sp.GetRequiredService<NotificacaoRepository>());
+builder.Services.AddScoped<IParametrosSistemaRepository>(sp =>
+    sp.GetRequiredService<ParametrosSistemaRepository>());
 builder.Services.AddScoped<UsuariosRepository>();
 builder.Services.AddScoped<PerfisRepository>();
 

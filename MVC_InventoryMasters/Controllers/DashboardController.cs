@@ -21,11 +21,11 @@ namespace MVC_InventoryMasters.Controllers
     [PermissaoAuthorize(PermissoesSistema.DashboardVisualizar)]
     public class DashboardController : Controller
     {
-        private readonly MedicaoVolumeRepository _medicaoRepo;
-        private readonly NotificacaoRepository _notificacaoRepo;
-        private readonly ParceirosRepository _parceirosRepo;
-        private readonly ParametrosSistemaRepository _parametrosRepo;
-        private readonly UsuariosRepository _usuariosRepo;
+        private readonly IMedicaoVolumeRepository _medicaoRepo;
+        private readonly INotificacaoRepository _notificacaoRepo;
+        private readonly IParceirosRepository _parceirosRepo;
+        private readonly IParametrosSistemaRepository _parametrosRepo;
+        private readonly IUsuariosRepository _usuariosRepo;
         private readonly ILogger<DashboardController> _logger;
 
         /// <summary>
@@ -41,11 +41,11 @@ namespace MVC_InventoryMasters.Controllers
         /// <param name="logger"></param>
         /// <returns>Instância do DashboardController com as dependências injetadas</returns>
         public DashboardController(
-            MedicaoVolumeRepository medicaoRepo,
-            NotificacaoRepository notificacaoRepo,
-            ParceirosRepository parceirosRepo,
-            ParametrosSistemaRepository parametrosRepo,
-            UsuariosRepository usuariosRepo,
+            IMedicaoVolumeRepository medicaoRepo,
+            INotificacaoRepository notificacaoRepo,
+            IParceirosRepository parceirosRepo,
+            IParametrosSistemaRepository parametrosRepo,
+            IUsuariosRepository usuariosRepo,
             ILogger<DashboardController> logger)
         {
             _medicaoRepo = medicaoRepo;

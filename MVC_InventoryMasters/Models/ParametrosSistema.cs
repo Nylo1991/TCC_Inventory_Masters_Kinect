@@ -83,7 +83,7 @@ namespace MVC_InventoryMasters.Models
 
         [FirestoreProperty]
         [Display(Name = "Raio de Detecção Kinect (m)")]
-        [Range(0, 100,
+        [Range(0d, 100d,
             ErrorMessage = "Informe um raio entre 0 e 100 metros.")]
         public double RaioDeteccaoKinect { get; set; }
 

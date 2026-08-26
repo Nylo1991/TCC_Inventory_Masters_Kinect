@@ -23,6 +23,12 @@ namespace MVC_InventoryMasters.Services
         /// </summary>
         public FirestoreDb Firestore => _firestore;
 
+        // Cliente injetado: não carrega credenciais nem inicializa FirebaseApp.
+        internal FirebaseService(FirestoreDb firestore)
+        {
+            _firestore = firestore ?? throw new ArgumentNullException(nameof(firestore));
+        }
+
         /// <summary>
         /// Construtor da classe FirebaseService,
         /// responsável por inicializar a conexão

@@ -7,6 +7,7 @@ using TCC_Inventory_Masters_Kinect.Command;
 using TCC_Inventory_Masters_Kinect.Logs;
 using TCC_Inventory_Masters_Kinect.Model;
 using TCC_Inventory_Masters_Kinect.Repository;
+using TCC_Inventory_Masters_Kinect.Repository.Interface;
 using TCC_Inventory_Masters_Kinect.Service;
 
 namespace TCC_Inventory_Masters_Kinect.ViewModel
@@ -30,18 +31,25 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         /// <summary>
         /// Repositório responsável pelo acesso ao banco SQLite.
         /// </summary>
-        private readonly KinectRepository _repository;
+        private readonly IKinectRepository _repository;
 
         /// <summary>
         /// Sessão atual do usuário logado.
         /// </summary>
         private readonly SessaoUsuario _sessao;
+        private readonly IAutenticacaoMvcService _autenticacaoService;
 
         private DispatcherTimer _frameTimer;
         private DispatcherTimer _volumeTimer;
 
         private double _ultimoVolumeAtual;
         private double _volumeMaximoCm3;
+
+        internal double VolumeMaximoCm3
+        {
+            get => _volumeMaximoCm3;
+            set => _volumeMaximoCm3 = value;
+        }
 
         private BitmapSource _cameraImage;
         public BitmapSource CameraImage
@@ -191,27 +199,50 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         }
 
         private ObservableCollection<MedicaoVolume> _historicoMedicoes;
+
         public ObservableCollection<MedicaoVolume> HistoricoMedicoes
         {
             get => _historicoMedicoes;
             set => SetProperty(ref _historicoMedicoes, value);
         }
 
-        /// <summary>
-        /// Evento acionado ao finalizar a calibração.
-        /// </summary>
-        public event Action CalibracaoFinalizada;
-
         public ICommand LigarKinectCommand { get; }
         public ICommand DesligarKinectCommand { get; }
         public ICommand CalibrarCommand { get; }
         public ICommand MedirCommand { get; }
         public ICommand SalvarEspacoCommand { get; }
+        public ICommand SairCommand { get; }
+        public ICommand AbrirHistoricoCommand { get; }
+        public ICommand SolicitarNovoTokenCommand { get; }
+        public ICommand DesbloquearSessaoCommand { get; }
+        public ICommand RegistrarAtividadeCommand { get; }
+        public ICommand FecharAvisoHistoricoCommand { get; }
+        public ICommand EncerrarCommand { get; }
+        public ICommand IniciarHistoricoCommand { get; }
+        public ICommand PararHistoricoCommand { get; }
+        public ICommand FecharHistoricoCommand { get; }
 
         /// <summary>
         /// Inicializa o monitor somente com uma sessao validada pelo MVC.
         /// </summary>
         public MainViewModel(SessaoUsuario sessao)
+            : this(
+                sessao,
+                new KinectService(),
+                new SignalRService(),
+                new KinectRepository(sessao?.Empresa),
+                new AutenticacaoMvcService(),
+                true)
+        {
+        }
+
+        internal MainViewModel(
+            SessaoUsuario sessao,
+            KinectService kinectService,
+            SignalRService signalRService,
+            IKinectRepository repository,
+            IAutenticacaoMvcService autenticacaoService,
+            bool iniciarTimerInatividade)
         {
             if (sessao == null)
             {
@@ -229,14 +260,14 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             }
 
             _sessao = sessao;
+            _kinectService = kinectService ?? throw new ArgumentNullException(nameof(kinectService));
+            _signalRService = signalRService ?? throw new ArgumentNullException(nameof(signalRService));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _autenticacaoService = autenticacaoService ?? throw new ArgumentNullException(nameof(autenticacaoService));
 
             UsuarioLogado = sessao.Usuario;
             EmpresaLogada = sessao.Empresa;
             LoggerService.DefinirEmpresa(sessao.Empresa);
-
-            _kinectService = new KinectService();
-            _signalRService = new SignalRService();
-            _repository = new KinectRepository(sessao.Empresa);
 
             _signalRService.StatusSignalRAtualizado += status => StatusSignalR = status;
 
@@ -245,6 +276,16 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             CalibrarCommand = new RelayCommand(ExecutarCalibracaoAsync);
             MedirCommand = new RelayCommand(ExecutarMedicaoAsync);
             SalvarEspacoCommand = new RelayCommand(SalvarEspaco);
+            SairCommand = new RelayCommand(Sair);
+            AbrirHistoricoCommand = new RelayCommand(AbrirHistorico);
+            SolicitarNovoTokenCommand = new RelayCommand(SolicitarNovoTokenAsync);
+            DesbloquearSessaoCommand = new RelayCommand(DesbloquearSessaoAsync);
+            RegistrarAtividadeCommand = new RelayCommand(RegistrarAtividadeUsuario);
+            FecharAvisoHistoricoCommand = new RelayCommand(() => AvisoHistoricoVisivel = false);
+            EncerrarCommand = new RelayCommand(Encerrar);
+            IniciarHistoricoCommand = new RelayCommand(IniciarAtualizacaoHistorico);
+            PararHistoricoCommand = new RelayCommand(PararAtualizacaoHistorico);
+            FecharHistoricoCommand = new RelayCommand(FecharHistorico);
 
             StatusMessage = "Pronto";
             StatusKinect = "Kinect desligado";
@@ -259,7 +300,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             StatusAlertaTexto = "OK";
             StatusCalibracao = string.Empty;
 
+            InicializarInterfaceMonitor(iniciarTimerInatividade);
+
             CarregarHistoricoMedicoes();
         }
+
     }
 }

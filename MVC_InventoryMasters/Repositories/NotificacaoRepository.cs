@@ -14,7 +14,7 @@ namespace MVC_InventoryMasters.Repositories
     /// Esta classe centraliza o acesso à coleção de notificações,
     /// abstraindo as operações de persistência e consulta de dados.
     /// </remarks>
-    public class NotificacaoRepository
+    public class NotificacaoRepository : INotificacaoRepository
     {
         private readonly FirestoreDb _db;
         private readonly ILogger<NotificacaoRepository> _logger;

@@ -14,7 +14,7 @@ namespace MVC_InventoryMasters.Repositories
     /// Esta classe centraliza o acesso à coleção de usuários,
     /// abstraindo as operações de persistência e recuperação de dados.
     /// </remarks>
-    public class UsuariosRepository
+    public class UsuariosRepository : IUsuariosRepository
     {
         /// <summary>
         /// Nome da coleção no Firestore.

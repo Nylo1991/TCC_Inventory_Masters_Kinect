@@ -13,7 +13,7 @@ namespace MVC_InventoryMasters.Repositories
     /// Esta classe centraliza o acesso à coleção de medições,
     /// abstraindo a comunicação com o banco de dados Firebase Firestore.
     /// </remarks>
-    public class MedicaoVolumeRepository
+    public class MedicaoVolumeRepository : IMedicaoVolumeRepository
     {
         private readonly string _colecao = "Medicoes";
         private readonly FirestoreDb _db;

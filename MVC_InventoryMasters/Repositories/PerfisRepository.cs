@@ -8,7 +8,7 @@ namespace MVC_InventoryMasters.Repositories
     /// <summary>
     /// Repositório responsável por perfis e permissões por empresa.
     /// </summary>
-    public class PerfisRepository
+    public class PerfisRepository : IPerfisRepository
     {
         private readonly FirestoreDb _firestore;
         private readonly ILogger<PerfisRepository> _logger;

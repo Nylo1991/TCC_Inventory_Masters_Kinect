@@ -10,18 +10,18 @@ namespace MVC_InventoryMasters.Controllers
 {
     public class AcessoController : Controller
     {
-        private readonly TokenAcessoKinectService _tokenService;
-        private readonly EmailTokenService _emailService;
-        private readonly UsuariosRepository _usuariosRepository;
-        private readonly LogsSistemaRepository _logsRepository;
+        private readonly ITokenAcessoKinectService _tokenService;
+        private readonly IEmailTokenService _emailService;
+        private readonly IUsuariosRepository _usuariosRepository;
+        private readonly ILogsSistemaRepository _logsRepository;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AcessoController> _logger;
 
         public AcessoController(
-            TokenAcessoKinectService tokenService,
-            EmailTokenService emailService,
-            UsuariosRepository usuariosRepository,
-            LogsSistemaRepository logsRepository,
+            ITokenAcessoKinectService tokenService,
+            IEmailTokenService emailService,
+            IUsuariosRepository usuariosRepository,
+            ILogsSistemaRepository logsRepository,
             IConfiguration configuration,
             ILogger<AcessoController> logger)
         {

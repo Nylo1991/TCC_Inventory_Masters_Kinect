@@ -124,6 +124,9 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
         /// </summary>
         private async Task ExecutarCalibracaoAsync()
         {
+            IniciarVideoCalibracao();
+            bool calibracaoConcluida = false;
+
             try
             {
                 IsCalibrating = true;
@@ -148,8 +151,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 StatusMessage = $"Calibração concluída. Volume máximo: {FormatarVolumeM3(resultado.MaxVolume)}";
                 StatusCalibracao = "Calibração finalizada.";
                 MensagemEspaco = "Calibração concluída. Salve o espaço para liberar medições.";
-
-                CalibracaoFinalizada?.Invoke();
+                calibracaoConcluida = true;
 
                 LoggerService.Info($"Calibração concluída. Volume máximo: {resultado.MaxVolume:F0} cm3");
             }
@@ -162,6 +164,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
             finally
             {
                 IsCalibrating = false;
+                FinalizarVideoCalibracao(calibracaoConcluida);
             }
         }
 
