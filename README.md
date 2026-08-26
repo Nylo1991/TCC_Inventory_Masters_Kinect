@@ -5350,7 +5350,7 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 ## TELA LOGIN WEB
 
 <p align="center">
-  <img src="./Imagens/Telas Sistema/Telalogin.jpeg" width="600" alt="Tela Login Web Inventory Masters" />
+  <img src="./Imagens/Telas Sistema/TelaLogin.jpeg" width="600" alt="Tela Login Web Inventory Masters" />
 </p>
 
 </div>
@@ -5459,7 +5459,7 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 ## TELA DO KINECT LIGADO
 
 <p align="center">
-  <img src="./Imagens/Telas Sistema/TelaKinectLigado.jpeg" width="600" alt="Tela de Kinect Ligada Inventory Masters" />
+  <img src="./Imagens/Telas Sistema/TelaKinectLigado.jpeg" width="600" alt="Tela Kinect Ligado Inventory Masters" />
 </p>
 
 </div>
@@ -5471,7 +5471,7 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 ## TELA DO KINECT CALIBRANDO
 
 <p align="center">
-  <img src="./Imagens/Telas Sistema/TelaKinectCalibrando.jpeg" width="600" alt="Tela Medições Inventory Masters" />
+  <img src="./Imagens/Telas Sistema/TelaKinectCalibrando.jpeg" width="600" alt="Tela Kinect Calibrando Inventory Masters" />
 </p>
 
 </div>
@@ -5482,7 +5482,7 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 ## TELA CADASTRO DO ESPAÇO
 
 <p align="center">
-  <img src="./Imagens/Telas Sistema/TelaCadastroEspaco.jpeg" width="600" alt="Tela Medições Inventory Masters" />
+  <img src="./Imagens/Telas Sistema/TelaCadastroEspaco.jpeg" width="600" alt="Tela Cadastro do Espaço Inventory Masters" />
 </p>
 
 </div>
