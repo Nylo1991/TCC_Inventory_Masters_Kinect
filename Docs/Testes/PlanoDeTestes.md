@@ -215,35 +215,40 @@ Para cada anomalia identificada durante as baterias de teste, um chamado técnic
 * **Versão e Ambiente:** Tag da *build* do *Inventory Masters* e especificações do ambiente de teste (como instabilidade simulada do SQL Server ou do Kinect).
 
 ----
-## Cenários de teste:
+## 12. Recursos Necessários
 
-### Caso de Teste: CT-Login-01 — Validação do Campo de E-mail e Autenticação por Token
+| Tipo de Recurso | Descrição |
+| :--- | :--- |
+| **Equipe** | 4 integrantes atuando em revezamento entre desenvolvimento e testes |
+| **Ambiente** | 4 máquinas Windows 10 ou Windows 11 de 64 bits para testes de instalação e execução do módulo Kinect/Desktop (WPF) |
+| **Ferramentas** | Visual Studio, SDK do Kinect para Windows 1.8, e ferramentas de gerenciamento de banco de dados SQLite local |
+| **Dados de Teste** | Massa de dados local em SQLite e registros de calibração de profundidade capturados pelo sensor Kinect Xbox 360 |
+| **Acessos** | Permissão de leitura e gravação na pasta do banco de dados e dos logs locais, além de acesso à rede para comunicação via SignalR com o módulo web |
 
-* **Objetivo:** Validar o comportamento visual, a usabilidade, a obrigatoriedade, o tratamento de mensagens, o fluxo de envio/validação de tokens e o retorno à tela inicial no módulo de autenticação.
-* **Pré-condições:** A aplicação deve estar aberta na tela de login inicial.
+---
+## 13. Cronograma de Testes
 
-#### 1. Execução dos Passos
-* **Ação 1:** Iniciar o processo de login e interagir com o campo destinado à digitação do e-mail (Tela 1).
-* **Ação 2:** Submeter um endereço de e-mail não cadastrado no sistema (Tela 2).
-* **Ação 3:** Inserir um e-mail cadastrado e avançar para a solicitação e validação do token (Telas 3 e 4).
-* **Ação 4:** Acionar a opção de solicitar um novo token e verificar o fluxo de retorno (Tela 5).
+Este cronograma consolida as atividades de validação do sistema e deverá ser atualizado a cada ciclo de desenvolvimento (sprint) do sistema.
 
-#### 2. Resultados Esperados e Observados
+| Período Previsto | Atividade | Casos de Teste / Escopo | Responsável |
+| :--- | :--- | :--- | :--- |
+| **Semana 1** | Preparação do ambiente e dados de teste | Configuração do ambiente (Azure/SQL Server), sensor Kinect e massa de dados inicial | Equipe de Infraestrutura |
+| **Semana 2** | Execução dos Casos de Teste funcionais | CT-001 a CT-003 (Autenticação), CT-007 a CT-008 (Dados), CT-011 a CT-012 (Cadastro/Estoque) e CT-015 a CT-016 (Permissões) | Analista de Qualidade / QA |
+| **Semana 2–3** | Testes de integração (SQL Server, Azure e SignalR) | CT-009 a CT-010 (Sincronização), CT-013 a CT-014 (Fluxo de Estoque e Divergências) | Analista de Integração |
+| **Semana 3** | Testes de Captura Volumétrica e de Sistema | CT-004 a CT-006 (Sensor Kinect) e CT-017 a CT-018 (Testes de Aceitação e Sistema ponta a ponta) | Analista de Testes / Product Owner |
+| **Semana 3–4** | Testes não funcionais, exploratórios e de estresse | CT-019 (Desempenho/Memory Leak), CT-020 (Resiliência de Rede), CT-021 a CT-022 (Testes Exploratórios e Robustez) | Analista de Desempenho / Exploratório |
+| **Semana 4** | Correção de defeitos, reteste e regressão | CT-002 (Reteste de E-mail), CT-006 (Reteste de Arredondamento) e CT-023 (Testes de Regressão) | Equipe de Desenvolvimento / QA |
+| **Semana 5** | Fechamento e relatório final | Consolidação de resultados, revisão de pendências e entrega do relatório de testes | Gerente de Projeto / QA |
 
-* **Cenário Positivo (Validação de Interface, Usabilidade e Fluxos):**
-  * **Layout e Preenchimento:** A tela apresenta indicação visual clara que determina especificamente o campo onde o usuário deve digitar o e-mail, com espaçamento adequado dentro da caixa de texto.
-  * **Validação de Obrigatoriedade:** Caso o usuário tente avançar sem preencher o campo de e-mail, o sistema dispara imediatamente uma mensagem informando a obrigatoriedade do preenchimento.
-  * **Design Visual e Destaque:** A interface possui paleta de cores harmônica que não sobrecarrega a visão do operador, e as cores das caixas de mensagens se destacam claramente para indicar quando há incorreções.
-  * **Campos e Instruções:** A tela exibe o campo de solicitação e validação de token de forma clara e intuitiva.
-  * **Fluxo de Retorno:** Ao solicitar um novo token, o sistema redireciona o fluxo perfeitamente de volta à tela inicial para que o usuário redigite o e-mail.
+---
+## 14. Conclusão 
 
-* **Cenário Negativo (Oportunidades de Melhoria e Alinhamento Técnico):**
-  * **Aviso de Primeiro Acesso:** Ao acessar a aplicação pela primeira vez, o sistema é omisso em informar que o endereço de e-mail precisa prévia e obrigatoriamente ser cadastrado pelo administrador do sistema.
-  * **Tratamento de Mensagem:** A mensagem exibida para e-mails não cadastrados é genérica, pois deixa de informar explicitamente que o usuário não possui acesso ao sistema.
-  * **Ausência de Tooltips:** Falta de dicas de contexto (tooltips) nos botões de ação da tela de login, especificamente nos botões de validar e de solicitar novo token.
+O presente Plano de Testes estruturado para o sistema **Inventory Masters** (versão 2.0.0) estabelece uma diretriz sistemática e abrangente para mitigar riscos operacionais, arquiteturais e de integridade de dados ao longo de todo o ecossistema tecnológico. 
 
-
-
+* **Garantia de Qualidade End-to-End:** A estratégia delineada assegura a validação rigorosa desde os componentes de hardware e captura volumétrica em metros cúbicos ($m^3$) via sensor/Kinect, passando pela persistência transacional local (SQL Server) e sincronização com a nuvem (Microsoft Azure), até a comunicação em tempo real via SignalR para o dashboard web.
+* **Mitigação de Riscos Críticos:** O mapeamento preventivo de falhas como estouros de memória (*memory leaks*) no fluxo gráfico, corrupção de dados transacionais, quebras na resiliência de rede e desvios nas regras de controle de acesso por perfil blinda a aplicação contra exceções não tratadas e vulnerabilidades estruturais.
+ * **Prontidão Operacional:** A execução integrada dos casos de teste funcionais, de estresse, exploratórios e de regressão consolida um padrão de excelência, assegurando que o sistema opere com alta estabilidade, precisão métrica e confiabilidade durante o ciclo de vida da gestão do estoque.
+---
 
 
 

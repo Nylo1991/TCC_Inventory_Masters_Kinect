@@ -2,7 +2,7 @@
 
 ## Dados do sistema
 * **Nome do Sistema:** Inventory Masters
-* **Versão:** 3.0
+* **Versão:** 3.0.0
 * **Ambiente de Aplicação:** Aplicação desktop (WPF) e aplicação WEB integrada com hardware Kinect SDK 1.8, arquitetura híbrida de dados e comunicação em tempo real via **SignalR (`MedicaoHub` e `NotificacaoHub`)**.
   
 ---
