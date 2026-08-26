@@ -5345,6 +5345,150 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
 ## TELAS DO SISTEMA
 ---
 
+<div align="center">
+
+## TELA LOGIN WEB
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/Telalogin.jpeg" width="600" alt="Tela Login Web Inventory Masters" />
+</p>
+
+</div>
+
+---
+
+<div align="center">
+
+## TELA DASHBOARD WEB
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaDashboard.jpeg" width="600" alt="Tela Dashboard Web Inventory Masters" />
+</p>
+
+</div>
+
+---
+
+<div align="center">
+
+## TELA CADDASTRO DE PARCEIROS
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaParceiros.jpeg" width="600" alt="Tela ParceiroS Inventory Masters" />
+</p>
+
+</div>
+
+---
+
+<div align="center">
+
+## TELA CADASTRO DE USUÁRIOS
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaUsuarios.jpeg" width="600" alt="Tela Usuários Inventory Masters" />
+</p>
+
+</div>
+
+---
+
+<div align="center">
+
+## TELA CADASTRO DE PERFIS
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaPerfil.jpeg" width="600" alt="Tela Perfis Inventory Masters" />
+</p>
+
+</div>
+
+
+---
+
+<div align="center">
+
+## TELA HISTÓRICO DE MEDIÇÕES
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaMedicao.jpeg" width="600" alt="Tela Medições Inventory Masters" />
+</p>
+
+</div>
+
+---
+
+<div align="center">
+
+## TELA HISTÓRICO DE NOTIFICAÇÕES
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaNotificacao.jpeg" width="600" alt="Tela Notificações Inventory Masters" />
+</p>
+
+</div>
+
+---
+
+<div align="center">
+
+## TELA DE PARAMETROS
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaParametros.jpeg" width="600" alt="Tela Parametros Inventory Masters" />
+</p>
+
+</div>
+
+---
+
+<div align="center">
+
+## TELA LOGIN KINECT
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaLoginKinect.jpeg" width="600" alt="Tela Login Kinect Inventory Masters" />
+</p>
+
+</div>
+
+---
+
+<div align="center">
+
+## TELA DO KINECT LIGADO
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaKinectLigado.jpeg" width="600" alt="Tela de Kinect Ligada Inventory Masters" />
+</p>
+
+</div>
+
+---
+
+<div align="center">
+
+## TELA DO KINECT CALIBRANDO
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaKinectCalibrando.jpeg" width="600" alt="Tela Medições Inventory Masters" />
+</p>
+
+</div>
+---
+
+<div align="center">
+
+## TELA CADASTRO DO ESPAÇO
+
+<p align="center">
+  <img src="./Imagens/Telas Sistema/TelaCadastroEspaco.jpeg" width="600" alt="Tela Medições Inventory Masters" />
+</p>
+
+</div>
+
+---
+
   ## DOCUMENTOS COMPLEMENTARES
   
   Para acessar as documentações técnicas, diretrizes de manutenção e recursos visuais do sistema, utilize a tabela abaixo:
