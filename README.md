@@ -5496,7 +5496,7 @@ Dessa forma, a plataforma demonstra potencial para aplicação em diferentes cen
   | Documento | Descrição | Link de Acesso |
   | :--- | :--- | :--- |
   | **Business Model Canvas** | Modelagem de negócio, fluxogramas e assets visuais | [Acessar PDF](Docs/canva.pdf) |
-  | **Documentação Integra** | Repositório central de especificações do TCC | [Acessar PDF](Docs/Documentação%20Integra.pdf) |
+  | **Documentação Integra** | Repositório central de especificações do TCC | [Acessar PDF](Docs/Integra/TCC%20INTEGRA.pdf) |
   | **Infraestrutura** | Especificações de infraestrutura, requisitos de hardware e software, arquitetura, riscos e checklist de implantação | [Acessar Markdown](Docs/Intalação%20do%20Sistema/Infraestrutura.md) |
   | **Migração de Banco de Dados** | Estratégia de backup, transição tecnológica e cenários de migração | [Acessar Markdown](Docs/Intalação%20do%20Sistema/Migracao.md) |
   | **Publicação Release** | Documentação de publicação, implantação, ferramentas e notas de release | [Acessar Markdown](Docs/Intalação%20do%20Sistema/Publicacao%20Release.md) |
