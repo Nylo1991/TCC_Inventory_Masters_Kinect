@@ -17,7 +17,7 @@ public interface INotificacaoRepository
     Task<List<Notificacao>> ListarTodos();
     Task<List<Notificacao>> ListarPorEmpresa(string? empresaId = null);
     Task<bool> AtualizarStatus(string id, string novoStatus);
-    Task<bool> ExisteNotificacaoPendente();
+    Task<bool> ExisteNotificacaoPendente(string? empresaId = null);
 }
 
 public interface IParametrosSistemaRepository
@@ -63,5 +63,4 @@ public interface IUsuariosRepository
     Task Excluir(string id);
     Task AtualizarStatus(string id, bool ativo);
 }
-
 

@@ -17,6 +17,8 @@ namespace TCC_Inventory_Masters_Kinect.Service
             {
                 if (volumeAtual <= 0)
                 {
+                    _historicoVolumes.Clear();
+                    _ultimoVolumeSuavizado = 0;
                     return 0;
                 }
 
@@ -186,8 +188,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
                             continue;
                         }
 
-                        double larguraPixelMm = (2 * profundidadeAtualMm * Math.Tan(fovHorizontal / 2)) / largura;
-                        double alturaPixelMm = (2 * profundidadeAtualMm * Math.Tan(fovVertical / 2)) / altura;
+                        // O pixel representa uma área do espaço calibrado. Usar a
+                        // profundidade atual fazia objetos próximos ocuparem uma área
+                        // artificialmente menor e impedia o volume de chegar ao máximo.
+                        double larguraPixelMm = (2 * profundidadeBaseMm * Math.Tan(fovHorizontal / 2)) / largura;
+                        double alturaPixelMm = (2 * profundidadeBaseMm * Math.Tan(fovVertical / 2)) / altura;
 
                         volumeTotalMm3 += alturaObjetoMm * larguraPixelMm * alturaPixelMm;
                         pontosValidos++;

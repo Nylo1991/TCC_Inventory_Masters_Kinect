@@ -58,6 +58,37 @@ public class MedicaoHubTests
         Assert.True(notificacao.Automatica);
         Assert.Equal("Pendente", notificacao.StatusEnvio);
         Assert.Contains("80", notificacao.Mensagem);
+
+        Assert.Contains(
+            cenario.Clientes.AllProxy.Calls,
+            chamada => chamada.Method == "NovaNotificacao");
+    }
+
+    [Fact]
+    public async Task EnviarVolume_ComEmpresa_DeveUsarParametrosEGravarNoMesmoContexto()
+    {
+        var cenario = CriarCenario(capacidadeMaxima: 10, percentualAlerta: 80);
+
+        await cenario.Hub.EnviarVolume(8_000_000, "empresa-teste");
+
+        Assert.Equal("empresa-teste", cenario.Parametros.EmpresaConsultada);
+        Assert.Equal("empresa-teste", Assert.Single(cenario.Medicoes.Adicionadas).EmpresaId);
+        Assert.Equal("empresa-teste", Assert.Single(cenario.Notificacoes.Adicionadas).EmpresaId);
+    }
+
+    [Fact]
+    public async Task EnviarVolume_DeveUsarCapacidadeELimiteInformadosPeloKinect()
+    {
+        var cenario = CriarCenario(capacidadeMaxima: 100, percentualAlerta: 95);
+
+        await cenario.Hub.EnviarVolume(
+            8_000_000,
+            "empresa-teste",
+            10_000_000,
+            78);
+
+        var notificacao = Assert.Single(cenario.Notificacoes.Adicionadas);
+        Assert.Contains("80", notificacao.Mensagem);
     }
 
     [Fact]
@@ -101,11 +132,13 @@ public class MedicaoHubTests
 
         await cenario.Hub.EnviarVolume(1_000_000);
 
-        Assert.Empty(cenario.Clientes.AllProxy.Calls);
+        Assert.Contains(
+            cenario.Clientes.AllProxy.Calls,
+            chamada => chamada.Method == "NovaMedicao");
         var chamada = Assert.Single(cenario.Clientes.CallerProxy.Calls);
         Assert.Equal("ErroProcessamento", chamada.Method);
         Assert.Equal(
-            "Não foi possível processar a medição enviada.",
+            "A medição foi exibida, mas não pôde ser salva no banco de dados.",
             Assert.Single(chamada.Arguments));
     }
 

@@ -163,6 +163,7 @@ namespace MVC_InventoryMasters.Controllers
             try
             {
                 await _hubContext.Clients.All.SendAsync("ReceberNotificacao", mensagem);
+                await _hubContext.Clients.All.SendAsync("RecarregarTabela");
             }
             catch (Exception ex)
             {                

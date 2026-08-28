@@ -126,7 +126,11 @@ namespace TCC_Inventory_Masters_Kinect.Service
         /// </summary>
         /// <param name="volumeCm3">Volume calculado em centímetros cúbicos.</param>
         /// <returns>True quando o envio é concluído com sucesso.</returns>
-        public async Task<bool> EnviarVolumeAsync(double volumeCm3)
+        public async Task<bool> EnviarVolumeAsync(
+            double volumeCm3,
+            string empresaId = null,
+            double volumeMaximoCm3 = 0,
+            double percentualAlerta = 0)
         {
             try
             {
@@ -154,7 +158,12 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     return false;
                 }
 
-                await _connection.InvokeAsync("EnviarVolume", volumeCm3);
+                await _connection.InvokeAsync(
+                    "EnviarVolume",
+                    volumeCm3,
+                    empresaId,
+                    volumeMaximoCm3,
+                    percentualAlerta);
 
                 LoggerService.Info($"Volume enviado ao MVC via SignalR: {volumeCm3:N0} cm3.");
 

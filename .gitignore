@@ -372,3 +372,9 @@ MVC_InventoryMasters/appsettings.Production.json
 **/*service-account*.json
 **/*firebase*.json
 *.db
+
+# Pastas locais geradas por diagnósticos, exportações e entregáveis
+/output/
+/tmp/
+/.codex-build/
+/Entregaveis/

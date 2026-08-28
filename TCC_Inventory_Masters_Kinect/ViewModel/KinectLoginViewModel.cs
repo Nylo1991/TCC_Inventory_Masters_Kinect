@@ -163,6 +163,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
                 {
                     Usuario = resultado.Usuario,
                     Empresa = resultado.Empresa,
+                    EmpresaId = resultado.EmpresaId,
                     Email = resultado.Email,
                     Token = token
                 };

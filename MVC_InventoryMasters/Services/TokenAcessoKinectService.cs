@@ -135,6 +135,7 @@ namespace MVC_InventoryMasters.Services
                 EmailValidado = true,
                 Usuario = tokenAcesso.UsuarioNome,
                 Empresa = tokenAcesso.Empresa,
+                EmpresaId = tokenAcesso.EmpresaId,
                 Email = tokenAcesso.Email,
                 Mensagem = "Token validado com sucesso."
             };

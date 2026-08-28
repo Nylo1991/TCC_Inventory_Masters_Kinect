@@ -41,7 +41,18 @@ public class NotificacaoRepositoryTests
     {
         await Seed("outra", "empresa-b"); await Seed("enviada", status: "Enviado");
         Assert.False(await Repo.ExisteNotificacaoPendente());
-        await Seed(); Assert.True(await Repo.ExisteNotificacaoPendente());
+        await db.Seed("Notificacoes", "recente", new Notificacao
+        {
+            EmpresaId = "empresa-a",
+            Mensagem = "Alerta recente",
+            StatusEnvio = "Pendente",
+            DataHora = DateTime.UtcNow
+        });
+        Assert.True(await Repo.ExisteNotificacaoPendente());
+    }
+    [Fact] public async Task ExistePendente_IgnoraPendenciaAntiga()
+    {
+        await Seed("antiga", "empresa-a", "Pendente");
+        Assert.False(await Repo.ExisteNotificacaoPendente());
     }
 }
-

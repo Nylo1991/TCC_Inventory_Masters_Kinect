@@ -123,19 +123,19 @@ namespace TCC_Inventory_Masters_Kinect.Danilo.Tests.Service_Test_MVVM
                 InvocarEstabilizarVolume(service, 2000);
 
             // Média histórica: (1000 + 2000) / 2 = 1500
-            // Suavização: (1000 × 0,7) + (1500 × 0,3) = 1150
+            // Suavização: (1000 × 0,35) + (1500 × 0,65) = 1325
 
             // Assert
             Assert.Equal(1000d, primeiroResultado);
-            Assert.Equal(1150d, segundoResultado);
+            Assert.Equal(1325d, segundoResultado);
         }
 
         /// <summary>
-        /// Verifica se o histórico mantém no máximo
-        /// dez volumes armazenados.
+        /// Verifica se o histórico curto permite resposta rápida
+        /// durante o monitoramento em tempo real.
         /// </summary>
         [Fact]
-        public void EstabilizarVolume_MaisDeDezLeituras_DeveLimitarHistorico()
+        public void EstabilizarVolume_MaisDeTresLeituras_DeveLimitarHistorico()
         {
             // Arrange
             var service = new KinectService();
@@ -149,7 +149,7 @@ namespace TCC_Inventory_Masters_Kinect.Danilo.Tests.Service_Test_MVVM
             Queue<double> historico = ObterHistoricoVolumes(service);
 
             // Assert
-            Assert.Equal(10, historico.Count);
+            Assert.Equal(3, historico.Count);
         }
 
         #endregion
@@ -328,6 +328,31 @@ namespace TCC_Inventory_Masters_Kinect.Danilo.Tests.Service_Test_MVVM
                 "O volume calculado deveria ser maior que zero.");
         }
 
+        [Fact]
+        public void CalcularVolumeRealCm3_AreaTotalOcupada_DeveAlcancarVolumeMaximoDetectavel()
+        {
+            var service = new KinectService();
+            const int largura = 40;
+            const int altura = 40;
+            short[] mapaCalibrado = CriarMapaDepth(largura, altura, 2000);
+            short[] mapaOcupado = CriarMapaDepth(largura, altura, 800);
+
+            double volumeAtual = InvocarCalcularVolumeReal(
+                service,
+                mapaCalibrado,
+                mapaOcupado,
+                largura,
+                altura);
+            double volumeMaximo = InvocarCalcularVolumeReferencia(
+                service,
+                mapaCalibrado,
+                largura,
+                altura);
+
+            Assert.True(volumeMaximo > 0);
+            Assert.InRange(volumeAtual / volumeMaximo, 0.99, 1.01);
+        }
+
         #endregion
 
         #region Métodos auxiliares
@@ -382,6 +407,26 @@ namespace TCC_Inventory_Masters_Kinect.Danilo.Tests.Service_Test_MVVM
 
             Assert.NotNull(resultado);
 
+            return (double)resultado!;
+        }
+
+        private static double InvocarCalcularVolumeReferencia(
+            KinectService service,
+            short[] mapaCalibrado,
+            int largura,
+            int altura)
+        {
+            MethodInfo? metodo = typeof(KinectService).GetMethod(
+                "CalcularVolumeReferenciaCm3",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+
+            Assert.NotNull(metodo);
+
+            object? resultado = metodo!.Invoke(
+                service,
+                new object[] { mapaCalibrado, largura, altura });
+
+            Assert.NotNull(resultado);
             return (double)resultado!;
         }
 

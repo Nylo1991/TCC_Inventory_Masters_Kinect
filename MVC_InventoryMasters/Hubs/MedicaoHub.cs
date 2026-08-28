@@ -55,33 +55,44 @@ namespace MVC_InventoryMasters.Hubs
         /// <returns>
         /// Tarefa assíncrona de processamento da medição.
         /// </returns>
-        public async Task EnviarVolume(double volumeCm3)
+        public async Task EnviarVolume(
+            double volumeCm3,
+            string? empresaId = null,
+            double volumeMaximoCm3 = 0,
+            double percentualAlertaKinect = 0)
         {
+            if (double.IsNaN(volumeCm3) || double.IsInfinity(volumeCm3) || volumeCm3 < 0)
+            {
+                await Clients.Caller.SendAsync(
+                    "ErroProcessamento",
+                    "A medição enviada possui um volume inválido.");
+                return;
+            }
+
+            double volumeM3 = volumeCm3 / 1000000d;
+            DateTime dataHora = DateTime.UtcNow;
+
+            // A atualização visual não deve depender da disponibilidade do Firestore.
+            await Clients.All.SendAsync(
+                "NovaMedicao",
+                new
+                {
+                    volumeMedido = volumeM3,
+                    dataHora = dataHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")
+                });
+
             try
             {
-                double volumeM3 = volumeCm3 / 1000000d;
-
                 var medicao = new MedicaoVolume
                 {
                     OrigemLeitura = "Kinect",
                     Status = "Normal",
                     VolumeMedido = volumeM3,
-                    DataHora = DateTime.UtcNow
+                    DataHora = dataHora,
+                    EmpresaId = string.IsNullOrWhiteSpace(empresaId) ? null : empresaId
                 };
 
                 await _medicaoRepository.Adicionar(medicao);
-
-                await VerificarAlertas(volumeM3);
-
-                await Clients.All.SendAsync(
-                    "NovaMedicao",
-                    new
-                    {
-                        volumeMedido = volumeM3,
-                        dataHora = DateTime.UtcNow
-                            .ToLocalTime()
-                            .ToString("dd/MM/yyyy HH:mm:ss")
-                    });
             }
             catch (Exception ex)
             {
@@ -92,8 +103,21 @@ namespace MVC_InventoryMasters.Hubs
 
                 await Clients.Caller.SendAsync(
                     "ErroProcessamento",
-                    "Não foi possível processar a medição enviada."
+                    "A medição foi exibida, mas não pôde ser salva no banco de dados."
                 );
+
+                return;
+            }
+
+            bool alertaCriado = await VerificarAlertas(
+                volumeM3,
+                empresaId,
+                volumeMaximoCm3,
+                percentualAlertaKinect);
+
+            if (alertaCriado)
+            {
+                await Clients.All.SendAsync("NovaNotificacao");
             }
         }
 
@@ -107,50 +131,58 @@ namespace MVC_InventoryMasters.Hubs
         /// <returns>
         /// Tarefa assíncrona de verificação dos alertas.
         /// </returns>
-        private async Task VerificarAlertas(double volumeAtual)
+        private async Task<bool> VerificarAlertas(
+            double volumeAtual,
+            string? empresaId,
+            double volumeMaximoCm3,
+            double percentualAlertaKinect)
         {
             try
             {
-                var parametros = _parametrosRepository.Buscar();
+                var parametros = string.IsNullOrWhiteSpace(empresaId)
+                    ? _parametrosRepository.Buscar()
+                    : _parametrosRepository.BuscarPorEmpresa(empresaId);
 
-                if (parametros == null)
+                double capacidadeMaxima = volumeMaximoCm3 > 0
+                    ? volumeMaximoCm3 / 1000000d
+                    : parametros?.CapacidadeMaxima ?? 0;
+
+                double percentualAlerta = percentualAlertaKinect > 0 &&
+                                          percentualAlertaKinect <= 100
+                    ? percentualAlertaKinect
+                    : parametros?.PercentualAlerta ?? 0;
+
+                if (capacidadeMaxima <= 0 || percentualAlerta <= 0)
                 {
                     _logger.LogWarning(
-                        "Os parâmetros do sistema não foram encontrados."
+                        "Capacidade máxima ou percentual inválido para geração de alertas."
                     );
 
-                    return;
+                    return false;
                 }
 
-                if (parametros.CapacidadeMaxima <= 0)
+                double percentual = Math.Min(
+                    (volumeAtual / capacidadeMaxima) * 100,
+                    100);
+
+                if (percentual < percentualAlerta)
                 {
-                    _logger.LogWarning(
-                        "Capacidade máxima inválida para geração de alertas."
-                    );
-
-                    return;
-                }
-
-                double percentual =
-                    (volumeAtual / parametros.CapacidadeMaxima) * 100;
-
-                if (percentual < parametros.PercentualAlerta)
-                {
-                    return;
+                    return false;
                 }
 
                 bool existePendente =
                     await _notificacaoRepository
-                        .ExisteNotificacaoPendente();
+                        .ExisteNotificacaoPendente(empresaId);
 
                 if (existePendente)
                 {
-                    return;
+                    return false;
                 }
 
                 var notificacao = new Notificacao
                 {
                     VolumeMedido = volumeAtual,
+                    EmpresaId = string.IsNullOrWhiteSpace(empresaId) ? null : empresaId,
                     Tipo = "Capacidade",
                     Automatica = true,
                     StatusEnvio = "Pendente",
@@ -165,6 +197,8 @@ namespace MVC_InventoryMasters.Hubs
                     "Notificação automática criada para {Percentual:F1}% de ocupação.",
                     percentual
                 );
+
+                return true;
             }
             catch (Exception ex)
             {
@@ -172,6 +206,8 @@ namespace MVC_InventoryMasters.Hubs
                     ex,
                     "Erro ao verificar alertas automáticos."
                 );
+
+                return false;
             }
         }
 

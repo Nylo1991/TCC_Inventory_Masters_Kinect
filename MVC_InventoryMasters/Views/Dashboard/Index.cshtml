@@ -78,6 +78,10 @@
                                             {
                                                 <span class="badge bg-danger">Erro</span>
                                             }
+                                            else if (n.StatusEnvio == "Pendente")
+                                            {
+                                                <span class="badge bg-warning text-dark">Pendente</span>
+                                            }
                                             else
                                             {
                                                 <span class="badge bg-info text-dark">Info</span>
@@ -188,7 +192,7 @@
         var labelsIniciais = [
         @foreach (var medicao in Model.Medicoes?
             .OrderByDescending(x => x.DataHora)
-            .Take(20)
+            .Take(10)
             .Reverse() ?? Enumerable.Empty<dynamic>())
         {
                 <text>'@medicao.DataHora?.ToLocalTime().ToString("HH:mm:ss")',</text>
@@ -198,7 +202,7 @@
         var dadosIniciais = [
         @foreach (var medicao in Model.Medicoes?
             .OrderByDescending(x => x.DataHora)
-            .Take(20)
+            .Take(10)
             .Reverse() ?? Enumerable.Empty<dynamic>())
         {
                 <text>@((medicao.VolumeMedido ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture)),</text>
@@ -224,17 +228,39 @@
                 maintainAspectRatio: false,
                 scales: {
                     y: {
-                        beginAtZero: true,
+                        beginAtZero: false,
                         grace: '5%',
                         ticks: {
                             callback: function(value) {
-                                return value.toFixed(2) + ' m³';
+                                var casas = Math.abs(value) < 0.01 ? 4 : 2;
+                                return Number(value).toFixed(casas) + ' m³';
                             }
                         }
                     }
                 }
             }
         });
+
+        function ajustarEscalaVolume() {
+            var valores = volumeChart.data.datasets[0].data
+                .map(Number)
+                .filter(Number.isFinite);
+
+            if (valores.length === 0) return;
+
+            var minimo = Math.min.apply(null, valores);
+            var maximo = Math.max.apply(null, valores);
+            var amplitude = maximo - minimo;
+            var margem = amplitude > 0
+                ? amplitude * 0.15
+                : Math.max(Math.abs(maximo) * 0.10, 0.0001);
+
+            volumeChart.options.scales.y.suggestedMin = Math.max(0, minimo - margem);
+            volumeChart.options.scales.y.suggestedMax = maximo + margem;
+        }
+
+        ajustarEscalaVolume();
+        volumeChart.update();
 
         // Gráfico de Ocupação
         var ctxOcupacao = document.getElementById('occupancyChart').getContext('2d');
@@ -261,11 +287,9 @@
             var novoVolume =
                 parseFloat(m.volumeMedido || 0);
 
-            var novoPercentual =
-                Math.min(
-                    (novoVolume / capacidadeTotal) * 100,
-                    100
-                );
+            var novoPercentual = capacidadeTotal > 0
+                ? Math.min((novoVolume / capacidadeTotal) * 100, 100)
+                : 0;
 
             occupancyChart.data.datasets[0].data = [
                 novoPercentual.toFixed(1),
@@ -279,20 +303,21 @@
 
             occupancyChart.update();
 
-            if (volumeChart.data.labels.length >= 20)
+            if (volumeChart.data.labels.length >= 10)
             {
                 volumeChart.data.labels.shift();
                 volumeChart.data.datasets[0].data.shift();
             }
 
             volumeChart.data.labels.push(
-                new Date().toLocaleTimeString()
+                (m.dataHora || new Date().toLocaleTimeString()).toString().split(' ').pop()
             );
 
             volumeChart.data.datasets[0].data.push(
-                Number(novoVolume.toFixed(3))
+                novoVolume
             );
 
+            ajustarEscalaVolume();
             volumeChart.update();
 
             var elMedicoes =
@@ -305,7 +330,9 @@
             }
         });
 
+        connectionMed.on("NovaNotificacao", function () { location.reload(); });
         connectionNotif.on("RecarregarTabela", function () { location.reload(); });
+        connectionNotif.on("ReceberNotificacao", function () { location.reload(); });
 
         connectionMed.start().catch(function (err) { console.error("Erro Hub: " + err); });
         connectionNotif.start().catch(function (err) { console.error("Erro Notif: " + err); });

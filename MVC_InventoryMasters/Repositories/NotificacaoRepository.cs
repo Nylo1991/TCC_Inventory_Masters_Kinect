@@ -154,7 +154,7 @@ namespace MVC_InventoryMasters.Repositories
         /// True se existir uma notificação pendente.
         /// False caso contrário.
         /// </returns>
-        public async Task<bool> ExisteNotificacaoPendente()
+        public async Task<bool> ExisteNotificacaoPendente(string? empresaId = null)
         {
             try
             {
@@ -165,15 +165,20 @@ namespace MVC_InventoryMasters.Repositories
                         "Pendente")
                     .GetSnapshotAsync();
 
-                string empresa = _contextoUsuario.ObterEmpresaId();
+                string empresa = string.IsNullOrWhiteSpace(empresaId)
+                    ? _contextoUsuario.ObterEmpresaId()
+                    : empresaId;
+                DateTime inicioJanela = DateTime.UtcNow.AddMinutes(-5);
 
                 return snapshot.Documents.Any(doc =>
                 {
                     var notificacao = doc.ConvertTo<Notificacao>();
 
-                    return notificacao.EmpresaId == empresa ||
-                           (empresa == ContextoUsuarioService.EmpresaPadraoId &&
-                            string.IsNullOrWhiteSpace(notificacao.EmpresaId));
+                    bool pertenceEmpresa = notificacao.EmpresaId == empresa ||
+                        (empresa == ContextoUsuarioService.EmpresaPadraoId &&
+                         string.IsNullOrWhiteSpace(notificacao.EmpresaId));
+
+                    return pertenceEmpresa && notificacao.DataHora >= inicioJanela;
                 });
             }
             catch (Exception ex)

@@ -383,6 +383,19 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup Condition="'$(MSBuildRuntimeType)' == 'Core'">
+    <!-- O dotnet MSBuild não executa o gerador XAML de projetos WPF antigos.
+         Estes arquivos são usados apenas na validação por linha de comando;
+         o Visual Studio continua usando o fluxo normal do WPF. -->
+    <Compile Include="$(IntermediateOutputPath)App.g.cs"
+             Condition="Exists('$(IntermediateOutputPath)App.g.cs')" />
+    <Compile Include="$(IntermediateOutputPath)View\KinectLogin.g.cs"
+             Condition="Exists('$(IntermediateOutputPath)View\KinectLogin.g.cs')" />
+    <Compile Include="$(IntermediateOutputPath)View\KinectMonitorWindow.g.cs"
+             Condition="Exists('$(IntermediateOutputPath)View\KinectMonitorWindow.g.cs')" />
+    <Compile Include="$(IntermediateOutputPath)View\HistoricoMedicoesWindowxaml.g.cs"
+             Condition="Exists('$(IntermediateOutputPath)View\HistoricoMedicoesWindowxaml.g.cs')" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -106,7 +106,13 @@ namespace TCC_Inventory_Masters_Kinect.Service
                     };
                 }
 
-                double volumeMaximo = CalcularVolumeReferenciaCm3(_depthCalibrado, _larguraDepth, _alturaDepth);
+                double volumeReferencia = CalcularVolumeReferenciaCm3(
+                    _depthCalibrado,
+                    _larguraDepth,
+                    _alturaDepth);
+                double volumeMaximo = Math.Round(
+                    volumeReferencia * FATOR_ESCALA_OCUPACAO,
+                    0);
 
                 if (volumeMaximo <= 0)
                 {
@@ -265,8 +271,10 @@ namespace TCC_Inventory_Masters_Kinect.Service
                         short[] depthData = new short[frame.PixelDataLength];
                         frame.CopyPixelDataTo(depthData);
 
-                        int margemX = frame.Width / 10;
-                        int margemY = frame.Height / 10;
+                        int margemX = frame.Width / 3;
+                        //int margemX = frame.Width / 10;
+                        int margemY = frame.Height / 3;
+                        //int margemY = frame.Height / 10;
 
                         for (int y = margemY; y < frame.Height - margemY; y++)
                         {
@@ -487,7 +495,21 @@ namespace TCC_Inventory_Masters_Kinect.Service
                         double larguraPixelMm = (2 * profundidadeMm * Math.Tan(fovHorizontal / 2)) / largura;
                         double alturaPixelMm = (2 * profundidadeMm * Math.Tan(fovVertical / 2)) / altura;
 
-                        double alturaUtilMm = Math.Min(profundidadeMm, ALTURA_MAXIMA_OBJETO_MM);
+                        // A capacidade precisa representar o volume que o sensor
+                        // realmente consegue detectar. A faixa entre a câmera e a
+                        // distância mínima não pode ser medida e não deve aumentar
+                        // artificialmente o volume máximo do espaço.
+                        double alturaDetectavelMm = Math.Max(
+                            profundidadeMm - DEPTH_MIN_MM,
+                            0);
+                        double alturaUtilMm = Math.Min(
+                            alturaDetectavelMm,
+                            ALTURA_MAXIMA_OBJETO_MM);
+
+                        if (alturaUtilMm <= 0)
+                        {
+                            continue;
+                        }
 
                         volumeTotalMm3 += alturaUtilMm * larguraPixelMm * alturaPixelMm;
                         pontosValidos++;

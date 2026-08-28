@@ -80,7 +80,12 @@ internal sealed class MedicaoVolumeRepositoryFake : IMedicaoVolumeRepository
 
 internal sealed class ParametrosSistemaRepositoryFake : IParametrosSistemaRepository
 {
-    public ParametrosSistema BuscarPorEmpresa(string empresaId) => throw new NotSupportedException();
+    public string? EmpresaConsultada { get; private set; }
+    public ParametrosSistema BuscarPorEmpresa(string empresaId)
+    {
+        EmpresaConsultada = empresaId;
+        return Resultado!;
+    }
     public ParametrosSistema ObterPadroes() => throw new NotSupportedException();
     public void Salvar(ParametrosSistema parametros) => throw new NotSupportedException();
     public double CalcularPercentualOcupacao(double volumeAtual, double capacidadeMaxima) => throw new NotSupportedException();
@@ -111,6 +116,6 @@ internal sealed class NotificacaoRepositoryFake : INotificacaoRepository
         return Task.CompletedTask;
     }
 
-    public Task<bool> ExisteNotificacaoPendente() =>
+    public Task<bool> ExisteNotificacaoPendente(string? empresaId = null) =>
         Task.FromResult(ExistePendente);
 }

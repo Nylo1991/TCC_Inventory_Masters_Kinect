@@ -23,7 +23,7 @@ namespace TCC_Inventory_Masters_Kinect.Service
 
         private readonly Queue<double> _historicoVolumes = new Queue<double>();
 
-        private const int MAX_HISTORICO_VOLUME = 10;
+        private const int MAX_HISTORICO_VOLUME = 3;
 
         private const int ANGULO_MIN = -27;
         private const int ANGULO_MAX = 27;
@@ -31,15 +31,16 @@ namespace TCC_Inventory_Masters_Kinect.Service
         private const int FRAMES_POR_ANGULO = 10;
         private const int ESPERA_MOTOR_MS = 1500;
 
-        private const int DEPTH_MIN_MM = 1200;
-        private const int DEPTH_MAX_MM = 3500;
+        private const int DEPTH_MIN_MM = 800;
+        private const int DEPTH_MAX_MM = 4000;
         private const int ALTURA_MINIMA_OBJETO_MM = 30;
         private const int ALTURA_MAXIMA_OBJETO_MM = 1800;
         private const int PONTOS_MINIMOS_VOLUME = 1000;
 
         private const double FOV_HORIZONTAL_GRAUS = 57.0;
         private const double FOV_VERTICAL_GRAUS = 43.0;
-        private const double PESO_SUAVIZACAO = 0.7;
+        private const double PESO_SUAVIZACAO = 0.35;
+        private const double FATOR_ESCALA_OCUPACAO = 0.30;
 
         /// <summary>
         /// Evento disparado sempre que um novo frame da câmera RGB é capturado.

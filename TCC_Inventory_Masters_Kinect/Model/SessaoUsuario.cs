@@ -8,6 +8,7 @@
         /// </summary>
         public string Usuario { get; set; }
         public string Empresa { get; set; }
+        public string EmpresaId { get; set; }
         public string Email { get; set; }
         public string Token { get; set; }
     }

@@ -17,7 +17,7 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
             _volumeTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(60)
+                Interval = TimeSpan.FromSeconds(10)
             };
 
             _volumeTimer.Tick += async (s, e) =>
@@ -68,10 +68,10 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 double volumeAtualCm3 = _kinectService.CalcularVolumeAtualCm3();
 
-                if (volumeAtualCm3 <= 0)
+                if (volumeAtualCm3 < 0)
                 {
-                    StatusMessage = "Nenhum volume detectado.";
-                    LoggerService.LogWarning("Nenhum volume detectado na medição.");
+                    StatusMessage = "Medição de volume inválida.";
+                    LoggerService.LogWarning("Medição de volume negativa descartada.");
                     return;
                 }
 
@@ -108,7 +108,11 @@ namespace TCC_Inventory_Masters_Kinect.ViewModel
 
                 if (_signalRService.EstaConectado)
                 {
-                    await _signalRService.EnviarVolumeAsync(volumeAtualCm3);
+                    await _signalRService.EnviarVolumeAsync(
+                        volumeAtualCm3,
+                        _sessao?.EmpresaId,
+                        _volumeMaximoCm3,
+                        limiteOcupacao);
                     MensagemEnvioAplicacao = $"Volume enviado: {FormatarVolumeM3(volumeAtualCm3)}";
                 }
                 else
